@@ -588,7 +588,7 @@ const serviceToConfigMap: Record<string, string> = {
   nats: "notify_nats",
   nsq: "notify_nsq",
   mysql: "notify_mysql",
-  postgresql: "notify_postgres", //looks different in server response(postgresql as opposed to postgres) from restapi/admin_notification_endpoints.go
+  postgresql: "notify_postgres", //looks different in server response(postgresql as opposed to postgres) from api/admin_notification_endpoints.go
   elasticsearch: "notify_elasticsearch",
   redis: "notify_redis",
 };

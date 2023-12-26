@@ -19,11 +19,11 @@ concurrency:
 jobs:
   lint-job:
     name: Checking Lint
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
@@ -65,8 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -110,8 +110,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -130,10 +130,10 @@ jobs:
 
   latest-minio:
     name: Build latest MinIO
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
+        go-version: [ 1.21.x ]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -168,8 +168,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -204,12 +204,12 @@ jobs:
     name: Test Subpath with Nginx
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -253,12 +253,12 @@ jobs:
     name: Permissions Tests Part 1
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -301,12 +301,12 @@ jobs:
     name: Permissions Tests Part 2
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -348,12 +348,12 @@ jobs:
     name: Permissions Tests Part 3
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -395,12 +395,12 @@ jobs:
     name: Permissions Tests Part 4
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -439,11 +439,11 @@ jobs:
     name: Permissions Tests Part 5
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -482,11 +482,11 @@ jobs:
     name: Permissions Tests Part 6
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -525,11 +525,11 @@ jobs:
     name: Permissions Tests Part 7
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -567,11 +567,11 @@ jobs:
     name: Permissions Tests Part 8
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -610,11 +610,11 @@ jobs:
     name: Permissions Tests Part 9
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -656,11 +656,11 @@ jobs:
     name: Permissions Tests Part A
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -702,11 +702,11 @@ jobs:
     name: Permissions Tests Part B
     needs:
       - compile-binary
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -754,8 +754,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -781,8 +781,8 @@ jobs:
           path: |
             ./pkg/coverage/
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
-  test-restapi-on-go:
-    name: Test Restapi on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+  test-api-on-go:
+    name: Test API on Go ${{ matrix.go-version }} and ${{ matrix.os }}
     needs:
       - lint-job
       - ui-assets
@@ -791,8 +791,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -812,12 +812,12 @@ jobs:
           make test
 
       - uses: actions/cache@v3
-        id: coverage-cache-restapi
-        name: Coverage Cache RestAPI
+        id: coverage-cache-api
+        name: Coverage Cache API
         with:
           path: |
-            ./restapi/coverage/
-          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+            ./api/coverage/
+          key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
   b-integration-tests:
     name: Integration Tests with Latest Distributed MinIO
     needs:
@@ -830,7 +830,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.21.x]
+        go-version: [ 1.21.x ]
 
     steps:
       - name: Check out code
@@ -915,11 +915,11 @@ jobs:
       - reuse-golang-dependencies
       - semgrep-static-code-analysis
       - latest-minio
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
 
     strategy:
       matrix:
-        go-version: [1.21.x]
+        go-version: [ 1.21.x ]
 
     steps:
       - name: Check out code
@@ -994,7 +994,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.21.x]
+        go-version: [ 1.21.x ]
 
     steps:
       - name: Check out code
@@ -1058,15 +1058,15 @@ jobs:
     name: "Coverage Limit Check"
     needs:
       - b-integration-tests
-      - test-restapi-on-go
+      - test-api-on-go
       - test-pkg-on-go
       - sso-integration
       - replication
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1107,12 +1107,12 @@ jobs:
           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v3
-        id: coverage-cache-restapi
-        name: Coverage Cache RestAPI
+        id: coverage-cache-api
+        name: Coverage Cache API
         with:
           path: |
-            ./restapi/coverage/
-          key: ${{ runner.os }}-coverage-restapi-2-${{ github.run_id }}
+            ./api/coverage/
+          key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
 
       - uses: actions/cache@v3
         id: coverage-cache-pkg
@@ -1139,7 +1139,7 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../restapi/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
@@ -1178,11 +1178,11 @@ jobs:
             ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../restapi/coverage/coverage.out -o coverage.html
+            go tool cover -html=../api/coverage/coverage.out -o coverage.html
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../restapi/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../restapi/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             go tool cover -html=../pkg/coverage/coverage-pkg.out -o coverage-pkg.html
             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
@@ -1211,8 +1211,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1252,8 +1252,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.21.x]
-        os: [ubuntu-latest]
+        go-version: [ 1.21.x ]
+        os: [ ubuntu-latest ]
     steps:
       - name: Check out code
         uses: actions/checkout@v3

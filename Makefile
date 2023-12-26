@@ -48,14 +48,14 @@ apply-gofmt:
 clean-swagger:
 	@echo "cleaning"
 	@rm -rf models
-	@rm -rf restapi/operations
+	@rm -rf api/operations
 
 swagger-console:
 	@echo "Generating swagger server code from yaml"
-	@swagger generate server -A console --main-package=management --server-package=restapi --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
+	@swagger generate server -A console --main-package=management --server-package=api --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 	@echo "Generating typescript api"
 	@npx swagger-typescript-api -p ./swagger.yml -o ./portal-ui/src/api -n consoleApi.ts
-	@git restore restapi/server.go
+	@git restore api/server.go
 
 
 assets:
@@ -78,7 +78,7 @@ test-integration:
 	@echo "Postgres"
 	@(docker run --net=mynet123 --ip=173.18.0.4 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
 	@echo "execute test and get coverage for test-integration:"
-	@(cd integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage &&  ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
+	@(cd integration && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage &&  ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
 	@(docker stop pgsqlcontainer)
 	@(docker stop minio)
 	@(docker stop minio2)
@@ -126,7 +126,7 @@ test-replication:
 	  $(MINIO_VERSION) server /data{1...4} \
 	  --address :9002 \
 	  --console-address :6002)
-	@(cd replication && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./replication.test -test.v -test.run "^Test*" -test.coverprofile=coverage/replication.out)
+	@(cd replication && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage && ./replication.test -test.v -test.run "^Test*" -test.coverprofile=coverage/replication.out)
 	@(docker stop minio || true)
 	@(docker stop minio1 || true)
 	@(docker stop minio2 || true)
@@ -180,7 +180,7 @@ test-sso-integration:
 	@echo "add python module"
 	@(pip3 install bs4)
 	@echo "Executing the test:"
-	@(cd sso-integration && go test -coverpkg=../restapi -c -tags testrunmain . && mkdir -p coverage && ./sso-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/sso-system.out)
+	@(cd sso-integration && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage && ./sso-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/sso-system.out)
 
 test-permissions-1:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
@@ -259,7 +259,7 @@ cleanup-minio-nginx:
 # This is needed because tests can be in the folder or sub-folder(s), let's include them all please!.
 test:
 	@echo "execute test and get coverage"
-	@(cd restapi && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage.out)
+	@(cd api && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage.out)
 
 
 # https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
@@ -270,7 +270,7 @@ test-pkg:
 	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
-	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/restapi/... && go tool cover -html=coverage.out && open coverage.html)
+	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/api/... && go tool cover -html=coverage.out && open coverage.html)
 
 clean:
 	@echo "Cleaning up all the generated files"
