@@ -52,7 +52,7 @@ clean-swagger:
 
 swagger-console:
 	@echo "Generating swagger server code from yaml"
-	@swagger generate server -A console --main-package=management --server-package=restapi --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
+	@swagger generate server -A console --main-package=management --server-package=api --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 	@echo "Generating typescript api"
 	@npx swagger-typescript-api -p ./swagger.yml -o ./portal-ui/src/api -n consoleApi.ts
 	@git restore restapi/server.go
@@ -267,7 +267,7 @@ test-pkg:
 	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
-	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/restapi/... && go tool cover -html=coverage.out && open coverage.html)
+	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/api/... && go tool cover -html=coverage.out && open coverage.html)
 
 clean:
 	@echo "Cleaning up all the generated files"

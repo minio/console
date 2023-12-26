@@ -33,15 +33,15 @@ import (
 	"github.com/minio/console/models"
 
 	"github.com/go-openapi/loads"
+	"github.com/minio/console/api"
+	"github.com/minio/console/api/operations"
 	consoleoauth2 "github.com/minio/console/pkg/auth/idp/oauth2"
-	"github.com/minio/console/restapi"
-	"github.com/minio/console/restapi/operations"
 	"github.com/stretchr/testify/assert"
 )
 
 var token string
 
-func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
+func initConsoleServer(consoleIDPURL string) (*api.Server, error) {
 	// Configure Console Server with vars to get the idp config from the container
 	pcfg := map[string]consoleoauth2.ProviderConfig{
 		"_": {
@@ -52,7 +52,7 @@ func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 		},
 	}
 
-	swaggerSpec, err := loads.Embedded(restapi.SwaggerJSON, restapi.FlatSwaggerJSON)
+	swaggerSpec, err := loads.Embedded(api.SwaggerJSON, api.FlatSwaggerJSON)
 	if err != nil {
 		return nil, err
 	}
@@ -62,24 +62,24 @@ func initConsoleServer(consoleIDPURL string) (*restapi.Server, error) {
 	}
 
 	// Initialize MinIO loggers
-	restapi.LogInfo = noLog
-	restapi.LogError = noLog
+	api.LogInfo = noLog
+	api.LogError = noLog
 
-	api := operations.NewConsoleAPI(swaggerSpec)
-	api.Logger = noLog
+	consoleAPI := operations.NewConsoleAPI(swaggerSpec)
+	consoleAPI.Logger = noLog
 
-	restapi.GlobalMinIOConfig = restapi.MinIOConfig{
+	api.GlobalMinIOConfig = api.MinIOConfig{
 		OpenIDProviders: pcfg,
 	}
 
-	server := restapi.NewServer(api)
+	server := api.NewServer(consoleAPI)
 	// register all APIs
 	server.ConfigureAPI()
 
 	server.Host = "0.0.0.0"
 	server.Port = 9090
-	restapi.Port = "9090"
-	restapi.Hostname = "0.0.0.0"
+	api.Port = "9090"
+	api.Hostname = "0.0.0.0"
 
 	return server, nil
 }

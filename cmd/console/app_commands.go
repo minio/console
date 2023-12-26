@@ -25,7 +25,7 @@ import (
 	"github.com/minio/console/pkg/logger"
 
 	"github.com/minio/cli"
-	"github.com/minio/console/restapi"
+	"github.com/minio/console/api"
 )
 
 var appCmds = []cli.Command{
@@ -37,30 +37,30 @@ var appCmds = []cli.Command{
 func StartServer(ctx *cli.Context) error {
 	if err := loadAllCerts(ctx); err != nil {
 		// Log this as a warning and continue running console without TLS certificates
-		restapi.LogError("Unable to load certs: %v", err)
+		api.LogError("Unable to load certs: %v", err)
 	}
 
 	xctx := context.Background()
 
-	transport := restapi.PrepareSTSClientTransport(false, restapi.LocalAddress)
+	transport := api.PrepareSTSClientTransport(false, api.LocalAddress)
 	if err := logger.InitializeLogger(xctx, transport.Transport); err != nil {
 		fmt.Println("error InitializeLogger", err)
 		logger.CriticalIf(xctx, err)
 	}
 	// custom error configuration
-	restapi.LogInfo = logger.Info
-	restapi.LogError = logger.Error
-	restapi.LogIf = logger.LogIf
+	api.LogInfo = logger.Info
+	api.LogError = logger.Error
+	api.LogIf = logger.LogIf
 
-	var rctx restapi.Context
+	var rctx api.Context
 	if err := rctx.Load(ctx); err != nil {
-		restapi.LogError("argument validation failed: %v", err)
+		api.LogError("argument validation failed: %v", err)
 		return err
 	}
 
 	server, err := buildServer()
 	if err != nil {
-		restapi.LogError("Unable to initialize console server: %v", err)
+		api.LogError("Unable to initialize console server: %v", err)
 		return err
 	}
 
@@ -70,18 +70,18 @@ func StartServer(ctx *cli.Context) error {
 	server.ReadTimeout = 1 * time.Hour
 	// no timeouts for response for downloads
 	server.WriteTimeout = 0
-	restapi.Port = strconv.Itoa(server.Port)
-	restapi.Hostname = server.Host
+	api.Port = strconv.Itoa(server.Port)
+	api.Hostname = server.Host
 
-	if len(restapi.GlobalPublicCerts) > 0 {
+	if len(api.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
 		// plain HTTP connections to HTTPS server
 		server.EnabledListeners = []string{"http", "https"}
 		server.TLSPort = rctx.HTTPSPort
 		// Need to store tls-port, tls-host un config variables so secure.middleware can read from there
-		restapi.TLSPort = strconv.Itoa(server.TLSPort)
-		restapi.Hostname = rctx.Host
-		restapi.TLSRedirect = rctx.TLSRedirect
+		api.TLSPort = strconv.Itoa(server.TLSPort)
+		api.Hostname = rctx.Host
+		api.TLSRedirect = rctx.TLSRedirect
 	}
 
 	defer server.Shutdown()
