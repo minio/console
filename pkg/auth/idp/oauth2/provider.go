@@ -154,7 +154,7 @@ var requiredResponseTypes = set.CreateStringSet("code")
 // We only support Authentication with the Authorization Code Flow - spec:
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
 func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.Client) (*Provider, error) {
-	ddoc, err := parseDiscoveryDoc(GetIDPURL(), httpClient)
+	ddoc, err := parseDiscoveryDoc(r.Context(), GetIDPURL(), httpClient)
 	if err != nil {
 		return nil, err
 	}
@@ -211,6 +211,15 @@ func NewOauth2ProviderClient(scopes []string, r *http.Request, httpClient *http.
 
 var defaultScopes = []string{"openid", "profile", "email"}
 
+// NewOauth2ProviderClientByName returns a provider if present specified by the input name of the provider.
+func (ois OpenIDPCfg) NewOauth2ProviderClientByName(name string, scopes []string, r *http.Request, idpClient, stsClient *http.Client) (provider *Provider, err error) {
+	oi, ok := ois[name]
+	if !ok {
+		return nil, fmt.Errorf("%s IDP provider does not exist", name)
+	}
+	return oi.GetOauth2Provider(name, scopes, r, idpClient, stsClient)
+}
+
 // NewOauth2ProviderClient instantiates a new oauth2 client using the
 // `OpenIDPCfg` configuration struct. It returns a *Provider object that
 // contains the necessary configuration to initiate an oauth2 authentication
@@ -218,70 +227,18 @@ var defaultScopes = []string{"openid", "profile", "email"}
 //
 // We only support Authentication with the Authorization Code Flow - spec:
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-func (o OpenIDPCfg) NewOauth2ProviderClient(name string, scopes []string, r *http.Request, idpClient, stsClient *http.Client) (*Provider, error) {
-	ddoc, err := parseDiscoveryDoc(o[name].URL, idpClient)
-	if err != nil {
-		return nil, err
-	}
-
-	supportedResponseTypes := set.NewStringSet()
-	for _, responseType := range ddoc.ResponseTypesSupported {
-		// FIXME: ResponseTypesSupported is a JSON array of strings - it
-		// may not actually have strings with spaces inside them -
-		// making the following code unnecessary.
-		for _, s := range strings.Fields(responseType) {
-			supportedResponseTypes.Add(s)
+func (ois OpenIDPCfg) NewOauth2ProviderClient(scopes []string, r *http.Request, idpClient, stsClient *http.Client) (provider *Provider, providerCfg ProviderConfig, err error) {
+	for name, oi := range ois {
+		provider, err = oi.GetOauth2Provider(name, scopes, r, idpClient, stsClient)
+		if err != nil {
+			// Upon error look for the next IDP.
+			continue
 		}
+		// Upon success return right away.
+		providerCfg = oi
+		break
 	}
-	isSupported := requiredResponseTypes.Difference(supportedResponseTypes).IsEmpty()
-
-	if !isSupported {
-		return nil, fmt.Errorf("expected 'code' response type - got %s, login not allowed", ddoc.ResponseTypesSupported)
-	}
-
-	// If provided scopes are empty we use the user configured list or a default
-	// list.
-	if len(scopes) == 0 {
-		scopesTmp := strings.Split(o[name].Scopes, ",")
-		for _, s := range scopesTmp {
-			w := strings.TrimSpace(s)
-			if w != "" {
-				scopes = append(scopes, w)
-			}
-		}
-		if len(scopes) == 0 {
-			scopes = defaultScopes
-		}
-	}
-
-	redirectURL := o[name].RedirectCallback
-	if o[name].RedirectCallbackDynamic {
-		// dynamic redirect if set, will generate redirect URLs
-		// dynamically based on incoming requests.
-		redirectURL = getLoginCallbackURL(r)
-	}
-
-	// add "openid" scope always.
-	scopes = append(scopes, "openid")
-
-	client := new(Provider)
-	client.oauth2Config = &xoauth2.Config{
-		ClientID:     o[name].ClientID,
-		ClientSecret: o[name].ClientSecret,
-		RedirectURL:  redirectURL,
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  ddoc.AuthEndpoint,
-			TokenURL: ddoc.TokenEndpoint,
-		},
-		Scopes: scopes,
-	}
-
-	client.IDPName = name
-	client.UserInfo = o[name].Userinfo
-
-	client.provHTTPClient = idpClient
-	client.stsHTTPClient = stsClient
-	return client, nil
+	return provider, providerCfg, err
 }
 
 type User struct {
@@ -427,9 +384,9 @@ func validateOauth2State(state string, keyFunc StateKeyFunc) error {
 
 // parseDiscoveryDoc parses a discovery doc from an OAuth provider
 // into a DiscoveryDoc struct that have the correct endpoints
-func parseDiscoveryDoc(ustr string, httpClient *http.Client) (DiscoveryDoc, error) {
+func parseDiscoveryDoc(ctx context.Context, ustr string, httpClient *http.Client) (DiscoveryDoc, error) {
 	d := DiscoveryDoc{}
-	req, err := http.NewRequest(http.MethodGet, ustr, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, ustr, nil)
 	if err != nil {
 		return d, err
 	}

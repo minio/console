@@ -177,58 +177,68 @@ func isKubernetes() bool {
 }
 
 // getLoginDetailsResponse returns information regarding the Console authentication mechanism.
-func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (*models.LoginDetails, *CodedAPIError) {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
+func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders oauth2.OpenIDPCfg) (ld *models.LoginDetails, apiErr *CodedAPIError) {
 	loginStrategy := models.LoginDetailsLoginStrategyForm
 	var redirectRules []*models.RedirectRule
 
 	r := params.HTTPRequest
+
 	var loginDetails *models.LoginDetails
-	if len(openIDProviders) >= 1 {
+	if len(openIDProviders) > 0 {
 		loginStrategy = models.LoginDetailsLoginStrategyRedirect
-		for name, provider := range openIDProviders {
-			// initialize new oauth2 client
-			oauth2Client, err := openIDProviders.NewOauth2ProviderClient(name, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)), GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
-			if err != nil {
-				return nil, ErrorWithContext(ctx, err, ErrOauth2Provider)
-			}
-			// Validate user against IDP
-			identityProvider := &auth.IdentityProvider{
-				KeyFunc: provider.GetStateKeyFunc(),
-				Client:  oauth2Client,
-			}
-
-			displayName := fmt.Sprintf("Login with SSO (%s)", name)
-			serviceType := ""
-
-			if provider.DisplayName != "" {
-				displayName = provider.DisplayName
-			}
-
-			if provider.RoleArn != "" {
-				splitRoleArn := strings.Split(provider.RoleArn, ":")
-
-				if len(splitRoleArn) > 2 {
-					serviceType = splitRoleArn[2]
-				}
-			}
-
-			redirectRule := models.RedirectRule{
-				Redirect:    identityProvider.GenerateLoginURL(),
-				DisplayName: displayName,
-				ServiceType: serviceType,
-			}
-
-			redirectRules = append(redirectRules, &redirectRule)
-		}
 	}
+
+	for name, provider := range openIDProviders {
+		// initialize new oauth2 client
+
+		oauth2Client, err := provider.GetOauth2Provider(name, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)),
+			GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
+		if err != nil {
+			continue
+		}
+
+		// Validate user against IDP
+		identityProvider := &auth.IdentityProvider{
+			KeyFunc: provider.GetStateKeyFunc(),
+			Client:  oauth2Client,
+		}
+
+		displayName := fmt.Sprintf("Login with SSO (%s)", name)
+		serviceType := ""
+
+		if provider.DisplayName != "" {
+			displayName = provider.DisplayName
+		}
+
+		if provider.RoleArn != "" {
+			splitRoleArn := strings.Split(provider.RoleArn, ":")
+
+			if len(splitRoleArn) > 2 {
+				serviceType = splitRoleArn[2]
+			}
+		}
+
+		redirectRule := models.RedirectRule{
+			Redirect:    identityProvider.GenerateLoginURL(),
+			DisplayName: displayName,
+			ServiceType: serviceType,
+		}
+
+		redirectRules = append(redirectRules, &redirectRule)
+	}
+
+	if len(openIDProviders) > 0 && len(redirectRules) == 0 {
+		loginStrategy = models.LoginDetailsLoginStrategyForm
+		// No IDP configured fallback to username/password
+	}
+
 	loginDetails = &models.LoginDetails{
 		LoginStrategy: loginStrategy,
 		RedirectRules: redirectRules,
 		IsK8S:         isKubernetes(),
 		AnimatedLogin: getConsoleAnimatedLogin(),
 	}
+
 	return loginDetails, nil
 }
 
@@ -248,7 +258,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 	r := params.HTTPRequest
 	lr := params.Body
 
-	if openIDProviders != nil {
+	if len(openIDProviders) > 0 {
 		// we read state
 		rState := *lr.State
 
@@ -258,22 +268,24 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		}
 
 		var requestItems oauth2.LoginURLParams
-
-		err = json.Unmarshal(decodedRState, &requestItems)
-
-		if err != nil {
+		if err = json.Unmarshal(decodedRState, &requestItems); err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
 
 		IDPName := requestItems.IDPName
 		state := requestItems.State
-		providerCfg := openIDProviders[IDPName]
 
-		oauth2Client, err := openIDProviders.NewOauth2ProviderClient(IDPName, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)), GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
+		providerCfg, ok := openIDProviders[IDPName]
+		if !ok {
+			return nil, ErrorWithContext(ctx, fmt.Errorf("selected IDP %s does not exist", IDPName))
+		}
+
+		// Initialize new identity provider with new oauth2Client per IDPName
+		oauth2Client, err := providerCfg.GetOauth2Provider(IDPName, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)),
+			GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
-		// initialize new identity provider
 
 		identityProvider := auth.IdentityProvider{
 			KeyFunc: providerCfg.GetStateKeyFunc(),

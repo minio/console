@@ -254,19 +254,19 @@ test-initialize-minio-nginx: test-start-docker-minio-w-redirect-url test-start-d
 cleanup-minio-nginx:
 	@(docker stop minio test-nginx & docker network rm test-network)
 
+# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+# Note: go test ./... will run tests on the current folder and all subfolders.
+# This is needed because tests can be in the folder or sub-folder(s), let's include them all please!.
 test:
 	@echo "execute test and get coverage"
-	# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
-	# Note: go test ./... will run tests on the current folder and all subfolders.
-	# This is needed because tests can be in the folder or sub-folder(s), let's include them all please!.
 	@(cd restapi && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage.out)
 
 
+# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+# Note: go test ./... will run tests on the current folder and all subfolders.
+# This is since tests in pkg folder are in subfolders and were not executed.
 test-pkg:
 	@echo "execute test and get coverage"
-	# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
-	# Note: go test ./... will run tests on the current folder and all subfolders.
-	# This is since tests in pkg folder are in subfolders and were not executed.
 	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
