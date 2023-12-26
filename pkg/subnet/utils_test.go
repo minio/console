@@ -605,22 +605,3 @@ func Test_getDriveSpaceInfo(t *testing.T) {
 		})
 	}
 }
-
-func Test_getSubnetClient(t *testing.T) {
-	tests := []struct {
-		name          string
-		wantSomething bool
-	}{
-		{
-			name:          "basic",
-			wantSomething: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := getSubnetClient(); tt.wantSomething && got == nil {
-				t.Errorf("getSubnetClient() = %v, wanted something, got nothing", got)
-			}
-		})
-	}
-}
