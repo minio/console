@@ -261,7 +261,10 @@ test:
 
 test-pkg:
 	@echo "execute test and get coverage"
-	@(cd pkg && mkdir coverage && GO111MODULE=on go test -test.v -coverprofile=coverage/coverage-pkg.out)
+	# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+	# Note: go test ./... will run tests on the current folder and all subfolders.
+	# This is since tests in pkg folder are in subfolders and were not executed.
+	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
 	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/restapi/... && go tool cover -html=coverage.out && open coverage.html)
