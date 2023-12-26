@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -245,7 +245,7 @@ func getDriveSpaceInfo(admInfo madmin.InfoMessage) (uint64, uint64) {
 }
 
 func GetSubnetAPIKeyUsingLicense(lic string) (string, error) {
-	return getSubnetAPIKeyUsingAuthHeaders(subnetLicenseAuthHeaders(lic))
+	return getSubnetAPIKeyUsingAuthHeaders(map[string]string{"x-subnet-license": lic})
 }
 
 func getSubnetAPIKeyUsingAuthHeaders(authHeaders map[string]string) (string, error) {
@@ -262,10 +262,6 @@ func extractSubnetCred(key string, resp gjson.Result) (string, error) {
 		return "", fmt.Errorf("Couldn't extract %s from SUBNET response: %s", key, resp)
 	}
 	return result.String(), nil
-}
-
-func subnetLicenseAuthHeaders(lic string) map[string]string {
-	return map[string]string{"x-subnet-license": lic}
 }
 
 func subnetGetReqMC(reqURL string, headers map[string]string) (string, error) {
@@ -286,7 +282,7 @@ func subnetReqDoMC(r *http.Request, headers map[string]string) (string, error) {
 		r.Header.Add("Content-Type", "application/json")
 	}
 
-	resp, e := subnetHTTPDo(r)
+	resp, e := httpClientSubnet(0).Do(r)
 	if e != nil {
 		return "", e
 	}
@@ -302,15 +298,6 @@ func subnetReqDoMC(r *http.Request, headers map[string]string) (string, error) {
 		return respStr, nil
 	}
 	return respStr, fmt.Errorf("Request failed with code %d with error: %s", resp.StatusCode, respStr)
-}
-
-func subnetHTTPDo(req *http.Request) (*http.Response, error) {
-	return getSubnetClient().Do(req)
-}
-
-func getSubnetClient() *http.Client {
-	client := httpClientSubnet(0)
-	return client
 }
 
 func httpClientSubnet(reqTimeout time.Duration) *http.Client {
