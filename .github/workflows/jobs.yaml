@@ -1162,6 +1162,33 @@ jobs:
             go tool cover -html=all.out -o coverage.html
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            # save all other coverage
+            go tool cover -html=../integration/coverage/system.out -o system.html
+            ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            go tool cover -html=../replication/coverage/replication.out -o replication.html
+            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            go tool cover -html=../sso-integration/coverage/sso-system.out -o sso-system.html
+            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            go tool cover -html=../restapi/coverage/coverage.out -o coverage.html
+            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../restapi/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../restapi/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            go tool cover -html=../pkg/coverage/coverage-pkg.out -o coverage-pkg.html
+            ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+            ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+            ./mc anonymous set public play/builds
           else
             echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
           fi
