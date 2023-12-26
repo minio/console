@@ -57,7 +57,7 @@ func initConsoleServer() (*api.Server, error) {
 	// register all APIs
 	server.ConfigureAPI()
 
-	// restapi.GlobalRootCAs, restapi.GlobalPublicCerts, restapi.GlobalTLSCertsManager = globalRootCAs, globalPublicCerts, globalTLSCerts
+	// api.GlobalRootCAs, api.GlobalPublicCerts, api.GlobalTLSCertsManager = globalRootCAs, globalPublicCerts, globalTLSCerts
 
 	consolePort, _ := strconv.Atoi("9090")
 

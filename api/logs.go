@@ -58,7 +58,7 @@ type Context struct {
 	TLSCertificate, TLSKey, TLSca string
 }
 
-// Load loads restapi Context from command line context.
+// Load loads api Context from command line context.
 func (c *Context) Load(ctx *cli.Context) error {
 	*c = Context{
 		Host:        ctx.String("host"),

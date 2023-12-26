@@ -46,4 +46,4 @@ run:
   skip-dirs:
     - pkg/clientgen
     - pkg/apis/networking.gke.io
-    - restapi/operations
+    - api/operations
