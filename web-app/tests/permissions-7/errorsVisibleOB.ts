@@ -40,19 +40,19 @@ test
       t,
       bucketName,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucketName,
       "home/UserY/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucketName,
       "home/UserX/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "Error Notification is shown in Object Browser when no privileges are set",
@@ -81,19 +81,19 @@ test
       t,
       bucketName2,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucketName2,
       "home/UserY/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucketName2,
       "home/UserX/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "Error Notification is shown in Object Browser with Rewind request set",

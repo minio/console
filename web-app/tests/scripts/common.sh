@@ -11,45 +11,43 @@
 # # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 add_alias() {
-    for i in $(seq 1 4); do
-        echo "... attempting to add alias $i"
-        until (mc alias set minio http://127.0.0.1:9000 minioadmin minioadmin); do
-            echo "...waiting... for 5secs" && sleep 5
-        done
+  for i in $(seq 1 4); do
+    echo "... attempting to add alias $i"
+    until (mc alias set minio http://127.0.0.1:9000 minioadmin minioadmin); do
+      echo "...waiting... for 5secs" && sleep 5
     done
+  done
 }
 
 create_policies() {
-  mc admin policy create minio bucketassignpolicy-$TIMESTAMP portal-ui/tests/policies/bucketAssignPolicy.json
-  mc admin policy create minio bucketread-$TIMESTAMP portal-ui/tests/policies/bucketRead.json
-  mc admin policy create minio bucketwrite-$TIMESTAMP portal-ui/tests/policies/bucketWrite.json
-  mc admin policy create minio bucketreadwrite-$TIMESTAMP portal-ui/tests/policies/bucketReadWrite.json
-  mc admin policy create minio bucketcannottag-$TIMESTAMP portal-ui/tests/policies/bucketCannotTag.json
-  mc admin policy create minio bucketspecific-$TIMESTAMP portal-ui/tests/policies/bucketSpecific.json
-  mc admin policy create minio dashboard-$TIMESTAMP portal-ui/tests/policies/dashboard.json
-  mc admin policy create minio diagnostics-$TIMESTAMP portal-ui/tests/policies/diagnostics.json
-  mc admin policy create minio groups-$TIMESTAMP portal-ui/tests/policies/groups.json
-  mc admin policy create minio heal-$TIMESTAMP portal-ui/tests/policies/heal.json
-  mc admin policy create minio iampolicies-$TIMESTAMP portal-ui/tests/policies/iamPolicies.json
-  mc admin policy create minio logs-$TIMESTAMP portal-ui/tests/policies/logs.json
-  mc admin policy create minio notificationendpoints-$TIMESTAMP portal-ui/tests/policies/notificationEndpoints.json
-  mc admin policy create minio settings-$TIMESTAMP portal-ui/tests/policies/settings.json
-  mc admin policy create minio tiers-$TIMESTAMP portal-ui/tests/policies/tiers.json
-  mc admin policy create minio trace-$TIMESTAMP portal-ui/tests/policies/trace.json
-  mc admin policy create minio users-$TIMESTAMP portal-ui/tests/policies/users.json
-  mc admin policy create minio watch-$TIMESTAMP portal-ui/tests/policies/watch.json
-  mc admin policy create minio bucketwriteprefixonlypolicy-$TIMESTAMP portal-ui/tests/policies/bucketWritePrefixOnlyPolicy.json
-  mc admin policy create minio inspect-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-allowed.json
-  mc admin policy create minio inspect-not-allowed-$TIMESTAMP portal-ui/tests/policies/inspect-not-allowed.json
-  mc admin policy create minio fix-prefix-policy-ui-crash-$TIMESTAMP portal-ui/tests/policies/fix-prefix-policy-ui-crash.json
-  mc admin policy create minio delete-object-with-prefix-$TIMESTAMP portal-ui/tests/policies/deleteObjectWithPrefix.json
-  mc admin policy create minio conditions-policy-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy.json
-  mc admin policy create minio conditions-policy-2-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy2.json
-  mc admin policy create minio conditions-policy-3-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy3.json
-  mc admin policy create minio conditions-policy-4-$TIMESTAMP portal-ui/tests/policies/conditionsPolicy4.json
+  mc admin policy create minio bucketassignpolicy-$TIMESTAMP web-app/tests/policies/bucketAssignPolicy.json
+  mc admin policy create minio bucketread-$TIMESTAMP web-app/tests/policies/bucketRead.json
+  mc admin policy create minio bucketwrite-$TIMESTAMP web-app/tests/policies/bucketWrite.json
+  mc admin policy create minio bucketreadwrite-$TIMESTAMP web-app/tests/policies/bucketReadWrite.json
+  mc admin policy create minio bucketcannottag-$TIMESTAMP web-app/tests/policies/bucketCannotTag.json
+  mc admin policy create minio bucketspecific-$TIMESTAMP web-app/tests/policies/bucketSpecific.json
+  mc admin policy create minio dashboard-$TIMESTAMP web-app/tests/policies/dashboard.json
+  mc admin policy create minio diagnostics-$TIMESTAMP web-app/tests/policies/diagnostics.json
+  mc admin policy create minio groups-$TIMESTAMP web-app/tests/policies/groups.json
+  mc admin policy create minio heal-$TIMESTAMP web-app/tests/policies/heal.json
+  mc admin policy create minio iampolicies-$TIMESTAMP web-app/tests/policies/iamPolicies.json
+  mc admin policy create minio logs-$TIMESTAMP web-app/tests/policies/logs.json
+  mc admin policy create minio notificationendpoints-$TIMESTAMP web-app/tests/policies/notificationEndpoints.json
+  mc admin policy create minio settings-$TIMESTAMP web-app/tests/policies/settings.json
+  mc admin policy create minio tiers-$TIMESTAMP web-app/tests/policies/tiers.json
+  mc admin policy create minio trace-$TIMESTAMP web-app/tests/policies/trace.json
+  mc admin policy create minio users-$TIMESTAMP web-app/tests/policies/users.json
+  mc admin policy create minio watch-$TIMESTAMP web-app/tests/policies/watch.json
+  mc admin policy create minio bucketwriteprefixonlypolicy-$TIMESTAMP web-app/tests/policies/bucketWritePrefixOnlyPolicy.json
+  mc admin policy create minio inspect-allowed-$TIMESTAMP web-app/tests/policies/inspect-allowed.json
+  mc admin policy create minio inspect-not-allowed-$TIMESTAMP web-app/tests/policies/inspect-not-allowed.json
+  mc admin policy create minio fix-prefix-policy-ui-crash-$TIMESTAMP web-app/tests/policies/fix-prefix-policy-ui-crash.json
+  mc admin policy create minio delete-object-with-prefix-$TIMESTAMP web-app/tests/policies/deleteObjectWithPrefix.json
+  mc admin policy create minio conditions-policy-$TIMESTAMP web-app/tests/policies/conditionsPolicy.json
+  mc admin policy create minio conditions-policy-2-$TIMESTAMP web-app/tests/policies/conditionsPolicy2.json
+  mc admin policy create minio conditions-policy-3-$TIMESTAMP web-app/tests/policies/conditionsPolicy3.json
+  mc admin policy create minio conditions-policy-4-$TIMESTAMP web-app/tests/policies/conditionsPolicy4.json
 }
 
 create_users() {
@@ -84,9 +82,9 @@ create_users() {
 }
 
 create_buckets() {
-  mc mb minio/testcafe && mc cp ./portal-ui/tests/uploads/test.txt minio/testcafe/write/test.txt
-  mc mb minio/test && mc cp ./portal-ui/tests/uploads/test.txt minio/test/test.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/test/digitalinsights/test.txt
-  mc mb minio/testcondition && mc cp ./portal-ui/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./portal-ui/tests2/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./portal-ui/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
+  mc mb minio/testcafe && mc cp ./web-app/tests/uploads/test.txt minio/testcafe/write/test.txt
+  mc mb minio/test && mc cp ./web-app/tests/uploads/test.txt minio/test/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/test.txt
+  mc mb minio/testcondition && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./web-app/tests2/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
 }
 
 assign_policies() {

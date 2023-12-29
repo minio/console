@@ -3,5 +3,5 @@ dist/
 target/
 console
 !console/
-portal-ui/node_modules/
+web-app/node_modules/
 .git/

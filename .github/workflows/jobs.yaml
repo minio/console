@@ -58,7 +58,7 @@ jobs:
           # https://github.com/actions/checkout/issues/334
           sudo apt install -y python3-pip || apt install -y python3-pip
           pip3 install semgrep
-          semgrep --config semgrep.yaml $(pwd)/portal-ui --error
+          semgrep --config semgrep.yaml $(pwd)/web-app --error
 
   ui-assets:
     name: "React Code Has No Warnings & Prettified"
@@ -77,31 +77,31 @@ jobs:
         with:
           node-version: ${{ env.NVMRC }}
           cache: "yarn"
-          cache-dependency-path: portal-ui/yarn.lock
+          cache-dependency-path: web-app/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache
         name: Assets Cache
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-${{ github.run_id }}
       - name: Install Dependencies
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn install --frozen-lockfile --immutable
       - name: Check for Warnings in build output
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-warnings.sh
       - name: Check if Files are Prettified
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-prettier.sh
       - name: Check for dead code
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-deadcode.sh
@@ -191,7 +191,7 @@ jobs:
         name: Assets Cache
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-${{ github.run_id }}
       - name: Build on ${{ matrix.os }}
         env:
@@ -242,7 +242,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/subpath-nginx/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
 
       - name: Clean up docker
         if: always()
@@ -291,7 +291,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-1/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-1/ -q --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -338,7 +338,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-2/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-2/ -q --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -385,7 +385,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-3/ -q --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-3/ -q --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -433,7 +433,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-4/ --skip-js-errors
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-4/ --skip-js-errors
 
   all-permissions-5:
     name: Permissions Tests Part 5
@@ -476,7 +476,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-5/ --skip-js-errors
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-5/ --skip-js-errors
 
   all-permissions-6:
     name: Permissions Tests Part 6
@@ -519,7 +519,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-6/ --skip-js-errors
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-6/ --skip-js-errors
 
   all-permissions-7:
     name: Permissions Tests Part 7
@@ -561,7 +561,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-7/ --skip-js-errors
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-7/ --skip-js-errors
 
   all-permissions-8:
     name: Permissions Tests Part 8
@@ -604,7 +604,7 @@ jobs:
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-8/ --skip-js-errors
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-8/ --skip-js-errors
 
   all-permissions-9:
     name: Permissions Tests Part 9
@@ -646,7 +646,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-9/ --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-9/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -692,7 +692,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-A/ --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-A/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -738,7 +738,7 @@ jobs:
         run: npm install testcafe@3.0.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" portal-ui/tests/permissions-B/ --skip-js-errors -c 3
+        run: npx testcafe "chrome:headless" web-app/tests/permissions-B/ --skip-js-errors -c 3
 
       - name: Clean up users & policies
         run: |
@@ -902,10 +902,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install modules
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         run: yarn
       - name: Run tests
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         run: yarn test
   replication:
     name: Site Replication Test
@@ -1223,21 +1223,21 @@ jobs:
         with:
           node-version: ${{ env.NVMRC }}
           cache: "yarn"
-          cache-dependency-path: portal-ui/yarn.lock
+          cache-dependency-path: web-app/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Install Dependencies
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn install --frozen-lockfile --immutable
       - name: Check for Warnings in build output
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-warnings-istanbul-coverage.sh
@@ -1275,7 +1275,7 @@ jobs:
         name: Assets Cache Istanbul Coverage
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Build on ${{ matrix.os }}
         env:
@@ -1298,7 +1298,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Install dependencies"
-          cd $GITHUB_WORKSPACE/portal-ui
+          cd $GITHUB_WORKSPACE/web-app
           yarn add -D playwright
           yarn add -D babel-plugin-istanbul
           yarn add -D nyc
@@ -1326,7 +1326,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           echo "Run tests under playwright folder only"
-          cd $GITHUB_WORKSPACE/portal-ui
+          cd $GITHUB_WORKSPACE/web-app
           yarn remove playwright
           yarn add --dev @playwright/test
           echo "npx playwright test"

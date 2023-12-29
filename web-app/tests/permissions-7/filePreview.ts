@@ -42,7 +42,7 @@ test
       t,
       bucketName,
       "internode.png",
-      "portal-ui/tests/uploads/internode.png",
+      "web-app/tests/uploads/internode.png",
     );
   })("File can be previewed", async (t) => {
     await t
@@ -65,7 +65,7 @@ test
       t,
       bucketName,
       "file1.pdf",
-      "portal-ui/tests/uploads/file1.pdf",
+      "web-app/tests/uploads/file1.pdf",
     );
   })("PDF File can be previewed", async (t) => {
     await t
@@ -88,7 +88,7 @@ test
       t,
       bucketName,
       "filescript.pdf",
-      "portal-ui/tests/uploads/filescript.pdf",
+      "web-app/tests/uploads/filescript.pdf",
     );
   })("PDF with Alert doesn't execute script", async (t) => {
     await t

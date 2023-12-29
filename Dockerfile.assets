@@ -3,11 +3,11 @@ FROM node:$NODE_VERSION as uilayer
 
 WORKDIR /app
 
-COPY ./portal-ui/package.json ./
-COPY ./portal-ui/yarn.lock ./
+COPY ./web-app/package.json ./
+COPY ./web-app/yarn.lock ./
 RUN yarn install
 
-COPY ./portal-ui .
+COPY ./web-app .
 
 RUN yarn install && make build-static
 

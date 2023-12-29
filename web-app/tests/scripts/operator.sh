@@ -13,67 +13,37 @@
 
 SCRIPT_DIR=$(dirname "$0")
 export SCRIPT_DIR
-source "${SCRIPT_DIR}/common.sh"
+source "${SCRIPT_DIR}/common.sh"             # This is common.sh for TestCafe Tests
+source "${GITHUB_WORKSPACE}/tests/common.sh" # This is common.sh for k8s tests.
+
+## this enables :dev tag for minio/operator container image.
+CI="true"
+export CI
+
+## Make sure to install things if not present already
+sudo curl -#L "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
+sudo chmod +x /usr/local/bin/kubectl
+
+sudo curl -#L "https://dl.min.io/client/mc/release/linux-amd64/mc" -o /usr/local/bin/mc
+sudo chmod +x /usr/local/bin/mc
 
 __init__() {
   export TIMESTAMP=$(date "+%s")
-  echo $TIMESTAMP > portal-ui/tests/constants/timestamp.txt
+  echo $TIMESTAMP >web-app/tests/constants/timestamp.txt
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
-
-  ARCH="`uname -m`"
-  case $ARCH in
-    'i386')
-      ARCH='amd64'
-      alias ls='ls --color=auto'
-      ;;
-    'x86_64')
-      ARCH='amd64'
-      alias ls='ls -G'
-      ;;
-    'arm')
-      ARCH='arm64'
-      ;;
-    *) ;;
-  esac
-
-  echo $ARCH
-
-
-  OS="`uname`"
-  case $OS in
-    'Linux')
-      OS='linux'
-      alias ls='ls --color=auto'
-      ;;
-    'FreeBSD')
-      OS='freebsd'
-      alias ls='ls -G'
-      ;;
-    'WindowsNT')
-      OS='windows'
-      ;;
-    'Darwin')
-      OS='darwin'
-      ;;
-    'SunOS')
-      OS='solaris'
-      ;;
-    'AIX') ;;
-    *) ;;
-  esac
-
-  curl -sLO "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc
-  chmod +x mc
-  mv mc /usr/local/bin
-
-  add_alias
+  destroy_kind
+  setup_kind
+  install_operator
+  install_tenant
+  echo "kubectl proxy"
+  kubectl proxy &
+  echo "yarn start"
+  yarn start &
+  echo "console operator"
+  ./console operator &
+  echo "DONE with kind, yarn and console, next is testcafe"
+  exit 0
 }
 
-main() {
-  create_policies
-  create_users
-  assign_policies
-}
-
-( __init__ "$@" && main "$@" )
+(__init__ "$@")

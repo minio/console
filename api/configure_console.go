@@ -43,7 +43,7 @@ import (
 
 	"github.com/klauspost/compress/gzhttp"
 
-	portal_ui "github.com/minio/console/portal-ui"
+	portal_ui "github.com/minio/console/web-app"
 	"github.com/minio/pkg/v2/env"
 	"github.com/minio/pkg/v2/mimedb"
 	xnet "github.com/minio/pkg/v2/net"
