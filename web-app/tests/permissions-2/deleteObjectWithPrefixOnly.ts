@@ -38,7 +38,7 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })("Delete button is disabled for object inside bucket", async (t) => {
     await t
@@ -62,7 +62,7 @@ test
       t,
       bucket2,
       "digitalinsights/xref_cust_guid_actd-v1.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "Delete button is enabled for object that matches prefix inside bucket",
@@ -96,7 +96,7 @@ test
       t,
       bucket3,
       "digitalinsights/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "Delete button is disabled for object that doesn't matches prefix inside bucket",

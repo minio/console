@@ -41,25 +41,25 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "User can only see permitted files in last path as expected",
@@ -99,25 +99,25 @@ test
       t,
       bucket1,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "firstlevel/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })("User can browse from first level as policy has wildcard", async (t) => {
     await t
@@ -157,31 +157,31 @@ test
       t,
       bucket3,
       "test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/UserY/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/UserX/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/User/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket3,
       "home/User/secondlevel/thirdlevel/test.txt",
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })("User can browse from sub levels as policy has wildcard", async (t) => {
     await t

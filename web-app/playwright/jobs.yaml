@@ -57,26 +57,26 @@ jobs:
         with:
           node-version: ${{ env.NVMRC }}
           cache: "yarn"
-          cache-dependency-path: portal-ui/yarn.lock
+          cache-dependency-path: web-app/yarn.lock
       - uses: actions/cache@v3
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Install Dependencies
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn install --frozen-lockfile --immutable
       - name: Check for Warnings in build output
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-warnings-istanbul-coverage.sh
       - name: Check if Files are Prettified
-        working-directory: ./portal-ui
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           ./check-prettier.sh
@@ -120,7 +120,7 @@ jobs:
           # https://github.com/actions/checkout/issues/334
           sudo apt install -y python3-pip || apt install -y python3-pip
           pip3 install semgrep
-          semgrep --config semgrep.yaml $(pwd)/portal-ui --error
+          semgrep --config semgrep.yaml $(pwd)/web-app --error
 
   compile-binary-istanbul-coverage:
     name: "Compile Console Binary with Istanbul Plugin for Coverage"
@@ -155,7 +155,7 @@ jobs:
         name: Assets Cache Istanbul Coverage
         with:
           path: |
-            ./portal-ui/build/
+            ./web-app/build/
           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
       - name: Build on ${{ matrix.os }}
         env:
@@ -178,7 +178,7 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Install dependencies"
-          cd $GITHUB_WORKSPACE/portal-ui
+          cd $GITHUB_WORKSPACE/web-app
           yarn add -D playwright
           yarn add -D @playwright/test
           yarn add -D babel-plugin-istanbul
@@ -206,7 +206,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           echo "Run tests under playwright folder only"
-          cd $GITHUB_WORKSPACE/portal-ui
+          cd $GITHUB_WORKSPACE/web-app
           yarn remove playwright
           yarn add --dev @playwright/test
           echo "npx playwright test"

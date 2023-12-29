@@ -83,7 +83,7 @@ cleanup() {
 
 __init__() {
   TIMESTAMP=$(date "+%s")
-  echo "$TIMESTAMP" > portal-ui/tests/constants/timestamp.txt
+  echo "$TIMESTAMP" >web-app/tests/constants/timestamp.txt
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 
@@ -98,8 +98,10 @@ __init__() {
 }
 
 main() {
-  (yarn start &> /dev/null) & (./console server &> /dev/null) & (testcafe "chrome:headless" "$1" -q --skip-js-errors -c 3)
+  (yarn start &>/dev/null) &
+  (./console server &>/dev/null) &
+  (testcafe "chrome:headless" "$1" -q --skip-js-errors -c 3)
   cleanup
 }
 
-( __init__ "$@" && main "$@" )
+(__init__ "$@" && main "$@")

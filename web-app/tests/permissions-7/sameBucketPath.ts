@@ -35,7 +35,7 @@ test
       t,
       bucketName,
       `firstlevel/secondlevel/${bucketName}/otherlevel/test.txt`,
-      "portal-ui/tests/uploads/test.txt",
+      "web-app/tests/uploads/test.txt",
     );
   })(
     "User can navigate through folders with the same bucket name",

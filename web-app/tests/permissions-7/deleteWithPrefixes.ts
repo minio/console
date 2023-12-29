@@ -35,13 +35,13 @@ test
       t,
       bucket1,
       "abc",
-      "portal-ui/tests/uploads/noextension",
+      "web-app/tests/uploads/noextension",
     );
     await functions.uploadNamedObjectToBucket(
       t,
       bucket1,
       "abcd",
-      "portal-ui/tests/uploads/noextension",
+      "web-app/tests/uploads/noextension",
     );
   })(
     "Files with similar prefixes don't get deleted with all versions",

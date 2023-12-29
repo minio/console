@@ -1,10 +1,10 @@
 add_alias() {
-    for i in $(seq 1 4); do
-        echo "... attempting to add alias $i"
-        until (mc alias set minio http://127.0.0.1:9000 minioadmin minioadmin); do
-            echo "...waiting... for 5secs" && sleep 5
-        done
+  for i in $(seq 1 4); do
+    echo "... attempting to add alias $i"
+    until (mc alias set minio http://127.0.0.1:9000 minioadmin minioadmin); do
+      echo "...waiting... for 5secs" && sleep 5
     done
+  done
 }
 
 remove_users() {
@@ -61,7 +61,7 @@ remove_policies() {
 }
 
 __init__() {
-  export TIMESTAMP="$(cat portal-ui/tests/constants/timestamp.txt)"
+  export TIMESTAMP="$(cat web-app/tests/constants/timestamp.txt)"
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 
@@ -76,4 +76,4 @@ main() {
   remove_policies
 }
 
-( __init__ "$@" && main "$@" )
+(__init__ "$@" && main "$@")

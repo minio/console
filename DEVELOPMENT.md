@@ -1,15 +1,20 @@
 # Developing MinIO Console
 
-The MinIO Console requires the [MinIO Server](https://github.com/minio/minio). For development purposes, you also need to run both the MinIO Console web app and the MinIO Console server.
+The MinIO Console requires the [MinIO Server](https://github.com/minio/minio). For development purposes, you also need
+to run both the MinIO Console web app and the MinIO Console server.
 
 ## Running MinIO Console server
 
 Build the server in the main folder by running:
+
 ```
 make
 ```
-> Note: If it's the first time running the server, you might need to run `go mod tidy` to ensure you have all modules required.
-To start the server run:
+
+> Note: If it's the first time running the server, you might need to run `go mod tidy` to ensure you have all modules
+> required.
+> To start the server run:
+
 ```
 CONSOLE_ACCESS_KEY=<your-access-key>
 CONSOLE_SECRET_KEY=<your-secret-key>
@@ -19,8 +24,8 @@ CONSOLE_DEV_MODE=on
 ```
 
 ## Running MinIO Console web app
-Refer to `/portal-ui` [instructions](/portal-ui/README.md) to run the web app locally.
 
+Refer to `/web-app` [instructions](/web-app/README.md) to run the web app locally.
 
 # Building with MinIO
 
