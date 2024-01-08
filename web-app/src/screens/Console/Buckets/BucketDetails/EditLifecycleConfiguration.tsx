@@ -253,7 +253,7 @@ const EditLifecycleConfiguration = ({
         }
         if (lifecycleRule.transition?.noncurrent_transition_days) {
           transition["noncurrentversion_transition_days"] =
-            parseInt(NCExpirationDays);
+            parseInt(NCTransitionDays);
           transition["noncurrentversion_transition_storage_class"] =
             NCTransitionSC;
         }
