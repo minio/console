@@ -29,14 +29,14 @@ import {
   Switch,
 } from "mds";
 import { api } from "api";
-import { Tier } from "api/consoleApi";
+import { ApiError, Tier } from "api/consoleApi";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { ITiersDropDown, LifeCycleItem } from "../types";
-import { ErrorResponseHandler } from "../../../../common/types";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
+import { errorToHandler } from "../../../../api/errors";
 
 interface IAddUserContentProps {
   closeModalAndRefresh: (reload: boolean) => void;
@@ -245,15 +245,15 @@ const EditLifecycleConfiguration = ({
         let transition: { [key: string]: number | string } = {};
 
         if (
-          lifecycleRule.expiration?.days &&
-          lifecycleRule.expiration?.days > 0
+          lifecycleRule.transition?.days &&
+          lifecycleRule.transition?.days > 0
         ) {
-          transition["transition_days"] = parseInt(expiryDays);
+          transition["transition_days"] = parseInt(transitionDays);
           transition["storage_class"] = storageClass;
         }
-        if (lifecycleRule.expiration?.noncurrent_expiration_days) {
+        if (lifecycleRule.transition?.noncurrent_transition_days) {
           transition["noncurrentversion_transition_days"] =
-            parseInt(NCExpirationDays);
+            parseInt(NCTransitionDays);
           transition["noncurrentversion_transition_storage_class"] =
             NCTransitionSC;
         }
@@ -282,9 +282,10 @@ const EditLifecycleConfiguration = ({
           setAddLoading(false);
           closeModalAndRefresh(true);
         })
-        .catch((err: ErrorResponseHandler) => {
+        .catch(async (eRes) => {
           setAddLoading(false);
-          dispatch(setModalErrorSnackMessage(err));
+          const err = (await eRes.json()) as ApiError;
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
         });
     }
   };

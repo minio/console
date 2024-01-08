@@ -75,10 +75,7 @@ const ModalWrapper = ({
 
   if (modalSnackMessage) {
     message = modalSnackMessage.detailedErrorMsg;
-    if (
-      modalSnackMessage.detailedErrorMsg === "" ||
-      modalSnackMessage.detailedErrorMsg.length < 5
-    ) {
+    if (message === "" || (message && message.length < 5)) {
       message = modalSnackMessage.message;
     }
   }
