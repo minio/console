@@ -2,6 +2,27 @@
 
 # Changelog
 
+## Release v0.45.0
+
+Deprecated:
+
+- Deprecated Heal / Drives page
+
+Features:
+
+- Updated tines on menus & pages  
+
+Bug Fix:
+
+- Upgraded project dependencies
+
+## Release v0.44.0
+
+Bug Fix:
+
+- Upgraded project dependencies
+- Fixed events icons not loading in subpaths
+
 ## Release v0.43.1
 
 Bug Fix:

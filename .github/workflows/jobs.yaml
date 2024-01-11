@@ -606,52 +606,6 @@ jobs:
         timeout-minutes: 5
         run: npx testcafe "chrome:headless" web-app/tests/permissions-8/ --skip-js-errors
 
-  all-permissions-9:
-    name: Permissions Tests Part 9
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.21.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.0.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-9/ --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
   all-permissions-A:
     name: Permissions Tests Part A
     needs:
