@@ -50,7 +50,6 @@ import LoadingComponent from "../../common/LoadingComponent";
 import ComponentsScreen from "./Common/ComponentsScreen";
 
 const Trace = React.lazy(() => import("./Trace/Trace"));
-const Heal = React.lazy(() => import("./Heal/Heal"));
 const Watch = React.lazy(() => import("./Watch/Watch"));
 const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
 
@@ -323,10 +322,6 @@ const Console = () => {
     {
       component: IDPOpenIDConfigurationDetails,
       path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_VIEW,
-    },
-    {
-      component: Heal,
-      path: IAM_PAGES.TOOLS_HEAL,
     },
     {
       component: Trace,
