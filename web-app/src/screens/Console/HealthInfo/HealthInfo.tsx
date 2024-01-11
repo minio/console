@@ -60,9 +60,10 @@ const HealthInfo = () => {
 
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const [localMessage, setMessage] = useState<string>("");
-  const [buttonStartText, setButtonStartText] =
-    useState<string>("Start Diagnostic");
-  const [title, setTitle] = useState<string>("New Diagnostic");
+  const [buttonStartText, setButtonStartText] = useState<string>(
+    "Start Health Report",
+  );
+  const [title, setTitle] = useState<string>("Health Report");
   const [diagFileContent, setDiagFileContent] = useState<string>("");
   const [subnetResponse, setSubnetResponse] = useState<string>("");
   const clusterRegistered = registeredCluster();
@@ -85,24 +86,24 @@ const HealthInfo = () => {
 
   useEffect(() => {
     if (serverDiagnosticStatus === DiagStatInProgress) {
-      setTitle("Diagnostic in progress...");
+      setTitle("Health Report in progress...");
       setMessage(
-        "Diagnostic started. Please do not refresh page during diagnosis.",
+        "Health Report started. Please do not refresh page during diagnosis.",
       );
       return;
     }
 
     if (serverDiagnosticStatus === DiagStatSuccess) {
-      setTitle("Diagnostic complete");
-      setMessage("Diagnostic file is ready to be downloaded.");
-      setButtonStartText("Start New Diagnostic");
+      setTitle("Health Report complete");
+      setMessage("Health Report file is ready to be downloaded.");
+      setButtonStartText("Start Health Report");
       return;
     }
 
     if (serverDiagnosticStatus === DiagStatError) {
       setTitle("Error");
-      setMessage("An error occurred while getting the Diagnostic file.");
-      setButtonStartText("Retry Diagnostic");
+      setMessage("An error occurred while getting the Health Report file.");
+      setButtonStartText("Retry Health Report");
       return;
     }
   }, [serverDiagnosticStatus, startDiagnostic]);
@@ -117,7 +118,7 @@ const HealthInfo = () => {
       setDownloadDisabled(false);
     }
     if (serverDiagnosticStatus === DiagStatInProgress) {
-      // Disable Start Diagnotic and Disable Download buttons
+      // Disable Start Health Report and Disable Download buttons
       // if a Diagnosis is in progress.
       setDownloadDisabled(true);
     }
@@ -150,7 +151,7 @@ const HealthInfo = () => {
             c.send("ok");
           }, 10 * 1000);
           setMessage(
-            "Diagnostic started. Please do not refresh page during diagnosis.",
+            "Health Report started. Please do not refresh page during diagnosis.",
           );
           dispatch(setServerDiagStat(DiagStatInProgress));
         };
@@ -184,12 +185,14 @@ const HealthInfo = () => {
           ) {
             // handle close with error
             console.log("connection closed by server with code:", event.code);
-            setMessage("An error occurred while getting the Diagnostic file.");
+            setMessage(
+              "An error occurred while getting the Health Report file.",
+            );
             dispatch(setServerDiagStat(DiagStatError));
           } else {
             console.log("connection closed by server");
 
-            setMessage("Diagnostic file is ready to be downloaded.");
+            setMessage("Health Report file is ready to be downloaded.");
             dispatch(setServerDiagStat(DiagStatSuccess));
           }
         };
