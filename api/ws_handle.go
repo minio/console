@@ -63,7 +63,6 @@ type wsAdminClient struct {
 // ConsoleWebsocket interface of a Websocket Client
 type ConsoleWebsocket interface {
 	watch(options watchOptions)
-	heal(opts healOptions)
 }
 
 type wsS3Client struct {
@@ -245,20 +244,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		go wsAdminClient.healthInfo(ctx, deadline)
-	case strings.HasPrefix(wsPath, `/heal`):
-		hOptions, err := getHealOptionsFromReq(req)
-		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("error getting heal options: %v", err))
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		go wsAdminClient.heal(ctx, hOptions)
 	case strings.HasPrefix(wsPath, `/watch`):
 		wOptions, err := getWatchOptionsFromReq(req)
 		if err != nil {
@@ -502,21 +487,6 @@ func (wsc *wsS3Client) watch(ctx context.Context, params *watchOptions) {
 	ctx = wsReadClientCtx(ctx, wsc.conn)
 
 	err := startWatch(ctx, wsc.conn, wsc.client, params)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsAdminClient) heal(ctx context.Context, opts *healOptions) {
-	defer func() {
-		LogInfo("heal stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("heal started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startHeal(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
 }
