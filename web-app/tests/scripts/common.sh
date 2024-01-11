@@ -30,7 +30,6 @@ create_policies() {
   mc admin policy create minio dashboard-$TIMESTAMP web-app/tests/policies/dashboard.json
   mc admin policy create minio diagnostics-$TIMESTAMP web-app/tests/policies/diagnostics.json
   mc admin policy create minio groups-$TIMESTAMP web-app/tests/policies/groups.json
-  mc admin policy create minio heal-$TIMESTAMP web-app/tests/policies/heal.json
   mc admin policy create minio iampolicies-$TIMESTAMP web-app/tests/policies/iamPolicies.json
   mc admin policy create minio logs-$TIMESTAMP web-app/tests/policies/logs.json
   mc admin policy create minio notificationendpoints-$TIMESTAMP web-app/tests/policies/notificationEndpoints.json
