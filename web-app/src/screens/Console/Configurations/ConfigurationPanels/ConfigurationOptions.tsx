@@ -102,7 +102,7 @@ const ConfigurationOptions = () => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper label={"Settings"} actions={<HelpMenu />} />
+      <PageHeaderWrapper label={"Configuration"} actions={<HelpMenu />} />
       <PageLayout>
         <Grid item xs={12} id={"settings-container"}>
           <ScreenTitle
