@@ -39,8 +39,9 @@ export const createGroupButton =
   Selector("button:enabled").withText("Create Group");
 export const addAccessRuleButton =
   Selector("button:enabled").withText("Add Access Rule");
-export const startDiagnosticButton =
-  Selector("button:disabled").withText("Start Diagnostic");
+export const startDiagnosticButton = Selector("button:disabled").withText(
+  "Start Health Report",
+);
 export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
 export const downloadButton = Selector("button:enabled").withText("Download");
 export const startButton = Selector("button:enabled").withText("Start");

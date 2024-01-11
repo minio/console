@@ -173,7 +173,6 @@ export const IAM_PAGES = {
   TOOLS_AUDITLOGS: "/tools/audit-logs",
   TOOLS_TRACE: "/tools/trace",
   DASHBOARD: "/tools/metrics",
-  TOOLS_HEAL: "/tools/heal",
   TOOLS_WATCH: "/tools/watch",
 
   /* KMS */
@@ -402,7 +401,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS, // display watch notifications
   ],
   [IAM_PAGES.TOOLS_TRACE]: [IAM_SCOPES.ADMIN_SERVER_TRACE],
-  [IAM_PAGES.TOOLS_HEAL]: [IAM_SCOPES.ADMIN_HEAL],
   [IAM_PAGES.TOOLS_DIAGNOSTICS]: [
     IAM_SCOPES.ADMIN_HEALTH_INFO,
     IAM_SCOPES.ADMIN_SERVER_INFO,
