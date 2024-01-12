@@ -222,7 +222,7 @@ const Status = () => {
                   label={"Key Management Service Endpoints:"}
                   value={
                     <Fragment>
-                      {status.endpoints.map((e: any, i: number) => (
+                      {status.endpoints?.map((e: any, i: number) => (
                         <LabelWithIcon
                           key={i}
                           icon={
