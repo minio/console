@@ -29,6 +29,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/validate"
+
+	"github.com/minio/console/models"
 )
 
 // NewCheckUserServiceAccountsParams creates a new CheckUserServiceAccountsParams object
@@ -52,7 +55,7 @@ type CheckUserServiceAccountsParams struct {
 	  Required: true
 	  In: body
 	*/
-	SelectedUsers []string
+	SelectedUsers models.SelectedUsers
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -66,7 +69,7 @@ func (o *CheckUserServiceAccountsParams) BindRequest(r *http.Request, route *mid
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body []string
+		var body models.SelectedUsers
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("selectedUsers", "body", ""))
@@ -74,8 +77,19 @@ func (o *CheckUserServiceAccountsParams) BindRequest(r *http.Request, route *mid
 				res = append(res, errors.NewParseError("selectedUsers", "body", "", err))
 			}
 		} else {
-			// no validation required on inline body
-			o.SelectedUsers = body
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(r.Context())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.SelectedUsers = body
+			}
 		}
 	} else {
 		res = append(res, errors.Required("selectedUsers", "body", ""))

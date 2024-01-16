@@ -149,6 +149,8 @@ export interface ListUsersResponse {
   users?: User[];
 }
 
+export type SelectedUsers = string[];
+
 export interface AddUserRequest {
   accessKey: string;
   secretKey: string;
@@ -3242,7 +3244,7 @@ export class Api<
      * @secure
      */
     checkUserServiceAccounts: (
-      selectedUsers: string[],
+      selectedUsers: SelectedUsers,
       params: RequestParams = {},
     ) =>
       this.request<UserServiceAccountSummary, ApiError>({
@@ -3250,6 +3252,7 @@ export class Api<
         method: "POST",
         body: selectedUsers,
         secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
@@ -3635,7 +3638,7 @@ export class Api<
      * @secure
      */
     listUsersForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<string[], ApiError>({
+      this.request<SelectedUsers, ApiError>({
         path: `/policies/${policy}/users`,
         method: "GET",
         secure: true,
@@ -3653,7 +3656,7 @@ export class Api<
      * @secure
      */
     listGroupsForPolicy: (policy: string, params: RequestParams = {}) =>
-      this.request<string[], ApiError>({
+      this.request<SelectedUsers, ApiError>({
         path: `/policies/${policy}/groups`,
         method: "GET",
         secure: true,
@@ -3805,7 +3808,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<string[], ApiError>({
+      this.request<SelectedUsers, ApiError>({
         path: `/bucket-users/${bucket}`,
         method: "GET",
         query: query,
@@ -4566,7 +4569,7 @@ export class Api<
      * @secure
      */
     listNodes: (params: RequestParams = {}) =>
-      this.request<string[], ApiError>({
+      this.request<SelectedUsers, ApiError>({
         path: `/nodes`,
         method: "GET",
         secure: true,
