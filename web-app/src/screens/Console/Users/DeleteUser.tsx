@@ -59,7 +59,6 @@ const DeleteUser = ({
             if (res.data.hasSA) {
               setHasSA(true);
             }
-            setLoadingSA(false);
           }
         })
         .catch((err) =>
