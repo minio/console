@@ -37,8 +37,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import api from "../../../common/api";
-import { ErrorResponseHandler } from "../../../common/types";
 import { hasPermission } from "../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
@@ -49,12 +47,16 @@ import { useAppDispatch } from "../../../store";
 import LabelWithIcon from "../Buckets/BucketDetails/SummaryItems/LabelWithIcon";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { KmsStatusResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const Status = () => {
   const dispatch = useAppDispatch();
   const [curTab, setCurTab] = useState<string>("simple-tab-0");
 
-  const [status, setStatus] = useState<any | null>(null);
+  const [isKMSSecretKey, setIsKMSSecretKey] = useState<boolean>(true);
+  const [status, setStatus] = useState<KmsStatusResponse | null>(null);
   const [loadingStatus, setLoadingStatus] = useState<boolean>(true);
   const [metrics, setMetrics] = useState<any | null>(null);
   const [loadingMetrics, setLoadingMetrics] = useState<boolean>(true);
@@ -66,105 +68,84 @@ const Status = () => {
   const displayStatus = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.KMS_STATUS,
   ]);
-  const displayMetrics = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.KMS_METRICS,
-  ]);
-  const displayAPIs = hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.KMS_APIS]);
-  const displayVersion = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.KMS_Version,
-  ]);
+  const displayMetrics =
+    hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.KMS_METRICS]) &&
+    !isKMSSecretKey;
+  const displayAPIs =
+    hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.KMS_APIS]) &&
+    !isKMSSecretKey;
+  const displayVersion =
+    hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.KMS_Version]) &&
+    !isKMSSecretKey;
 
   useEffect(() => {
-    setLoadingStatus(true);
-  }, []);
+    const loadStatus = () => {
+      api.kms
+        .kmsStatus()
+        .then((result) => {
+          if (result.data) {
+            setStatus(result.data);
+            setIsKMSSecretKey(result.data.name === "SecretKey");
+          }
+        })
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+        })
+        .finally(() => setLoadingStatus(false));
+    };
 
-  useEffect(() => {
     const loadMetrics = () => {
-      if (displayMetrics) {
-        api
-          .invoke("GET", `/api/v1/kms/metrics`)
-          .then((result: any) => {
-            if (result) {
-              setMetrics(result);
-            }
-            setLoadingMetrics(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
-            setLoadingMetrics(false);
-          });
-      } else {
-        setLoadingMetrics(false);
-      }
+      api.kms
+        .kmsMetrics()
+        .then((result) => {
+          if (result.data) {
+            setMetrics(result.data);
+          }
+        })
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+        })
+        .finally(() => setLoadingMetrics(false));
     };
 
     const loadAPIs = () => {
-      if (displayAPIs) {
-        api
-          .invoke("GET", `/api/v1/kms/apis`)
-          .then((result: any) => {
-            if (result) {
-              setAPIs(result);
-            }
-            setLoadingAPIs(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
-            setLoadingAPIs(false);
-          });
-      } else {
-        setLoadingAPIs(false);
-      }
+      api.kms
+        .kmsapIs()
+        .then((result: any) => {
+          if (result.data) {
+            setAPIs(result.data);
+          }
+        })
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+        })
+        .finally(() => setLoadingAPIs(false));
     };
 
     const loadVersion = () => {
-      if (displayVersion) {
-        api
-          .invoke("GET", `/api/v1/kms/version`)
-          .then((result: any) => {
-            if (result) {
-              setVersion(result);
-            }
-            setLoadingVersion(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
-            setLoadingVersion(false);
-          });
-      } else {
-        setLoadingVersion(false);
-      }
+      api.kms
+        .kmsVersion()
+        .then((result: any) => {
+          if (result.data) {
+            setVersion(result.data);
+          }
+        })
+        .catch((err) => {
+          dispatch(setErrorSnackMessage(errorToHandler(err.error)));
+        })
+        .finally(() => setLoadingVersion(false));
     };
 
-    const loadStatus = () => {
-      if (displayStatus) {
-        api
-          .invoke("GET", `/api/v1/kms/status`)
-          .then((result: any) => {
-            if (result) {
-              setStatus(result);
-            }
-            setLoadingStatus(false);
-          })
-          .catch((err: ErrorResponseHandler) => {
-            dispatch(setErrorSnackMessage(err));
-            setLoadingStatus(false);
-          });
-      } else {
-        setLoadingStatus(false);
-      }
-    };
-
-    if (loadingStatus) {
+    if (displayStatus && loadingStatus) {
       loadStatus();
     }
-    if (loadingMetrics) {
+    if (displayMetrics && loadingMetrics) {
       loadMetrics();
     }
-    if (loadingAPIs) {
+    if (displayAPIs && loadingAPIs) {
       loadAPIs();
     }
-    if (loadingVersion) {
+    if (displayVersion && loadingVersion) {
       loadVersion();
     }
   }, [
@@ -395,7 +376,11 @@ const Status = () => {
               ),
             },
             {
-              tabConfig: { label: "APIs", id: "simple-tab-1" },
+              tabConfig: {
+                label: "APIs",
+                id: "simple-tab-1",
+                disabled: !displayAPIs,
+              },
               content: (
                 <Box
                   withBorders
@@ -410,7 +395,11 @@ const Status = () => {
               ),
             },
             {
-              tabConfig: { label: "Metrics", id: "simple-tab-2" },
+              tabConfig: {
+                label: "Metrics",
+                id: "simple-tab-2",
+                disabled: !displayMetrics,
+              },
               content: (
                 <Box
                   withBorders
