@@ -8280,15 +8280,15 @@ mdn-data@2.0.4:
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.4.tgz#699b3c38ac6f1d728091a64650b65d388502fd5b"
   integrity sha512-iV3XNKw06j5Q7mi6h+9vbx23Tv7JkjEVgKHW4pimwyDGWm0OIQntJJ+u1C6mg6mK1EaTv42XQ7w76yuzH7M2cA==
 
-"mds@https://github.com/minio/mds.git#v0.14.0":
-  version "0.14.0"
-  resolved "https://github.com/minio/mds.git#05bb3e2737f0809234bcf63d7517a8df80ab69ed"
+"mds@https://github.com/minio/mds.git#v0.15.0":
+  version "0.15.0"
+  resolved "https://github.com/minio/mds.git#509338e926c86edd14422e3609fb843a9c2b539f"
   dependencies:
     "@types/styled-components" "^5.1.34"
     "@uiw/react-textarea-code-editor" "^3.0.2"
     detect-gpu "^5.0.37"
     luxon "^3.4.4"
-    react-calendar "^4.7.0"
+    react-calendar "^4.8.0"
     react-virtualized "^9.22.5"
     styled-components "^5.3.11"
 
@@ -10167,7 +10167,7 @@ react-app-rewired@^2.2.1:
   dependencies:
     semver "^5.6.0"
 
-react-calendar@^4.7.0:
+react-calendar@^4.8.0:
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-4.8.0.tgz#61edbba6d17e7ef8a8012de9143b5e5ff41104c8"
   integrity sha512-qFgwo+p58sgv1QYMI1oGNaop90eJVKuHTZ3ZgBfrrpUb+9cAexxsKat0sAszgsizPMVo7vOXedV7Lqa0GQGMvA==
