@@ -16,34 +16,27 @@
 
 import React, { useState, Fragment } from "react";
 import { ConfirmDeleteIcon, Grid, InformativeMessage, InputBox } from "mds";
-import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { ApiError, HttpResponse } from "api/consoleApi";
 
 interface IDeleteKMSModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
   deleteOpen: boolean;
   selectedItem: string;
-  endpoint: string;
-  element: string;
 }
 
 const DeleteKMSModal = ({
   closeDeleteModalAndRefresh,
   deleteOpen,
   selectedItem,
-  endpoint,
-  element,
 }: IDeleteKMSModalProps) => {
   const dispatch = useAppDispatch();
-  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
-
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
   const [retypeKey, setRetypeKey] = useState("");
 
   if (!selectedItem) {
@@ -51,20 +44,31 @@ const DeleteKMSModal = ({
   }
 
   const onConfirmDelete = () => {
-    invokeDeleteApi("DELETE", `${endpoint}${selectedItem}`);
+    setLoadingDelete(true);
+    api.kms
+      .kmsDeleteKey(selectedItem)
+      .then((_) => {
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch(async (res: HttpResponse<void, ApiError>) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        closeDeleteModalAndRefresh(false);
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
   return (
     <ConfirmDialog
-      title={`Delete ${element}`}
+      title={`Delete Key`}
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
-      isLoading={deleteLoading}
+      isLoading={loadingDelete}
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmButtonProps={{
-        disabled: retypeKey !== selectedItem || deleteLoading,
+        disabled: retypeKey !== selectedItem || loadingDelete,
       }}
       confirmationContent={
         <Fragment>

@@ -130,8 +130,6 @@ const ListKeys = () => {
         <DeleteKMSModal
           deleteOpen={deleteOpen}
           selectedItem={selectedKey}
-          endpoint={"/api/v1/kms/keys/"}
-          element={"Key"}
           closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
         />
       )}
