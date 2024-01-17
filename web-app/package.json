@@ -11,7 +11,7 @@
     "local-storage-fallback": "^4.1.1",
     "lodash": "^4.17.21",
     "luxon": "^3.4.3",
-    "mds": "https://github.com/minio/mds.git#v0.14.0",
+    "mds": "https://github.com/minio/mds.git#v0.15.0",
     "pdfjs-dist": "3.11.174",
     "react": "^18.1.0",
     "react-component-export-image": "^1.0.6",
