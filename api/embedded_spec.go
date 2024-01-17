@@ -5268,10 +5268,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedUsers"
             }
           }
         ],
@@ -7986,6 +7983,12 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedUsers": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "serverDrives": {
@@ -14458,10 +14461,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedUsers"
             }
           }
         ],
@@ -17325,6 +17325,12 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedUsers": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "serverDrives": {
