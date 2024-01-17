@@ -1425,9 +1425,7 @@ paths:
           in: body
           required: true
           schema:
-            type: array
-            items:
-              type: string
+            $ref: "#/definitions/selectedSAs"
       responses:
         204:
           description: A successful response.
@@ -6196,3 +6194,8 @@ definitions:
         format: int64
     required:
       - exp
+  
+  selectedSAs:
+    type: array
+    items:
+      type: string

@@ -14,13 +14,14 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
-import { ErrorResponseHandler } from "../../../common/types";
-import useApi from "../../../screens/Console/Common/Hooks/useApi";
 import ConfirmDialog from "../../../screens/Console/Common/ModalWrapper/ConfirmDialog";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { ApiError, HttpResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IDeleteMultiSAsProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -34,20 +35,25 @@ const DeleteMultipleSAs = ({
   selectedSAs,
 }: IDeleteMultiSAsProps) => {
   const dispatch = useAppDispatch();
-  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
+
   if (!selectedSAs) {
     return null;
   }
   const onConfirmDelete = () => {
-    invokeDeleteApi(
-      "DELETE",
-      `/api/v1/service-accounts/delete-multi`,
-      selectedSAs,
-    );
+    setLoadingDelete(true);
+    api.serviceAccounts
+      .deleteMultipleServiceAccounts(selectedSAs)
+      .then((_) => {
+        closeDeleteModalAndRefresh(true);
+      })
+      .catch(async (res: HttpResponse<void, ApiError>) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        closeDeleteModalAndRefresh(false);
+      })
+      .finally(() => setLoadingDelete(false));
   };
   return (
     <ConfirmDialog
@@ -55,7 +61,7 @@ const DeleteMultipleSAs = ({
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
-      isLoading={deleteLoading}
+      isLoading={loadingDelete}
       onConfirm={onConfirmDelete}
       onClose={onClose}
       confirmationContent={

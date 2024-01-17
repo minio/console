@@ -29,6 +29,9 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/validate"
+
+	"github.com/minio/console/models"
 )
 
 // NewDeleteMultipleServiceAccountsParams creates a new DeleteMultipleServiceAccountsParams object
@@ -52,7 +55,7 @@ type DeleteMultipleServiceAccountsParams struct {
 	  Required: true
 	  In: body
 	*/
-	SelectedSA []string
+	SelectedSA models.SelectedSAs
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -66,7 +69,7 @@ func (o *DeleteMultipleServiceAccountsParams) BindRequest(r *http.Request, route
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		var body []string
+		var body models.SelectedSAs
 		if err := route.Consumer.Consume(r.Body, &body); err != nil {
 			if err == io.EOF {
 				res = append(res, errors.Required("selectedSA", "body", ""))
@@ -74,8 +77,19 @@ func (o *DeleteMultipleServiceAccountsParams) BindRequest(r *http.Request, route
 				res = append(res, errors.NewParseError("selectedSA", "body", "", err))
 			}
 		} else {
-			// no validation required on inline body
-			o.SelectedSA = body
+			// validate body object
+			if err := body.Validate(route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			ctx := validate.WithOperationRequest(r.Context())
+			if err := body.ContextValidate(ctx, route.Formats); err != nil {
+				res = append(res, err)
+			}
+
+			if len(res) == 0 {
+				o.SelectedSA = body
+			}
 		}
 	} else {
 		res = append(res, errors.Required("selectedSA", "body", ""))
