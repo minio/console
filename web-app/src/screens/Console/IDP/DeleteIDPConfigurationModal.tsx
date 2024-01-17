@@ -55,7 +55,7 @@ const DeleteIDPConfigurationModal = ({
   const onConfirmDelete = () => {
     setDeleteLoading(true);
     api.idp
-      .deleteConfiguration(idpType, idp)
+      .deleteConfiguration(idp, idpType)
       .then((res) => {
         onDelSuccess(res.data);
       })
