@@ -14,14 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
-import { ErrorResponseHandler } from "../../../common/types";
+import React, { Fragment, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import useApi from "../Common/Hooks/useApi";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import { ApiError, HttpResponse } from "api/consoleApi";
 
 interface IDeleteGroup {
   selectedGroups: string[];
@@ -35,21 +36,26 @@ const DeleteGroup = ({
   closeDeleteModalAndRefresh,
 }: IDeleteGroup) => {
   const dispatch = useAppDispatch();
-  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) => {
-    dispatch(setErrorSnackMessage(err));
-    closeDeleteModalAndRefresh(false);
-  };
   const onClose = () => closeDeleteModalAndRefresh(false);
-
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [loadingDelete, setLoadingDelete] = useState<boolean>(false);
 
   if (!selectedGroups) {
     return null;
   }
   const onDeleteGroups = () => {
     for (let group of selectedGroups) {
-      invokeDeleteApi("DELETE", `/api/v1/group/${encodeURLString(group)}`);
+      setLoadingDelete(true);
+      api.group
+        .removeGroup(encodeURLString(group))
+        .then((_) => {
+          closeDeleteModalAndRefresh(true);
+        })
+        .catch(async (res: HttpResponse<void, ApiError>) => {
+          const err = (await res.json()) as ApiError;
+          dispatch(setErrorSnackMessage(errorToHandler(err)));
+          closeDeleteModalAndRefresh(false);
+        })
+        .finally(() => setLoadingDelete(false));
     }
   };
 
@@ -65,7 +71,7 @@ const DeleteGroup = ({
       confirmText={"Delete"}
       isOpen={deleteOpen}
       titleIcon={<ConfirmDeleteIcon />}
-      isLoading={deleteLoading}
+      isLoading={loadingDelete}
       onConfirm={onDeleteGroups}
       onClose={onClose}
       confirmationContent={
