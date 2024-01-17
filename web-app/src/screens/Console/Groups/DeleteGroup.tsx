@@ -22,7 +22,7 @@ import { useAppDispatch } from "../../../store";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { HttpResponse } from "api/consoleApi";
+import { ApiError, HttpResponse } from "api/consoleApi";
 
 interface IDeleteGroup {
   selectedGroups: string[];
@@ -50,8 +50,8 @@ const DeleteGroup = ({
         .then((_) => {
           closeDeleteModalAndRefresh(true);
         })
-        .catch(async (res: HttpResponse<void, Error>) => {
-          const err = (await res.json()) as Error;
+        .catch(async (res: HttpResponse<void, ApiError>) => {
+          const err = (await res.json()) as ApiError;
           dispatch(setErrorSnackMessage(errorToHandler(err)));
           closeDeleteModalAndRefresh(false);
         })
