@@ -3399,6 +3399,8 @@ paths:
     put:
       summary: Update IDP Configuration
       operationId: UpdateConfiguration
+      consumes:
+        - application/json
       parameters:
         - name: body
           in: body
