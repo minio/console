@@ -5177,6 +5177,7 @@ export class Api<
         method: "PUT",
         body: body,
         secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

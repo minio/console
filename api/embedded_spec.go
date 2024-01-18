@@ -3005,6 +3005,9 @@ func init() {
         }
       },
       "put": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],
@@ -12177,6 +12180,9 @@ func init() {
         }
       },
       "put": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],
