@@ -3008,6 +3008,9 @@ func init() {
         }
       },
       "put": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],
@@ -4434,10 +4437,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedSAs"
             }
           }
         ],
@@ -5271,10 +5271,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedUsers"
             }
           }
         ],
@@ -7989,6 +7986,18 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedSAs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selectedUsers": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "serverDrives": {
@@ -12177,6 +12186,9 @@ func init() {
         }
       },
       "put": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],
@@ -13619,10 +13631,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedSAs"
             }
           }
         ],
@@ -14464,10 +14473,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedUsers"
             }
           }
         ],
@@ -17331,6 +17337,18 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedSAs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "selectedUsers": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "serverDrives": {

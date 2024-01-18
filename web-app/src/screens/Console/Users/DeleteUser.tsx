@@ -17,14 +17,14 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
-import { ErrorResponseHandler } from "../../../common/types";
 import { ConfirmDeleteIcon, DataTable, InformativeMessage, Loader } from "mds";
 import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import api from "../../../common/api";
 import { useAppDispatch } from "../../../store";
+import { api } from "api";
+import { UserServiceAccountItem } from "../../../api/consoleApi";
+import { errorToHandler } from "../../../api/errors";
 
 interface IDeleteUserProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -40,33 +40,31 @@ const DeleteUser = ({
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const onDelSuccess = () => closeDeleteModalAndRefresh(true);
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
   const onClose = () => closeDeleteModalAndRefresh(false);
 
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
   const [loadingSA, setLoadingSA] = useState<boolean>(true);
   const [hasSA, setHasSA] = useState<boolean>(false);
-  const [userSAList, setUserSAList] = useState<userSACount[]>([]);
+  const [userSAList, setUserSAList] = useState<UserServiceAccountItem[]>([]);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const userLoggedIn = localStorage.getItem("userLoggedIn") || "";
 
   useEffect(() => {
     if (selectedUsers) {
-      api
-        .invoke("POST", `/api/v1/users/service-accounts`, selectedUsers)
+      api.users
+        .checkUserServiceAccounts(selectedUsers)
         .then((res) => {
-          setUserSAList(res.userServiceAccountList);
-          if (res.hasSA) {
-            setHasSA(true);
+          if (res.data) {
+            setUserSAList(res.data.userServiceAccountList ?? []);
+            if (res.data.hasSA) {
+              setHasSA(true);
+            }
           }
-          setLoadingSA(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-          setLoadingSA(false);
-        });
+        .catch((err) =>
+          dispatch(setErrorSnackMessage(errorToHandler(err.error))),
+        )
+        .finally(() => setLoadingSA(false));
     }
   }, [selectedUsers, dispatch]);
 
@@ -102,17 +100,16 @@ const DeleteUser = ({
         );
         closeDeleteModalAndRefresh(true);
       } else {
-        invokeDeleteApi("DELETE", `/api/v1/user/${encodeURLString(user)}`);
-        closeDeleteModalAndRefresh(true);
-        navigate(`${IAM_PAGES.USERS}`);
+        api.user
+          .removeUser(encodeURLString(user))
+          .then((res) => {
+            closeDeleteModalAndRefresh(true);
+            navigate(`${IAM_PAGES.USERS}`);
+          })
+          .finally(() => setDeleteLoading(false));
       }
     }
   };
-
-  interface userSACount {
-    userName: string;
-    numSAs: number;
-  }
 
   const noSAtext =
     "Are you sure you want to delete the following " +
