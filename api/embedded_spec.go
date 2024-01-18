@@ -2928,6 +2928,9 @@ func init() {
         }
       },
       "post": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],
@@ -12094,6 +12097,9 @@ func init() {
         }
       },
       "post": {
+        "consumes": [
+          "application/json"
+        ],
         "tags": [
           "idp"
         ],

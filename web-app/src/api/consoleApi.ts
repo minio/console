@@ -5084,6 +5084,7 @@ export class Api<
         method: "POST",
         body: body,
         secure: true,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),
