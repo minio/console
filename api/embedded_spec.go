@@ -4431,10 +4431,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedSAs"
             }
           }
         ],
@@ -7983,6 +7980,12 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedSAs": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "selectedUsers": {
@@ -13616,10 +13619,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+              "$ref": "#/definitions/selectedSAs"
             }
           }
         ],
@@ -17325,6 +17325,12 @@ func init() {
             "$ref": "#/definitions/rewindItem"
           }
         }
+      }
+    },
+    "selectedSAs": {
+      "type": "array",
+      "items": {
+        "type": "string"
       }
     },
     "selectedUsers": {

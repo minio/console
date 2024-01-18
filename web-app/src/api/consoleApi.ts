@@ -1537,6 +1537,8 @@ export interface MaxShareLinkExpResponse {
   exp: number;
 }
 
+export type SelectedSAs = string[];
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -2177,7 +2179,7 @@ export class Api<
      */
     downloadMultipleObjects: (
       bucketName: string,
-      objectList: string[],
+      objectList: SelectedUsers,
       params: RequestParams = {},
     ) =>
       this.request<File, ApiError>({
@@ -2185,6 +2187,7 @@ export class Api<
         method: "POST",
         body: objectList,
         secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -3088,7 +3091,7 @@ export class Api<
      * @secure
      */
     deleteMultipleServiceAccounts: (
-      selectedSA: string[],
+      selectedSA: SelectedSAs,
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
@@ -3096,6 +3099,7 @@ export class Api<
         method: "DELETE",
         body: selectedSA,
         secure: true,
+        type: ContentType.Json,
         ...params,
       }),
 
