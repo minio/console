@@ -17,7 +17,7 @@
     "downlevelIteration": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": "./src",
-    "rootDir": "./src"
+    "rootDir": "./src",
   },
-  "include": ["src"]
+  "include": ["src"],
 }

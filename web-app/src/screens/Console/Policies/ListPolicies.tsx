@@ -159,8 +159,8 @@ const ListPolicies = () => {
     },
   ];
 
-  const filteredRecords = records.filter(
-    (elementItem) => elementItem.name?.includes(filterPolicies),
+  const filteredRecords = records.filter((elementItem) =>
+    elementItem.name?.includes(filterPolicies),
   );
 
   useEffect(() => {
