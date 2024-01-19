@@ -27,14 +27,15 @@ import {
 } from "mds";
 import { useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../common/types";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { ApiError, HttpResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 export const emptyContent = '{\n    "bytes": ""\n}';
 
@@ -42,19 +43,25 @@ const ImportKey = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const onSuccess = () => navigate(`${IAM_PAGES.KMS_KEYS}`);
-
-  const onError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
-
-  const [loading, invokeApi] = useApi(onSuccess, onError);
+  const [loadingImport, setLoadingImport] = useState<boolean>(false);
   const [keyName, setKeyName] = useState<string>("");
   const [keyContent, setKeyContent] = useState<string>(emptyContent);
 
   const importRecord = (event: React.FormEvent) => {
+    setLoadingImport(true);
     event.preventDefault();
     let data = JSON.parse(keyContent);
-    invokeApi("POST", `/api/v1/kms/keys/${keyName}/import`, data);
+
+    api.kms
+      .kmsImportKey(keyName, data)
+      .then((_) => {
+        navigate(`${IAM_PAGES.KMS_KEYS}`);
+      })
+      .catch(async (res: HttpResponse<void, ApiError>) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+      })
+      .finally(() => setLoadingImport(false));
   };
 
   const resetForm = () => {
@@ -140,7 +147,7 @@ const ImportKey = () => {
                   type="submit"
                   variant="callAction"
                   color="primary"
-                  disabled={loading || !validSave}
+                  disabled={loadingImport || !validSave}
                   label={"Import"}
                 />
               </Grid>

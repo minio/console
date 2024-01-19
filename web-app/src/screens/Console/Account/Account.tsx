@@ -179,9 +179,8 @@ const Account = () => {
     },
   ];
 
-  const filteredRecords = records.filter(
-    (elementItem) =>
-      elementItem?.accessKey?.toLowerCase().includes(filter.toLowerCase()),
+  const filteredRecords = records.filter((elementItem) =>
+    elementItem?.accessKey?.toLowerCase().includes(filter.toLowerCase()),
   );
 
   return (
