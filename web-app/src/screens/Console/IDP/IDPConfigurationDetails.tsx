@@ -37,18 +37,23 @@ import {
 } from "mds";
 import { useNavigate, useParams } from "react-router-dom";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import {
   setErrorSnackMessage,
   setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
-import api from "../../../common/api";
-import useApi from "../Common/Hooks/useApi";
 import DeleteIDPConfigurationModal from "./DeleteIDPConfigurationModal";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import {
+  ApiError,
+  HttpResponse,
+  IdpServerConfiguration,
+  SetIDPResponse,
+} from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 type IDPConfigurationDetailsProps = {
   formFields: object;
@@ -75,7 +80,9 @@ const IDPConfigurationDetails = ({
 
   const configurationName = params.idpName;
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loadingDetails, setLoadingDetails] = useState<boolean>(true);
+  const [loadingSave, setLoadingSave] = useState<boolean>(false);
+  const [loadingEnabledSave, setLoadingEnabledSave] = useState<boolean>(false);
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [fields, setFields] = useState<any>({});
   const [overrideFields, setOverrideFields] = useState<any>({});
@@ -84,29 +91,6 @@ const IDPConfigurationDetails = ({
   const [editMode, setEditMode] = useState<boolean>(false);
   const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
   const [envOverride, setEnvOverride] = useState<boolean>(false);
-
-  const onSuccess = (res: any) => {
-    dispatch(setServerNeedsRestart(res.restart === true));
-  };
-
-  const onError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
-
-  const [loadingSave, invokeApi] = useApi(onSuccess, onError);
-
-  const onEnabledSuccess = (res: any) => {
-    setIsEnabled(!isEnabled);
-    dispatch(setServerNeedsRestart(res.restart === true));
-  };
-
-  const onEnabledError = (err: ErrorResponseHandler) => {
-    dispatch(setErrorSnackMessage(err));
-  };
-
-  const [loadingEnabledSave, invokeEnabledApi] = useApi(
-    onEnabledSuccess,
-    onEnabledError,
-  );
 
   const parseFields = useCallback(
     (record: any) => {
@@ -159,31 +143,26 @@ const IDPConfigurationDetails = ({
   };
 
   useEffect(() => {
-    setLoading(true);
-  }, []);
-
-  useEffect(() => {
     const loadRecord = () => {
-      api
-        .invoke("GET", `${endpoint}${configurationName}`)
-        .then((result: any) => {
-          if (result) {
-            setRecord(result);
-            parseFields(result);
-            parseOriginalFields(result);
+      api.idp
+        .getConfiguration(configurationName || "", "openid")
+        .then((res: HttpResponse<IdpServerConfiguration, ApiError>) => {
+          if (res.data) {
+            setRecord(res.data);
+            parseFields(res.data);
+            parseOriginalFields(res.data);
           }
-          setLoading(false);
         })
-        .catch((err: ErrorResponseHandler) => {
-          dispatch(setErrorSnackMessage(err));
-          setLoading(false);
-        });
+        .catch((res: HttpResponse<IdpServerConfiguration, ApiError>) => {
+          dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+        })
+        .finally(() => setLoadingDetails(false));
     };
 
-    if (loading) {
+    if (loadingDetails) {
       loadRecord();
     }
-  }, [dispatch, loading, configurationName, endpoint, parseFields]);
+  }, [dispatch, loadingDetails, configurationName, endpoint, parseFields]);
 
   const validSave = () => {
     for (const [key, value] of Object.entries(formFields)) {
@@ -206,6 +185,7 @@ const IDPConfigurationDetails = ({
   };
 
   const saveRecord = (event: React.FormEvent) => {
+    setLoadingSave(true);
     event.preventDefault();
     let input = "";
     for (const key of Object.keys(formFields)) {
@@ -213,8 +193,19 @@ const IDPConfigurationDetails = ({
         input += `${key}=${fields[key]} `;
       }
     }
-    invokeApi("PUT", `${endpoint}${configurationName}`, { input });
-    setEditMode(false);
+
+    api.idp
+      .updateConfiguration(configurationName || "", "openid", { input })
+      .then((res: HttpResponse<SetIDPResponse, ApiError>) => {
+        if (res.data) {
+          dispatch(setServerNeedsRestart(res.data.restart === true));
+          setEditMode(false);
+        }
+      })
+      .catch(async (res: HttpResponse<SetIDPResponse, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
+      .finally(() => setLoadingSave(false));
   };
 
   const closeDeleteModalAndRefresh = async (refresh: boolean) => {
@@ -226,8 +217,21 @@ const IDPConfigurationDetails = ({
   };
 
   const toggleConfiguration = (value: boolean) => {
+    setLoadingEnabledSave(true);
     const input = `enable=${value ? "on" : "off"}`;
-    invokeEnabledApi("PUT", `${endpoint}${configurationName}`, { input });
+
+    api.idp
+      .updateConfiguration(configurationName || "", "openid", { input: input })
+      .then((res: HttpResponse<SetIDPResponse, ApiError>) => {
+        if (res.data) {
+          setIsEnabled(!isEnabled);
+          dispatch(setServerNeedsRestart(res.data.restart === true));
+        }
+      })
+      .catch((res: HttpResponse<SetIDPResponse, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
+      .finally(() => setLoadingEnabledSave(false));
   };
 
   const renderFormField = (key: string, value: any) => {
@@ -331,7 +335,7 @@ const IDPConfigurationDetails = ({
                     type="submit"
                     variant="callAction"
                     color="primary"
-                    disabled={loading || loadingSave || !validSave()}
+                    disabled={loadingDetails || loadingSave || !validSave()}
                     label={"Save"}
                   />
                 )}
@@ -498,7 +502,7 @@ const IDPConfigurationDetails = ({
                 </Tooltip>
                 <Button
                   id={"refresh-idp-config"}
-                  onClick={() => setLoading(true)}
+                  onClick={() => setLoadingDetails(true)}
                   label={"Refresh"}
                   icon={<RefreshIcon />}
                 />

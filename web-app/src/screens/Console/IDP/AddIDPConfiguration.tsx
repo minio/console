@@ -26,7 +26,6 @@ import {
   Switch,
 } from "mds";
 import { useNavigate } from "react-router-dom";
-import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import {
@@ -34,9 +33,11 @@ import {
   setHelpName,
   setServerNeedsRestart,
 } from "../../../systemSlice";
-import useApi from "../Common/Hooks/useApi";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { api } from "api";
+import { ApiError, HttpResponse, SetIDPResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 type AddIDPConfigurationProps = {
   classes?: any;
@@ -46,7 +47,6 @@ type AddIDPConfigurationProps = {
   title: string;
   backLink: string;
   formFields: object;
-  endpoint: string;
 };
 
 const AddIDPConfiguration = ({
@@ -56,7 +56,6 @@ const AddIDPConfiguration = ({
   backLink,
   title,
   formFields,
-  endpoint,
 }: AddIDPConfigurationProps) => {
   const extraFormFields = {
     name: {
@@ -76,16 +75,7 @@ const AddIDPConfiguration = ({
   const dispatch = useAppDispatch();
 
   const [fields, setFields] = useState<any>({});
-
-  const onSuccess = (res: any) => {
-    navigate(backLink);
-    dispatch(setServerNeedsRestart(res.restart === true));
-  };
-
-  const onError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
-
-  const [loading, invokeApi] = useApi(onSuccess, onError);
+  const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
 
   const validSave = () => {
     for (const [key, value] of Object.entries(extraFormFields)) {
@@ -108,6 +98,7 @@ const AddIDPConfiguration = ({
   };
 
   const addRecord = (event: React.FormEvent) => {
+    setLoadingCreate(true);
     event.preventDefault();
     const name = fields["name"];
     let input = "";
@@ -116,7 +107,17 @@ const AddIDPConfiguration = ({
         input += `${key}=${fields[key]} `;
       }
     }
-    invokeApi("POST", endpoint, { name, input });
+
+    api.idp
+      .createConfiguration("openid", { name, input })
+      .then((res: HttpResponse<SetIDPResponse, ApiError>) => {
+        navigate(backLink);
+        dispatch(setServerNeedsRestart(res.data.restart === true));
+      })
+      .catch(async (res: HttpResponse<SetIDPResponse, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
+      .finally(() => setLoadingCreate(false));
   };
 
   const renderFormField = (key: string, value: any) => {
@@ -197,7 +198,7 @@ const AddIDPConfiguration = ({
                     type="submit"
                     variant="callAction"
                     color="primary"
-                    disabled={loading || !validSave()}
+                    disabled={loadingCreate || !validSave()}
                     label={"Save"}
                   />
                 </Grid>

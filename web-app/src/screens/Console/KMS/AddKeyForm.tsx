@@ -23,23 +23,36 @@ import {
   Grid,
   InputBox,
 } from "mds";
-import { ErrorResponseHandler } from "../../../common/types";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import useApi from "../Common/Hooks/useApi";
 import KMSHelpBox from "./KMSHelpbox";
+import { api } from "api";
+import { useAppDispatch } from "store";
+import { useNavigate } from "react-router-dom";
+import { ApiError, HttpResponse } from "api/consoleApi";
+import { setErrorSnackMessage } from "systemSlice";
+import { errorToHandler } from "api/errors";
+import { IAM_PAGES } from "common/SecureComponent/permissions";
 
-interface IAddKeyFormProps {
-  onSuccess: () => void;
-  onError: (err: ErrorResponseHandler) => void;
-}
+const AddKeyForm = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
-  const [loading, invokeApi] = useApi(onSuccess, onError);
   const [keyName, setKeyName] = useState<string>("");
+  const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
 
   const addRecord = (event: React.FormEvent) => {
     event.preventDefault();
-    invokeApi("POST", "/api/v1/kms/keys/", { key: keyName });
+    setLoadingCreate(true);
+    api.kms
+      .kmsCreateKey({ key: keyName })
+      .then((_) => {
+        navigate(`${IAM_PAGES.KMS_KEYS}`);
+      })
+      .catch(async (res: HttpResponse<void, ApiError>) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+      })
+      .finally(() => setLoadingCreate(false));
   };
 
   const resetForm = () => {
@@ -103,7 +116,7 @@ const AddKeyForm = ({ onSuccess, onError }: IAddKeyFormProps) => {
                 type="submit"
                 variant="callAction"
                 color="primary"
-                disabled={loading || !validSave}
+                disabled={loadingCreate || !validSave}
                 label={"Save"}
               />
             </Grid>
