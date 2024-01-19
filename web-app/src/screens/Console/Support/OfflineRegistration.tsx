@@ -35,7 +35,9 @@ import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import CopyToClipboard from "react-copy-to-clipboard";
 import RegisterHelpBox from "./RegisterHelpBox";
-import useApi from "../Common/Hooks/useApi";
+import { api } from "api";
+import { ApiError, HttpResponse, SetConfigResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 const OfflineRegistration = () => {
   const dispatch = useAppDispatch();
@@ -52,21 +54,22 @@ const OfflineRegistration = () => {
   const offlineRegUrl = `https://subnet.min.io/cluster/register?token=${subnetRegToken}`;
 
   const [licenseKey, setLicenseKey] = useState("");
-
-  const [isSaving, invokeApplyLicenseApi] = useApi(
-    () => {
-      dispatch(fetchLicenseInfo());
-      dispatch(setServerNeedsRestart(true));
-    },
-    (err) => {
-      dispatch(setErrorSnackMessage(err));
-    },
-  );
+  const [loadingSave, setLoadingSave] = useState<boolean>(false);
 
   const applyAirGapLicense = () => {
-    invokeApplyLicenseApi("PUT", `/api/v1/configs/subnet`, {
-      key_values: [{ key: "license", value: licenseKey }],
-    });
+    setLoadingSave(true);
+    api.configs
+      .setConfig("subnet", {
+        key_values: [{ key: "license", value: licenseKey }],
+      })
+      .then((_) => {
+        dispatch(fetchLicenseInfo());
+        dispatch(setServerNeedsRestart(true));
+      })
+      .catch(async (res: HttpResponse<SetConfigResponse, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
+      .finally(() => setLoadingSave(false));
   };
 
   return (
@@ -159,7 +162,7 @@ const OfflineRegistration = () => {
                   </label>
                   <CommentBox
                     value={licenseKey}
-                    disabled={isSaving}
+                    disabled={loadingSave}
                     label={""}
                     id={"licenseKey"}
                     name={"licenseKey"}
@@ -174,7 +177,7 @@ const OfflineRegistration = () => {
                     id={"apply-license-key"}
                     onClick={applyAirGapLicense}
                     variant={"callAction"}
-                    disabled={!licenseKey || isSaving}
+                    disabled={!licenseKey || loadingSave}
                     label={"Apply Cluster License"}
                   />
                 </Box>
