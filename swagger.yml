@@ -3299,6 +3299,8 @@ paths:
     post:
       summary: Create IDP Configuration
       operationId: CreateConfiguration
+      consumes:
+        - application/json
       parameters:
         - name: type
           description: IDP Configuration Type

@@ -38,7 +38,6 @@ const AddIDPOpenIDConfiguration = () => {
       header={"OpenID Configurations"}
       backLink={IAM_PAGES.IDP_OPENID_CONFIGURATIONS}
       title={"Create OpenID Configuration"}
-      endpoint={"/api/v1/idp/openid/"}
       formFields={openIDFormFields}
     />
   );
