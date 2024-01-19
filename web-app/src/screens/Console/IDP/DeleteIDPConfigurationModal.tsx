@@ -14,16 +14,17 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
 import {
   setErrorSnackMessage,
   setServerNeedsRestart,
 } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-import { ErrorResponseHandler } from "../../../common/types";
-import useApi from "../Common/Hooks/useApi";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
+import { api } from "api";
+import { SetIDPResponse } from "../../../api/consoleApi";
+import { errorToHandler } from "../../../api/errors";
 
 interface IDeleteIDPConfigurationModalProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -39,22 +40,27 @@ const DeleteIDPConfigurationModal = ({
   idpType,
 }: IDeleteIDPConfigurationModalProps) => {
   const dispatch = useAppDispatch();
-  const onDelSuccess = (res: any) => {
+  const onDelSuccess = (res: SetIDPResponse) => {
     closeDeleteModalAndRefresh(true);
     dispatch(setServerNeedsRestart(res.restart === true));
   };
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
-  const onClose = () => closeDeleteModalAndRefresh(false);
 
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const onClose = () => closeDeleteModalAndRefresh(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   if (!idp) {
     return null;
   }
 
   const onConfirmDelete = () => {
-    invokeDeleteApi("DELETE", `/api/v1/idp/${idpType}/${idp}`);
+    setDeleteLoading(true);
+    api.idp
+      .deleteConfiguration(idp, idpType)
+      .then((res) => {
+        onDelSuccess(res.data);
+      })
+      .catch((err) => dispatch(setErrorSnackMessage(errorToHandler(err.error))))
+      .finally(() => setDeleteLoading(false));
   };
 
   const displayName = idp === "_" ? "Default" : idp;
