@@ -18,14 +18,10 @@
 package subnet
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/minio/console/pkg/http"
-
-	"github.com/minio/pkg/v2/licverifier"
 
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
@@ -122,46 +118,6 @@ func Register(client http.ClientI, admInfo madmin.InfoMessage, apiKey, token, ac
 		}, nil
 	}
 	return nil, errors.New("subnet api key not found")
-}
-
-const publicKey = "/downloads/license-pubkey.pem"
-
-// downloadSubnetPublicKey will download the current subnet public key.
-func downloadSubnetPublicKey(client http.ClientI) (string, error) {
-	// Get the public key directly from Subnet
-	url := fmt.Sprintf("%s%s", subnetBaseURL(), publicKey)
-	resp, err := client.Get(url)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	return buf.String(), err
-}
-
-// ParseLicense parses the license with the bundle public key and return it's information
-func ParseLicense(client http.ClientI, license string) (*licverifier.LicenseInfo, error) {
-	var publicKeys []string
-
-	subnetPubKey, err := downloadSubnetPublicKey(client)
-	if err != nil {
-		// there was an issue getting the subnet public key
-		// use hardcoded public keys instead
-		publicKeys = OfflinePublicKeys
-	} else {
-		publicKeys = append(publicKeys, subnetPubKey)
-	}
-
-	licenseInfo, err := GetLicenseInfoFromJWT(license, publicKeys)
-	if err != nil {
-		return nil, err
-	}
-
-	return licenseInfo, nil
 }
 
 func GetAPIKey(client http.ClientI, token string) (string, error) {

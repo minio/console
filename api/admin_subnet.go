@@ -356,7 +356,7 @@ func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInf
 		return nil, ErrorWithContext(ctx, ErrSubnetLicenseNotFound)
 	}
 
-	licenseInfo, err := subnet.ParseLicense(client, seededLicense)
+	licenseInfo, err := getLicenseInfo(*client.Client, seededLicense)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

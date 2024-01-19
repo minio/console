@@ -1,12 +1,12 @@
 # Playwright Data
-portal-ui/storage/
-portal-ui/playwright/.auth/admin.json
+web-app/storage/
+web-app/playwright/.auth/admin.json
 
 # Report from Playwright
-portal-ui/playwright-report/
+web-app/playwright-report/
 
 # Coverage from Playwright
-portal-ui/.nyc_output/
+web-app/.nyc_output/
 
 # Binaries for programs and plugins
 *.exe
@@ -37,7 +37,7 @@ dist/
 
 # Ignore node_modules
 
-portal-ui/node_modules/
+web-app/node_modules/
 
 # Ignore tls cert and key
 private.key

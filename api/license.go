@@ -17,9 +17,11 @@
 package api
 
 import (
+	"net/http"
 	"os"
 
-	"github.com/minio/console/pkg/subnet"
+	"github.com/minio/pkg/v2/licverifier"
+	"github.com/minio/pkg/v2/subnet"
 )
 
 type SubnetPlan int
@@ -43,8 +45,18 @@ func (sp SubnetPlan) String() string {
 
 var InstanceLicensePlan = PlanAGPL
 
+func getLicenseInfo(client http.Client, license string) (*licverifier.LicenseInfo, error) {
+	lv := subnet.LicenseValidator{
+		Client:            client,
+		ExpiryGracePeriod: 0,
+	}
+	lv.Init(getConsoleDevMode())
+	return lv.ParseLicense(license)
+}
+
 func fetchLicensePlan() {
-	licenseInfo, err := subnet.ParseLicense(GetConsoleHTTPClient("", "127.0.0.1"), os.Getenv(EnvSubnetLicense))
+	client := GetConsoleHTTPClient("", "127.0.0.1")
+	licenseInfo, err := getLicenseInfo(*client, os.Getenv(EnvSubnetLicense))
 	if err != nil {
 		return
 	}

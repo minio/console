@@ -3,11 +3,11 @@ FROM node:$NODE_VERSION as uilayer
 
 WORKDIR /app
 
-COPY ./portal-ui/package.json ./
-COPY ./portal-ui/yarn.lock ./
+COPY ./web-app/package.json ./
+COPY ./web-app/yarn.lock ./
 RUN yarn install
 
-COPY ./portal-ui .
+COPY ./web-app .
 
 RUN make build-static
 
@@ -29,7 +29,7 @@ WORKDIR /go/src/github.com/minio/console/
 
 ENV CGO_ENABLED=0
 
-COPY --from=uilayer /app/build /go/src/github.com/minio/console/portal-ui/build
+COPY --from=uilayer /app/build /go/src/github.com/minio/console/web-app/build
 RUN go build --tags=kqueue,operator -ldflags "-w -s" -a -o console ./cmd/console
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.7
