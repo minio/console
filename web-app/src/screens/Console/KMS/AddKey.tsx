@@ -18,21 +18,15 @@ import React, { Fragment, useEffect } from "react";
 import { BackLink, Grid } from "mds";
 import { useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { ErrorResponseHandler } from "../../../common/types";
-import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import AddKeyForm from "./AddKeyForm";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
+import { setHelpName } from "systemSlice";
 
 const AddKey = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  const onSuccess = () => navigate(`${IAM_PAGES.KMS_KEYS}`);
-
-  const onError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
 
   useEffect(() => {
     dispatch(setHelpName("add_key"));
@@ -51,7 +45,7 @@ const AddKey = () => {
           }
           actions={<HelpMenu />}
         />
-        <AddKeyForm onError={onError} onSuccess={onSuccess} />
+        <AddKeyForm />
       </Grid>
     </Fragment>
   );
