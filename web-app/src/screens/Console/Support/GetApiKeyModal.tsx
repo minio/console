@@ -16,11 +16,17 @@
 
 import React, { useState } from "react";
 import { Box, FormLayout, InfoIcon, InputBox, LockIcon, UsersIcon } from "mds";
-import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
-import useApi from "../Common/Hooks/useApi";
+import { api } from "api";
+import {
+  ApiError,
+  ApiKey,
+  HttpResponse,
+  SubnetLoginResponse,
+} from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IGetApiKeyModalProps {
   open: boolean;
@@ -34,9 +40,10 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
   const [password, setPassword] = useState("");
   const [mfaToken, setMfaToken] = useState("");
   const [subnetOTP, setSubnetOTP] = useState("");
+  const [loadingSave, setLoadingSave] = useState<boolean>(false);
 
-  const onError = (err: ErrorResponseHandler) => {
-    dispatch(setErrorSnackMessage(err));
+  const onError = (err: ApiError) => {
+    dispatch(setErrorSnackMessage(errorToHandler(err)));
     closeModal();
     setEmail("");
     setPassword("");
@@ -44,29 +51,64 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
     setSubnetOTP("");
   };
 
-  const onSuccess = (res: any) => {
-    if (res.mfa_token) {
-      setMfaToken(res.mfa_token);
-    } else if (res.access_token) {
-      invokeApi("GET", `/api/v1/subnet/apikey?token=${res.access_token}`);
+  const onConfirm = () => {
+    if (mfaToken !== "") {
+      submitSubnetMfa();
     } else {
-      onSet(res.apiKey);
-      closeModal();
+      submitSubnetLogin();
     }
   };
 
-  const [isLoading, invokeApi] = useApi(onSuccess, onError);
-
-  const onConfirm = () => {
-    if (mfaToken !== "") {
-      invokeApi("POST", "/api/v1/subnet/login/mfa", {
+  const submitSubnetMfa = () => {
+    setLoadingSave(true);
+    api.subnet
+      .subnetLoginMfa({
         username: email,
         otp: subnetOTP,
         mfa_token: mfaToken,
-      });
-    } else {
-      invokeApi("POST", "/api/v1/subnet/login", { username: email, password });
-    }
+      })
+      .then((res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+        if (res.data && res.data.access_token) {
+          getApiKey(res.data.access_token);
+        }
+      })
+      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+        onError(res.error);
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  const getApiKey = (access_token: string) => {
+    setLoadingSave(true);
+    api.subnet
+      .subnetApiKey({
+        token: access_token,
+      })
+      .then((res: HttpResponse<ApiKey, ApiError>) => {
+        if (res.data && res.data.apiKey) {
+          onSet(res.data.apiKey);
+          closeModal();
+        }
+      })
+      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+        onError(res.error);
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  const submitSubnetLogin = () => {
+    setLoadingSave(true);
+    api.subnet
+      .subnetLogin({ username: email, password })
+      .then((res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+        if (res.data && res.data.mfa_token) {
+          setMfaToken(res.data.mfa_token);
+        }
+      })
+      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+        onError(res.error);
+      })
+      .finally(() => setLoadingSave(false));
   };
 
   const getDialogContent = () => {
@@ -153,17 +195,17 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
       confirmText={"Get API Key"}
       isOpen={open}
       titleIcon={<InfoIcon />}
-      isLoading={isLoading}
+      isLoading={loadingSave}
       cancelText={"Cancel"}
       onConfirm={onConfirm}
       onClose={closeModal}
       confirmButtonProps={{
         variant: "callAction",
-        disabled: !email || !password || isLoading,
+        disabled: !email || !password || loadingSave,
         hidden: true,
       }}
       cancelButtonProps={{
-        disabled: isLoading,
+        disabled: loadingSave,
       }}
       confirmationContent={getDialogContent()}
     />

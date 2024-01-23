@@ -61,6 +61,7 @@ const BucketNamingRules = ({ errorList }: { errorList: boolean[] }) => {
     <Fragment>
       <ExpandOptionsButton
         id={"toggle-naming-rules"}
+        type="button"
         open={showNamingRules}
         label={`${showNamingRules ? "Hide" : "View"} Bucket Naming Rules`}
         onClick={() => {

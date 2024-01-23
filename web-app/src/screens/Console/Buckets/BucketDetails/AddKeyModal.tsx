@@ -16,12 +16,13 @@
 
 import React, { Fragment, useState } from "react";
 import { Grid, InputBox } from "mds";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { useAppDispatch } from "../../../../store";
 import { setErrorSnackMessage } from "../../../../systemSlice";
-import useApi from "../../Common/Hooks/useApi";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 import KMSHelpBox from "../../KMS/KMSHelpbox";
+import { api } from "api";
+import { ApiError, HttpResponse } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 
 interface IAddKeyModalProps {
   closeAddModalAndRefresh: (refresh: boolean) => void;
@@ -33,18 +34,24 @@ const AddKeyModal = ({
   addOpen,
 }: IAddKeyModalProps) => {
   const dispatch = useAppDispatch();
-  const onAddSuccess = () => closeAddModalAndRefresh(true);
-  const onAddError = (err: ErrorResponseHandler) => {
-    closeAddModalAndRefresh(false);
-    dispatch(setErrorSnackMessage(err));
-  };
   const onClose = () => closeAddModalAndRefresh(false);
 
-  const [addLoading, invokeAddApi] = useApi(onAddSuccess, onAddError);
+  const [loadingAdd, setLoadingAdd] = useState<boolean>(false);
   const [keyName, setKeyName] = useState<string>("");
 
   const onConfirmAdd = () => {
-    invokeAddApi("POST", "/api/v1/kms/keys/", { key: keyName });
+    setLoadingAdd(true);
+    api.kms
+      .kmsCreateKey({ key: keyName })
+      .then((_) => {
+        closeAddModalAndRefresh(true);
+      })
+      .catch(async (res: HttpResponse<void, ApiError>) => {
+        const err = (await res.json()) as ApiError;
+        dispatch(setErrorSnackMessage(errorToHandler(err)));
+        closeAddModalAndRefresh(false);
+      })
+      .finally(() => setLoadingAdd(false));
   };
 
   return (
@@ -52,11 +59,11 @@ const AddKeyModal = ({
       title={""}
       confirmText={"Create"}
       isOpen={addOpen}
-      isLoading={addLoading}
+      isLoading={loadingAdd}
       onConfirm={onConfirmAdd}
       onClose={onClose}
       confirmButtonProps={{
-        disabled: keyName.indexOf(" ") !== -1 || keyName === "" || addLoading,
+        disabled: keyName.indexOf(" ") !== -1 || keyName === "" || loadingAdd,
         variant: "callAction",
       }}
       confirmationContent={
