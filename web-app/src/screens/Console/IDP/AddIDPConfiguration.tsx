@@ -114,7 +114,7 @@ const AddIDPConfiguration = ({
         navigate(backLink);
         dispatch(setServerNeedsRestart(res.data.restart === true));
       })
-      .catch(async (res: HttpResponse<SetIDPResponse, ApiError>) => {
+      .catch((res: HttpResponse<SetIDPResponse, ApiError>) => {
         dispatch(setErrorSnackMessage(errorToHandler(res.error)));
       })
       .finally(() => setLoadingCreate(false));

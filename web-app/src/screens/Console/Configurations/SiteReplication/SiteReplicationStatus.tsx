@@ -122,12 +122,10 @@ const SiteReplicationStatus = () => {
       .then((res: HttpResponse<SiteReplicationStatusResponse, ApiError>) => {
         setStats(res.data);
       })
-      .catch(
-        async (res: HttpResponse<SiteReplicationStatusResponse, ApiError>) => {
-          setStats({});
-          dispatch(setErrorSnackMessage(errorToHandler(res.error)));
-        },
-      )
+      .catch((res: HttpResponse<SiteReplicationStatusResponse, ApiError>) => {
+        setStats({});
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
       .finally(() => setLoading(false));
   };
 

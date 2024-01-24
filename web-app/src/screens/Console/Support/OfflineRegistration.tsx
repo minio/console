@@ -66,7 +66,7 @@ const OfflineRegistration = () => {
         dispatch(fetchLicenseInfo());
         dispatch(setServerNeedsRestart(true));
       })
-      .catch(async (res: HttpResponse<SetConfigResponse, ApiError>) => {
+      .catch((res: HttpResponse<SetConfigResponse, ApiError>) => {
         dispatch(setErrorSnackMessage(errorToHandler(res.error)));
       })
       .finally(() => setLoadingSave(false));
