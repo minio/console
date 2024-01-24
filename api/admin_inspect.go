@@ -120,7 +120,7 @@ func processInspectResponse(params *inspectApi.InspectParams, k []byte, r io.Rea
 
 		_, err := io.Copy(w, r)
 		if err != nil {
-			LogError("Unable to write all the data: %v", err)
+			LogError("unable to write all the data: %v", err)
 		}
 	}
 }

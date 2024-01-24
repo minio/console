@@ -448,7 +448,8 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		// override filename is set
 		decodeOverride, err := base64.StdEncoding.DecodeString(*params.OverrideFileName)
 		if err != nil {
-			return
+			ErrorWithContext(ctx, fmt.Errorf("unable to decode OverrideFileName: %v", err))
+			panic(err)
 		}
 
 		overrideName := string(decodeOverride)
@@ -472,17 +473,15 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		stat, err := resp.Stat()
 		if err != nil {
 			minErr := minio.ToErrorResponse(err)
-			rw.WriteHeader(minErr.StatusCode)
-			ErrorWithContext(ctx, fmt.Errorf("Failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error()))
-			return
+			ErrorWithContext(ctx, fmt.Errorf("failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error()))
+			panic(err)
 		}
 
 		// if we are getting a Range Request (video) handle that specially
 		ranges, err := parseRange(params.HTTPRequest.Header.Get("Range"), stat.Size)
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("Unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err))
-			rw.WriteHeader(400)
-			return
+			ErrorWithContext(ctx, fmt.Errorf("unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err))
+			panic(err)
 		}
 		contentType := stat.ContentType
 		rw.Header().Set("X-XSS-Protection", "1; mode=block")
@@ -510,9 +509,8 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 
 			_, err = resp.Seek(start, io.SeekStart)
 			if err != nil {
-				ErrorWithContext(ctx, fmt.Errorf("Unable to seek at offset %d: %v", start, err))
-				rw.WriteHeader(400)
-				return
+				ErrorWithContext(ctx, fmt.Errorf("unable to seek at offset %d: %v", start, err))
+				panic(err)
 			}
 
 			rw.Header().Set("Accept-Ranges", "bytes")
@@ -524,8 +522,8 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		rw.Header().Set("Content-Length", fmt.Sprintf("%d", length))
 		_, err = io.Copy(rw, io.LimitReader(resp, length))
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("Unable to write all data to client: %v", err))
-			return
+			ErrorWithContext(ctx, fmt.Errorf("unable to write all data to client: %v", err))
+			panic(err)
 		}
 	}), nil
 }
@@ -610,8 +608,8 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				ErrorWithContext(ctx, fmt.Errorf("Unable to parse encoded prefix %s: %v", encodedPrefix, err))
-				return
+				ErrorWithContext(ctx, fmt.Errorf("unable to parse encoded prefix %s: %v", encodedPrefix, err))
+				panic(err)
 			}
 
 			prefixPath = string(decodedPrefix)
@@ -632,7 +630,8 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("Unable to write all the requested data: %v", err))
+			ErrorWithContext(ctx, fmt.Errorf("unable to write all the requested data: %v", err))
+			panic(err)
 		}
 	}), nil
 }
@@ -754,7 +753,8 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 		// Copy the stream
 		_, err := io.Copy(rw, resp)
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("Unable to write all the requested data: %v", err))
+			ErrorWithContext(ctx, fmt.Errorf("unable to write all the requested data: %v", err))
+			panic(err)
 		}
 	}), nil
 }
