@@ -46,12 +46,11 @@ const DeleteAccessRule = ({
     let wrapper: PrefixWrapper = { prefix: toDelete };
     api.bucket
       .deleteAccessRuleWithBucket(bucket, wrapper)
-      .then((_) => {
+      .then(() => {
         onClose();
       })
-      .catch(async (res: HttpResponse<void, ApiError>) => {
-        const err = (await res.json()) as ApiError;
-        dispatch(setErrorSnackMessage(errorToHandler(err)));
+      .catch(async (res: HttpResponse<boolean, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
         onClose();
       })
       .finally(() => setLoadingDeleteAccessRule(false));
