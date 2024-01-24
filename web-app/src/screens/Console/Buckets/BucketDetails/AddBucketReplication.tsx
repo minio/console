@@ -186,15 +186,15 @@ const AddBucketReplication = () => {
       />
       <PageLayout>
         <FormLayout
-          containerPadding={false}
-          withBorders={false}
+          title="Add Replication Rule"
+          icon={<BucketReplicationIcon />}
           helpBox={
             <HelpBox
               iconComponent={<BucketReplicationIcon />}
               title="Bucket Replication Configuration"
               help={
                 <Fragment>
-                  <Box sx={{ paddingTop: "10px" }}>
+                  <Box sx={{ paddconngTop: "10px" }}>
                     The bucket selected in this deployment acts as the “source”
                     while the configured remote deployment acts as the “target”.
                   </Box>
