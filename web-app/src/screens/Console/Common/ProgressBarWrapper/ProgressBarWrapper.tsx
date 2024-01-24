@@ -73,7 +73,7 @@ const ProgressBarWrapper = ({
   const propsComponent: ProgressBarProps = {
     variant:
       indeterminate && !ready && !cancelled ? "indeterminate" : "determinate",
-    value: ready ? 100 : value,
+    value: ready && !error ? 100 : value,
     color: color,
     notificationLabel: notificationLabel || "",
   };
