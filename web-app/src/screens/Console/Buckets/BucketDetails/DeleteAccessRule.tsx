@@ -49,7 +49,7 @@ const DeleteAccessRule = ({
       .then(() => {
         onClose();
       })
-      .catch(async (res: HttpResponse<boolean, ApiError>) => {
+      .catch((res: HttpResponse<boolean, ApiError>) => {
         dispatch(setErrorSnackMessage(errorToHandler(res.error)));
         onClose();
       })
