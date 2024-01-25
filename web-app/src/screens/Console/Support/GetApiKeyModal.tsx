@@ -72,7 +72,7 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
           getApiKey(res.data.access_token);
         }
       })
-      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+      .catch((res: HttpResponse<SubnetLoginResponse, ApiError>) => {
         onError(res.error);
       })
       .finally(() => setLoadingSave(false));
@@ -90,7 +90,7 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
           closeModal();
         }
       })
-      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+      .catch((res: HttpResponse<SubnetLoginResponse, ApiError>) => {
         onError(res.error);
       })
       .finally(() => setLoadingSave(false));
@@ -105,7 +105,7 @@ const GetApiKeyModal = ({ open, closeModal, onSet }: IGetApiKeyModalProps) => {
           setMfaToken(res.data.mfa_token);
         }
       })
-      .catch(async (res: HttpResponse<SubnetLoginResponse, ApiError>) => {
+      .catch((res: HttpResponse<SubnetLoginResponse, ApiError>) => {
         onError(res.error);
       })
       .finally(() => setLoadingSave(false));
