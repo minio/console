@@ -33,13 +33,19 @@ import {
 import { useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../../common/SecureComponent/permissions";
 import { useAppDispatch } from "../../../../store";
-import { setHelpName } from "../../../../systemSlice";
-import useApi from "../../Common/Hooks/useApi";
+import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import StatusCountCard from "../../Dashboard/BasicDashboard/StatusCountCard";
 import EntityReplicationLookup from "./EntityReplicationLookup";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
+import { api } from "api";
+import { errorToHandler } from "api/errors";
+import {
+  ApiError,
+  HttpResponse,
+  SiteReplicationStatusResponse,
+} from "api/consoleApi";
 
 export type StatsResponseType = {
   maxBuckets?: number;
@@ -91,15 +97,7 @@ const SiteReplicationStatus = () => {
   const navigate = useNavigate();
 
   const [stats, setStats] = useState<StatsResponseType>({});
-
-  const [isStatsLoading, invokeSiteStatsApi] = useApi(
-    (res: any) => {
-      setStats(res);
-    },
-    (err: any) => {
-      setStats({});
-    },
-  );
+  const [loading, setLoading] = useState<boolean>(false);
 
   const {
     maxBuckets = 0,
@@ -113,8 +111,22 @@ const SiteReplicationStatus = () => {
   } = stats || {};
 
   const getStats = () => {
-    let url = `api/v1/admin/site-replication/status?buckets=true&groups=true&policies=true&users=true`;
-    invokeSiteStatsApi("GET", url);
+    setLoading(true);
+    api.admin
+      .getSiteReplicationStatus({
+        buckets: true,
+        groups: true,
+        policies: true,
+        users: true,
+      })
+      .then((res: HttpResponse<SiteReplicationStatusResponse, ApiError>) => {
+        setStats(res.data);
+      })
+      .catch((res: HttpResponse<SiteReplicationStatusResponse, ApiError>) => {
+        setStats({});
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -163,7 +175,7 @@ const SiteReplicationStatus = () => {
           Replication status from all Sites
         </SectionTitle>
 
-        {!isStatsLoading ? (
+        {!loading ? (
           <Box
             sx={{
               display: "grid",
