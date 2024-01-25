@@ -21,7 +21,7 @@ import store from "../../../../../store";
 import { ContentType, PermissionResource } from "api/consoleApi";
 import { api } from "../../../../../api";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
-
+import { StatusCodes } from "http-status-codes";
 const downloadWithLink = (href: string, downloadFileName: string) => {
   const link = document.createElement("a");
   link.href = href;
@@ -78,6 +78,7 @@ export const download = (
   toastCallback: () => void,
 ) => {
   let basename = document.baseURI.replace(window.location.origin, "");
+  let bytesLoaded = 0;
   const state = store.getState();
   const anonymousMode = state.system.anonymousMode;
 
@@ -106,7 +107,7 @@ export const download = (
     "progress",
     function (evt) {
       let percentComplete = Math.round((evt.loaded / fileSize) * 100);
-
+      bytesLoaded = evt.loaded;
       if (progressCallback) {
         progressCallback(percentComplete);
       }
@@ -116,8 +117,10 @@ export const download = (
 
   req.responseType = "blob";
   req.onreadystatechange = () => {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+      let completeDownload = bytesLoaded === fileSize;
+
+      if (req.status === StatusCodes.OK && completeDownload) {
         const rspHeader = req.getResponseHeader("Content-Disposition");
 
         let filename = "download";
@@ -143,7 +146,7 @@ export const download = (
             return;
           }
         }
-        errorCallback(`Unexpected response status code (${req.status}).`);
+        errorCallback(`Unexpected response, download incomplete.`);
       }
     }
   };

@@ -448,8 +448,9 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		// override filename is set
 		decodeOverride, err := base64.StdEncoding.DecodeString(*params.OverrideFileName)
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("unable to decode OverrideFileName: %v", err))
-			panic(err)
+			fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to decode OverrideFileName: %v", err))
+			http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusBadRequest)
+			return
 		}
 
 		overrideName := string(decodeOverride)
@@ -473,15 +474,17 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		stat, err := resp.Stat()
 		if err != nil {
 			minErr := minio.ToErrorResponse(err)
-			ErrorWithContext(ctx, fmt.Errorf("failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error()))
-			panic(err)
+			fmtError := ErrorWithContext(ctx, fmt.Errorf("failed to get Stat() response from server for %s (version %s): %v", prefix, opts.VersionID, minErr.Error()))
+			http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusInternalServerError)
+			return
 		}
 
 		// if we are getting a Range Request (video) handle that specially
 		ranges, err := parseRange(params.HTTPRequest.Header.Get("Range"), stat.Size)
 		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err))
-			panic(err)
+			fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to parse range header input %s: %v", params.HTTPRequest.Header.Get("Range"), err))
+			http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusInternalServerError)
+			return
 		}
 		contentType := stat.ContentType
 		rw.Header().Set("X-XSS-Protection", "1; mode=block")
@@ -509,8 +512,9 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 
 			_, err = resp.Seek(start, io.SeekStart)
 			if err != nil {
-				ErrorWithContext(ctx, fmt.Errorf("unable to seek at offset %d: %v", start, err))
-				panic(err)
+				fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to seek at offset %d: %v", start, err))
+				http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusInternalServerError)
+				return
 			}
 
 			rw.Header().Set("Accept-Ranges", "bytes")
@@ -523,7 +527,9 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		_, err = io.Copy(rw, io.LimitReader(resp, length))
 		if err != nil {
 			ErrorWithContext(ctx, fmt.Errorf("unable to write all data to client: %v", err))
-			panic(err)
+			// You can't change headers after you already started writing the body.
+			// Handle incomplete write in client.
+			return
 		}
 	}), nil
 }
@@ -608,8 +614,9 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
 			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
 			if err != nil {
-				ErrorWithContext(ctx, fmt.Errorf("unable to parse encoded prefix %s: %v", encodedPrefix, err))
-				panic(err)
+				fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to parse encoded prefix %s: %v", encodedPrefix, err))
+				http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusInternalServerError)
+				return
 			}
 
 			prefixPath = string(decodedPrefix)
@@ -631,7 +638,9 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		_, err := io.Copy(rw, resp)
 		if err != nil {
 			ErrorWithContext(ctx, fmt.Errorf("unable to write all the requested data: %v", err))
-			panic(err)
+			// You can't change headers after you already started writing the body.
+			// Handle incomplete write in client.
+			return
 		}
 	}), nil
 }
@@ -754,7 +763,9 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 		_, err := io.Copy(rw, resp)
 		if err != nil {
 			ErrorWithContext(ctx, fmt.Errorf("unable to write all the requested data: %v", err))
-			panic(err)
+			// You can't change headers after you already started writing the body.
+			// Handle incomplete write in client.
+			return
 		}
 	}), nil
 }
