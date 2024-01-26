@@ -97,8 +97,8 @@ type MinioAdmin interface {
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 	// Site Relication
 	getSiteReplicationInfo(ctx context.Context) (*madmin.SiteReplicationInfo, error)
-	addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error)
-	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error)
+	addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite, opts madmin.SRAddOptions) (*madmin.ReplicateAddStatus, error)
+	editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo, opts madmin.SREditOptions) (*madmin.ReplicateEditStatus, error)
 	deleteSiteReplicationInfo(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
 
 	// Replication status
@@ -565,8 +565,8 @@ func (ac AdminClient) getSiteReplicationInfo(ctx context.Context) (*madmin.SiteR
 	}, nil
 }
 
-func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error) {
-	res, err := ac.Client.SiteReplicationAdd(ctx, sites, madmin.SRAddOptions{})
+func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite, opts madmin.SRAddOptions) (*madmin.ReplicateAddStatus, error) {
+	res, err := ac.Client.SiteReplicationAdd(ctx, sites, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -579,8 +579,8 @@ func (ac AdminClient) addSiteReplicationInfo(ctx context.Context, sites []madmin
 	}, nil
 }
 
-func (ac AdminClient) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error) {
-	res, err := ac.Client.SiteReplicationEdit(ctx, site, madmin.SREditOptions{})
+func (ac AdminClient) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo, opts madmin.SREditOptions) (*madmin.ReplicateEditStatus, error) {
+	res, err := ac.Client.SiteReplicationEdit(ctx, site, opts)
 	if err != nil {
 		return nil, err
 	}

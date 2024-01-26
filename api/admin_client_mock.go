@@ -317,11 +317,11 @@ func (ac AdminClientMock) getSiteReplicationInfo(ctx context.Context) (*madmin.S
 	return getSiteReplicationInfo(ctx)
 }
 
-func (ac AdminClientMock) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite) (*madmin.ReplicateAddStatus, error) {
+func (ac AdminClientMock) addSiteReplicationInfo(ctx context.Context, sites []madmin.PeerSite, _ madmin.SRAddOptions) (*madmin.ReplicateAddStatus, error) {
 	return addSiteReplicationInfo(ctx, sites)
 }
 
-func (ac AdminClientMock) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo) (*madmin.ReplicateEditStatus, error) {
+func (ac AdminClientMock) editSiteReplicationInfo(ctx context.Context, site madmin.PeerInfo, _ madmin.SREditOptions) (*madmin.ReplicateEditStatus, error) {
 	return editSiteReplicationInfo(ctx, site)
 }
 
