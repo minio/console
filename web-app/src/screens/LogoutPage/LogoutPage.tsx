@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect } from "react";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../store";
 import { ErrorResponseHandler } from "../../common/types";
 import { clearSession } from "../../common/utils";
@@ -38,7 +38,7 @@ const LogoutPage = () => {
       clearSession();
 
       navigate("/login");
-      window.location.reload() //reset-all redux states etc. by force reloading.
+      window.location.reload(); //reset-all redux states etc. by force reloading.
     };
 
     const logout = () => {
