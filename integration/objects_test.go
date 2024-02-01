@@ -186,6 +186,7 @@ func TestObjectGet(t *testing.T) {
 			}
 
 			response, err := client.Do(request)
+			fmt.Printf("Console server Response: %v\nErr: %v\n", response, err)
 
 			assert.NotNil(response, fmt.Sprintf("%s response object is nil", tt.name))
 			assert.Nil(err, fmt.Sprintf("%s returned an error: %v", tt.name, err))

@@ -17,11 +17,9 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -123,36 +121,17 @@ func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {
 
 // createServiceAccount adds a service account to the userClient and assigns a policy to him if defined.
 func createServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
-	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
-	// we override with the user provided iam policy
-	var iamPolicy *iampolicy.Policy
-	if strings.TrimSpace(policy) != "" {
-		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
-		if err != nil {
-			return nil, err
-		}
-		iamPolicy = iamp
-	}
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", "", "", name, description, expiry, comment)
+	creds, err := userClient.addServiceAccount(ctx, policy, "", "", "", name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
 	return &models.ServiceAccountCreds{AccessKey: creds.AccessKey, SecretKey: creds.SecretKey, URL: getMinIOServer()}, nil
 }
 
-// createServiceAccount adds a service account with the given credentials to the userClient and assigns a policy to him if defined.
+// createServiceAccount adds a service account with the given credentials to the
+// userClient and assigns a policy to him if defined.
 func createServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
-	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
-	// we override with the user provided iam policy
-	var iamPolicy *iampolicy.Policy
-	if strings.TrimSpace(policy) != "" {
-		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
-		if err != nil {
-			return nil, err
-		}
-		iamPolicy = iamp
-	}
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, "", accessKey, secretKey, name, description, expiry, comment)
+	creds, err := userClient.addServiceAccount(ctx, policy, "", accessKey, secretKey, name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
@@ -190,18 +169,7 @@ func getCreateServiceAccountResponse(session *models.Principal, params saApi.Cre
 
 // createServiceAccount adds a service account to a given user and assigns a policy to him if defined.
 func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, policy string, user string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
-	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
-	// we override with the user provided iam policy
-	var iamPolicy *iampolicy.Policy
-	if strings.TrimSpace(policy) != "" {
-		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
-		if err != nil {
-			return nil, err
-		}
-		iamPolicy = iamp
-	}
-
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, "", "", name, description, expiry, comment)
+	creds, err := userClient.addServiceAccount(ctx, policy, user, "", "", name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
@@ -209,18 +177,7 @@ func createAUserServiceAccount(ctx context.Context, userClient MinioAdmin, polic
 }
 
 func createAUserServiceAccountCreds(ctx context.Context, userClient MinioAdmin, policy string, user string, accessKey string, secretKey string, name string, description string, expiry *time.Time, comment string) (*models.ServiceAccountCreds, error) {
-	// By default a nil policy will be used so the service account inherit the parent account policy, otherwise
-	// we override with the user provided iam policy
-	var iamPolicy *iampolicy.Policy
-	if strings.TrimSpace(policy) != "" {
-		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
-		if err != nil {
-			return nil, err
-		}
-		iamPolicy = iamp
-	}
-
-	creds, err := userClient.addServiceAccount(ctx, iamPolicy, user, accessKey, secretKey, name, description, expiry, comment)
+	creds, err := userClient.addServiceAccount(ctx, policy, user, accessKey, secretKey, name, description, expiry, comment)
 	if err != nil {
 		return nil, err
 	}
