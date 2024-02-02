@@ -614,25 +614,25 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "What is MinIO Healing?",
           "url": "https://min.io/docs/minio/windows/operations/concepts.html#minio-automatically-heals-corrupt-or-missing-data-on-the-fly",
-          "body": "Healing is MinIO\u2019s ability to restore data after  some event causes data loss. Data loss can come  from bit rot, drive loss, or node loss."
+          "body": "Healing is MinIO\u2019s ability to restore data after some event causes data loss. Data loss can come from bit rot, drive loss, or node loss."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Understand MinIO Healing Using mc",
           "url": "https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-heal.html#description",
-          "body": "The mc admin heal command scans for  objects that are damaged or corrupted and heals  those objects."
+          "body": "The mc admin heal command scans for objects that are damaged or corrupted and heals those objects."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "What is Bit Rot?",
           "url": "https://min.io/docs/minio/kubernetes/upstream/glossary.html#term-bit-rot",
-          "body": "Bit rot is data corruption that occurs without  the user\u2019s knowledge. MinIO combats  bit rot with hashing and erasure coding."
+          "body": "Bit rot is data corruption that occurs without the user\u2019s knowledge. MinIO combats bit rot with hashing and erasure coding."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "What are Settings and Configurations?",
           "url": "https://min.io/docs/minio/windows/administration/console/managing-deployment.html#minio-console-settings",
-          "body": "These configuration settings define runtime  behavior of the MinIO server process,  comparable to the mc admin config command"
+          "body": "These configuration settings define runtime behavior of the MinIO server process, comparable to the mc admin config command"
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
@@ -709,7 +709,7 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Object Scanner",
           "url": "https://min.io/docs/minio/windows/administration/object-management/object-lifecycle-management.html#minio-lifecycle-management-scanner",
-          "body": "Learn more about how the scanner checks Objects  for transition and expiry based on lifecycle rules"
+          "body": "Learn more about how the scanner checks Objects for transition and expiry based on lifecycle rules"
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
@@ -942,37 +942,37 @@
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Kafka Service for Bucket Notifications",
           "url": "https://min.io/docs/minio/linux/reference/minio-server/minio-server.html#minio-server-envvar-bucket-notification-kafka",
-          "body": "Learn about environment variables for configuring a  Kafka service as a target for Bucket Nofitications."
+          "body": "Learn about environment variables for configuring a Kafka service as a target for Bucket Nofitications."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Kafka Service Configuration Settings",
           "url": "https://min.io/docs/minio/linux/reference/minio-mc-admin/mc-admin-config.html#minio-server-config-bucket-notification-kafka",
-          "body": "Learn about environment variables for configuring a  Kafka service as a target for Bucket Nofitications."
+          "body": "Learn about environment variables for configuring a Kafka service as a target for Bucket Nofitications."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Supported Bucket Notification Targets",
           "url": "https://min.io/docs/minio/linux/administration/monitoring/bucket-notifications.html#supported-notification-targets",
-          "body": "Learn which notification targets are  supported by MinIO."
+          "body": "Learn which notification targets are supported by MinIO."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "Bucket Notifications",
           "url": "https://min.io/docs/minio/linux/administration/monitoring.html#bucket-notifications",
-          "body": "MinIO bucket notifications allow administrators  to send notifications to supported external  services on certain object or bucket events."
+          "body": "MinIO bucket notifications allow administrators to send notifications to supported external services on certain object or bucket events."
         },
         {
           "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
           "title": "What are Settings and Configurations?",
           "url": "https://min.io/docs/minio/windows/administration/console/managing-deployment.html#minio-console-settings",
-          "body": "These configuration settings define runtime  behavior of the MinIO server process,  comparable to the mc admin config command"
+          "body": "These configuration settings define runtime behavior of the MinIO server process, comparable to the mc admin config command"
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
           "title": "Troubleshooting",
           "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
-          "body": "Need more help?  Check out additional Troubleshooting options"
+          "body": "Need more help? Check out additional Troubleshooting options"
         }
       ]
     },
@@ -1047,6 +1047,12 @@
           "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
         },
         {
           "img": "https://images.unsplash.com/photo-1548197193-2c2df590e23f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDU0fHxmYXN0JTIwbW90aW9uJTIwYmx1cnxlbnwwfHx8fDE2NjkxNDY0MzM&ixlib=rb-4.0.3&q=80&w=1000",
@@ -1139,6 +1145,12 @@
           "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
           "title": "Erasure Coding 101",
           "url": "https://blog.min.io/erasure-coding/",
@@ -1179,6 +1191,12 @@
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
           "title": "Replication Best Practices",
@@ -1458,6 +1476,12 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
           "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
@@ -1477,7 +1501,7 @@
         },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2021/09/denys-nevozhai-7nrsVjvALnA-unsplash.jpg",
-          "title": "Multi-SiteActive-Active Replication",
+          "title": "Multi-Site Active-Active Replication",
           "url": "https://blog.min.io/minio-multi-site-active-active-replication/",
           "body": "Active-Active replication enables multi-primary topologies, fast hot-hot failover, and multi-geo resiliency."
         },
@@ -2232,6 +2256,12 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-How-to-renew-KES-certs.png",
+          "title": "Renewing KES Certificate",
+          "url": "https://blog.min.io/renewing-kes-certificate/",
+          "body": "Learn about KES certificate expiry errors, and how to renew the certificate to resolve them."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
@@ -2265,13 +2295,19 @@
           "img": "",
           "title": "KMS overview",
           "url": "https://www.youtube.com/watch?v=XUuJZVK-Wpw",
-          "body": "Text snippet that will be relevant to the user will  go here  made to look nice in the helpitem size  on two-three lines"
+          "body": "Learn about key management using KMS."
         }
       ]
     },
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-How-to-renew-KES-certs.png",
+          "title": "Renewing KES Certificate",
+          "url": "https://blog.min.io/renewing-kes-certificate/",
+          "body": "Learn about KES certificate expiry errors, and how to renew the certificate to resolve them."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
@@ -2306,13 +2342,19 @@
           "img": "",
           "title": "KMS overview",
           "url": "https://www.youtube.com/watch?v=XUuJZVK-Wpw",
-          "body": "Text snippet that will be relevant to the user will  go here  made to look nice in the helpitem size  on two-three lines"
+          "body": "Learn about key management using KMS."
         }
       ]
     },
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-How-to-renew-KES-certs.png",
+          "title": "Renewing KES Certificate",
+          "url": "https://blog.min.io/renewing-kes-certificate/",
+          "body": "Learn about KES certificate expiry errors, and how to renew the certificate to resolve them."
+        },
         {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
@@ -2579,6 +2621,30 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/IMG_7378.jpeg",
+          "title": "Event-Driven Architecture: MinIO Event Notification Webhooks using Flask",
+          "url": "https://blog.min.io/minio-webhook-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications and integrate them with a Flask webhook to enable real-time data processing."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/david-blog.jpeg",
+          "title": "Streamlining Data Events with MinIO and PostgreSQL",
+          "url": "https://blog.min.io/minio-postgres-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications to PostgreSQL to trigger real-time responses to storage events."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/eventnotifications-lambda.jpg",
+          "title": "Event Notifications vs Object Lambda",
+          "url": "https://blog.min.io/event-notifications-vs-object-lambda/",
+          "body": "Learn the difference between Event Notifications and Object Lambdas, and how to consider which one is best for your use case."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/Regulatory-Compliance-with-MinIO-Object-Lambdas--1-.jpg",
+          "title": "Regulatory Compliance with MinIO Object Lambdas",
+          "url": "https://blog.min.io/regulatory-compliance-with-minio-object-lambdas/",
+          "body": "Learn how MinIO event notifications can be used to modify data on-the-fly to maintain compliance without maintaining separate datasets."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
           "url": "https://blog.min.io/managing-objects-tagging-policies/",
@@ -2644,6 +2710,30 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/IMG_7378.jpeg",
+          "title": "Event-Driven Architecture: MinIO Event Notification Webhooks using Flask",
+          "url": "https://blog.min.io/minio-webhook-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications and integrate them with a Flask webhook to enable real-time data processing."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/david-blog.jpeg",
+          "title": "Streamlining Data Events with MinIO and PostgreSQL",
+          "url": "https://blog.min.io/minio-postgres-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications to PostgreSQL to trigger real-time responses to storage events."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/eventnotifications-lambda.jpg",
+          "title": "Event Notifications vs Object Lambda",
+          "url": "https://blog.min.io/event-notifications-vs-object-lambda/",
+          "body": "Learn the difference between Event Notifications and Object Lambdas, and how to consider which one is best for your use case."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/Regulatory-Compliance-with-MinIO-Object-Lambdas--1-.jpg",
+          "title": "Regulatory Compliance with MinIO Object Lambdas",
+          "url": "https://blog.min.io/regulatory-compliance-with-minio-object-lambdas/",
+          "body": "Learn how MinIO event notifications can be used to modify data on-the-fly to maintain compliance without maintaining separate datasets."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
           "url": "https://blog.min.io/managing-objects-tagging-policies/",
@@ -2708,6 +2798,30 @@
     "blog": {
       "header": null,
       "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/IMG_7378.jpeg",
+          "title": "Event-Driven Architecture: MinIO Event Notification Webhooks using Flask",
+          "url": "https://blog.min.io/minio-webhook-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications and integrate them with a Flask webhook to enable real-time data processing."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/david-blog.jpeg",
+          "title": "Streamlining Data Events with MinIO and PostgreSQL",
+          "url": "https://blog.min.io/minio-postgres-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications to PostgreSQL to trigger real-time responses to storage events."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/eventnotifications-lambda.jpg",
+          "title": "Event Notifications vs Object Lambda",
+          "url": "https://blog.min.io/event-notifications-vs-object-lambda/",
+          "body": "Learn the difference between Event Notifications and Object Lambdas, and how to consider which one is best for your use case."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/Regulatory-Compliance-with-MinIO-Object-Lambdas--1-.jpg",
+          "title": "Regulatory Compliance with MinIO Object Lambdas",
+          "url": "https://blog.min.io/regulatory-compliance-with-minio-object-lambdas/",
+          "body": "Learn how MinIO event notifications can be used to modify data on-the-fly to maintain compliance without maintaining separate datasets."
+        },
         {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
@@ -4262,6 +4376,12 @@
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
         },
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
+        },
+        {
           "img": "https://blog.min.io/content/images/size/w1000/2022/12/Screen-Shot-2022-12-16-at-2.13.42-PM.png",
           "title": "Access Control Best Practices",
           "url": "https://blog.min.io/s3-security-access-control/",
@@ -4363,6 +4483,30 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/IMG_7378.jpeg",
+          "title": "Event-Driven Architecture: MinIO Event Notification Webhooks using Flask",
+          "url": "https://blog.min.io/minio-webhook-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications and integrate them with a Flask webhook to enable real-time data processing."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/david-blog.jpeg",
+          "title": "Streamlining Data Events with MinIO and PostgreSQL",
+          "url": "https://blog.min.io/minio-postgres-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications to PostgreSQL to trigger real-time responses to storage events."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/eventnotifications-lambda.jpg",
+          "title": "Event Notifications vs Object Lambda",
+          "url": "https://blog.min.io/event-notifications-vs-object-lambda/",
+          "body": "Learn the difference between Event Notifications and Object Lambdas, and how to consider which one is best for your use case."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/Regulatory-Compliance-with-MinIO-Object-Lambdas--1-.jpg",
+          "title": "Regulatory Compliance with MinIO Object Lambdas",
+          "url": "https://blog.min.io/regulatory-compliance-with-minio-object-lambdas/",
+          "body": "Learn how MinIO event notifications can be used to modify data on-the-fly to maintain compliance without maintaining separate datasets."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
           "url": "https://blog.min.io/managing-objects-tagging-policies/",
@@ -4432,6 +4576,12 @@
           "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
         },
         {
           "img": "https://images.unsplash.com/photo-1523961131990-5ea7c61b2107?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMTc3M3wwfDF8c2VhcmNofDExfHxkYXRhJTIwY2VudGVyfGVufDB8fHx8MTY1MDY3MTUwMw&ixlib=rb-1.2.1&q=80&w=1000",
@@ -4709,6 +4859,30 @@
       "header": null,
       "links": [
         {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/IMG_7378.jpeg",
+          "title": "Event-Driven Architecture: MinIO Event Notification Webhooks using Flask",
+          "url": "https://blog.min.io/minio-webhook-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications and integrate them with a Flask webhook to enable real-time data processing."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/david-blog.jpeg",
+          "title": "Streamlining Data Events with MinIO and PostgreSQL",
+          "url": "https://blog.min.io/minio-postgres-event-notifications/",
+          "body": "Learn how to set up MinIO event notifications to PostgreSQL to trigger real-time responses to storage events."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/eventnotifications-lambda.jpg",
+          "title": "Event Notifications vs Object Lambda",
+          "url": "https://blog.min.io/event-notifications-vs-object-lambda/",
+          "body": "Learn the difference between Event Notifications and Object Lambdas, and how to consider which one is best for your use case."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2023/11/Regulatory-Compliance-with-MinIO-Object-Lambdas--1-.jpg",
+          "title": "Regulatory Compliance with MinIO Object Lambdas",
+          "url": "https://blog.min.io/regulatory-compliance-with-minio-object-lambdas/",
+          "body": "Learn how MinIO event notifications can be used to modify data on-the-fly to maintain compliance without maintaining separate datasets."
+        },
+        {
           "img": "https://images.unsplash.com/photo-1571907483086-3c0ea40cc16d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wxMTc3M3wwfDF8c2VhcmNofDF8fHRhZ3N8ZW58MHx8fHwxNjk4ODY2NTQyfDA&ixlib=rb-4.0.3&q=80&w=2000",
           "title": "Managing Objects with Tagging and Policies",
           "url": "https://blog.min.io/managing-objects-tagging-policies/",
@@ -4921,6 +5095,12 @@
           "title": "Replication Best Practices",
           "url": "https://blog.min.io/minio-replication-best-practices/",
           "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
+        },
+        {
+          "img": "https://blog.min.io/content/images/size/w2000/2024/01/blog-header-how-do-I-know-replication-is-up-to-date.png",
+          "title": "How Do I Know Replication Is Up To Date?",
+          "url": "https://blog.min.io/how-do-i-know-replication-is-up-to-date/",
+          "body": "Learn about monitoring your batch, site and bucket replication processes."
         }
       ]
     }
