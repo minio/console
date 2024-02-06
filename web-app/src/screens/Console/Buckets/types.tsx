@@ -41,6 +41,7 @@ interface IExpirationLifecycle {
   days: number;
   date: string;
   delete_marker?: boolean;
+  delete_all?: boolean;
   noncurrent_expiration_days?: number;
   newer_noncurrent_expiration_versions?: number;
 }

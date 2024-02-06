@@ -40,6 +40,9 @@ type ExpirationResponse struct {
 	// days
 	Days int64 `json:"days,omitempty"`
 
+	// delete all
+	DeleteAll bool `json:"delete_all,omitempty"`
+
 	// delete marker
 	DeleteMarker bool `json:"delete_marker,omitempty"`
 

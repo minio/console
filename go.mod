@@ -158,3 +158,5 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/minio/mc v0.0.0-20240209221824-669cb0a9a475 => github.com/shtripat/mc v0.0.0-20240212061450-03c9dfe77107

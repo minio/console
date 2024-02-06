@@ -189,8 +189,6 @@ github.com/minio/kes-go v0.2.1 h1:KnqS+p6xoSFJZbQhmJaz/PbxeA6nQyRqT/ywrn5lU2o=
 github.com/minio/kes-go v0.2.1/go.mod h1:76xf7l41Wrh+IifisABXK2S8uZWYgWV1IGBKC3GdOJk=
 github.com/minio/madmin-go/v3 v3.0.46 h1:DabFt+aUph5Vu/SOat2RWN/xVagPBU7qzxhAQ03hH/k=
 github.com/minio/madmin-go/v3 v3.0.46/go.mod h1:ZDF7kf5fhmxLhbGTqyq5efs4ao0v4eWf7nOuef/ljJs=
-github.com/minio/mc v0.0.0-20240209221824-669cb0a9a475 h1:yfLzMougcV2xkVlWgwYwVRoT8pnXrcCV4oOQW+pI2EQ=
-github.com/minio/mc v0.0.0-20240209221824-669cb0a9a475/go.mod h1:MmDLdb7NWd/OYhcKcXKvwErq2GNa/Zq6xtTWuhdC4II=
 github.com/minio/md5-simd v1.1.2 h1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=
 github.com/minio/md5-simd v1.1.2/go.mod h1:MzdKDxYpY2BT9XQFocsiZf/NKVtR7nkE4RoEpN+20RM=
 github.com/minio/minio-go/v7 v7.0.67 h1:BeBvZWAS+kRJm1vGTMJYVjKUNoo0FoEt/wUWdUtfmh8=
@@ -282,6 +280,8 @@ github.com/shoenig/go-m1cpu v0.1.6 h1:nxdKQNcEB6vzgA2E2bvzKIYRuNj7XNJ4S/aRSwKzFt
 github.com/shoenig/go-m1cpu v0.1.6/go.mod h1:1JJMcUBvfNwpq05QDQVAnx3gUHr9IYF7GNg9SUEw2VQ=
 github.com/shoenig/test v0.6.4 h1:kVTaSd7WLz5WZ2IaoM0RSzRsUD+m8wRR+5qvntpn4LU=
 github.com/shoenig/test v0.6.4/go.mod h1:byHiCGXqrVaflBLAMq/srcZIHynQPQgeyvkvXnjqq0k=
+github.com/shtripat/mc v0.0.0-20240212061450-03c9dfe77107 h1:pDFlsezd+kxeohWXZW/X6mmqXO8yDBFvB5RgWGlHi68=
+github.com/shtripat/mc v0.0.0-20240212061450-03c9dfe77107/go.mod h1:9opeL9Qw8zh5u6Vl2Dn87F0pRGxwBbWr2liWbf/7afU=
 github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
 github.com/sirupsen/logrus v1.9.3/go.mod h1:naHLuLoDiP4jHNo9R0sCBMtWGeIprob74mVsIT4qYEQ=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

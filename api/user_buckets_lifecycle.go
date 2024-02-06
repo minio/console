@@ -117,6 +117,7 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 				Date:                              rule.Expiration.Date.Format(time.RFC3339),
 				Days:                              int64(rule.Expiration.Days),
 				DeleteMarker:                      rule.Expiration.DeleteMarker.IsEnabled(),
+				DeleteAll:                         bool(rule.Expiration.DeleteAll),
 				NoncurrentExpirationDays:          int64(rule.NoncurrentVersionExpiration.NoncurrentDays),
 				NewerNoncurrentExpirationVersions: int64(rule.NoncurrentVersionExpiration.NewerNoncurrentVersions),
 			},
@@ -188,6 +189,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			Status:                    &status,
 			Tags:                      &params.Body.Tags,
 			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
+			ExpiredObjectAllversions:  &params.Body.ExpiredObjectDeleteAll,
 		}
 
 		if params.Body.NoncurrentversionTransitionDays > 0 {
@@ -219,6 +221,7 @@ func addBucketLifecycle(ctx context.Context, client MinioClient, params bucketAp
 			Status:                    &status,
 			Tags:                      &params.Body.Tags,
 			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
+			ExpiredObjectAllversions:  &params.Body.ExpiredObjectDeleteAll,
 		}
 
 		if params.Body.NewerNoncurrentversionExpirationVersions > 0 {
@@ -298,6 +301,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 			Status:                    &status,
 			Tags:                      &params.Body.Tags,
 			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
+			ExpiredObjectAllversions:  &params.Body.ExpiredObjectDeleteAll,
 		}
 
 		if params.Body.NoncurrentversionTransitionDays > 0 {
@@ -328,6 +332,7 @@ func editBucketLifecycle(ctx context.Context, client MinioClient, params bucketA
 			Status:                    &status,
 			Tags:                      &params.Body.Tags,
 			ExpiredObjectDeleteMarker: &params.Body.ExpiredObjectDeleteMarker,
+			ExpiredObjectAllversions:  &params.Body.ExpiredObjectDeleteAll,
 		}
 
 		if params.Body.NoncurrentversionExpirationDays > 0 {
@@ -456,6 +461,7 @@ func addMultiBucketLifecycle(ctx context.Context, client MinioClient, params buc
 			ExpiryDays:                              params.Body.ExpiryDays,
 			Disable:                                 false,
 			ExpiredObjectDeleteMarker:               params.Body.ExpiredObjectDeleteMarker,
+			ExpiredObjectDeleteAll:                  params.Body.ExpiredObjectDeleteMarker,
 		}
 
 		go func() {
