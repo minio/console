@@ -59,7 +59,8 @@ const AddBulkReplicationModal = ({
   const [storageClass, setStorageClass] = useState("");
   const [NCTransitionSC, setNCTransitionSC] = useState("");
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
-  const [expiredAllVersionsDM, setExpiredAllVersionsDM] = useState<boolean>(false);
+  const [expiredAllVersionsDM, setExpiredAllVersionsDM] =
+    useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
   const [ilmType, setIlmType] = useState<"expiry" | "transition">("expiry");

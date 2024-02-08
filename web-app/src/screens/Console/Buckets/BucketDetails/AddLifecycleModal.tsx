@@ -73,7 +73,8 @@ const AddLifecycleModal = ({
   const [lifecycleDays, setLifecycleDays] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
-  const [expiredAllVersionsDM, setExpiredAllVersionsDM] = useState<boolean>(false);
+  const [expiredAllVersionsDM, setExpiredAllVersionsDM] =
+    useState<boolean>(false);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [expandedAdv, setExpandedAdv] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(false);
