@@ -27,6 +27,7 @@ import {
   ProgressBar,
   RefreshIcon,
   Grid,
+  HelpTip,
 } from "mds";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { SecureComponent } from "../../../common/SecureComponent";
@@ -50,6 +51,7 @@ import { Bucket } from "../../../api/consoleApi";
 import { api } from "../../../api";
 import { errorToHandler } from "../../../api/errors";
 import HelpMenu from "../HelpMenu";
+import { usageClarifyingContent } from "../Dashboard/BasicDashboard/ReportedUsage";
 
 const OBListBuckets = () => {
   const dispatch = useAppDispatch();
@@ -57,6 +59,7 @@ const OBListBuckets = () => {
 
   const [records, setRecords] = useState<Bucket[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [clickOverride, setClickOverride] = useState<boolean>(false);
   const [filterBuckets, setFilterBuckets] = useState<string>("");
 
   const features = useSelector(selFeatures);
@@ -102,7 +105,8 @@ const OBListBuckets = () => {
     {
       type: "view",
       onClick: (bucket: Bucket) => {
-        navigate(`${IAM_PAGES.OBJECT_BROWSER_VIEW}/${bucket.name}`);
+        !clickOverride &&
+          navigate(`${IAM_PAGES.OBJECT_BROWSER_VIEW}/${bucket.name}`);
       },
     },
   ];
@@ -213,7 +217,19 @@ const OBListBuckets = () => {
                   {
                     label: "Size",
                     elementKey: "size",
-                    renderFunction: (size: number) => niceBytesInt(size || 0),
+                    renderFunction: (size: number) => (
+                      <div
+                        onMouseEnter={() => setClickOverride(true)}
+                        onMouseLeave={() => setClickOverride(false)}
+                      >
+                        <HelpTip
+                          content={usageClarifyingContent}
+                          placement="right"
+                        >
+                          {niceBytesInt(size || 0)}
+                        </HelpTip>
+                      </div>
+                    ),
                   },
                   {
                     label: "Access",

@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import get from "lodash/get";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +23,7 @@ import {
   BucketsIcon,
   Checkbox,
   Grid,
+  HelpTip,
   ReportedUsageIcon,
   TotalObjectsIcon,
 } from "mds";
@@ -37,6 +38,7 @@ import {
 } from "../../../../common/SecureComponent/permissions";
 import { hasPermission } from "../../../../common/SecureComponent";
 import { Bucket } from "../../../../api/consoleApi";
+import { usageClarifyingContent } from "screens/Console/Dashboard/BasicDashboard/ReportedUsage";
 
 const BucketItemMain = styled.div(({ theme }) => ({
   border: `${get(theme, "borderColor", "#eaeaea")} 1px solid`,
@@ -129,6 +131,8 @@ const BucketListItem = ({
 }: IBucketListItem) => {
   const navigate = useNavigate();
 
+  const [clickOverride, setClickOverride] = useState<boolean>(false);
+
   const usage = niceBytes(`${bucket.size}` || "0");
   const usageScalar = usage.split(" ")[0];
   const usageUnit = usage.split(" ")[1];
@@ -157,7 +161,7 @@ const BucketListItem = ({
   return (
     <BucketItemMain
       onClick={() => {
-        navigate(`/buckets/${bucket.name}/admin`);
+        !clickOverride && navigate(`/buckets/${bucket.name}/admin`);
       }}
       id={`manageBucket-${bucket.name}`}
       className={`bucket-item ${manageAllowed ? "disabled" : ""}`}
@@ -205,8 +209,22 @@ const BucketListItem = ({
           />
         </Link>
 
-        <Grid item className={"metric"}>
-          <ReportedUsageIcon />
+        <Grid
+          item
+          className={"metric"}
+          onMouseEnter={() =>
+            bucket.details?.versioning && setClickOverride(true)
+          }
+          onMouseLeave={() =>
+            bucket.details?.versioning && setClickOverride(false)
+          }
+        >
+          {bucket.details?.versioning && (
+            <HelpTip content={usageClarifyingContent} placement="top">
+              <ReportedUsageIcon />{" "}
+            </HelpTip>
+          )}
+          {!bucket.details?.versioning && <ReportedUsageIcon />}
           <span className={"metricLabel"}>Usage</span>
           <div className={"metricText"}>
             {usageScalar}

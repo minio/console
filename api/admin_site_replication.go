@@ -19,6 +19,7 @@ package api
 import (
 	"context"
 
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"
 	siteRepApi "github.com/minio/console/api/operations/site_replication"
@@ -162,7 +163,13 @@ func addSiteReplication(ctx context.Context, client MinioAdmin, params *siteRepA
 			rSites = append(rSites, *pInfo)
 		}
 	}
-	cc, err := client.addSiteReplicationInfo(ctx, rSites)
+	qs := runtime.Values(params.HTTPRequest.URL.Query())
+	_, qhkReplicateILMExpiry, _ := qs.GetOK("replicate-ilm-expiry")
+	var opts madmin.SRAddOptions
+	if qhkReplicateILMExpiry {
+		opts.ReplicateILMExpiry = true
+	}
+	cc, err := client.addSiteReplicationInfo(ctx, rSites, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +190,17 @@ func editSiteReplication(ctx context.Context, client MinioAdmin, params *siteRep
 		Name:         params.Body.Name,         // does not get updated.
 		DeploymentID: params.Body.DeploymentID, // readonly
 	}
-	eRes, err := client.editSiteReplicationInfo(ctx, *peerSiteInfo)
+	qs := runtime.Values(params.HTTPRequest.URL.Query())
+	_, qhkDisableILMExpiryReplication, _ := qs.GetOK("disable-ilm-expiry-replication")
+	_, qhkEnableILMExpiryReplication, _ := qs.GetOK("enable-ilm-expiry-replication")
+	var opts madmin.SREditOptions
+	if qhkDisableILMExpiryReplication {
+		opts.DisableILMExpiryReplication = true
+	}
+	if qhkEnableILMExpiryReplication {
+		opts.EnableILMExpiryReplication = true
+	}
+	eRes, err := client.editSiteReplicationInfo(ctx, *peerSiteInfo, opts)
 	if err != nil {
 		return nil, err
 	}

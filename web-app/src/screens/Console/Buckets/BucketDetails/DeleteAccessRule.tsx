@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
-import { ErrorResponseHandler } from "../../../../common/types";
 import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import useApi from "../../Common/Hooks/useApi";
+import { api } from "api";
+import { ApiError, HttpResponse, PrefixWrapper } from "api/consoleApi";
+import { errorToHandler } from "api/errors";
 import ConfirmDialog from "../../Common/ModalWrapper/ConfirmDialog";
 
 interface IDeleteAccessRule {
@@ -36,16 +37,23 @@ const DeleteAccessRule = ({
   toDelete,
 }: IDeleteAccessRule) => {
   const dispatch = useAppDispatch();
-  const onDelSuccess = () => onClose();
-  const onDelError = (err: ErrorResponseHandler) =>
-    dispatch(setErrorSnackMessage(err));
 
-  const [deleteLoading, invokeDeleteApi] = useApi(onDelSuccess, onDelError);
+  const [loadingDeleteAccessRule, setLoadingDeleteAccessRule] =
+    useState<boolean>(false);
 
   const onConfirmDelete = () => {
-    invokeDeleteApi("DELETE", `/api/v1/bucket/${bucket}/access-rules`, {
-      prefix: toDelete,
-    });
+    setLoadingDeleteAccessRule(true);
+    let wrapper: PrefixWrapper = { prefix: toDelete };
+    api.bucket
+      .deleteAccessRuleWithBucket(bucket, wrapper)
+      .then(() => {
+        onClose();
+      })
+      .catch((res: HttpResponse<boolean, ApiError>) => {
+        dispatch(setErrorSnackMessage(errorToHandler(res.error)));
+        onClose();
+      })
+      .finally(() => setLoadingDeleteAccessRule(false));
   };
 
   return (
@@ -53,7 +61,7 @@ const DeleteAccessRule = ({
       title={`Delete Anonymous Access Rule`}
       confirmText={"Delete"}
       isOpen={modalOpen}
-      isLoading={deleteLoading}
+      isLoading={loadingDeleteAccessRule}
       onConfirm={onConfirmDelete}
       titleIcon={<ConfirmDeleteIcon />}
       onClose={onClose}
