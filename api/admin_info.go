@@ -46,7 +46,7 @@ func registerAdminInfoHandlers(api *operations.ConsoleAPI) {
 		return systemApi.NewAdminInfoOK().WithPayload(infoResp)
 	})
 	// return single widget results
-	api.SystemDashboardWidgetDetailsHandler = systemApi.DashboardWidgetDetailsHandlerFunc(func(params systemApi.DashboardWidgetDetailsParams, session *models.Principal) middleware.Responder {
+	api.SystemDashboardWidgetDetailsHandler = systemApi.DashboardWidgetDetailsHandlerFunc(func(params systemApi.DashboardWidgetDetailsParams, _ *models.Principal) middleware.Responder {
 		infoResp, err := getAdminInfoWidgetResponse(params)
 		if err != nil {
 			return systemApi.NewDashboardWidgetDetailsDefault(err.Code).WithPayload(err.APIError)

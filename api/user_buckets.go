@@ -648,7 +648,6 @@ func getPutBucketTagsResponse(session *models.Principal, params bucketApi.PutBuc
 	}
 
 	err = minioClient.SetBucketTagging(ctx, bucketName, newTagSet)
-
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

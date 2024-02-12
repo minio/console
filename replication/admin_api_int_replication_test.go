@@ -204,7 +204,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			actualStatusCode, err := AddSiteReplicationInfo(tt.args.sites)
 			fmt.Println("TestAddSiteReplicationInfo: ", actualStatusCode)
 
@@ -269,7 +269,7 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			actualStatusCode, err := EditSiteReplicationInfo(tt.args)
 			fmt.Println("TestEditSiteReplicationInfo: ", actualStatusCode)
 			if tt.expStatusCode > 0 {
@@ -331,7 +331,7 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 	}
 	fmt.Println("Delete Site Replication")
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			actualStatusCode, err := DeleteSiteReplicationInfo(tt.args)
 			fmt.Println("TestDeleteSiteReplicationInfo: ", actualStatusCode)
 			if tt.expStatusCode > 0 {
@@ -440,7 +440,7 @@ func TestGetSiteReplicationStatus(t *testing.T) {
 	}
 
 	for ti, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			response, err := makeStatusExecuteReq("GET", tt.args)
 			tgt := &models.SiteReplicationStatusResponse{}
 			json.NewDecoder(response.Body).Decode(tgt)

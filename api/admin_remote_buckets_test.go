@@ -299,7 +299,7 @@ func (suite *RemoteBucketsTestSuite) initListExternalBucketsRequest() (params bu
 
 func (suite *RemoteBucketsTestSuite) TestListExternalBucketsWithError() {
 	ctx := context.Background()
-	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+	minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 		return madmin.AccountInfo{}, errors.New("error")
 	}
 	res, err := listExternalBuckets(ctx, &suite.adminClient)
@@ -309,7 +309,7 @@ func (suite *RemoteBucketsTestSuite) TestListExternalBucketsWithError() {
 
 func (suite *RemoteBucketsTestSuite) TestListExternalBucketsWithoutError() {
 	ctx := context.Background()
-	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+	minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 		return madmin.AccountInfo{
 			Buckets: []madmin.BucketAccessInfo{},
 		}, nil

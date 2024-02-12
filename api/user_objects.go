@@ -1045,7 +1045,6 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 			ContentType:      contentType,
 			DisableMultipart: true, // Do not upload as multipart stream for console uploader.
 		})
-
 		if err != nil {
 			return err
 		}

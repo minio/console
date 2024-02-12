@@ -71,7 +71,7 @@ func Test_getSessionResponse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
 			}
@@ -128,7 +128,7 @@ func Test_getListOfEnabledFeatures(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
 			}

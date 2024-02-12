@@ -125,14 +125,14 @@ func Test_validateUserAgainstIDP(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 			mockFunc: func() {
-				idpVerifyIdentityMock = func(ctx context.Context, code, state string) (*credentials.Credentials, error) {
+				idpVerifyIdentityMock = func(_ context.Context, _, _ string) (*credentials.Credentials, error) {
 					return nil, errors.New("something went wrong")
 				}
 			},
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.mockFunc != nil {
 				tt.mockFunc()
 			}
@@ -170,14 +170,14 @@ func Test_getAccountInfo(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 			mockFunc: func() {
-				minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+				minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 					return madmin.AccountInfo{}, errors.New("something went wrong")
 				}
 			},
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.mockFunc != nil {
 				tt.mockFunc()
 			}

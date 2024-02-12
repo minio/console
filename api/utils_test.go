@@ -85,7 +85,7 @@ func TestRandomCharStringWithAlphabet(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, RandomCharStringWithAlphabet(tt.args.n, tt.args.alphabet), "RandomCharStringWithAlphabet(%v, %v)", tt.args.n, tt.args.alphabet)
 		})
 	}
@@ -117,7 +117,7 @@ func TestNewSessionCookieForConsole(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got := NewSessionCookieForConsole(tt.args.token)
 			assert.Equalf(t, tt.want.Value, got.Value, "NewSessionCookieForConsole(%v)", tt.args.token)
 			assert.Equalf(t, tt.want.Path, got.Path, "NewSessionCookieForConsole(%v)", tt.args.token)
@@ -144,7 +144,7 @@ func TestExpireSessionCookie(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got := ExpireSessionCookie()
 			assert.Equalf(t, tt.want.Name, got.Name, "ExpireSessionCookie()")
 			assert.Equalf(t, tt.want.Value, got.Value, "ExpireSessionCookie()")
@@ -178,7 +178,7 @@ func TestSanitizeEncodedPrefix(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
 		})
 	}
@@ -209,7 +209,7 @@ func Test_isSafeToPreview(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, isSafeToPreview(tt.args.str), "isSafeToPreview(%v)", tt.args.str)
 		})
 	}
@@ -239,7 +239,7 @@ func TestRandomCharString(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.wantLength, len(RandomCharString(tt.args.n)), "RandomCharString(%v)", tt.args.n)
 		})
 	}
@@ -284,7 +284,7 @@ func TestValidateEncodedStyles(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.wantErr {
 				assert.NotNilf(t, ValidateEncodedStyles(tt.args.encodedStyles), "Wanted an error")
 			} else {
@@ -312,7 +312,7 @@ func TestSanitizeEncodedPrefix1(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
 		})
 	}

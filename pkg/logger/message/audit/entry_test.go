@@ -43,7 +43,7 @@ func TestNewEntry(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := NewEntry(tt.args.deploymentID); got.DeploymentID != tt.want.DeploymentID {
 				t.Errorf("NewEntry() = %v, want %v", got, tt.want)
 			}
@@ -106,7 +106,7 @@ func TestNewEntry(t *testing.T) {
 // 		},
 // 	}
 // 	for _, tt := range tests {
-// 		t.Run(tt.name, func(t *testing.T) {
+// 		t.Run(tt.name, func(_ *testing.T) {
 // 			if tt.preFunc != nil {
 // 				tt.preFunc()
 // 			}

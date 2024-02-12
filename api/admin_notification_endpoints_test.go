@@ -61,7 +61,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -94,7 +94,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, errors.New("error")
 			},
 			want:    nil,
@@ -118,7 +118,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -149,7 +149,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -178,7 +178,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -208,7 +208,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -240,7 +240,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -273,7 +273,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -305,7 +305,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -335,7 +335,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -365,7 +365,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -397,7 +397,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, errors.New("invalid config")
 			},
 			want:    nil,
@@ -421,7 +421,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 					},
 				},
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return true, nil
 			},
 			want: &models.SetNotificationEndpointResponse{
@@ -438,7 +438,7 @@ func Test_addNotificationEndpoint(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// mock function response from setConfig()
 			minioSetConfigKVMock = tt.mockSetConfig
 			got, err := addNotificationEndpoint(tt.args.ctx, tt.args.client, tt.args.params)

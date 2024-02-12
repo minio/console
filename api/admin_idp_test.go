@@ -46,7 +46,7 @@ type IDPTestSuite struct {
 func (suite *IDPTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
 	suite.adminClient = AdminClientMock{}
-	minioServiceRestartMock = func(ctx context.Context) error {
+	minioServiceRestartMock = func(_ context.Context) error {
 		return nil
 	}
 }
@@ -270,7 +270,7 @@ func TestGetEntitiesResult(t *testing.T) {
 		GroupMappings:  groupsMap,
 		UserMappings:   usersMap,
 	}
-	minioGetLDAPPolicyEntitiesMock = func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+	minioGetLDAPPolicyEntitiesMock = func(_ context.Context, _ madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
 		return mockResponse, nil
 	}
 
@@ -308,7 +308,7 @@ func TestGetEntitiesResult(t *testing.T) {
 	}
 
 	// Test-2: getEntitiesResult error is returned from getLDAPPolicyEntities()
-	minioGetLDAPPolicyEntitiesMock = func(ctx context.Context, query madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
+	minioGetLDAPPolicyEntitiesMock = func(_ context.Context, _ madmin.PolicyEntitiesQuery) (madmin.PolicyEntitiesResult, error) {
 		return madmin.PolicyEntitiesResult{}, errors.New("error")
 	}
 

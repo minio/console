@@ -183,7 +183,7 @@ func Test_ServiceAccountsAPI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -290,7 +290,7 @@ func TestCreateServiceAccountForUserWithCredentials(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 2. Create the service account for the user
 			createServiceAccountWithCredentialsResponse,
 				createServiceAccountWithCredentialsError := CreateServiceAccountForUserWithCredentials(

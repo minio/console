@@ -81,7 +81,7 @@ func TestGetLifecycleRules(t *testing.T) {
 		},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycle, nil
 	}
 
@@ -110,7 +110,7 @@ func TestGetLifecycleRules(t *testing.T) {
 		Lifecycle: []*models.ObjectBucketLifecycle{},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycleT2, nil
 	}
 
@@ -123,7 +123,7 @@ func TestGetLifecycleRules(t *testing.T) {
 
 	// Test-3 : getBucketLifecycle() get list of events returns an error
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return nil, errors.New("error returned")
 	}
 
@@ -159,7 +159,7 @@ func TestSetLifecycleRule(t *testing.T) {
 		},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycle, nil
 	}
 
@@ -182,7 +182,7 @@ func TestSetLifecycleRule(t *testing.T) {
 		},
 	}
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return nil
 	}
 
@@ -192,7 +192,7 @@ func TestSetLifecycleRule(t *testing.T) {
 
 	// Test-2 : addBucketLifecycle() returns error
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return errors.New("error setting lifecycle")
 	}
 
@@ -223,7 +223,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 		},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycle, nil
 	}
 
@@ -249,7 +249,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 		LifecycleID: "TESTRULE",
 	}
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return nil
 	}
 
@@ -277,7 +277,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 		LifecycleID: "TESTRULE",
 	}
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return nil
 	}
 
@@ -287,7 +287,7 @@ func TestUpdateLifecycleRule(t *testing.T) {
 
 	// Test-3 : editBucketLifecycle() returns error
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return errors.New("error setting lifecycle")
 	}
 
@@ -305,7 +305,7 @@ func TestDeleteLifecycleRule(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	minioSetBucketLifecycleMock = func(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
+	minioSetBucketLifecycleMock = func(_ context.Context, _ string, _ *lifecycle.Configuration) error {
 		return nil
 	}
 
@@ -328,7 +328,7 @@ func TestDeleteLifecycleRule(t *testing.T) {
 		},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycle, nil
 	}
 
@@ -360,7 +360,7 @@ func TestDeleteLifecycleRule(t *testing.T) {
 		Rules: []lifecycle.Rule{},
 	}
 
-	minioGetLifecycleRulesMock = func(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
+	minioGetLifecycleRulesMock = func(_ context.Context, _ string) (lifecycle *lifecycle.Configuration, err error) {
 		return &mockLifecycle2, nil
 	}
 
