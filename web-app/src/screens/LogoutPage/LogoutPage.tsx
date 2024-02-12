@@ -28,25 +28,24 @@ const LogoutPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   useEffect(() => {
+    const deleteSession = () => {
+      dispatch(userLogged(false));
+      // Disconnect OB Websocket
+      dispatch({ type: "socket/OBDisconnect" });
+      localStorage.setItem("userLoggedIn", "");
+      localStorage.setItem("redirect-path", "");
+      dispatch(resetSession());
+      clearSession();
+
+      navigate("/login");
+      window.location.reload(); //reset-all redux states etc. by force reloading.
+    };
+
     const logout = () => {
-      const deleteSession = () => {
-        clearSession();
-        dispatch(userLogged(false));
-
-        // Disconnect OB Websocket
-        dispatch({ type: "socket/OBDisconnect" });
-
-        localStorage.setItem("userLoggedIn", "");
-        localStorage.setItem("redirect-path", "");
-        dispatch(resetSession());
-        navigate(`/login`);
-      };
       const state = localStorage.getItem("auth-state");
       api
         .invoke("POST", `/api/v1/logout`, { state })
-        .then(() => {
-          deleteSession();
-        })
+        .then(deleteSession)
         .catch((err: ErrorResponseHandler) => {
           console.error(err);
           deleteSession();
