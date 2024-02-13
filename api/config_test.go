@@ -54,7 +54,7 @@ func TestGetPort(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsolePort, tt.args.env)
 			assert.Equalf(t, tt.want, GetPort(), "GetPort()")
 			os.Unsetenv(ConsolePort)
@@ -87,7 +87,7 @@ func TestGetTLSPort(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleTLSPort, tt.args.env)
 			assert.Equalf(t, tt.want, GetTLSPort(), "GetTLSPort()")
 			os.Unsetenv(ConsoleTLSPort)
@@ -120,7 +120,7 @@ func TestGetSecureAllowedHosts(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleSecureAllowedHosts, tt.args.env)
 			assert.Equalf(t, tt.want, GetSecureAllowedHosts(), "GetSecureAllowedHosts()")
 			os.Unsetenv(ConsoleSecureAllowedHosts)
@@ -153,7 +153,7 @@ func TestGetSecureHostsProxyHeaders(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleSecureHostsProxyHeaders, tt.args.env)
 			assert.Equalf(t, tt.want, GetSecureHostsProxyHeaders(), "GetSecureHostsProxyHeaders()")
 			os.Unsetenv(ConsoleSecureHostsProxyHeaders)
@@ -186,7 +186,7 @@ func TestGetSecureSTSSeconds(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleSecureSTSSeconds, tt.args.env)
 			assert.Equalf(t, tt.want, GetSecureSTSSeconds(), "GetSecureSTSSeconds()")
 			os.Unsetenv(ConsoleSecureSTSSeconds)
@@ -219,7 +219,7 @@ func Test_getLogSearchAPIToken(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleLogQueryAuthToken, tt.args.env)
 			assert.Equalf(t, tt.want, getLogSearchAPIToken(), "getLogSearchAPIToken()")
 			os.Setenv(ConsoleLogQueryAuthToken, tt.args.env)
@@ -252,7 +252,7 @@ func Test_getPrometheusURL(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(PrometheusURL, tt.args.env)
 			assert.Equalf(t, tt.want, getPrometheusURL(), "getPrometheusURL()")
 			os.Setenv(PrometheusURL, tt.args.env)
@@ -285,7 +285,7 @@ func Test_getPrometheusJobID(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(PrometheusJobID, tt.args.env)
 			assert.Equalf(t, tt.want, getPrometheusJobID(), "getPrometheusJobID()")
 			os.Setenv(PrometheusJobID, tt.args.env)
@@ -318,7 +318,7 @@ func Test_getMaxConcurrentUploadsLimit(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleMaxConcurrentUploads, tt.args.env)
 			assert.Equalf(t, tt.want, getMaxConcurrentUploadsLimit(), "getMaxConcurrentUploadsLimit()")
 			os.Unsetenv(ConsoleMaxConcurrentUploads)
@@ -351,7 +351,7 @@ func Test_getMaxConcurrentDownloadsLimit(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleMaxConcurrentDownloads, tt.args.env)
 			assert.Equalf(t, tt.want, getMaxConcurrentDownloadsLimit(), "getMaxConcurrentDownloadsLimit()")
 			os.Unsetenv(ConsoleMaxConcurrentDownloads)
@@ -384,7 +384,7 @@ func Test_getConsoleDevMode(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			os.Setenv(ConsoleDevMode, tt.args.env)
 			assert.Equalf(t, tt.want, getConsoleDevMode(), "getConsoleDevMode()")
 			os.Unsetenv(ConsoleDevMode)

@@ -52,7 +52,7 @@ func Test_subnetBaseURL(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.args.env != nil {
 				for k, v := range tt.args.env {
 					os.Setenv(k, v)
@@ -102,7 +102,7 @@ func Test_subnetRegisterURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetRegisterURL(); got != tt.want {
 				t.Errorf("subnetRegisterURL() = %v, want %v", got, tt.want)
 			}
@@ -147,7 +147,7 @@ func Test_subnetLoginURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetLoginURL(); got != tt.want {
 				t.Errorf("subnetLoginURL() = %v, want %v", got, tt.want)
 			}
@@ -192,7 +192,7 @@ func Test_subnetOrgsURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetOrgsURL(); got != tt.want {
 				t.Errorf("subnetOrgsURL() = %v, want %v", got, tt.want)
 			}
@@ -237,7 +237,7 @@ func Test_subnetMFAURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetMFAURL(); got != tt.want {
 				t.Errorf("subnetMFAURL() = %v, want %v", got, tt.want)
 			}
@@ -282,7 +282,7 @@ func Test_subnetAPIKeyURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetAPIKeyURL(); got != tt.want {
 				t.Errorf("subnetAPIKeyURL() = %v, want %v", got, tt.want)
 			}
@@ -327,7 +327,7 @@ func TestLogWebhookURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := LogWebhookURL(); got != tt.want {
 				t.Errorf("LogWebhookURL() = %v, want %v", got, tt.want)
 			}
@@ -378,7 +378,7 @@ func TestUploadURL(t *testing.T) {
 				os.Setenv(k, v)
 			}
 		}
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := UploadURL(tt.args.uploadType, tt.args.filename); got != tt.want {
 				t.Errorf("UploadURL() = %v, want %v", got, tt.want)
 			}
@@ -409,7 +409,7 @@ func TestUploadAuthHeaders(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := UploadAuthHeaders(tt.args.apiKey); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UploadAuthHeaders() = %v, want %v", got, tt.want)
 			}
@@ -442,7 +442,7 @@ func TestGenerateRegToken(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got, err := GenerateRegToken(tt.args.clusterRegInfo)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateRegToken() error = %v, wantErr %v", err, tt.wantErr)
@@ -473,7 +473,7 @@ func Test_subnetAuthHeaders(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetAuthHeaders(tt.args.authToken); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("subnetAuthHeaders() = %v, want %v", got, tt.want)
 			}
@@ -594,7 +594,7 @@ func Test_getDriveSpaceInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got, got1 := getDriveSpaceInfo(tt.args.admInfo)
 			if got != tt.want {
 				t.Errorf("getDriveSpaceInfo() got = %v, want %v", got, tt.want)

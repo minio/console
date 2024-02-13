@@ -97,8 +97,8 @@ func TestLogSearch(t *testing.T) {
 
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			testRequest := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		t.Run(tt.name, func(_ *testing.T) {
+			testRequest := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(tt.args.apiResponseCode)
 				fmt.Fprintln(w, tt.args.apiResponse)
 			}))

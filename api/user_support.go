@@ -166,7 +166,6 @@ func configureCallHomeDiagnostics(ctx context.Context, client MinioAdmin, diagSt
 	}
 	configStr := "callhome enable=" + enableStr
 	_, err = client.setConfigKV(ctx, configStr)
-
 	if err != nil {
 		return err
 	}
@@ -205,13 +204,11 @@ func setCallHomeConfiguration(ctx context.Context, client MinioAdmin, diagState,
 	}
 
 	err = configureCallHomeDiagnostics(ctx, client, diagState)
-
 	if err != nil {
 		return err
 	}
 
 	err = configureCallHomeLogs(ctx, client, logsState, apiKey)
-
 	if err != nil {
 		return err
 	}

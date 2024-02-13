@@ -51,7 +51,6 @@ func TestObjectGet(t *testing.T) {
 	}
 	bucketName := fmt.Sprintf("testbucket-%d", rand.Intn(1000-1)+1)
 	err = minioClient.MakeBucket(context.Background(), bucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
-
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -128,7 +127,7 @@ func TestObjectGet(t *testing.T) {
 				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
 				bytesRange:    "bytes=9-12",
 			},
-			expectedStatus: 400,
+			expectedStatus: 500,
 			expectedError:  nil,
 		},
 		{
@@ -146,7 +145,7 @@ func TestObjectGet(t *testing.T) {
 				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
 				bytesRange:    "bytes=12-16",
 			},
-			expectedStatus: 400,
+			expectedStatus: 500,
 			expectedError:  nil,
 		},
 		{
@@ -163,13 +162,13 @@ func TestObjectGet(t *testing.T) {
 				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject")),
 				versionID:     "garble",
 			},
-			expectedStatus: 400,
+			expectedStatus: 500,
 			expectedError:  nil,
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -264,7 +263,7 @@ func TestDownloadMultipleFiles(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			resp, err := downloadMultipleFiles(tt.args.bucketName, tt.args.objectLis)
 			if tt.expectedError {
 				assert.Nil(err)

@@ -52,7 +52,7 @@ func TestStartProfiling(t *testing.T) {
 
 	// Test-1 : startProfiling() Get response from MinIO server with one profiling object without errors
 	// mock function response from startProfiling()
-	minioStartProfiling = func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+	minioStartProfiling = func(_ madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 		return []madmin.StartProfilingResult{
 			{
 				NodeName: "http://127.0.0.1:9000/",
@@ -71,7 +71,7 @@ func TestStartProfiling(t *testing.T) {
 		return &ClosingBuffer{bytes.NewBufferString("In memory string eaeae")}, nil
 	}
 	// mock function response from mockConn.writeMessage()
-	connWriteMessageMock = func(messageType int, p []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return nil
 	}
 	err := startProfiling(ctx, mockWSConn, adminClient, testOptions)
@@ -82,7 +82,7 @@ func TestStartProfiling(t *testing.T) {
 
 	// Test-2 : startProfiling() Correctly handles errors returned by MinIO
 	// mock function response from startProfiling()
-	minioStartProfiling = func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+	minioStartProfiling = func(_ madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
 		return nil, errors.New("error")
 	}
 	err = startProfiling(ctx, mockWSConn, adminClient, testOptions)

@@ -70,7 +70,7 @@ func Test_parseSubPath(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, parseSubPath(tt.args.v), "parseSubPath(%v)", tt.args.v)
 		})
 	}
@@ -115,7 +115,7 @@ func Test_getSubPath(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			t.Setenv(SubPath, tt.args.envValue)
 			defer os.Unsetenv(SubPath)
 			subPathOnce = sync.Once{}

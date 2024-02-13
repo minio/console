@@ -135,7 +135,6 @@ func TestMain(t *testing.T) {
 	fmt.Println(body)
 
 	err = json.Unmarshal(body, &jsonMap)
-
 	if err != nil {
 		fmt.Printf("error JSON Unmarshal %s\n", err)
 	}

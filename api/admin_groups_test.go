@@ -130,7 +130,7 @@ func TestGroupInfo(t *testing.T) {
 		Status:  "enabled",
 	}
 	// mock function response from updateGroupMembers()
-	minioGetGroupDescriptionMock = func(group string) (*madmin.GroupDesc, error) {
+	minioGetGroupDescriptionMock = func(_ string) (*madmin.GroupDesc, error) {
 		return mockResponse, nil
 	}
 	function := "groupInfo()"
@@ -144,7 +144,7 @@ func TestGroupInfo(t *testing.T) {
 	assert.Equal("enabled", info.Status)
 
 	// Test-2 : groupInfo() Return error and see that the error is handled correctly and returned
-	minioGetGroupDescriptionMock = func(group string) (*madmin.GroupDesc, error) {
+	minioGetGroupDescriptionMock = func(_ string) (*madmin.GroupDesc, error) {
 		return nil, errors.New("error")
 	}
 	_, err = groupInfo(ctx, adminClient, groupName)
@@ -226,7 +226,7 @@ func TestUpdateGroup(t *testing.T) {
 	// the function twice but the second time returned an error
 	is2ndRunGroupInfo := false
 	// mock function response from updateGroupMembers()
-	minioGetGroupDescriptionMock = func(group string) (*madmin.GroupDesc, error) {
+	minioGetGroupDescriptionMock = func(_ string) (*madmin.GroupDesc, error) {
 		if is2ndRunGroupInfo {
 			return mockResponseAfterUpdate, nil
 		}
@@ -236,7 +236,7 @@ func TestUpdateGroup(t *testing.T) {
 	minioUpdateGroupMembersMock = func(madmin.GroupAddRemove) error {
 		return nil
 	}
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
+	minioSetGroupStatusMock = func(_ string, _ madmin.GroupStatus) error {
 		return nil
 	}
 	groupUpdated, err := groupUpdate(ctx, adminClient, groupName, expectedGroupUpdate)
@@ -258,7 +258,7 @@ func TestSetGroupStatus(t *testing.T) {
 	defer cancel()
 	// Test-1: setGroupStatus() update valid disabled status
 	expectedStatus := "disabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
+	minioSetGroupStatusMock = func(_ string, _ madmin.GroupStatus) error {
 		return nil
 	}
 	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); err != nil {
@@ -266,7 +266,7 @@ func TestSetGroupStatus(t *testing.T) {
 	}
 	// Test-2: setGroupStatus() update valid enabled status
 	expectedStatus = "enabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
+	minioSetGroupStatusMock = func(_ string, _ madmin.GroupStatus) error {
 		return nil
 	}
 	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); err != nil {
@@ -274,7 +274,7 @@ func TestSetGroupStatus(t *testing.T) {
 	}
 	// Test-3: setGroupStatus() update invalid status, should send error
 	expectedStatus = "invalid"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
+	minioSetGroupStatusMock = func(_ string, _ madmin.GroupStatus) error {
 		return nil
 	}
 	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); assert.Error(err) {
@@ -282,7 +282,7 @@ func TestSetGroupStatus(t *testing.T) {
 	}
 	// Test-4: setGroupStatus() handler error correctly
 	expectedStatus = "enabled"
-	minioSetGroupStatusMock = func(group string, status madmin.GroupStatus) error {
+	minioSetGroupStatusMock = func(_ string, _ madmin.GroupStatus) error {
 		return errors.New("error")
 	}
 	if err := setGroupStatus(ctx, adminClient, groupName, expectedStatus); assert.Error(err) {

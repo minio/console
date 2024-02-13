@@ -51,7 +51,7 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline:     deadlineDuration,
 				mockMessages: []madmin.HealthInfo{{}, {}},
-				wsWriteMock: func(messageType int, data []byte) error {
+				wsWriteMock: func(_ int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
 					var t madmin.HealthInfo
@@ -67,7 +67,7 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline:     deadlineDuration,
 				mockMessages: []madmin.HealthInfo{{}},
-				wsWriteMock: func(messageType int, data []byte) error {
+				wsWriteMock: func(_ int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
 					var t madmin.HealthInfo
@@ -83,7 +83,7 @@ func Test_serverHealthInfo(t *testing.T) {
 			args: args{
 				deadline:     deadlineDuration,
 				mockMessages: []madmin.HealthInfo{{}},
-				wsWriteMock: func(messageType int, data []byte) error {
+				wsWriteMock: func(_ int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
 					var t madmin.HealthInfo
@@ -102,7 +102,7 @@ func Test_serverHealthInfo(t *testing.T) {
 						Error: "error on healthInfo",
 					},
 				},
-				wsWriteMock: func(messageType int, data []byte) error {
+				wsWriteMock: func(_ int, data []byte) error {
 					// mock connection WriteMessage() no error
 					// emulate that receiver gets the message written
 					var t madmin.HealthInfo
@@ -115,12 +115,12 @@ func Test_serverHealthInfo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			// make testReceiver channel
 			testReceiver = make(chan madmin.HealthInfo, len(tt.args.mockMessages))
 			// mock function same for all tests, changes mockMessages
-			minioServerHealthInfoMock = func(ctx context.Context, healthDataTypes []madmin.HealthDataType,
-				deadline time.Duration,
+			minioServerHealthInfoMock = func(_ context.Context, _ []madmin.HealthDataType,
+				_ time.Duration,
 			) (interface{}, string, error) {
 				info := tt.args.mockMessages[0]
 				return info, madmin.HealthInfoVersion, nil

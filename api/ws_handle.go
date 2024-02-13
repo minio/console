@@ -164,7 +164,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	// can't validate the proper Origin since we don't know the source domain, so we are going
 	// to allow the connection to be upgraded in this case.
 	if getSubPath() != "/" || getConsoleDevMode() {
-		upgrader.CheckOrigin = func(r *http.Request) bool {
+		upgrader.CheckOrigin = func(_ *http.Request) bool {
 			return true
 		}
 	}

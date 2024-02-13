@@ -46,13 +46,13 @@ func Test_getCallHomeRule(t *testing.T) {
 				ctx:     ctx,
 				session: nil,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{}, errors.New("feature is not supported")
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte{}, nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -69,7 +69,7 @@ func Test_getCallHomeRule(t *testing.T) {
 				ctx:     ctx,
 				session: nil,
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -79,7 +79,7 @@ func Test_getCallHomeRule(t *testing.T) {
 					},
 				}, nil
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "callhome",
 					Description:     "enable callhome for the cluster",
@@ -90,7 +90,7 @@ func Test_getCallHomeRule(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`callhome:_ frequency=24h enable=on`), nil
 			},
 			want: &models.CallHomeGetResponse{
@@ -104,7 +104,7 @@ func Test_getCallHomeRule(t *testing.T) {
 				ctx:     ctx,
 				session: nil,
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -114,7 +114,7 @@ func Test_getCallHomeRule(t *testing.T) {
 					},
 				}, nil
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "callhome",
 					Description:     "enable callhome for the cluster",
@@ -125,7 +125,7 @@ func Test_getCallHomeRule(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`callhome:_ frequency=24h enable=off`), nil
 			},
 			want: &models.CallHomeGetResponse{
@@ -136,7 +136,7 @@ func Test_getCallHomeRule(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			adminClient := AdminClientMock{}
 
 			minioGetConfigKVMock = tt.getConfigKV
@@ -181,13 +181,13 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 				session:   nil,
 				diagState: false,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{}, errors.New("feature is not supported")
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte{}, nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -195,7 +195,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					KeysHelp:        madmin.HelpKVS{},
 				}, nil
 			},
-			setConfigEnv: func(kv string) (restart bool, err error) {
+			setConfigEnv: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr: true,
@@ -208,7 +208,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 				session:   nil,
 				diagState: false,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "subnet",
 					Description:     "set subnet config for the cluster e.g. api key",
@@ -220,10 +220,10 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`subnet license= api_key= proxy=http://127.0.0.1 `), nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -233,7 +233,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			setConfigEnv: func(kv string) (restart bool, err error) {
+			setConfigEnv: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr: true,
@@ -246,7 +246,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 				session:   nil,
 				diagState: true,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "subnet",
 					Description:     "set subnet config for the cluster e.g. api key",
@@ -258,10 +258,10 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`subnet license= api_key=testAPIKey proxy=http://127.0.0.1 `), nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -271,7 +271,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			setConfigEnv: func(kv string) (restart bool, err error) {
+			setConfigEnv: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr: false,
@@ -284,7 +284,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 				session:   nil,
 				diagState: false,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "subnet",
 					Description:     "set subnet config for the cluster e.g. api key",
@@ -296,10 +296,10 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`subnet license= api_key=testAPIKey proxy=http://127.0.0.1 `), nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -309,7 +309,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			setConfigEnv: func(kv string) (restart bool, err error) {
+			setConfigEnv: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr: false,
@@ -322,7 +322,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 				session:   nil,
 				diagState: false,
 			},
-			helpConfigKV: func(subSys, key string, envOnly bool) (madmin.Help, error) {
+			helpConfigKV: func(_, _ string, _ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "subnet",
 					Description:     "set subnet config for the cluster e.g. api key",
@@ -334,10 +334,10 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			getConfigKV: func(key string) ([]byte, error) {
+			getConfigKV: func(_ string) ([]byte, error) {
 				return []byte(`subnet license= api_key=testAPIKey proxy=http://127.0.0.1 `), nil
 			},
-			helpConfigKVGlobal: func(envOnly bool) (madmin.Help, error) {
+			helpConfigKVGlobal: func(_ bool) (madmin.Help, error) {
 				return madmin.Help{
 					SubSys:          "",
 					Description:     "",
@@ -347,7 +347,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 					},
 				}, nil
 			},
-			setConfigEnv: func(kv string) (restart bool, err error) {
+			setConfigEnv: func(_ string) (restart bool, err error) {
 				return false, errors.New("new error detected")
 			},
 			wantErr: true,
@@ -356,7 +356,7 @@ func Test_setCallHomeConfiguration(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			adminClient := AdminClientMock{}
 
 			minioGetConfigKVMock = tt.getConfigKV
