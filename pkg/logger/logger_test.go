@@ -174,7 +174,7 @@ func TestInitializeLogger(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.setEnvVars != nil {
 				tt.setEnvVars()
 			}
@@ -197,7 +197,7 @@ func TestEnableJSON(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			EnableJSON()
 			if !IsJSON() {
 				t.Errorf("EnableJSON() = %v, want %v", IsJSON(), true)
@@ -215,7 +215,7 @@ func TestEnableQuiet(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			EnableQuiet()
 			if !IsQuiet() {
 				t.Errorf("EnableQuiet() = %v, want %v", IsQuiet(), true)
@@ -233,7 +233,7 @@ func TestEnableAnonymous(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			EnableAnonymous()
 			if !IsAnonymous() {
 				t.Errorf("EnableAnonymous() = %v, want %v", IsAnonymous(), true)

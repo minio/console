@@ -61,7 +61,7 @@ func TestGenerateLoginURL(t *testing.T) {
 		oauth2Config: Oauth2configMock{},
 	}
 	// Test-1 : GenerateLoginURL() generates URL correctly with provided state
-	oauth2ConfigAuthCodeURLMock = func(state string, opts ...oauth2.AuthCodeOption) string {
+	oauth2ConfigAuthCodeURLMock = func(state string, _ ...oauth2.AuthCodeOption) string {
 		// Internally we are testing the private method getRandomStateWithHMAC, this function should always returns
 		// a non-empty string
 		return state

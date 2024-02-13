@@ -83,7 +83,7 @@ func TestRemovePolicy(t *testing.T) {
 	adminClient := AdminClientMock{}
 	// Test-1 : removePolicy() remove an existing policy
 	policyToRemove := "console-policy"
-	minioRemovePolicyMock = func(name string) error {
+	minioRemovePolicyMock = func(_ string) error {
 		return nil
 	}
 	function := "removePolicy()"
@@ -91,7 +91,7 @@ func TestRemovePolicy(t *testing.T) {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// Test-2 : removePolicy() Return error and see that the error is handled correctly and returned
-	minioRemovePolicyMock = func(name string) error {
+	minioRemovePolicyMock = func(_ string) error {
 		return errors.New("error")
 	}
 	if err := removePolicy(ctx, adminClient, policyToRemove); funcAssert.Error(err) {
@@ -106,10 +106,10 @@ func TestAddPolicy(t *testing.T) {
 	adminClient := AdminClientMock{}
 	policyName := "new-policy"
 	policyDefinition := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"
-	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
+	minioAddPolicyMock = func(_ string, _ *iampolicy.Policy) error {
 		return nil
 	}
-	minioGetPolicyMock = func(name string) (*iampolicy.Policy, error) {
+	minioGetPolicyMock = func(_ string) (*iampolicy.Policy, error) {
 		policy := "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::*\"]}]}"
 		iamp, err := iampolicy.ParseConfig(bytes.NewReader([]byte(policy)))
 		if err != nil {
@@ -138,17 +138,17 @@ func TestAddPolicy(t *testing.T) {
 		funcAssert.Equal(expectedPolicy, actualPolicy)
 	}
 	// Test-2 : addPolicy() got an error while adding policy
-	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
+	minioAddPolicyMock = func(_ string, _ *iampolicy.Policy) error {
 		return errors.New("error")
 	}
 	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); funcAssert.Error(err) {
 		funcAssert.Equal("error", err.Error())
 	}
 	// Test-3 : addPolicy() got an error while retrieving policy
-	minioAddPolicyMock = func(name string, policy *iampolicy.Policy) error {
+	minioAddPolicyMock = func(_ string, _ *iampolicy.Policy) error {
 		return nil
 	}
-	minioGetPolicyMock = func(name string) (*iampolicy.Policy, error) {
+	minioGetPolicyMock = func(_ string) (*iampolicy.Policy, error) {
 		return nil, errors.New("error")
 	}
 	if _, err := addPolicy(ctx, adminClient, policyName, policyDefinition); funcAssert.Error(err) {
@@ -164,7 +164,7 @@ func TestSetPolicy(t *testing.T) {
 	policyName := "readOnly"
 	entityName := "alevsk"
 	entityObject := models.PolicyEntityUser
-	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
+	minioSetPolicyMock = func(_, _ string, _ bool) error {
 		return nil
 	}
 	// Test-1 : SetPolicy() set policy to user
@@ -181,7 +181,7 @@ func TestSetPolicy(t *testing.T) {
 	}
 	// Test-3 : SetPolicy() set policy to user and get error
 	entityObject = models.PolicyEntityUser
-	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
+	minioSetPolicyMock = func(_, _ string, _ bool) error {
 		return errors.New("error")
 	}
 	if err := SetPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
@@ -189,7 +189,7 @@ func TestSetPolicy(t *testing.T) {
 	}
 	// Test-4 : SetPolicy() set policy to group and get error
 	entityObject = models.PolicyEntityGroup
-	minioSetPolicyMock = func(policyName, entityName string, isGroup bool) error {
+	minioSetPolicyMock = func(_, _ string, _ bool) error {
 		return errors.New("error")
 	}
 	if err := SetPolicy(ctx, adminClient, policyName, entityName, entityObject); funcAssert.Error(err) {
@@ -219,7 +219,7 @@ func Test_SetPolicyMultiple(t *testing.T) {
 				policyName: "readonly",
 				users:      []models.IamEntity{"user1", "user2"},
 				groups:     []models.IamEntity{"group1", "group2"},
-				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+				setPolicyFunc: func(_, _ string, _ bool) error {
 					return nil
 				},
 			},
@@ -231,7 +231,7 @@ func Test_SetPolicyMultiple(t *testing.T) {
 				policyName: "readonly",
 				users:      []models.IamEntity{"user1", "user2"},
 				groups:     []models.IamEntity{"group1", "group2"},
-				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+				setPolicyFunc: func(_, _ string, _ bool) error {
 					return errors.New("error set")
 				},
 			},
@@ -244,7 +244,7 @@ func Test_SetPolicyMultiple(t *testing.T) {
 				policyName: "readonly",
 				users:      []models.IamEntity{},
 				groups:     []models.IamEntity{},
-				setPolicyFunc: func(policyName, entityName string, isGroup bool) error {
+				setPolicyFunc: func(_, _ string, _ bool) error {
 					return nil
 				},
 			},
@@ -252,7 +252,7 @@ func Test_SetPolicyMultiple(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioSetPolicyMock = tt.args.setPolicyFunc
 			got := setPolicyMultipleEntities(ctx, adminClient, tt.args.policyName, tt.args.users, tt.args.groups)
 			if !reflect.DeepEqual(got, tt.errorExpected) {
@@ -373,7 +373,7 @@ func Test_policyMatchesBucket(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := policyMatchesBucket(tt.args.ctx, tt.args.policy, tt.args.bucket); got != tt.want {
 				t.Errorf("policyMatchesBucket() = %v, want %v", got, tt.want)
 			}

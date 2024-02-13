@@ -40,7 +40,7 @@ func TestStartProfiling(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			files := map[string]bool{
 				"profile-127.0.0.1:9000-goroutines.txt":                false,
 				"profile-127.0.0.1:9000-goroutines-before.txt":         false,

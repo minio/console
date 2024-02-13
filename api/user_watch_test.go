@@ -81,7 +81,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-1: Serve Watch with no errors until Watch finishes sending
 	// define mock function behavior
-	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(_ context.Context, _ mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),
@@ -109,7 +109,7 @@ func TestWatch(t *testing.T) {
 	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, data []byte) error {
 		// emulate that receiver gets the message written
 		var t []mc.EventInfo
 		_ = json.Unmarshal(data, &t)
@@ -136,7 +136,7 @@ func TestWatch(t *testing.T) {
 	}
 
 	// Test-2: if error happens while writing, return error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return fmt.Errorf("error on write")
 	}
 	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
@@ -145,7 +145,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-3: error happens on Watch, watch should stop
 	// and error shall be returned.
-	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(_ context.Context, _ mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),
@@ -171,7 +171,7 @@ func TestWatch(t *testing.T) {
 		}(wo)
 		return wo, nil
 	}
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return nil
 	}
 	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
@@ -180,7 +180,7 @@ func TestWatch(t *testing.T) {
 
 	// Test-4: error happens on Watch, watch should stop
 	// and error shall be returned.
-	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(_ context.Context, _ mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		return nil, &probe.Error{Cause: fmt.Errorf("error on watch")}
 	}
 	if err := startWatch(ctx, mockWSConn, client, testOptions); assert.Error(err) {
@@ -188,7 +188,7 @@ func TestWatch(t *testing.T) {
 	}
 
 	// Test-5: return nil on error on watch
-	mcWatchMock = func(ctx context.Context, params mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
+	mcWatchMock = func(_ context.Context, _ mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 		wo := &mc.WatchObject{
 			EventInfoChan: make(chan []mc.EventInfo),
 			ErrorChan:     make(chan *probe.Error),

@@ -41,7 +41,7 @@ func TestAdminTrace(t *testing.T) {
 
 	// Test-1: Serve Trace with no errors until trace finishes sending
 	// define mock function behavior for minio server Trace
-	minioServiceTraceMock = func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	minioServiceTraceMock = func(_ context.Context, _ int64, _, _, _, _, _ bool) <-chan madmin.ServiceTraceInfo {
 		ch := make(chan madmin.ServiceTraceInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.ServiceTraceInfo) {
@@ -59,7 +59,7 @@ func TestAdminTrace(t *testing.T) {
 	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, data []byte) error {
 		// emulate that receiver gets the message written
 		var t shortTraceMsg
 		_ = json.Unmarshal(data, &t)
@@ -84,7 +84,7 @@ func TestAdminTrace(t *testing.T) {
 	}
 
 	// Test-2: if error happens while writing, return error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return fmt.Errorf("error on write")
 	}
 	if err := startTraceInfo(ctx, mockWSConn, adminClient, TraceRequest{}); assert.Error(err) {
@@ -93,7 +93,7 @@ func TestAdminTrace(t *testing.T) {
 
 	// Test-3: error happens on serviceTrace Minio, trace should stop
 	// and error shall be returned.
-	minioServiceTraceMock = func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo {
+	minioServiceTraceMock = func(_ context.Context, _ int64, _, _, _, _, _ bool) <-chan madmin.ServiceTraceInfo {
 		ch := make(chan madmin.ServiceTraceInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.ServiceTraceInfo) {
@@ -110,7 +110,7 @@ func TestAdminTrace(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return nil
 	}
 	if err := startTraceInfo(ctx, mockWSConn, adminClient, TraceRequest{}); assert.Error(err) {

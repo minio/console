@@ -122,7 +122,7 @@ func TestError(t *testing.T) {
 		})
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got := Error(tt.args.err...)
 			assert.Equalf(t, tt.want.Code, got.Code, "Error(%v) Got (%v)", tt.want.Code, got.Code)
 			assert.Equalf(t, tt.want.APIError.DetailedMessage, got.APIError.DetailedMessage, "Error(%s) Got (%s)", tt.want.APIError.DetailedMessage, got.APIError.DetailedMessage)
@@ -152,7 +152,7 @@ func TestErrorWithContext(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, ErrorWithContext(tt.args.ctx, tt.args.err...), "ErrorWithContext(%v, %v)", tt.args.ctx, tt.args.err)
 		})
 	}

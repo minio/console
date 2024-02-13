@@ -72,7 +72,7 @@ func TestGetSiteReplicationInfo(t *testing.T) {
 		ServiceAccountAccessKey: "test-key",
 	}
 
-	getSiteReplicationInfo = func(ctx context.Context) (info *madmin.SiteReplicationInfo, err error) {
+	getSiteReplicationInfo = func(_ context.Context) (info *madmin.SiteReplicationInfo, err error) {
 		return &retValueMock, nil
 	}
 
@@ -104,7 +104,7 @@ func TestAddSiteReplicationInfo(t *testing.T) {
 		InitialSyncErrorMessage: "",
 	}
 
-	addSiteReplicationInfo = func(ctx context.Context, sites []madmin.PeerSite) (res *madmin.ReplicateAddStatus, err error) {
+	addSiteReplicationInfo = func(_ context.Context, _ []madmin.PeerSite) (res *madmin.ReplicateAddStatus, err error) {
 		return retValueMock, nil
 	}
 
@@ -149,7 +149,7 @@ func TestEditSiteReplicationInfo(t *testing.T) {
 		ErrDetail: "",
 	}
 
-	editSiteReplicationInfo = func(ctx context.Context, site madmin.PeerInfo) (res *madmin.ReplicateEditStatus, err error) {
+	editSiteReplicationInfo = func(_ context.Context, _ madmin.PeerInfo) (res *madmin.ReplicateEditStatus, err error) {
 		return retValueMock, nil
 	}
 
@@ -183,7 +183,7 @@ func TestDeleteSiteReplicationInfo(t *testing.T) {
 		ErrDetail: "",
 	}
 
-	deleteSiteReplicationInfoMock = func(ctx context.Context, removeReq madmin.SRRemoveReq) (res *madmin.ReplicateRemoveStatus, err error) {
+	deleteSiteReplicationInfoMock = func(_ context.Context, _ madmin.SRRemoveReq) (res *madmin.ReplicateRemoveStatus, err error) {
 		return retValueMock, nil
 	}
 
@@ -236,7 +236,7 @@ func TestSiteReplicationStatus(t *testing.T) {
 		GroupStats:   nil,
 	}
 
-	getSiteReplicationStatus = func(ctx context.Context, params madmin.SRStatusOptions) (info *madmin.SRStatusInfo, err error) {
+	getSiteReplicationStatus = func(_ context.Context, _ madmin.SRStatusOptions) (info *madmin.SRStatusInfo, err error) {
 		return &retValueMock, nil
 	}
 

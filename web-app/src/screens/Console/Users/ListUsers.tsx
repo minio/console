@@ -279,7 +279,7 @@ const ListUsers = () => {
               <TooltipWrapper
                 tooltip={
                   hasPermission(
-                    "console",
+                    "console-ui",
                     [
                       IAM_SCOPES.ADMIN_CREATE_USER,
                       IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
@@ -310,7 +310,7 @@ const ListUsers = () => {
                   variant={"callAction"}
                   disabled={
                     !hasPermission(
-                      "console",
+                      "console-ui",
                       [
                         IAM_SCOPES.ADMIN_CREATE_USER,
                         IAM_SCOPES.ADMIN_LIST_USER_POLICIES,

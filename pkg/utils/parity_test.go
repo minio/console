@@ -36,7 +36,7 @@ func TestGetDivisibleSize(t *testing.T) {
 
 	for _, testCase := range testCases {
 		testCase := testCase
-		t.Run("", func(t *testing.T) {
+		t.Run("", func(_ *testing.T) {
 			gotGCD := getDivisibleSize(testCase.totalSizes)
 			if testCase.result != gotGCD {
 				t.Errorf("Expected %v, got %v", testCase.result, gotGCD)
@@ -143,7 +143,7 @@ func TestGetSetIndexes(t *testing.T) {
 
 	for _, testCase := range testCases {
 		testCase := testCase
-		t.Run("", func(t *testing.T) {
+		t.Run("", func(_ *testing.T) {
 			argPatterns := make([]ellipses.ArgPattern, len(testCase.args))
 			for i, arg := range testCase.args {
 				patterns, err := ellipses.FindEllipsesPatterns(arg)
@@ -277,7 +277,7 @@ func TestPossibleParities(t *testing.T) {
 
 	for _, testCase := range testCases {
 		testCase := testCase
-		t.Run("", func(t *testing.T) {
+		t.Run("", func(_ *testing.T) {
 			gotPs, err := PossibleParityValues(testCase.arg)
 			if err != nil && testCase.success {
 				t.Errorf("Expected success but failed instead %s", err)

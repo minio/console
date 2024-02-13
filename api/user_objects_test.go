@@ -145,7 +145,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -168,15 +168,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -222,20 +222,20 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					defer close(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -257,7 +257,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -277,15 +277,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -309,7 +309,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -333,15 +333,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -385,7 +385,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -402,13 +402,13 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					return nil, errors.New("error legal")
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					return nil, nil, errors.New("error retention")
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					return nil, errors.New("error get tags")
 				},
 			},
@@ -433,7 +433,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -456,15 +456,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -501,7 +501,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -524,15 +524,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -566,7 +566,7 @@ func Test_listObjects(t *testing.T) {
 				recursive:    true,
 				withVersions: false,
 				withMetadata: false,
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -589,15 +589,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -644,7 +644,7 @@ func Test_listObjects(t *testing.T) {
 				withVersions: false,
 				withMetadata: false,
 				limit:        swag.Int32(1),
-				listFunc: func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+				listFunc: func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 					objectStatCh := make(chan minio.ObjectInfo, 1)
 					go func(objectStatCh chan<- minio.ObjectInfo) {
 						defer close(objectStatCh)
@@ -667,15 +667,15 @@ func Test_listObjects(t *testing.T) {
 					}(objectStatCh)
 					return objectStatCh
 				},
-				objectLegalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
+				objectLegalHoldFunc: func(_ context.Context, _, _ string, _ minio.GetObjectLegalHoldOptions) (status *minio.LegalHoldStatus, err error) {
 					s := minio.LegalHoldEnabled
 					return &s, nil
 				},
-				objectRetentionFunc: func(ctx context.Context, bucketName, objectName, versionID string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
+				objectRetentionFunc: func(_ context.Context, _, _, _ string) (mode *minio.RetentionMode, retainUntilDate *time.Time, err error) {
 					m := minio.Governance
 					return &m, &tretention, nil
 				},
-				objectGetTaggingFunc: func(ctx context.Context, bucketName, objectName string, opts minio.GetObjectTaggingOptions) (*tags.Tags, error) {
+				objectGetTaggingFunc: func(_ context.Context, _, _ string, _ minio.GetObjectTaggingOptions) (*tags.Tags, error) {
 					tagMap := map[string]string{
 						"tag1": "value1",
 					}
@@ -707,7 +707,7 @@ func Test_listObjects(t *testing.T) {
 	t.Parallel()
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			minioListObjectsMock = tt.args.listFunc
 			minioGetObjectLegalHoldMock = tt.args.objectLegalHoldFunc
 			minioGetObjectRetentionMock = tt.args.objectRetentionFunc
@@ -768,7 +768,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  false,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
@@ -784,7 +784,7 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  false,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)
@@ -800,13 +800,13 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
 					return resultCh
 				},
-				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+				listFunc: func(_ context.Context, _ mc.ListOptions) <-chan *mc.ClientContent {
 					ch := make(chan *mc.ClientContent, 1)
 					ch <- &mc.ClientContent{}
 					close(ch)
@@ -824,13 +824,13 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: false,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)
 					return resultCh
 				},
-				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+				listFunc: func(_ context.Context, _ mc.ListOptions) <-chan *mc.ClientContent {
 					ch := make(chan *mc.ClientContent, 1)
 					ch <- &mc.ClientContent{}
 					close(ch)
@@ -846,13 +846,13 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: nil}
 					close(resultCh)
 					return resultCh
 				},
-				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+				listFunc: func(_ context.Context, _ mc.ListOptions) <-chan *mc.ClientContent {
 					ch := make(chan *mc.ClientContent, 1)
 					ch <- &mc.ClientContent{}
 					close(ch)
@@ -870,13 +870,13 @@ func Test_deleteObjects(t *testing.T) {
 				versionID:  "",
 				recursive:  true,
 				nonCurrent: true,
-				removeFunc: func(ctx context.Context, isIncomplete, isRemoveBucket, isBypass, forceDelete bool, contentCh <-chan *mc.ClientContent) <-chan mc.RemoveResult {
+				removeFunc: func(_ context.Context, _, _, _, _ bool, _ <-chan *mc.ClientContent) <-chan mc.RemoveResult {
 					resultCh := make(chan mc.RemoveResult, 1)
 					resultCh <- mc.RemoveResult{Err: probe.NewError(errors.New("probe error"))}
 					close(resultCh)
 					return resultCh
 				},
-				listFunc: func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+				listFunc: func(_ context.Context, _ mc.ListOptions) <-chan *mc.ClientContent {
 					ch := make(chan *mc.ClientContent, 1)
 					ch <- &mc.ClientContent{}
 					close(ch)
@@ -890,7 +890,7 @@ func Test_deleteObjects(t *testing.T) {
 	t.Parallel()
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			mcListMock = tt.args.listFunc
 			mcRemoveMock = tt.args.removeFunc
 			err := deleteObjects(ctx, s3Client1, tt.args.bucket, tt.args.path, tt.args.versionID, tt.args.recursive, false, tt.args.nonCurrent, false)
@@ -929,7 +929,7 @@ func Test_shareObject(t *testing.T) {
 			args: args{
 				versionID: "2121434",
 				expires:   "30s",
-				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
 					return "http://someurl", nil
 				},
 			},
@@ -941,7 +941,7 @@ func Test_shareObject(t *testing.T) {
 			args: args{
 				versionID: "2121434",
 				expires:   "invalid",
-				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
 					return "http://someurl", nil
 				},
 			},
@@ -952,7 +952,7 @@ func Test_shareObject(t *testing.T) {
 			args: args{
 				versionID: "2121434",
 				expires:   "",
-				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
 					return "http://someurl", nil
 				},
 			},
@@ -964,7 +964,7 @@ func Test_shareObject(t *testing.T) {
 			args: args{
 				versionID: "2121434",
 				expires:   "3h",
-				shareFunc: func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
 					return "", probe.NewError(errors.New("probe error"))
 				},
 			},
@@ -973,7 +973,7 @@ func Test_shareObject(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			mcShareDownloadMock = tt.args.shareFunc
 			url, err := getShareObjectURL(ctx, client, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
@@ -1011,7 +1011,7 @@ func Test_putObjectLegalHold(t *testing.T) {
 				versionID: "someversion",
 				prefix:    "folder/file.txt",
 				status:    models.ObjectLegalHoldStatusEnabled,
-				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+				legalHoldFunc: func(_ context.Context, _, _ string, _ minio.PutObjectLegalHoldOptions) error {
 					return nil
 				},
 			},
@@ -1024,7 +1024,7 @@ func Test_putObjectLegalHold(t *testing.T) {
 				versionID: "someversion",
 				prefix:    "folder/file.txt",
 				status:    models.ObjectLegalHoldStatusDisabled,
-				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+				legalHoldFunc: func(_ context.Context, _, _ string, _ minio.PutObjectLegalHoldOptions) error {
 					return nil
 				},
 			},
@@ -1037,7 +1037,7 @@ func Test_putObjectLegalHold(t *testing.T) {
 				versionID: "someversion",
 				prefix:    "folder/file.txt",
 				status:    models.ObjectLegalHoldStatusDisabled,
-				legalHoldFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectLegalHoldOptions) error {
+				legalHoldFunc: func(_ context.Context, _, _ string, _ minio.PutObjectLegalHoldOptions) error {
 					return errors.New("new error")
 				},
 			},
@@ -1046,7 +1046,7 @@ func Test_putObjectLegalHold(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			minioPutObjectLegalHoldMock = tt.args.legalHoldFunc
 			err := setObjectLegalHold(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.status)
 			if !reflect.DeepEqual(err, tt.wantError) {
@@ -1085,7 +1085,7 @@ func Test_putObjectRetention(t *testing.T) {
 					GovernanceBypass: false,
 					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeGovernance),
 				},
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1102,7 +1102,7 @@ func Test_putObjectRetention(t *testing.T) {
 					GovernanceBypass: false,
 					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1115,7 +1115,7 @@ func Test_putObjectRetention(t *testing.T) {
 				versionID: "someversion",
 				prefix:    "folder/file.txt",
 				opts:      nil,
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1132,7 +1132,7 @@ func Test_putObjectRetention(t *testing.T) {
 					GovernanceBypass: false,
 					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1149,7 +1149,7 @@ func Test_putObjectRetention(t *testing.T) {
 					GovernanceBypass: false,
 					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1166,7 +1166,7 @@ func Test_putObjectRetention(t *testing.T) {
 					GovernanceBypass: false,
 					Mode:             models.NewObjectRetentionMode(models.ObjectRetentionModeCompliance),
 				},
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return errors.New("new Error")
 				},
 			},
@@ -1175,7 +1175,7 @@ func Test_putObjectRetention(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			minioPutObjectRetentionMock = tt.args.retentionFunc
 			err := setObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID, tt.args.opts)
 			if tt.wantError != nil {
@@ -1210,7 +1210,7 @@ func Test_deleteObjectRetention(t *testing.T) {
 				bucket:    "buck1",
 				versionID: "someversion",
 				prefix:    "folder/file.txt",
-				retentionFunc: func(ctx context.Context, bucketName, objectName string, opts minio.PutObjectRetentionOptions) error {
+				retentionFunc: func(_ context.Context, _, _ string, _ minio.PutObjectRetentionOptions) error {
 					return nil
 				},
 			},
@@ -1218,7 +1218,7 @@ func Test_deleteObjectRetention(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			minioPutObjectRetentionMock = tt.args.retentionFunc
 			err := deleteObjectRetention(ctx, client, tt.args.bucket, tt.args.prefix, tt.args.versionID)
 			if tt.wantError != nil {
@@ -1252,7 +1252,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket1",
 				prefix:     "someprefix",
-				statFunc: func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (minio.ObjectInfo, error) {
+				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, nil
 				},
 			},
@@ -1263,7 +1263,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket2",
 				prefix:     "someprefi2",
-				statFunc: func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (minio.ObjectInfo, error) {
+				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, errors.New("new Error")
 				},
 			},
@@ -1271,7 +1271,7 @@ func Test_getObjectInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.test, func(t *testing.T) {
+		t.Run(tt.test, func(_ *testing.T) {
 			minioStatObjectMock = tt.args.statFunc
 			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix)
 			if tt.wantError != nil {
@@ -1312,7 +1312,7 @@ func Test_getScheme(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			gotScheme, gotPath := getScheme(tt.args.rawurl)
 			assert.Equalf(t, tt.wantScheme, gotScheme, "getScheme(%v)", tt.args.rawurl)
 			assert.Equalf(t, tt.wantPath, gotPath, "getScheme(%v)", tt.args.rawurl)
@@ -1364,7 +1364,7 @@ func Test_splitSpecial(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got, got1 := splitSpecial(tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
 			assert.Equalf(t, tt.want, got, "splitSpecial(%v, %v, %v)", tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
 			assert.Equalf(t, tt.want1, got1, "splitSpecial(%v, %v, %v)", tt.args.s, tt.args.delimiter, tt.args.cutdelimiter)
@@ -1397,7 +1397,7 @@ func Test_getHost(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.wantHost, getHost(tt.args.authority), "getHost(%v)", tt.args.authority)
 		})
 	}
@@ -1439,7 +1439,7 @@ func Test_newClientURL(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			assert.Equalf(t, tt.want, *newClientURL(tt.args.urlStr), "newClientURL(%v)", tt.args.urlStr)
 		})
 	}
@@ -1498,7 +1498,7 @@ func Test_getMultipleFilesDownloadResponse(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got, got1 := getMultipleFilesDownloadResponse(tt.args.session, tt.args.params)
 			assert.Equal(t, tt.want1, got1)
 			assert.NotNil(t, got)
