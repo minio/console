@@ -220,10 +220,10 @@ const ListObjectsTable = () => {
       selectedItems={selectedObjects}
       onSelect={!anonymousMode ? selectListObjects : undefined}
       customEmptyMessage={errorMessage}
-      sortConfig={{
+      sortEnabled={{
         currentSort: currentSortField,
         currentDirection: sortDirection,
-        triggerSort: sortChange,
+        onSortClick: sortChange,
       }}
       onSelectAll={selectAllItems}
       rowStyle={({ index }) => {

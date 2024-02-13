@@ -452,10 +452,10 @@ const LogsSearchMain = () => {
                   customPaperHeight={
                     filterOpen ? "calc(100vh - 520px)" : "calc(100vh - 320px)"
                   }
-                  sortConfig={{
+                  sortEnabled={{
                     currentSort: "time",
                     currentDirection: sortOrder,
-                    triggerSort: sortChange,
+                    onSortClick: sortChange,
                   }}
                   infiniteScrollConfig={{
                     recordsCount: 1000000,
