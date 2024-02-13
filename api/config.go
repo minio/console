@@ -213,11 +213,6 @@ func GetSecureForceSTSHeader() bool {
 	return strings.ToLower(env.Get(ConsoleSecureForceSTSHeader, "off")) == "on"
 }
 
-// PublicKey implements HPKP to prevent MITM attacks with forged certificates. Default is "".
-func GetSecurePublicKey() string {
-	return env.Get(ConsoleSecurePublicKey, "")
-}
-
 // ReferrerPolicy allows the Referrer-Policy header with the value to be set with a custom value. Default is "".
 func GetSecureReferrerPolicy() string {
 	return env.Get(ConsoleSecureReferrerPolicy, "")
@@ -226,10 +221,6 @@ func GetSecureReferrerPolicy() string {
 // FeaturePolicy allows the Feature-Policy header with the value to be set with a custom value. Default is "".
 func GetSecureFeaturePolicy() string {
 	return env.Get(ConsoleSecureFeaturePolicy, "")
-}
-
-func GetSecureExpectCTHeader() string {
-	return env.Get(ConsoleSecureExpectCTHeader, "")
 }
 
 func getLogSearchAPIToken() string {
