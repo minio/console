@@ -63,9 +63,18 @@ export const deleteAllVersions =
 export const bucketNameInput = Selector("#bucket-name-select");
 export const bucketsPrefixInput = Selector("#prefix");
 export const bucketsAccessInput = Selector("div.selectContainer");
-export const bucketsAccessReadOnlyInput = Selector("li").withText("readonly");
-export const bucketsAccessWriteOnlyInput = Selector("li").withText("writeonly");
-export const bucketsAccessReadWriteInput = Selector("li").withText("readwrite");
+export const bucketsAccessReadOnlyInput = Selector("div").withAttribute(
+  "label",
+  "readonly",
+);
+export const bucketsAccessWriteOnlyInput = Selector("div").withAttribute(
+  "label",
+  "writeonly",
+);
+export const bucketsAccessReadWriteInput = Selector("div").withAttribute(
+  "label",
+  "readwrite",
+);
 export const uploadInput = Selector("input").withAttribute("type", "file");
 export const createPolicyName = Selector("#policy-name");
 export const createPolicyTextfield = Selector(".w-tc-editor-text");
@@ -86,7 +95,7 @@ export const groupUserCheckbox = Selector(".ReactVirtualized__Table__row input")
 // Dropdowns and options
 //----------------------------------------------------
 export const bucketDropdownOptionFor = (modifier) => {
-  return Selector("#bucket-name-options-selector li").withText(
+  return Selector("#bucket-name-options-selector div").withText(
     `${constants.TEST_BUCKET_NAME}-${modifier}`,
   );
 };
