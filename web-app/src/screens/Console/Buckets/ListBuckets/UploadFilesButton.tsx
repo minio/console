@@ -148,7 +148,7 @@ const UploadFilesButton = ({
         open={uploadOptionsOpen}
         anchorEl={anchorEl}
         anchorOrigin={"end"}
-        useAnchorWidth={false}
+        useAnchorWidth
       />
     </Fragment>
   );

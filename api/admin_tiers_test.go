@@ -89,11 +89,11 @@ func TestGetTiers(t *testing.T) {
 		},
 	}
 
-	minioListTiersMock = func(ctx context.Context) ([]*madmin.TierConfig, error) {
+	minioListTiersMock = func(_ context.Context) ([]*madmin.TierConfig, error) {
 		return returnListMock, nil
 	}
 
-	minioTierStatsMock = func(ctx context.Context) ([]madmin.TierInfo, error) {
+	minioTierStatsMock = func(_ context.Context) ([]madmin.TierInfo, error) {
 		return returnStatsMock, nil
 	}
 
@@ -138,7 +138,7 @@ func TestGetTiers(t *testing.T) {
 	// Test-2 : getBucketLifecycle() list is empty
 	returnListMockT2 := []*madmin.TierConfig{}
 
-	minioListTiersMock = func(ctx context.Context) ([]*madmin.TierConfig, error) {
+	minioListTiersMock = func(_ context.Context) ([]*madmin.TierConfig, error) {
 		return returnListMockT2, nil
 	}
 
@@ -161,7 +161,7 @@ func TestAddTier(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1: addTier() add new Tier
-	minioAddTiersMock = func(ctx context.Context, tier *madmin.TierConfig) error {
+	minioAddTiersMock = func(_ context.Context, _ *madmin.TierConfig) error {
 		return nil
 	}
 
@@ -185,7 +185,7 @@ func TestAddTier(t *testing.T) {
 	assert.Equal(nil, err, fmt.Sprintf("Failed on %s: Error returned", function))
 
 	// Test-2: addTier() error adding Tier
-	minioAddTiersMock = func(ctx context.Context, tier *madmin.TierConfig) error {
+	minioAddTiersMock = func(_ context.Context, _ *madmin.TierConfig) error {
 		return errors.New("error setting new tier")
 	}
 
@@ -203,7 +203,7 @@ func TestUpdateTierCreds(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// Test-1: editTierCredentials() update Tier configuration
-	minioEditTiersMock = func(ctx context.Context, tierName string, creds madmin.TierCreds) error {
+	minioEditTiersMock = func(_ context.Context, _ string, _ madmin.TierCreds) error {
 		return nil
 	}
 
@@ -220,7 +220,7 @@ func TestUpdateTierCreds(t *testing.T) {
 	assert.Equal(nil, err, fmt.Sprintf("Failed on %s: Error returned", function))
 
 	// Test-2: editTierCredentials() update Tier configuration failure
-	minioEditTiersMock = func(ctx context.Context, tierName string, creds madmin.TierCreds) error {
+	minioEditTiersMock = func(_ context.Context, _ string, _ madmin.TierCreds) error {
 		return errors.New("error message")
 	}
 

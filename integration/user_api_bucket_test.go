@@ -816,7 +816,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 3. Put Objects Legal Status
 			putResponse, putError := PutObjectsLegalholdStatus(
 				bucketName,
@@ -895,7 +895,7 @@ func TestGetBucketQuota(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			restResp, restErr := GetBucketQuota(
 				tt.args.bucketName,
 			)
@@ -951,7 +951,7 @@ func TestPutBucketQuota(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			restResp, restErr := PutBucketQuota(
 				tt.args.bucketName,
 				true,          // enabled
@@ -1010,7 +1010,7 @@ func TestListBucketEvents(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			restResp, restErr := ListBucketEvents(
 				tt.args.bucketName,
 			)
@@ -1118,7 +1118,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 4. Delete Objects Retention Status
 			putResponse, putError := DeleteObjectsRetentionStatus(
 				bucketName,
@@ -1175,7 +1175,7 @@ func TestBucketSetPolicy(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// Set Policy
 			restResp, restErr := BucketSetPolicy(
 				tt.args.bucketName,
@@ -1265,7 +1265,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 4. Restore Object to a selected version
 			restResp, restErr := RestoreObjectToASelectedVersion(
 				bucketName,
@@ -1323,7 +1323,7 @@ func TestPutBucketsTags(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 2. Add a tag to the bucket
 			tags := make(map[string]string)
 			tags["tag2"] = "tag2"
@@ -1396,7 +1396,7 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 3. Get the metadata from an object
 			getRsp, getErr := GetsTheMetadataOfAnObject(
 				bucketName, tt.args.prefix)
@@ -1482,7 +1482,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 3. Put Objects Legal Status
 			putResponse, putError := PutObjectsRetentionStatus(
 				bucketName,
@@ -1565,7 +1565,7 @@ func TestShareObjectOnURL(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// 3. Share the object on a URL
 			shareResponse, shareError := SharesAnObjectOnAUrl(bucketName, tt.args.prefix, versionID, "604800s")
 			assert.Nil(shareError)
@@ -2138,7 +2138,7 @@ func TestDeleteBucket(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// Create bucket if needed for the test
 			if tt.args.createBucketName != "" {
 				if err := minioClient.MakeBucket(context.Background(), tt.args.createBucketName, minio.MakeBucketOptions{}); err != nil {
@@ -2464,7 +2464,7 @@ func TestAddBucket(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if !setupBucket(tt.args.bucketName, false, nil, nil, nil, assert, tt.expectedStatus) {
 				return
 			}

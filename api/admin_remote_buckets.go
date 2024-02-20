@@ -90,7 +90,7 @@ func registerAdminBucketRemoteHandlers(api *operations.ConsoleAPI) {
 	})
 
 	// list external buckets
-	api.BucketListExternalBucketsHandler = bucketApi.ListExternalBucketsHandlerFunc(func(params bucketApi.ListExternalBucketsParams, session *models.Principal) middleware.Responder {
+	api.BucketListExternalBucketsHandler = bucketApi.ListExternalBucketsHandlerFunc(func(params bucketApi.ListExternalBucketsParams, _ *models.Principal) middleware.Responder {
 		response, err := listExternalBucketsResponse(params)
 		if err != nil {
 			return bucketApi.NewListExternalBucketsDefault(err.Code).WithPayload(err.APIError)
@@ -796,7 +796,6 @@ func updateBucketReplicationResponse(session *models.Principal, params bucketApi
 		params.Body.Tags,
 		params.Body.Priority,
 		params.Body.StorageClass)
-
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

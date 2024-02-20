@@ -269,7 +269,6 @@ func resetConfigResponse(session *models.Principal, params cfgApi.ResetConfigPar
 	adminClient := AdminClient{Client: mAdmin}
 
 	err = resetConfig(ctx, adminClient, &params.Name)
-
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

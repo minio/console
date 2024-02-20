@@ -69,7 +69,7 @@ func TestAddBucketNotification(t *testing.T) {
 	testPrefix := ""
 	testSuffix := ""
 	testIgnoreExisting := false
-	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(_ context.Context, _ string, _ []string, _, _ string, _ bool) *probe.Error {
 		return nil
 	}
 	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
@@ -85,7 +85,7 @@ func TestAddBucketNotification(t *testing.T) {
 	testPrefix = "photos/"
 	testSuffix = ".jpg"
 	testIgnoreExisting = true
-	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(_ context.Context, _ string, _ []string, _, _ string, _ bool) *probe.Error {
 		return nil
 	}
 	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); err != nil {
@@ -93,7 +93,7 @@ func TestAddBucketNotification(t *testing.T) {
 	}
 
 	// Test-3 createBucketEvent() S3Client.AddNotificationConfig returns an error and is handled correctly
-	mcAddNotificationConfigMock = func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	mcAddNotificationConfigMock = func(_ context.Context, _ string, _ []string, _, _ string, _ bool) *probe.Error {
 		return probe.NewError(errors.New("error"))
 	}
 	if err := createBucketEvent(ctx, client, testArn, testNotificationEvents, testPrefix, testSuffix, testIgnoreExisting); assert.Error(err) {
@@ -118,7 +118,7 @@ func TestDeleteBucketNotification(t *testing.T) {
 	}
 	prefix := "/photos"
 	suffix := ".jpg"
-	mcRemoveNotificationConfigMock = func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
+	mcRemoveNotificationConfigMock = func(_ context.Context, _ string, _ string, _ string, _ string) *probe.Error {
 		return nil
 	}
 	if err := deleteBucketEventNotification(ctx, client, testArn, events, swag.String(prefix), swag.String(suffix)); err != nil {
@@ -126,7 +126,7 @@ func TestDeleteBucketNotification(t *testing.T) {
 	}
 
 	// Test-2 deleteBucketEventNotification() S3Client.DeleteBucketEventNotification returns an error and is handled correctly
-	mcRemoveNotificationConfigMock = func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
+	mcRemoveNotificationConfigMock = func(_ context.Context, _ string, _ string, _ string, _ string) *probe.Error {
 		return probe.NewError(errors.New("error"))
 	}
 	if err := deleteBucketEventNotification(ctx, client, testArn, events, swag.String(prefix), swag.String(suffix)); assert.Error(err) {
@@ -191,7 +191,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	minioGetBucketNotificationMock = func(_ context.Context, _ string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err := listBucketEvents(minClient, "bucket")
@@ -238,7 +238,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	minioGetBucketNotificationMock = func(_ context.Context, _ string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err = listBucketEvents(minClient, "bucket")
@@ -357,7 +357,7 @@ func TestListBucketEvents(t *testing.T) {
 			},
 		},
 	}
-	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	minioGetBucketNotificationMock = func(_ context.Context, _ string) (bucketNotification notification.Configuration, err error) {
 		return mockBucketN, nil
 	}
 	eventConfigs, err = listBucketEvents(minClient, "bucket")
@@ -378,7 +378,7 @@ func TestListBucketEvents(t *testing.T) {
 	}
 
 	////// Test-2 : listBucketEvents() Returns error and see that the error is handled correctly and returned
-	minioGetBucketNotificationMock = func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	minioGetBucketNotificationMock = func(_ context.Context, _ string) (bucketNotification notification.Configuration, err error) {
 		return notification.Configuration{}, errors.New("error")
 	}
 	_, err = listBucketEvents(minClient, "bucket")

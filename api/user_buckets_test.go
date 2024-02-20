@@ -145,7 +145,7 @@ func TestMakeBucket(t *testing.T) {
 	ctx := context.Background()
 	// Test-1: makeBucket() create a bucket
 	// mock function response from makeBucketWithContext(ctx)
-	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
+	minioMakeBucketWithContextMock = func(_ context.Context, _, _ string, _ bool) error {
 		return nil
 	}
 	if err := makeBucket(ctx, minClient, "bucktest1", true); err != nil {
@@ -153,7 +153,7 @@ func TestMakeBucket(t *testing.T) {
 	}
 
 	// Test-2 makeBucket() make sure errors are handled correctly when errors on MakeBucketWithContext
-	minioMakeBucketWithContextMock = func(ctx context.Context, bucketName, location string, objectLock bool) error {
+	minioMakeBucketWithContextMock = func(_ context.Context, _, _ string, _ bool) error {
 		return errors.New("error")
 	}
 	if err := makeBucket(ctx, minClient, "bucktest1", true); assert.Error(err) {
@@ -169,7 +169,7 @@ func TestDeleteBucket(t *testing.T) {
 
 	// Test-1: removeBucket() delete a bucket
 	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(bucketName string) error {
+	minioRemoveBucketMock = func(_ string) error {
 		return nil
 	}
 	if err := removeBucket(minClient, "bucktest1"); err != nil {
@@ -178,7 +178,7 @@ func TestDeleteBucket(t *testing.T) {
 
 	// Test-2: removeBucket() make sure errors are handled correctly when errors on DeleteBucket()
 	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(bucketName string) error {
+	minioRemoveBucketMock = func(_ string) error {
 		return errors.New("error")
 	}
 	if err := removeBucket(minClient, "bucktest1"); assert.Error(err) {
@@ -197,7 +197,7 @@ func TestBucketInfo(t *testing.T) {
 	// Test-1: getBucketInfo() get a bucket with PRIVATE access
 	// if not policy set on bucket, access should be PRIVATE
 	mockPolicy := ""
-	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
+	minioGetBucketPolicyMock = func(_ string) (string, error) {
 		return mockPolicy, nil
 	}
 	bucketToSet := "csbucket"
@@ -239,7 +239,7 @@ func TestBucketInfo(t *testing.T) {
 		Policy: []byte(infoPolicy),
 	}
 	// mock function response from listBucketsWithContext(ctx)
-	minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+	minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 		return mockBucketList, nil
 	}
 
@@ -256,7 +256,7 @@ func TestBucketInfo(t *testing.T) {
 	// Test-2: getBucketInfo() get a bucket with PUBLIC access
 	// mock policy for bucket csbucket with readWrite access (should return PUBLIC)
 	mockPolicy = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"s3:GetBucketLocation\",\"s3:ListBucket\",\"s3:ListBucketMultipartUploads\"],\"Resource\":[\"arn:aws:s3:::csbucket\"]},{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"s3:GetObject\",\"s3:ListMultipartUploadParts\",\"s3:PutObject\",\"s3:AbortMultipartUpload\",\"s3:DeleteObject\"],\"Resource\":[\"arn:aws:s3:::csbucket/*\"]}]}"
-	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
+	minioGetBucketPolicyMock = func(_ string) (string, error) {
 		return mockPolicy, nil
 	}
 	bucketToSet = "csbucket"
@@ -278,9 +278,9 @@ func TestBucketInfo(t *testing.T) {
 	assert.Equal(outputExpected.Objects, bucketInfo.Objects)
 
 	// Test-3: getBucketInfo() get a bucket with PRIVATE access
-	// if bucket has a null statement, the the bucket is PRIVATE
+	// if bucket has a null statement, the bucket is PRIVATE
 	mockPolicy = "{\"Version\":\"2012-10-17\",\"Statement\":[]}"
-	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
+	minioGetBucketPolicyMock = func(_ string) (string, error) {
 		return mockPolicy, nil
 	}
 	bucketToSet = "csbucket"
@@ -303,7 +303,7 @@ func TestBucketInfo(t *testing.T) {
 
 	// Test-4: getBucketInfo() returns an errors while parsing invalid policy
 	mockPolicy = "policyinvalid"
-	minioGetBucketPolicyMock = func(bucketName string) (string, error) {
+	minioGetBucketPolicyMock = func(_ string) (string, error) {
 		return mockPolicy, nil
 	}
 	bucketToSet = "csbucket"
@@ -331,7 +331,7 @@ func TestSetBucketAccess(t *testing.T) {
 	function := "setBucketAccessPolicy()"
 	// Test-1: setBucketAccessPolicy() set a bucket's access policy
 	// mock function response from setBucketPolicyWithContext(ctx)
-	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
+	minioSetBucketPolicyWithContextMock = func(_ context.Context, _, _ string) error {
 		return nil
 	}
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC, ""); err != nil {
@@ -359,7 +359,7 @@ func TestSetBucketAccess(t *testing.T) {
 	}
 
 	// Test-5: setBucketAccessPolicy() handle errors on SetPolicy call
-	minioSetBucketPolicyWithContextMock = func(ctx context.Context, bucketName, policy string) error {
+	minioSetBucketPolicyWithContextMock = func(_ context.Context, _, _ string) error {
 		return errors.New("error")
 	}
 	if err := setBucketAccessPolicy(ctx, minClient, "bucktest1", models.BucketAccessPUBLIC, ""); assert.Error(err) {
@@ -390,7 +390,7 @@ func Test_enableBucketEncryption(t *testing.T) {
 				client:         minClient,
 				bucketName:     "test",
 				encryptionType: "sse-s3",
-				mockEnableBucketEncryptionFunc: func(ctx context.Context, bucketName string, config *sse.Configuration) error {
+				mockEnableBucketEncryptionFunc: func(_ context.Context, _ string, _ *sse.Configuration) error {
 					return nil
 				},
 			},
@@ -403,7 +403,7 @@ func Test_enableBucketEncryption(t *testing.T) {
 				client:         minClient,
 				bucketName:     "test",
 				encryptionType: "sse-s3",
-				mockEnableBucketEncryptionFunc: func(ctx context.Context, bucketName string, config *sse.Configuration) error {
+				mockEnableBucketEncryptionFunc: func(_ context.Context, _ string, _ *sse.Configuration) error {
 					return ErrInvalidSession
 				},
 			},
@@ -411,7 +411,7 @@ func Test_enableBucketEncryption(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioSetBucketEncryptionMock = tt.args.mockEnableBucketEncryptionFunc
 			if err := enableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.encryptionType, tt.args.kmsKeyID); (err != nil) != tt.wantErr {
 				t.Errorf("enableBucketEncryption() errors = %v, wantErr %v", err, tt.wantErr)
@@ -440,7 +440,7 @@ func Test_disableBucketEncryption(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
+				mockBucketDisableFunc: func(_ context.Context, _ string) error {
 					return nil
 				},
 			},
@@ -452,7 +452,7 @@ func Test_disableBucketEncryption(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				mockBucketDisableFunc: func(ctx context.Context, bucketName string) error {
+				mockBucketDisableFunc: func(_ context.Context, _ string) error {
 					return ErrDefault
 				},
 			},
@@ -460,7 +460,7 @@ func Test_disableBucketEncryption(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioRemoveBucketEncryptionMock = tt.args.mockBucketDisableFunc
 			if err := disableBucketEncryption(tt.args.ctx, tt.args.client, tt.args.bucketName); (err != nil) != tt.wantErr {
 				t.Errorf("disableBucketEncryption() errors = %v, wantErr %v", err, tt.wantErr)
@@ -490,7 +490,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+				mockBucketEncryptionGet: func(_ context.Context, _ string) (*sse.Configuration, error) {
 					return &sse.Configuration{
 						Rules: []sse.Rule{
 							{
@@ -512,7 +512,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+				mockBucketEncryptionGet: func(_ context.Context, _ string) (*sse.Configuration, error) {
 					return &sse.Configuration{
 						Rules: []sse.Rule{},
 					}, nil
@@ -526,7 +526,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				mockBucketEncryptionGet: func(ctx context.Context, bucketName string) (*sse.Configuration, error) {
+				mockBucketEncryptionGet: func(_ context.Context, _ string) (*sse.Configuration, error) {
 					return nil, ErrSSENotConfigured
 				},
 			},
@@ -534,7 +534,7 @@ func Test_getBucketEncryptionInfo(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioGetBucketEncryptionMock = tt.args.mockBucketEncryptionGet
 			got, err := getBucketEncryptionInfo(tt.args.ctx, tt.args.client, tt.args.bucketName)
 			if (err != nil) != tt.wantErr {
@@ -575,7 +575,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionModeCompliance,
 				unit:       models.ObjectRetentionUnitDays,
 				validity:   swag.Int32(2),
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return nil
 				},
 			},
@@ -590,7 +590,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionModeGovernance,
 				unit:       models.ObjectRetentionUnitYears,
 				validity:   swag.Int32(2),
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return nil
 				},
 			},
@@ -605,7 +605,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionModeCompliance,
 				unit:       models.ObjectRetentionUnitDays,
 				validity:   nil,
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return nil
 				},
 			},
@@ -620,7 +620,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionMode("othermode"),
 				unit:       models.ObjectRetentionUnitDays,
 				validity:   swag.Int32(2),
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return nil
 				},
 			},
@@ -635,7 +635,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionModeCompliance,
 				unit:       models.ObjectRetentionUnit("otherunit"),
 				validity:   swag.Int32(2),
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return nil
 				},
 			},
@@ -650,7 +650,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 				mode:       models.ObjectRetentionModeCompliance,
 				unit:       models.ObjectRetentionUnitDays,
 				validity:   swag.Int32(2),
-				mockBucketRetentionFunc: func(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error {
+				mockBucketRetentionFunc: func(_ context.Context, _ string, _ *minio.RetentionMode, _ *uint, _ *minio.ValidityUnit) error {
 					return errors.New("error func")
 				},
 			},
@@ -658,7 +658,7 @@ func Test_SetBucketRetentionConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioSetObjectLockConfigMock = tt.args.mockBucketRetentionFunc
 			err := setBucketRetentionConfig(tt.args.ctx, tt.args.client, tt.args.bucketName, tt.args.mode, tt.args.unit, tt.args.validity)
 			if tt.expectedError != nil {
@@ -693,7 +693,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					m := minio.Governance
 					u := minio.Days
 					return &m, swag.Uint(2), &u, nil
@@ -712,7 +712,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					m := minio.Compliance
 					u := minio.Days
 					return &m, swag.Uint(2), &u, nil
@@ -731,7 +731,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					return nil, nil, nil, errors.New("error func")
 				},
 			},
@@ -746,7 +746,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					return nil, nil, nil, minio.ErrorResponse{
 						Code:    "ObjectLockConfigurationNotFoundError",
 						Message: "Object Lock configuration does not exist for this bucket",
@@ -762,7 +762,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					m := minio.RetentionMode("other")
 					u := minio.Days
 					return &m, swag.Uint(2), &u, nil
@@ -777,7 +777,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 				ctx:        ctx,
 				client:     minClient,
 				bucketName: "test",
-				getRetentionFunc: func(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
+				getRetentionFunc: func(_ context.Context, _ string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 					m := minio.Governance
 					u := minio.ValidityUnit("otherUnit")
 					return &m, swag.Uint(2), &u, nil
@@ -789,7 +789,7 @@ func Test_GetBucketRetentionConfig(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioGetBucketObjectLockConfigMock = tt.args.getRetentionFunc
 			resp, err := getBucketRetentionConfig(tt.args.ctx, tt.args.client, tt.args.bucketName)
 
@@ -833,7 +833,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
-				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+				setVersioningFunc: func(_ context.Context, _ string, _ []string, _ bool) *probe.Error {
 					return nil
 				},
 			},
@@ -847,7 +847,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 				excludePrefix: []string{"prefix1", "prefix2"},
 				bucketName:    "test",
 				client:        minClient,
-				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+				setVersioningFunc: func(_ context.Context, _ string, _ []string, _ bool) *probe.Error {
 					return nil
 				},
 			},
@@ -862,7 +862,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 				excludeFolders: true,
 				bucketName:     "test",
 				client:         minClient,
-				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+				setVersioningFunc: func(_ context.Context, _ string, _ []string, _ bool) *probe.Error {
 					return nil
 				},
 			},
@@ -875,7 +875,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 				state:      VersionEnable,
 				bucketName: "test",
 				client:     minClient,
-				setVersioningFunc: func(ctx context.Context, state string, excludePrefix []string, excludeFolders bool) *probe.Error {
+				setVersioningFunc: func(_ context.Context, _ string, _ []string, _ bool) *probe.Error {
 					return probe.NewError(errors.New(errorMsg))
 				},
 			},
@@ -884,7 +884,7 @@ func Test_SetBucketVersioning(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			minioSetVersioningMock = tt.args.setVersioningFunc
 
 			err := doSetVersioning(tt.args.ctx, tt.args.client, tt.args.state, tt.args.excludePrefix, tt.args.excludeFolders)
@@ -1199,9 +1199,9 @@ func Test_getAccountBuckets(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// mock function response from listBucketsWithContext(ctx)
-			minioAccountInfoMock = func(ctx context.Context) (madmin.AccountInfo, error) {
+			minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 				return tt.args.mockBucketList, tt.args.mockError
 			}
 			client := AdminClientMock{}
@@ -1268,7 +1268,7 @@ func Test_getMaxShareLinkExpirationSeconds(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
 			}

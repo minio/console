@@ -48,7 +48,7 @@ func Test_ConfigAPI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			request, err := http.NewRequest("GET", "http://localhost:9090/api/v1/configs", nil)
 			if err != nil {
 				log.Println(err)
@@ -99,7 +99,7 @@ func Test_GetConfigAPI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -158,7 +158,7 @@ func Test_SetConfigAPI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
@@ -220,7 +220,7 @@ func Test_ResetConfigAPI(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}

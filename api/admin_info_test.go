@@ -46,7 +46,7 @@ type AdminInfoTestSuite struct {
 func (suite *AdminInfoTestSuite) SetupSuite() {
 	suite.assert = assert.New(suite.T())
 	suite.adminClient = AdminClientMock{}
-	MinioServerInfoMock = func(ctx context.Context) (madmin.InfoMessage, error) {
+	MinioServerInfoMock = func(_ context.Context) (madmin.InfoMessage, error) {
 		return madmin.InfoMessage{
 			Servers: []madmin.ServerProperties{{
 				Disks: []madmin.Disk{{}},

@@ -264,7 +264,6 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 				}
 
 				err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
-
 				if err != nil {
 					LogInfo("Error while writing the message", err)
 					return

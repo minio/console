@@ -97,11 +97,11 @@ func TestWSRewindObjects(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 
-			mcListMock = func(ctx context.Context, opts mc.ListOptions) <-chan *mc.ClientContent {
+			mcListMock = func(_ context.Context, _ mc.ListOptions) <-chan *mc.ClientContent {
 				ch := make(chan *mc.ClientContent)
 				go func() {
 					defer close(ch)
@@ -206,11 +206,11 @@ func TestWSListObjects(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 
-			minioListObjectsMock = func(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
+			minioListObjectsMock = func(_ context.Context, _ string, _ minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 				ch := make(chan minio.ObjectInfo)
 				go func() {
 					defer close(ch)

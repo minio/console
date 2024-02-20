@@ -40,7 +40,7 @@ func TestAdminConsoleLog(t *testing.T) {
 
 	// Test-1: Serve Console with no errors until Console finishes sending
 	// define mock function behavior for minio server Console
-	minioGetLogsMock = func(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
+	minioGetLogsMock = func(_ context.Context, _ string, _ int, _ string) <-chan madmin.LogInfo {
 		ch := make(chan madmin.LogInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.LogInfo) {
@@ -58,7 +58,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	}
 	writesCount := 1
 	// mock connection WriteMessage() no error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, data []byte) error {
 		// emulate that receiver gets the message written
 		var t madmin.LogInfo
 		_ = json.Unmarshal(data, &t)
@@ -82,7 +82,7 @@ func TestAdminConsoleLog(t *testing.T) {
 	}
 
 	// Test-2: if error happens while writing, return error
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return fmt.Errorf("error on write")
 	}
 	if err := startConsoleLog(ctx, mockWSConn, adminClient, LogRequest{node: "", logType: "all"}); assert.Error(err) {
@@ -91,7 +91,7 @@ func TestAdminConsoleLog(t *testing.T) {
 
 	// Test-3: error happens on GetLogs Minio, Console should stop
 	// and error shall be returned.
-	minioGetLogsMock = func(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo {
+	minioGetLogsMock = func(_ context.Context, _ string, _ int, _ string) <-chan madmin.LogInfo {
 		ch := make(chan madmin.LogInfo)
 		// Only success, start a routine to start reading line by line.
 		go func(ch chan<- madmin.LogInfo) {
@@ -108,7 +108,7 @@ func TestAdminConsoleLog(t *testing.T) {
 		}(ch)
 		return ch
 	}
-	connWriteMessageMock = func(messageType int, data []byte) error {
+	connWriteMessageMock = func(_ int, _ []byte) error {
 		return nil
 	}
 	if err := startConsoleLog(ctx, mockWSConn, adminClient, LogRequest{node: "", logType: "all"}); assert.Error(err) {

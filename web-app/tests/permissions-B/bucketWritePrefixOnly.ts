@@ -31,9 +31,17 @@ test
         .useRole(roles.bucketWritePrefixOnly)
         .navigateTo("http://localhost:9090/browser/testcafe")
         .click(uploadButton)
-        .expect(Selector("li").withText("Upload File").hasClass("disabled"))
+        .expect(
+          Selector("div")
+            .withAttribute("label", "Upload File")
+            .hasClass("disabled"),
+        )
         .ok()
-        .expect(Selector("li").withText("Upload Folder").hasClass("disabled"))
+        .expect(
+          Selector("div")
+            .withAttribute("label", "Upload Folder")
+            .hasClass("disabled"),
+        )
         .notOk();
     },
   )
@@ -48,9 +56,17 @@ test
         .useRole(roles.bucketWritePrefixOnly)
         .navigateTo("http://localhost:9090/browser/testcafe/d3JpdGU=")
         .click(uploadButton)
-        .expect(Selector("li").withText("Upload File").hasClass("disabled"))
+        .expect(
+          Selector("div")
+            .withAttribute("label", "Upload File")
+            .hasClass("disabled"),
+        )
         .notOk()
-        .expect(Selector("li").withText("Upload Folder").hasClass("disabled"))
+        .expect(
+          Selector("div")
+            .withAttribute("label", "Upload Folder")
+            .hasClass("disabled"),
+        )
         .notOk();
     },
   )

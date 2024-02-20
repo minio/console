@@ -75,7 +75,7 @@ func Test_changePassword(t *testing.T) {
 				newSecretKey:     "TESTTEST2",
 			},
 			mock: func() {
-				minioChangePasswordMock = func(ctx context.Context, accessKey, secretKey string) error {
+				minioChangePasswordMock = func(_ context.Context, _, _ string) error {
 					return nil
 				}
 			},
@@ -92,7 +92,7 @@ func Test_changePassword(t *testing.T) {
 				newSecretKey:     "TESTTEST2",
 			},
 			mock: func() {
-				minioChangePasswordMock = func(ctx context.Context, accessKey, secretKey string) error {
+				minioChangePasswordMock = func(_ context.Context, _, _ string) error {
 					return errors.New("there was an error, please try again")
 				}
 			},
@@ -110,7 +110,7 @@ func Test_changePassword(t *testing.T) {
 				newSecretKey:     "TESTTEST2",
 			},
 			mock: func() {
-				minioChangePasswordMock = func(ctx context.Context, accessKey, secretKey string) error {
+				minioChangePasswordMock = func(_ context.Context, _, _ string) error {
 					return errors.New("there was an error, please try again")
 				}
 			},
@@ -118,7 +118,7 @@ func Test_changePassword(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if tt.mock != nil {
 				tt.mock()
 			}

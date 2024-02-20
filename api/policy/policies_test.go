@@ -94,7 +94,7 @@ func TestReplacePolicyVariables(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got := ReplacePolicyVariables(tt.args.claims, tt.args.accountInfo)
 			policy, err := minioIAMPolicy.ParseConfig(bytes.NewReader(got))
 			if (err != nil) != tt.wantErr {

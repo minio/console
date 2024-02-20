@@ -63,7 +63,7 @@ func TestListConfig(t *testing.T) {
 	}
 	expectedKeysDesc := mockConfigList.KeysHelp
 	// mock function response from listConfig()
-	minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+	minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 		return mockConfigList, nil
 	}
 	configList, err := listConfig(adminClient)
@@ -80,7 +80,7 @@ func TestListConfig(t *testing.T) {
 
 	// Test-2 : listConfig() Return error and see that the error is handled correctly and returned
 	// mock function response from listConfig()
-	minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+	minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 		return madmin.Help{}, errors.New("error")
 	}
 	_, err = listConfig(adminClient)
@@ -94,7 +94,7 @@ func TestSetConfig(t *testing.T) {
 	adminClient := AdminClientMock{}
 	function := "setConfig()"
 	// mock function response from setConfig()
-	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+	minioSetConfigKVMock = func(_ string) (restart bool, err error) {
 		return false, nil
 	}
 	configName := "notify_postgres"
@@ -119,7 +119,7 @@ func TestSetConfig(t *testing.T) {
 	assert.Equal(restart, false)
 
 	// Test-2 : setConfig() returns error, handle properly
-	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+	minioSetConfigKVMock = func(_ string) (restart bool, err error) {
 		return false, errors.New("error")
 	}
 	restart, err = setConfig(ctx, adminClient, &configName, kvs)
@@ -129,7 +129,7 @@ func TestSetConfig(t *testing.T) {
 	assert.Equal(restart, false)
 
 	// Test-4 : setConfig() set config, need restart
-	minioSetConfigKVMock = func(kv string) (restart bool, err error) {
+	minioSetConfigKVMock = func(_ string) (restart bool, err error) {
 		return true, nil
 	}
 	restart, err = setConfig(ctx, adminClient, &configName, kvs)
@@ -144,7 +144,7 @@ func TestDelConfig(t *testing.T) {
 	adminClient := AdminClientMock{}
 	function := "resetConfig()"
 	// mock function response from setConfig()
-	minioDelConfigKVMock = func(name string) (err error) {
+	minioDelConfigKVMock = func(_ string) (err error) {
 		return nil
 	}
 	configName := "region"
@@ -158,7 +158,7 @@ func TestDelConfig(t *testing.T) {
 	}
 
 	// Test-2 : resetConfig() returns error, handle properly
-	minioDelConfigKVMock = func(name string) (err error) {
+	minioDelConfigKVMock = func(_ string) (err error) {
 		return errors.New("error")
 	}
 
@@ -220,7 +220,7 @@ func Test_buildConfig(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			if got := buildConfig(tt.args.configName, tt.args.kvs); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("buildConfig() = %s, want %s", *got, *tt.want)
 			}
@@ -260,7 +260,7 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "1",
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr:  false,
@@ -280,7 +280,7 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "1",
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return true, nil
 			},
 			wantErr:  false,
@@ -300,7 +300,7 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "",
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, nil
 			},
 			wantErr:  false,
@@ -320,7 +320,7 @@ func Test_setConfigWithARN(t *testing.T) {
 				},
 				arn: "",
 			},
-			mockSetConfig: func(kv string) (restart bool, err error) {
+			mockSetConfig: func(_ string) (restart bool, err error) {
 				return false, errors.New("error")
 			},
 			wantErr:  true,
@@ -328,7 +328,7 @@ func Test_setConfigWithARN(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			// mock function response from setConfig()
 			minioSetConfigKVMock = tt.mockSetConfig
 			restart, err := setConfigWithARNAccountID(tt.args.ctx, tt.args.client, tt.args.configName, tt.args.kvs, tt.args.arn)
@@ -361,7 +361,7 @@ func Test_getConfig(t *testing.T) {
 			},
 			mock: func() {
 				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
+				minioGetConfigKVMock = func(_ string) ([]byte, error) {
 					return []byte(`notify_postgres:_ connection_string="host=localhost dbname=minio_events user=postgres password=password port=5432 sslmode=disable" table=bucketevents`), nil
 				}
 
@@ -407,7 +407,7 @@ func Test_getConfig(t *testing.T) {
 					KeysHelp:        configListMock,
 				}
 				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+				minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 					return mockConfigList, nil
 				}
 			},
@@ -435,7 +435,7 @@ func Test_getConfig(t *testing.T) {
 			},
 			mock: func() {
 				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
+				minioGetConfigKVMock = func(_ string) ([]byte, error) {
 					return []byte(`notify_postgres:_`), nil
 				}
 
@@ -481,7 +481,7 @@ func Test_getConfig(t *testing.T) {
 					KeysHelp:        configListMock,
 				}
 				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+				minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 					return mockConfigList, nil
 				}
 			},
@@ -496,7 +496,7 @@ func Test_getConfig(t *testing.T) {
 			},
 			mock: func() {
 				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
+				minioGetConfigKVMock = func(_ string) ([]byte, error) {
 					x := make(map[string]string)
 					x["x"] = "x"
 					j, _ := json.Marshal(x)
@@ -545,7 +545,7 @@ func Test_getConfig(t *testing.T) {
 					KeysHelp:        configListMock,
 				}
 				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+				minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 					return mockConfigList, nil
 				}
 			},
@@ -560,13 +560,13 @@ func Test_getConfig(t *testing.T) {
 			},
 			mock: func() {
 				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
+				minioGetConfigKVMock = func(_ string) ([]byte, error) {
 					return nil, errors.New("invalid config")
 				}
 
 				mockConfigList := madmin.Help{}
 				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+				minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 					return mockConfigList, nil
 				}
 			},
@@ -581,11 +581,11 @@ func Test_getConfig(t *testing.T) {
 			},
 			mock: func() {
 				// mock function response from getConfig()
-				minioGetConfigKVMock = func(key string) ([]byte, error) {
+				minioGetConfigKVMock = func(_ string) ([]byte, error) {
 					return nil, errors.New("invalid config")
 				}
 				// mock function response from listConfig()
-				minioHelpConfigKVMock = func(subSys, key string, envOnly bool) (madmin.Help, error) {
+				minioHelpConfigKVMock = func(_, _ string, _ bool) (madmin.Help, error) {
 					return madmin.Help{}, errors.New("no help")
 				}
 			},
@@ -595,7 +595,7 @@ func Test_getConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		tt.mock()
-		t.Run(tt.name, func(t *testing.T) {
+		t.Run(tt.name, func(_ *testing.T) {
 			got, err := getConfig(context.Background(), tt.args.client, tt.args.name)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("getConfig() error = %v, wantErr %v", err, tt.wantErr)

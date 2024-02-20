@@ -200,7 +200,6 @@ func ValidateEncodedStyles(encodedStyles string) error {
 	var styleElements *CustomStyles
 
 	err = json.Unmarshal(str, &styleElements)
-
 	if err != nil {
 		return err
 	}

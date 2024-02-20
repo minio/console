@@ -2,6 +2,18 @@
 
 # Changelog
 
+## Release v0.46.0
+
+Features:
+
+- Added latest help content to forms
+
+Bug Fix:
+
+- Disabled Create User button in certain policy cases
+- Fixed an issue with Logout request
+- Upgraded project dependencies
+
 ## Release v0.45.0
 
 Deprecated:
