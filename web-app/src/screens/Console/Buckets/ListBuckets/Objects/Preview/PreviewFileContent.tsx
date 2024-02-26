@@ -194,7 +194,6 @@ const PreviewFile = ({
           {objectType === "none" && (
             <div>
               <InformativeMessage
-                variant={"error"}
                 message=" File couldn't be previewed using file extension or mime type. Please
             try Download instead"
                 title="Preview unavailable"
