@@ -40,7 +40,10 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
+import {
+  IAM_PAGES,
+  IAM_SCOPES,
+} from "../../../../common/SecureComponent/permissions";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
@@ -83,7 +86,6 @@ const BucketReplicationPanel = () => {
     IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
     IAM_SCOPES.S3_GET_ACTIONS,
   ]);
-
   useEffect(() => {
     dispatch(setHelpName("bucket_detail_replication"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -293,7 +295,12 @@ const BucketReplicationPanel = () => {
                 <Button
                   id={"add-bucket-replication-rule"}
                   onClick={() => {
-                    setOpenReplicationOpen(true);
+                    navigate(
+                      IAM_PAGES.BUCKETS_ADD_REPLICATION +
+                        `?bucketName=${bucketName}&nextPriority=${
+                          replicationRules.length + 1
+                        }`,
+                    );
                   }}
                   label={"Add Replication Rule"}
                   icon={<AddIcon />}

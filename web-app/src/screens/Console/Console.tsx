@@ -95,6 +95,9 @@ const Buckets = React.lazy(() => import("./Buckets/Buckets"));
 const EditBucketReplication = React.lazy(
   () => import("./Buckets/BucketDetails/EditBucketReplication"),
 );
+const AddBucketReplication = React.lazy(
+  () => import("./Buckets/BucketDetails/AddBucketReplication"),
+);
 const Policies = React.lazy(() => import("./Policies/Policies"));
 
 const AddPolicyScreen = React.lazy(() => import("./Policies/AddPolicyScreen"));
@@ -237,6 +240,16 @@ const Console = () => {
       path: IAM_PAGES.ADD_BUCKETS,
       customPermissionFnc: () => {
         return hasPermission("*", IAM_PAGES_PERMISSIONS[IAM_PAGES.ADD_BUCKETS]);
+      },
+    },
+    {
+      component: AddBucketReplication,
+      path: IAM_PAGES.BUCKETS_ADD_REPLICATION,
+      customPermissionFnc: () => {
+        return hasPermission(
+          "*",
+          IAM_PAGES_PERMISSIONS[IAM_PAGES.BUCKETS_ADD_REPLICATION],
+        );
       },
     },
     {

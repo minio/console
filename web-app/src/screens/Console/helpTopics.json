@@ -5104,5 +5104,86 @@
         }
       ]
     }
+  },
+  "bucket-replication-add": {
+    "docs": {
+      "header": null,
+      "links": [
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "Bucket Replication Requirements",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication/bucket-replication-requirements.html",
+          "body": "Check here to ensure you meet the prerequisites before setting up any replication configurations."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "One-way Bucket Replication",
+          "url": " https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication/enable-server-side-one-way-bucket-replication.html#",
+          "body": "Guidance on configuring one-way Bucket replication using MinIO Console."
+        },
+
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "Two-way Bucket Replication",
+          "url": " https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication/enable-server-side-two-way-bucket-replication.html#minio-bucket-replication-serverside-twoway",
+          "body": "Guidance on configuring two-way (active-active) Bucket replication using MinIO Console."
+        },
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "Bucket Replication",
+          "url": "https://min.io/docs/minio/kubernetes/upstream/administration/bucket-replication.html#minio-bucket-replication-serverside",
+          "body": "MinIO server-side bucket replication is an automatic bucket-level configuration that synchronizes objects between a source and destination bucket."
+        },
+
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "Replication Internals",
+          "url": "https://min.io/docs/minio/windows/administration/bucket-replication.html#minio-replication-process",
+          "body": "Learn details of the MinIO replication process."
+        },
+
+        {
+          "img": "https://min.io/resources/img/logo/MINIO_wordmark.png",
+          "title": "SUBNET Registration and Support",
+          "url": "https://min.io/docs/minio/linux/administration/console/subnet-registration.html",
+          "body": "Learn how to register your MinIO deployment and access our SUBNET support system"
+        },
+
+        {
+          "img": "https://blog.min.io/content/images/size/w1000/2020/12/pay_banner-01-01-01-01-01.png",
+          "title": "Troubleshooting",
+          "url": "https://min.io/docs/minio/linux/operations/troubleshooting.html",
+          "body": "Need more help?  Check out additional Troubleshooting options"
+        }
+      ]
+    },
+    "video": {
+      "header": null,
+      "links": [
+        {
+          "img": "https://i.ytimg.com/vi/89vnToCcoAw/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAxsMWCpBYqwqEy0xULLLdcIVKkeA",
+          "title": "Replication Lab I",
+          "url": "https://www.youtube.com/watch?v=89vnToCcoAw",
+          "body": "Demonstrates bucket replication concepts using MinIO Client, including active-passive and active-active replication."
+        },
+        {
+          "img": "https://i.ytimg.com/vi/G4wQZEsIxcU/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBTPmOjC6YVBAmuyHwPK1OMfTrXoA",
+          "title": "Bucket Replication Overview",
+          "url": "https://www.youtube.com/watch?v=G4wQZEsIxcU",
+          "body": "In this video, we will cover bucket level replication, both active-passive and active-active."
+        }
+      ]
+    },
+    "blog": {
+      "header": null,
+      "links": [
+        {
+          "img": "https://blog.min.io/content/images/size/w1000/2022/12/replication-bestpractices.jpg",
+          "title": "Replication Best Practices",
+          "url": "https://blog.min.io/minio-replication-best-practices/",
+          "body": "A detailed tutorial guiding you through setting up MinIO with a well-configured replication architecture."
+        }
+      ]
+    }
   }
 }
