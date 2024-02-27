@@ -134,23 +134,23 @@ const HealthInfo = () => {
       const baseLocation = new URL(document.baseURI);
       const baseUrl = baseLocation.pathname;
 
-      const c = new WebSocket(
+      const socket = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`,
       );
       let interval: any | null = null;
-      if (c !== null) {
-        c.onopen = () => {
+      if (socket !== null) {
+        socket.onopen = () => {
           console.log("WebSocket Client Connected");
-          c.send("ok");
+          socket.send("ok");
           interval = setInterval(() => {
-            c.send("ok");
+            socket.send("ok");
           }, 10 * 1000);
           setMessage(
             "Health Report started. Please do not refresh page during diagnosis.",
           );
           dispatch(setServerDiagStat(DiagStatInProgress));
         };
-        c.onmessage = (message: MessageEvent) => {
+        socket.onmessage = (message: MessageEvent) => {
           let m: ReportMessage = JSON.parse(message.data.toString());
           if (m.serverHealthInfo) {
             dispatch(healthInfoMessageReceived(m.serverHealthInfo));
@@ -162,13 +162,13 @@ const HealthInfo = () => {
             setSubnetResponse(m.subnetResponse);
           }
         };
-        c.onerror = (error) => {
+        socket.onerror = (error) => {
           console.error("error closing websocket:", error);
-          c.close(1000);
+          socket.close(1000);
           clearInterval(interval);
           dispatch(setServerDiagStat(DiagStatError));
         };
-        c.onclose = (event: CloseEvent) => {
+        socket.onclose = (event: CloseEvent) => {
           clearInterval(interval);
           if (
             event.code === WSCloseInternalServerErr ||

@@ -25,7 +25,7 @@ import RegisterCluster from "./RegisterCluster";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
-var c: any = null;
+var socket: any = null;
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -69,16 +69,16 @@ const Profile = () => {
     const baseUrl = baseLocation.pathname;
 
     const wsProt = wsProtocol(url.protocol);
-    c = new WebSocket(
+    socket = new WebSocket(
       `${wsProt}://${url.hostname}:${port}${baseUrl}ws/profile?types=${typeString}`,
     );
 
-    if (c !== null) {
-      c.onopen = () => {
+    if (socket !== null) {
+      socket.onopen = () => {
         setProfilingStarted(true);
-        c.send("ok");
+        socket.send("ok");
       };
-      c.onmessage = (message: MessageEvent) => {
+      socket.onmessage = (message: MessageEvent) => {
         // process received message
         let response = new Blob([message.data], { type: "application/zip" });
         let filename = "profile.zip";
@@ -90,12 +90,12 @@ const Profile = () => {
         link.click();
         document.body.removeChild(link);
       };
-      c.onclose = () => {
+      socket.onclose = () => {
         console.log("connection closed by server");
         setProfilingStarted(false);
       };
       return () => {
-        c.close(1000);
+        socket.close(1000);
         console.log("closing websockets");
         setProfilingStarted(false);
       };
@@ -103,7 +103,7 @@ const Profile = () => {
   };
 
   const stopProfiling = () => {
-    c.close(1000);
+    socket.close(1000);
     setProfilingStarted(false);
   };
 
