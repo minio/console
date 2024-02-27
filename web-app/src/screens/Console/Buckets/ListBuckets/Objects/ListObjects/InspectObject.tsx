@@ -66,8 +66,10 @@ const InspectObject = ({
     const file = encodeURLString(inspectPath + "/xl.meta");
     const volume = encodeURLString(volumeName);
 
-    let basename = document.baseURI.replace(window.location.origin, "");
-    const urlOfInspectApi = `${window.location.origin}${basename}/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
+    const urlOfInspectApi = new URL(
+      `/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`,
+      document.baseURI,
+    ).href;
 
     makeRequest(urlOfInspectApi)
       .then(async (res) => {
