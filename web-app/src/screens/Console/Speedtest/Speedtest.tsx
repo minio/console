@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -77,7 +76,7 @@ const Speedtest = () => {
       const baseUrl = baseLocation.pathname;
 
       const wsProt = wsProtocol(url.protocol);
-      const c = new W3CWebSocket(
+      const socket = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`,
       );
 
@@ -95,15 +94,15 @@ const Speedtest = () => {
       setTotalSeconds(totalSeconds);
 
       let interval: any | null = null;
-      if (c !== null) {
-        c.onopen = () => {
+      if (socket !== null) {
+        socket.onopen = () => {
           console.log("WebSocket Client Connected");
-          c.send("ok");
+          socket.send("ok");
           interval = setInterval(() => {
-            c.send("ok");
+            socket.send("ok");
           }, 10 * 1000);
         };
-        c.onmessage = (message: IMessageEvent) => {
+        socket.onmessage = (message: MessageEvent) => {
           const data: SpeedTestResponse = JSON.parse(message.data.toString());
 
           setCurrStatus((prevStatus) => {
@@ -119,7 +118,7 @@ const Speedtest = () => {
           const currTime = DateTime.now().toUnixInteger() / 1000;
           setCurrentValue(currTime);
         };
-        c.onclose = () => {
+        socket.onclose = () => {
           clearInterval(interval);
           console.log("connection closed by server");
           // reset start status
@@ -127,7 +126,7 @@ const Speedtest = () => {
         };
         return () => {
           // close websocket on useEffect cleanup
-          c.close(1000);
+          socket.close(1000);
           clearInterval(interval);
           console.log("closing websockets");
         };

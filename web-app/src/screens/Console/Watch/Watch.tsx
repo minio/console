@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
 import {
   Box,
@@ -79,26 +78,26 @@ const Watch = () => {
       const baseUrl = baseLocation.pathname;
 
       const wsProt = wsProtocol(url.protocol);
-      const c = new W3CWebSocket(
+      const socket = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`,
       );
 
       let interval: any | null = null;
-      if (c !== null) {
-        c.onopen = () => {
+      if (socket !== null) {
+        socket.onopen = () => {
           console.log("WebSocket Client Connected");
-          c.send("ok");
+          socket.send("ok");
           interval = setInterval(() => {
-            c.send("ok");
+            socket.send("ok");
           }, 10 * 1000);
         };
-        c.onmessage = (message: IMessageEvent) => {
+        socket.onmessage = (message: MessageEvent) => {
           let m: EventInfo = JSON.parse(message.data.toString());
           m.Time = new Date(m.Time.toString());
           m.key = Math.random();
           dispatch(watchMessageReceived(m));
         };
-        c.onclose = () => {
+        socket.onclose = () => {
           clearInterval(interval);
           console.log("connection closed by server");
           // reset start status
@@ -106,7 +105,7 @@ const Watch = () => {
         };
         return () => {
           // close websocket on useEffect cleanup
-          c.close(1000);
+          socket.close(1000);
           clearInterval(interval);
           console.log("closing websockets");
         };
