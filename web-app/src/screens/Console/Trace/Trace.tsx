@@ -17,7 +17,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { useSelector } from "react-redux";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import {
   Box,
   breakPoints,
@@ -43,7 +42,7 @@ import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
 
-var c: any = null;
+var socket: any = null;
 
 const Trace = () => {
   const dispatch = useAppDispatch();
@@ -85,7 +84,7 @@ const Trace = () => {
     const baseUrl = baseLocation.pathname;
 
     const wsProt = wsProtocol(url.protocol);
-    c = new W3CWebSocket(
+    socket = new WebSocket(
       `${wsProt}://${
         url.hostname
       }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
@@ -94,29 +93,29 @@ const Trace = () => {
     );
 
     let interval: any | null = null;
-    if (c !== null) {
-      c.onopen = () => {
+    if (socket !== null) {
+      socket.onopen = () => {
         console.log("WebSocket Client Connected");
         dispatch(setTraceStarted(true));
-        c.send("ok");
+        socket.send("ok");
         interval = setInterval(() => {
-          c.send("ok");
+          socket.send("ok");
         }, 10 * 1000);
       };
-      c.onmessage = (message: IMessageEvent) => {
+      socket.onmessage = (message: MessageEvent) => {
         let m: TraceMessage = JSON.parse(message.data.toString());
 
         m.ptime = DateTime.fromISO(m.time).toJSDate();
         m.key = Math.random();
         dispatch(traceMessageReceived(m));
       };
-      c.onclose = () => {
+      socket.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
         dispatch(setTraceStarted(false));
       };
       return () => {
-        c.close(1000);
+        socket.close(1000);
         clearInterval(interval);
         console.log("closing websockets");
         setTraceStarted(false);
@@ -125,7 +124,7 @@ const Trace = () => {
   };
 
   const stopTrace = () => {
-    c.close(1000);
+    socket.close(1000);
     dispatch(setTraceStarted(false));
   };
 

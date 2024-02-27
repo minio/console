@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Box, Button, Grid, PageLayout, Select, Table, TableBody } from "mds";
 import { useSelector } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -33,7 +32,7 @@ import LogLine from "./LogLine";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
 
-var c: any = null;
+var socket: any = null;
 
 const ErrorLogs = () => {
   const dispatch = useAppDispatch();
@@ -61,7 +60,7 @@ const ErrorLogs = () => {
     const baseLocation = new URL(document.baseURI);
     const baseUrl = baseLocation.pathname;
 
-    c = new W3CWebSocket(
+    socket = new WebSocket(
       `${wsProt}://${
         url.hostname
       }:${port}${baseUrl}ws/console/?logType=${logType}&node=${
@@ -69,16 +68,16 @@ const ErrorLogs = () => {
       }`,
     );
     let interval: any | null = null;
-    if (c !== null) {
-      c.onopen = () => {
+    if (socket !== null) {
+      socket.onopen = () => {
         console.log("WebSocket Client Connected");
         dispatch(setLogsStarted(true));
-        c.send("ok");
+        socket.send("ok");
         interval = setInterval(() => {
-          c.send("ok");
+          socket.send("ok");
         }, 10 * 1000);
       };
-      c.onmessage = (message: IMessageEvent) => {
+      socket.onmessage = (message: MessageEvent) => {
         // console.log(message.data.toString())
         // FORMAT: 00:35:17 UTC 01/01/2021
 
@@ -104,13 +103,13 @@ const ErrorLogs = () => {
           dispatch(logMessageReceived(m));
         }
       };
-      c.onclose = () => {
+      socket.onclose = () => {
         clearInterval(interval);
         console.log("connection closed by server");
         dispatch(setLogsStarted(false));
       };
       return () => {
-        c.close(1000);
+        socket.close(1000);
         clearInterval(interval);
         console.log("closing websockets");
         dispatch(setLogsStarted(false));
@@ -119,8 +118,8 @@ const ErrorLogs = () => {
   };
 
   const stopLogs = () => {
-    if (c !== null && c !== undefined) {
-      c.close(1000);
+    if (socket !== null && socket !== undefined) {
+      socket.close(1000);
       dispatch(setLogsStarted(false));
     }
   };

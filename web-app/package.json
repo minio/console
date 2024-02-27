@@ -28,8 +28,7 @@
     "recharts": "^2.10.3",
     "styled-components": "^5.3.11",
     "superagent": "^8.0.8",
-    "tinycolor2": "^1.6.0",
-    "websocket": "^1.0.31"
+    "tinycolor2": "^1.6.0"
   },
   "scripts": {
     "start": "PORT=5005 react-scripts start",
@@ -76,7 +75,6 @@
     "@types/recharts": "^1.8.29",
     "@types/superagent": "^4.1.24",
     "@types/webpack-env": "^1.18.2",
-    "@types/websocket": "^1.0.10",
     "babel-plugin-istanbul": "^6.1.1",
     "customize-cra": "^1.0.0",
     "minio": "^7.1.3",
@@ -103,7 +101,6 @@
     "react-scripts/**/json5": "^2.2.2",
     "react-scripts/**/debug": "^3.1.0",
     "recharts/**/d3-color": "^3.1.0",
-    "websocket/debug": "^3.1.0",
     "fast-xml-parser": "^4.3.4",
     "semver": "^7.5.2",
     "testcafe/**/tough-cookie": "^4.1.3",
