@@ -19,7 +19,7 @@ export const DiagStatSuccess = "success";
 export const DiagStatInProgress = "inProgress";
 
 export interface HealthInfoMessage {
-  timestamp: Date;
+  timestamp: string;
   error: string;
   perf: perfInfo;
   minio: minioHealthInfo;
