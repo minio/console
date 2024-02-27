@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -77,7 +76,7 @@ const Speedtest = () => {
       const baseUrl = baseLocation.pathname;
 
       const wsProt = wsProtocol(url.protocol);
-      const c = new W3CWebSocket(
+      const c = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/speedtest?&size=${size}${sizeUnit}&duration=${duration}s`,
       );
 
@@ -103,7 +102,7 @@ const Speedtest = () => {
             c.send("ok");
           }, 10 * 1000);
         };
-        c.onmessage = (message: IMessageEvent) => {
+        c.onmessage = (message: MessageEvent) => {
           const data: SpeedTestResponse = JSON.parse(message.data.toString());
 
           setCurrStatus((prevStatus) => {

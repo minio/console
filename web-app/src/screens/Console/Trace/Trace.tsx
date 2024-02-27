@@ -17,7 +17,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { useSelector } from "react-redux";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import {
   Box,
   breakPoints,
@@ -85,7 +84,7 @@ const Trace = () => {
     const baseUrl = baseLocation.pathname;
 
     const wsProt = wsProtocol(url.protocol);
-    c = new W3CWebSocket(
+    c = new WebSocket(
       `${wsProt}://${
         url.hostname
       }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
@@ -103,7 +102,7 @@ const Trace = () => {
           c.send("ok");
         }, 10 * 1000);
       };
-      c.onmessage = (message: IMessageEvent) => {
+      c.onmessage = (message: MessageEvent) => {
         let m: TraceMessage = JSON.parse(message.data.toString());
 
         m.ptime = DateTime.fromISO(m.time).toJSDate();

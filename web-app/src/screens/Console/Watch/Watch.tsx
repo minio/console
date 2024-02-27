@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState, Fragment } from "react";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { useSelector } from "react-redux";
 import {
   Box,
@@ -79,7 +78,7 @@ const Watch = () => {
       const baseUrl = baseLocation.pathname;
 
       const wsProt = wsProtocol(url.protocol);
-      const c = new W3CWebSocket(
+      const c = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/watch/${bucketName}?prefix=${prefix}&suffix=${suffix}`,
       );
 
@@ -92,7 +91,7 @@ const Watch = () => {
             c.send("ok");
           }, 10 * 1000);
         };
-        c.onmessage = (message: IMessageEvent) => {
+        c.onmessage = (message: MessageEvent) => {
           let m: EventInfo = JSON.parse(message.data.toString());
           m.Time = new Date(m.Time.toString());
           m.key = Math.random();

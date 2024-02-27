@@ -14,11 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import React, { Fragment, useEffect, useState } from "react";
-import {
-  ICloseEvent,
-  IMessageEvent,
-  w3cwebsocket as W3CWebSocket,
-} from "websocket";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Grid, HelpBox, InfoIcon, Loader, PageLayout } from "mds";
@@ -139,7 +134,7 @@ const HealthInfo = () => {
       const baseLocation = new URL(document.baseURI);
       const baseUrl = baseLocation.pathname;
 
-      const c = new W3CWebSocket(
+      const c = new WebSocket(
         `${wsProt}://${url.hostname}:${port}${baseUrl}ws/health-info?deadline=1h`,
       );
       let interval: any | null = null;
@@ -155,12 +150,9 @@ const HealthInfo = () => {
           );
           dispatch(setServerDiagStat(DiagStatInProgress));
         };
-        c.onmessage = (message: IMessageEvent) => {
+        c.onmessage = (message: MessageEvent) => {
           let m: ReportMessage = JSON.parse(message.data.toString());
           if (m.serverHealthInfo) {
-            m.serverHealthInfo.timestamp = new Date(
-              m.serverHealthInfo.timestamp.toString(),
-            );
             dispatch(healthInfoMessageReceived(m.serverHealthInfo));
           }
           if (m.encoded !== "") {
@@ -170,13 +162,13 @@ const HealthInfo = () => {
             setSubnetResponse(m.subnetResponse);
           }
         };
-        c.onerror = (error: Error) => {
-          console.log("error closing websocket:", error.message);
+        c.onerror = (error) => {
+          console.error("error closing websocket:", error);
           c.close(1000);
           clearInterval(interval);
           dispatch(setServerDiagStat(DiagStatError));
         };
-        c.onclose = (event: ICloseEvent) => {
+        c.onclose = (event: CloseEvent) => {
           clearInterval(interval);
           if (
             event.code === WSCloseInternalServerErr ||

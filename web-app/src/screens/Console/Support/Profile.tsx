@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Button, PageLayout, FormLayout, Box, Checkbox, InputLabel } from "mds";
 import { wsProtocol } from "../../../utils/wsUtils";
 import { useNavigate } from "react-router-dom";
@@ -70,7 +69,7 @@ const Profile = () => {
     const baseUrl = baseLocation.pathname;
 
     const wsProt = wsProtocol(url.protocol);
-    c = new W3CWebSocket(
+    c = new WebSocket(
       `${wsProt}://${url.hostname}:${port}${baseUrl}ws/profile?types=${typeString}`,
     );
 
@@ -79,7 +78,7 @@ const Profile = () => {
         setProfilingStarted(true);
         c.send("ok");
       };
-      c.onmessage = (message: IMessageEvent) => {
+      c.onmessage = (message: MessageEvent) => {
         // process received message
         let response = new Blob([message.data], { type: "application/zip" });
         let filename = "profile.zip";

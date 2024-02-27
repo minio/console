@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { IMessageEvent, w3cwebsocket as W3CWebSocket } from "websocket";
 import { Box, Button, Grid, PageLayout, Select, Table, TableBody } from "mds";
 import { useSelector } from "react-redux";
 import { ErrorResponseHandler } from "../../../../common/types";
@@ -61,7 +60,7 @@ const ErrorLogs = () => {
     const baseLocation = new URL(document.baseURI);
     const baseUrl = baseLocation.pathname;
 
-    c = new W3CWebSocket(
+    c = new WebSocket(
       `${wsProt}://${
         url.hostname
       }:${port}${baseUrl}ws/console/?logType=${logType}&node=${
@@ -78,7 +77,7 @@ const ErrorLogs = () => {
           c.send("ok");
         }, 10 * 1000);
       };
-      c.onmessage = (message: IMessageEvent) => {
+      c.onmessage = (message: MessageEvent) => {
         // console.log(message.data.toString())
         // FORMAT: 00:35:17 UTC 01/01/2021
 
