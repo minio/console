@@ -113,9 +113,6 @@ const PreviewFile = ({
               "&.image": {
                 height: 500,
               },
-              "&.text": {
-                height: 700,
-              },
               "&.audio": {
                 height: 150,
               },
