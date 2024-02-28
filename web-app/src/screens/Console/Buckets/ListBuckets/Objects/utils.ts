@@ -194,13 +194,7 @@ class BrowserDownload {
   }
 }
 
-export type AllowedPreviews =
-  | "image"
-  | "pdf"
-  | "text"
-  | "audio"
-  | "video"
-  | "none";
+export type AllowedPreviews = "image" | "pdf" | "audio" | "video" | "none";
 export const contentTypePreview = (contentType: string): AllowedPreviews => {
   if (contentType) {
     const mimeObjectType = (contentType || "").toLowerCase();
@@ -210,9 +204,6 @@ export const contentTypePreview = (contentType: string): AllowedPreviews => {
     }
     if (mimeObjectType.includes("pdf")) {
       return "pdf";
-    }
-    if (mimeObjectType.includes("text")) {
-      return "text";
     }
     if (mimeObjectType.includes("audio")) {
       return "audio";
@@ -243,7 +234,6 @@ export const extensionPreview = (fileName: string): AllowedPreviews => {
     "png",
     "heic",
   ];
-  const textExtensions = ["txt"];
   const pdfExtensions = ["pdf"];
   const audioExtensions = ["wav", "mp3", "alac", "aiff", "dsd", "pcm"];
   const videoExtensions = [
@@ -273,10 +263,6 @@ export const extensionPreview = (fileName: string): AllowedPreviews => {
 
   if (pdfExtensions.includes(fileExtension)) {
     return "pdf";
-  }
-
-  if (textExtensions.includes(fileExtension)) {
-    return "text";
   }
 
   if (audioExtensions.includes(fileExtension)) {
