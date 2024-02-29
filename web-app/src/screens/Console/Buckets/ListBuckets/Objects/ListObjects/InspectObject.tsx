@@ -67,7 +67,7 @@ const InspectObject = ({
     const volume = encodeURLString(volumeName);
 
     let basename = document.baseURI.replace(window.location.origin, "");
-    const urlOfInspectApi = `${basename}/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
+    const urlOfInspectApi = `${window.location.origin}${basename}/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
 
     makeRequest(urlOfInspectApi)
       .then(async (res) => {
