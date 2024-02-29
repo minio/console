@@ -1743,9 +1743,10 @@ export class HttpClient<SecurityDataType = unknown> {
             ? { "Content-Type": type }
             : {}),
         },
-        signal: cancelToken
-          ? this.createAbortSignal(cancelToken)
-          : requestParams.signal,
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
         body:
           typeof body === "undefined" || body === null
             ? null
