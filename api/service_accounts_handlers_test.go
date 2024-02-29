@@ -24,7 +24,6 @@ import (
 	"time"
 
 	"github.com/minio/madmin-go/v3"
-	iampolicy "github.com/minio/pkg/v2/policy"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +40,7 @@ func TestAddServiceAccount(t *testing.T) {
 		AccessKey: "minio",
 		SecretKey: "minio123",
 	}
-	minioAddServiceAccountMock = func(_ context.Context, _ *iampolicy.Policy, _ string, _ string, _ string, _ string, _ string, _ *time.Time, _ string) (madmin.Credentials, error) {
+	minioAddServiceAccountMock = func(_ context.Context, _ string, _ string, _ string, _ string, _ string, _ string, _ *time.Time, _ string) (madmin.Credentials, error) {
 		return mockResponse, nil
 	}
 	saCreds, err := createServiceAccount(ctx, client, policyDefinition, "", "", nil, "")
@@ -51,25 +50,13 @@ func TestAddServiceAccount(t *testing.T) {
 	assert.Equal(mockResponse.AccessKey, saCreds.AccessKey, fmt.Sprintf("Failed on %s:, error occurred: AccessKey differ", function))
 	assert.Equal(mockResponse.SecretKey, saCreds.SecretKey, fmt.Sprintf("Failed on %s:, error occurred: SecretKey differ", function))
 
-	// Test-2: if an invalid policy is assigned to the service account, this will raise an error
-	policyDefinition = "invalid policy"
-	mockResponse = madmin.Credentials{
-		AccessKey: "minio",
-		SecretKey: "minio123",
-	}
-	minioAddServiceAccountMock = func(_ context.Context, _ *iampolicy.Policy, _ string, _ string, _ string, _ string, _ string, _ *time.Time, _ string) (madmin.Credentials, error) {
-		return mockResponse, nil
-	}
-	_, err = createServiceAccount(ctx, client, policyDefinition, "", "", nil, "")
-	assert.Error(err)
-
-	// Test-3: if an error occurs on server while creating service account (valid policy), handle it
+	// Test-2: if an error occurs on server while creating service account (valid policy), handle it
 	policyDefinition = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"s3:GetBucketLocation\",\"s3:GetObject\",\"s3:ListAllMyBuckets\"],\"Resource\":[\"arn:aws:s3:::bucket1/*\"]}]}"
 	mockResponse = madmin.Credentials{
 		AccessKey: "minio",
 		SecretKey: "minio123",
 	}
-	minioAddServiceAccountMock = func(_ context.Context, _ *iampolicy.Policy, _ string, _ string, _ string, _ string, _ string, _ *time.Time, _ string) (madmin.Credentials, error) {
+	minioAddServiceAccountMock = func(_ context.Context, _ string, _ string, _ string, _ string, _ string, _ string, _ *time.Time, _ string) (madmin.Credentials, error) {
 		return madmin.Credentials{}, errors.New("error")
 	}
 	_, err = createServiceAccount(ctx, client, policyDefinition, "", "", nil, "")
