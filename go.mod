@@ -22,7 +22,7 @@ require (
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.23.0
 	github.com/minio/madmin-go/v3 v3.0.46
-	github.com/minio/mc v0.0.0-20240209221824-669cb0a9a475
+	github.com/minio/mc v0.0.0-20240224013320-f17313e7ab89
 	github.com/minio/minio-go/v7 v7.0.67
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0

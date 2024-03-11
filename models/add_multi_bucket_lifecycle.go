@@ -42,6 +42,9 @@ type AddMultiBucketLifecycle struct {
 	Buckets []string `json:"buckets"`
 
 	// Non required, toggle to disable or enable rule
+	ExpiredObjectDeleteAll bool `json:"expired_object_delete_all,omitempty"`
+
+	// Non required, toggle to disable or enable rule
 	ExpiredObjectDeleteMarker bool `json:"expired_object_delete_marker,omitempty"`
 
 	// Required in case of expiry_date or transition fields are not set. it defines an expiry days for ILM

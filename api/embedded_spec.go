@@ -5373,6 +5373,10 @@ func init() {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
+        "expired_object_delete_all": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
         "expired_object_delete_marker": {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
@@ -5474,6 +5478,10 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "expired_object_delete_all": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
         },
         "expired_object_delete_marker": {
           "description": "Non required, toggle to disable or enable rule",
@@ -6179,6 +6187,9 @@ func init() {
         "days": {
           "type": "integer",
           "format": "int64"
+        },
+        "delete_all": {
+          "type": "boolean"
         },
         "delete_marker": {
           "type": "boolean"
@@ -8835,6 +8846,10 @@ func init() {
       ],
       "properties": {
         "disable": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expired_object_delete_all": {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
@@ -14729,6 +14744,10 @@ func init() {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },
+        "expired_object_delete_all": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
         "expired_object_delete_marker": {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
@@ -14830,6 +14849,10 @@ func init() {
           "items": {
             "type": "string"
           }
+        },
+        "expired_object_delete_all": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
         },
         "expired_object_delete_marker": {
           "description": "Non required, toggle to disable or enable rule",
@@ -15530,6 +15553,9 @@ func init() {
         "days": {
           "type": "integer",
           "format": "int64"
+        },
+        "delete_all": {
+          "type": "boolean"
         },
         "delete_marker": {
           "type": "boolean"
@@ -18169,6 +18195,10 @@ func init() {
       ],
       "properties": {
         "disable": {
+          "description": "Non required, toggle to disable or enable rule",
+          "type": "boolean"
+        },
+        "expired_object_delete_all": {
           "description": "Non required, toggle to disable or enable rule",
           "type": "boolean"
         },

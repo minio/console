@@ -73,6 +73,8 @@ const AddLifecycleModal = ({
   const [lifecycleDays, setLifecycleDays] = useState<string>("");
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
+  const [expiredAllVersionsDM, setExpiredAllVersionsDM] =
+    useState<boolean>(false);
   const [loadingVersioning, setLoadingVersioning] = useState<boolean>(true);
   const [expandedAdv, setExpandedAdv] = useState<boolean>(false);
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -183,6 +185,7 @@ const AddLifecycleModal = ({
       prefix,
       tags,
       expired_object_delete_marker: expiredObjectDM,
+      expired_object_delete_all: expiredAllVersionsDM,
       ...rules,
     };
 
@@ -435,6 +438,21 @@ const AddLifecycleModal = ({
                       label={"Expire Delete Marker"}
                       description={
                         "Remove the reference to the object if no versions are left"
+                      }
+                    />
+                    <Switch
+                      value="expired_delete_all"
+                      id="expired_delete_all"
+                      name="expired_delete_all"
+                      checked={expiredAllVersionsDM}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>,
+                      ) => {
+                        setExpiredAllVersionsDM(event.target.checked);
+                      }}
+                      label={"Expire All Versions"}
+                      description={
+                        "Removes all the versions of the object already expired"
                       }
                     />
                   </Grid>

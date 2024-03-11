@@ -62,6 +62,8 @@ const EditLifecycleConfiguration = ({
   const [storageClass, setStorageClass] = useState("");
   const [NCTransitionSC, setNCTransitionSC] = useState("");
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
+  const [expiredAllVersionsDM, setExpiredAllVersionsDM] =
+    useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
   const [ilmType, setIlmType] = useState<"transition" | "expiry">("expiry");
@@ -199,6 +201,7 @@ const EditLifecycleConfiguration = ({
     }
 
     setExpiredObjectDM(!!lifecycleRule.expiration?.delete_marker);
+    setExpiredAllVersionsDM(!!lifecycleRule.expiration?.delete_all);
     setPrefix(lifecycleRule.prefix || "");
 
     if (lifecycleRule.tags) {
@@ -270,6 +273,7 @@ const EditLifecycleConfiguration = ({
         prefix,
         tags,
         expired_object_delete_marker: expiredObjectDM,
+        expired_object_delete_all: expiredAllVersionsDM,
         ...rules,
       };
 
@@ -497,6 +501,18 @@ const EditLifecycleConfiguration = ({
                         setExpiredObjectDM(event.target.checked);
                       }}
                       label={"Expired Object Delete Marker"}
+                    />
+                    <Switch
+                      value="expired_delete_all"
+                      id="expired_delete_all"
+                      name="expired_delete_all"
+                      checked={expiredAllVersionsDM}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>,
+                      ) => {
+                        setExpiredAllVersionsDM(event.target.checked);
+                      }}
+                      label={"Expired All Versions"}
                     />
                   </Accordion>
                 </Grid>

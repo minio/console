@@ -903,6 +903,7 @@ export interface ExpirationResponse {
   /** @format int64 */
   days?: number;
   delete_marker?: boolean;
+  delete_all?: boolean;
   /** @format int64 */
   noncurrent_expiration_days?: number;
   /** @format int64 */
@@ -958,6 +959,8 @@ export interface AddBucketLifecycle {
   disable?: boolean;
   /** Non required, toggle to disable or enable rule */
   expired_object_delete_marker?: boolean;
+  /** Non required, toggle to disable or enable rule */
+  expired_object_delete_all?: boolean;
   /**
    * Non required, can be set in case of expiration is enabled
    * @format int32
@@ -1005,6 +1008,8 @@ export interface UpdateBucketLifecycle {
   disable?: boolean;
   /** Non required, toggle to disable or enable rule */
   expired_object_delete_marker?: boolean;
+  /** Non required, toggle to disable or enable rule */
+  expired_object_delete_all?: boolean;
   /**
    * Non required, can be set in case of expiration is enabled
    * @format int32
@@ -1045,6 +1050,8 @@ export interface AddMultiBucketLifecycle {
   storage_class?: string;
   /** Non required, toggle to disable or enable rule */
   expired_object_delete_marker?: boolean;
+  /** Non required, toggle to disable or enable rule */
+  expired_object_delete_all?: boolean;
   /**
    * Non required, can be set in case of expiration is enabled
    * @format int32
