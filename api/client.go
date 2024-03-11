@@ -278,7 +278,8 @@ func (c mcClient) list(ctx context.Context, opts mc.ListOptions) <-chan *mc.Clie
 }
 
 func (c mcClient) get(ctx context.Context, opts mc.GetOptions) (io.ReadCloser, *probe.Error) {
-	return c.client.Get(ctx, opts)
+	rd, _, err := c.client.Get(ctx, opts)
+	return rd, err
 }
 
 func (c mcClient) shareDownload(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error) {
