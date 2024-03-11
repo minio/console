@@ -59,6 +59,8 @@ const AddBulkReplicationModal = ({
   const [storageClass, setStorageClass] = useState("");
   const [NCTransitionSC, setNCTransitionSC] = useState("");
   const [expiredObjectDM, setExpiredObjectDM] = useState<boolean>(false);
+  const [expiredAllVersionsDM, setExpiredAllVersionsDM] =
+    useState<boolean>(false);
   const [NCExpirationDays, setNCExpirationDays] = useState<string>("0");
   const [NCTransitionDays, setNCTransitionDays] = useState<string>("0");
   const [ilmType, setIlmType] = useState<"expiry" | "transition">("expiry");
@@ -172,6 +174,7 @@ const AddBulkReplicationModal = ({
       prefix,
       tags,
       expired_object_delete_marker: expiredObjectDM,
+      expired_object_delete_all: expiredAllVersionsDM,
       ...rules,
     };
 
@@ -343,6 +346,18 @@ const AddBulkReplicationModal = ({
                         setExpiredObjectDM(event.target.checked);
                       }}
                       label={"Expired Object Delete Marker"}
+                    />
+                    <Switch
+                      value="expired_delete_all"
+                      id="expired_delete_all"
+                      name="expired_delete_all"
+                      checked={expiredAllVersionsDM}
+                      onChange={(
+                        event: React.ChangeEvent<HTMLInputElement>,
+                      ) => {
+                        setExpiredAllVersionsDM(event.target.checked);
+                      }}
+                      label={"Expired All Versions"}
                     />
                   </fieldset>
                 </FormLayout>
