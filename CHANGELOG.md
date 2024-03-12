@@ -2,6 +2,28 @@
 
 # Changelog
 
+## Release v1.0.1
+
+Features:
+
+- Added Set Expired object all versions selector
+
+Bug Fix:
+
+- Updated Go Dependencies
+
+## Release v1.0.0
+
+Features:
+
+- Updated Preview message alert
+
+Bug Fix:
+
+- Updated Websocket API
+- Fixed issues with download manager
+- Fixed policies issues
+
 ## Release v0.46.0
 
 Features:
