@@ -121,7 +121,7 @@ export const download = (
   req.responseType = "blob";
   req.onreadystatechange = () => {
     if (req.readyState === XMLHttpRequest.DONE) {
-      // Ensure object was donwloaded fully, if it's folder we don't get the fileSize
+      // Ensure object was downloaded fully, if it's a folder we don't get the fileSize
       let completeDownload =
         isFolder(objectPath) || req.response.size === fileSize;
 
