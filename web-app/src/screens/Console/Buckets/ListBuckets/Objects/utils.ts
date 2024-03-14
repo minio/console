@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "./ListObjects/types";
-import { encodeURLString } from "../../../../../common/utils";
+import { decodeURLString, encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
 import store from "../../../../../store";
 import { ContentType, PermissionResource } from "api/consoleApi";
@@ -64,6 +64,11 @@ export const downloadSelectedAsZip = async (
     );
   }
 };
+
+const isFolder = (objectPath: string) => {
+  return decodeURLString(objectPath).endsWith("/");
+};
+
 export const download = (
   bucketName: string,
   objectPath: string,
@@ -116,7 +121,9 @@ export const download = (
   req.responseType = "blob";
   req.onreadystatechange = () => {
     if (req.readyState === XMLHttpRequest.DONE) {
-      let completeDownload = req.response.size === fileSize;
+      // Ensure object was downloaded fully, if it's a folder we don't get the fileSize
+      let completeDownload =
+        isFolder(objectPath) || req.response.size === fileSize;
 
       if (req.status === StatusCodes.OK && completeDownload) {
         const rspHeader = req.getResponseHeader("Content-Disposition");
