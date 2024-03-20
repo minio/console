@@ -385,6 +385,7 @@ export interface MultiBucketReplication {
   healthCheckPeriod?: number;
   prefix?: string;
   tags?: string;
+  replicateExistingObjects?: boolean;
   replicateDeleteMarkers?: boolean;
   replicateDeletes?: boolean;
   replicateMetadata?: boolean;
