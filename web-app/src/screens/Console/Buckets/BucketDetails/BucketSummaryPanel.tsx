@@ -124,7 +124,7 @@ const BucketSummary = () => {
 
   const bucketName = params.bucketName || "";
 
-  let accessPolicy = "n/a";
+  let accessPolicy = "PRIVATE";
   let policyDefinition = "";
 
   if (bucketInfo !== null && bucketInfo.access && bucketInfo.definition) {

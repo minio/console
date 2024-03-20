@@ -89,7 +89,7 @@ const EditablePropertyItem = ({
                   isLoading={isLoading}
                   onClick={onEdit}
                   label={value}
-                  sx={{ fontWeight: "bold" }}
+                  sx={{ fontWeight: "bold", textTransform: "capitalize" }}
                   disabled={disabled}
                 />
               </HelpTip>
@@ -104,7 +104,7 @@ const EditablePropertyItem = ({
                 isLoading={isLoading}
                 onClick={onEdit}
                 label={value}
-                sx={{ fontWeight: "bold" }}
+                sx={{ fontWeight: "bold", textTransform: "capitalize" }}
                 disabled={disabled}
               />
             </SecureAction>
