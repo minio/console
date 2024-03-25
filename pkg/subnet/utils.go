@@ -204,44 +204,7 @@ func subnetPostReq(client xhttp.ClientI, reqURL string, payload interface{}, hea
 }
 
 func GetClusterRegInfo(admInfo madmin.InfoMessage) mc.ClusterRegistrationInfo {
-	noOfPools := 1
-	noOfDrives := 0
-	for _, srvr := range admInfo.Servers {
-		if srvr.PoolNumber > noOfPools {
-			noOfPools = srvr.PoolNumber
-		}
-		noOfDrives += len(srvr.Disks)
-	}
-
-	totalSpace, usedSpace := getDriveSpaceInfo(admInfo)
-
-	return mc.ClusterRegistrationInfo{
-		DeploymentID: admInfo.DeploymentID,
-		ClusterName:  admInfo.DeploymentID,
-		UsedCapacity: admInfo.Usage.Size,
-		Info: mc.ClusterInfo{
-			MinioVersion:    admInfo.Servers[0].Version,
-			NoOfServerPools: noOfPools,
-			NoOfServers:     len(admInfo.Servers),
-			NoOfDrives:      noOfDrives,
-			TotalDriveSpace: totalSpace,
-			UsedDriveSpace:  usedSpace,
-			NoOfBuckets:     admInfo.Buckets.Count,
-			NoOfObjects:     admInfo.Objects.Count,
-		},
-	}
-}
-
-func getDriveSpaceInfo(admInfo madmin.InfoMessage) (uint64, uint64) {
-	total := uint64(0)
-	used := uint64(0)
-	for _, srvr := range admInfo.Servers {
-		for _, d := range srvr.Disks {
-			total += d.TotalSpace
-			used += d.UsedSpace
-		}
-	}
-	return total, used
+	return mc.GetClusterRegInfo(admInfo, admInfo.DeploymentID)
 }
 
 func GetSubnetAPIKeyUsingLicense(lic string) (string, error) {
