@@ -124,8 +124,8 @@ const AddBucketReplication = () => {
           if (itemVal.errorString && itemVal.errorString !== "") {
             dispatch(
               setErrorSnackMessage({
-                errorMessage: itemVal.errorString,
-                detailedError: "There was an error",
+                errorMessage: "There was an error",
+                detailedError: itemVal.errorString,
               }),
             );
             // navigate(backLink);
