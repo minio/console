@@ -506,7 +506,7 @@ func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
 func replaceLicense(indexPageBytes []byte) []byte {
 	indexPageStr := string(indexPageBytes)
 	newPlan := fmt.Sprintf("<meta name=\"minio-license\" content=\"%s\" />", InstanceLicensePlan.String())
-	indexPageStr = strings.Replace(indexPageStr, "<meta name=\"minio-license\" content=\"apgl\"/>", newPlan, 1)
+	indexPageStr = strings.Replace(indexPageStr, "<meta name=\"minio-license\" content=\"agpl\"/>", newPlan, 1)
 	indexPageBytes = []byte(indexPageStr)
 	return indexPageBytes
 }
