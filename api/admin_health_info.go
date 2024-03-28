@@ -17,22 +17,22 @@
 package api
 
 import (
-	"bytes"
 	"context"
 	b64 "encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
+	"net/url"
+	"os"
 	"time"
 
+	"github.com/minio/console/pkg/logger"
 	"github.com/minio/console/pkg/utils"
 
-	"github.com/klauspost/compress/gzip"
-	xhttp "github.com/minio/console/pkg/http"
 	subnet "github.com/minio/console/pkg/subnet"
 	"github.com/minio/madmin-go/v3"
+	mc "github.com/minio/mc/cmd"
 	"github.com/minio/websocket"
 )
 
@@ -63,7 +63,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 		return err
 	}
 
-	compressedDiag, err := tarGZ(healthInfo, version)
+	compressedDiag, err := mc.TarGZHealthInfo(healthInfo, version)
 	if err != nil {
 		return err
 	}
@@ -75,11 +75,11 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	}
 
 	ctx = context.WithValue(ctx, utils.ContextClientIP, conn.remoteAddress())
-	subnetResp, err := sendHealthInfoToSubnet(ctx, healthInfo, client)
+	err = sendHealthInfoToSubnet(ctx, healthInfo, client)
 	report := messageReport{
 		Encoded:          encodedDiag,
 		ServerHealthInfo: healthInfo,
-		SubnetResponse:   subnetResp,
+		SubnetResponse:   mc.SubnetBaseURL() + "/health",
 	}
 	if err != nil {
 		report.SubnetResponse = fmt.Sprintf("Error: %s", err.Error())
@@ -94,31 +94,6 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	return conn.writeMessage(websocket.TextMessage, message)
 }
 
-// compress and tar MinIO diagnostics output
-func tarGZ(healthInfo interface{}, version string) ([]byte, error) {
-	buffer := bytes.NewBuffer(nil)
-	gzWriter := gzip.NewWriter(buffer)
-
-	enc := json.NewEncoder(gzWriter)
-
-	header := struct {
-		Version string `json:"version"`
-	}{Version: version}
-
-	if err := enc.Encode(header); err != nil {
-		return nil, err
-	}
-
-	if err := enc.Encode(healthInfo); err != nil {
-		return nil, err
-	}
-	err := gzWriter.Close()
-	if err != nil {
-		return nil, err
-	}
-	return buffer.Bytes(), nil
-}
-
 // getHealthInfoOptionsFromReq gets duration for startHealthInfo request
 // path come as : `/health-info?deadline=2h`
 func getHealthInfoOptionsFromReq(req *http.Request) (*time.Duration, error) {
@@ -129,16 +104,27 @@ func getHealthInfoOptionsFromReq(req *http.Request) (*time.Duration, error) {
 	return &deadlineDuration, nil
 }
 
-func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) (string, error) {
-	filename := fmt.Sprintf("health_%d.json", time.Now().Unix())
+func updateMcGlobals(subnetTokenConfig subnet.LicenseTokenConfig) error {
+	mc.GlobalDevMode = getConsoleDevMode()
+	if len(subnetTokenConfig.Proxy) > 0 {
+		proxyURL, e := url.Parse(subnetTokenConfig.Proxy)
+		if e != nil {
+			return e
+		}
+		mc.GlobalSubnetProxyURL = proxyURL
+	}
+	return nil
+}
 
-	clientIP := utils.ClientIPFromContext(ctx)
-
-	subnetUploadURL := subnet.UploadURL("health", filename)
-	subnetHTTPClient := &xhttp.Client{Client: GetConsoleHTTPClient("", clientIP)}
+func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) error {
+	filename := fmt.Sprintf("health_%d.json.gz", time.Now().Unix())
 	subnetTokenConfig, e := GetSubnetKeyFromMinIOConfig(ctx, client)
 	if e != nil {
-		return "", e
+		return e
+	}
+	e = updateMcGlobals(*subnetTokenConfig)
+	if e != nil {
+		return e
 	}
 	var apiKey string
 	if len(subnetTokenConfig.APIKey) != 0 {
@@ -146,32 +132,41 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 	} else {
 		apiKey, e = subnet.GetSubnetAPIKeyUsingLicense(subnetTokenConfig.License)
 		if e != nil {
-			return "", e
+			return e
 		}
 	}
-	headers := subnet.UploadAuthHeaders(apiKey)
-	uploadInfo, formDataType, e := subnet.ProcessUploadInfo(healthInfo, "health", filename)
+	compressedHealthInfo, e := mc.TarGZHealthInfo(healthInfo, madmin.HealthInfoVersion)
 	if e != nil {
-		return "", e
+		return e
 	}
-	resp, e := subnet.UploadFileToSubnet(uploadInfo, subnetHTTPClient, subnetUploadURL, headers, formDataType)
+	e = os.WriteFile(filename, compressedHealthInfo, 0o666)
+	if e != nil {
+		return e
+	}
+	headers := mc.SubnetAPIKeyAuthHeaders(apiKey)
+	resp, e := (&mc.SubnetFileUploader{
+		FilePath:          filename,
+		ReqURL:            mc.SubnetUploadURL("health"),
+		Headers:           headers,
+		DeleteAfterUpload: true,
+	}).UploadFileToSubnet()
+	if e != nil {
+		// file gets deleted only if upload is successful
+		// so we delete explicitly here as we already have the bytes
+		logger.LogIf(ctx, os.Remove(filename))
+		return e
+	}
 
-	if e != nil {
-		return "", e
-	}
 	type SubnetResponse struct {
-		ClusterURL string `json:"cluster_url,omitempty"`
+		LicenseV2 string `json:"license_v2,omitempty"`
+		APIKey    string `json:"api_key,omitempty"`
 	}
 
 	var subnetResp SubnetResponse
 	e = json.Unmarshal([]byte(resp), &subnetResp)
 	if e != nil {
-		return "", e
-	}
-	if len(subnetResp.ClusterURL) != 0 {
-		subnetClusterURL := strings.ReplaceAll(subnetResp.ClusterURL, "%2f", "/")
-		return subnetClusterURL, nil
+		return e
 	}
 
-	return "", ErrSubnetUploadFail
+	return nil
 }

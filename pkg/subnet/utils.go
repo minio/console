@@ -18,14 +18,11 @@ package subnet
 
 import (
 	"bytes"
-	"compress/gzip"
 	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net"
 	"net/http"
 	"time"
@@ -77,65 +74,6 @@ func UploadURL(uploadType string, filename string) string {
 
 func UploadAuthHeaders(apiKey string) map[string]string {
 	return map[string]string{"x-subnet-api-key": apiKey}
-}
-
-func ProcessUploadInfo(info interface{}, uploadType string, filename string) ([]byte, string, error) {
-	if uploadType == "health" {
-		return processHealthReport(info, filename)
-	}
-	return nil, "", errors.New("invalid SUBNET upload type")
-}
-
-func UploadFileToSubnet(info []byte, client *xhttp.Client, reqURL string, headers map[string]string, formDataType string) (string, error) {
-	req, e := subnetUploadReq(info, reqURL, formDataType)
-	if e != nil {
-		return "", e
-	}
-	resp, e := subnetReqDo(client, req, headers)
-	return resp, e
-}
-
-func processHealthReport(info interface{}, filename string) ([]byte, string, error) {
-	var body bytes.Buffer
-	writer := multipart.NewWriter(&body)
-	zipWriter := gzip.NewWriter(&body)
-	version := "3"
-	enc := json.NewEncoder(zipWriter)
-
-	header := struct {
-		Version string `json:"version"`
-	}{Version: version}
-
-	if e := enc.Encode(header); e != nil {
-		return nil, "", e
-	}
-
-	if e := enc.Encode(info); e != nil {
-		return nil, "", e
-	}
-	zipWriter.Close()
-	temp := body
-	part, e := writer.CreateFormFile("file", filename)
-	if e != nil {
-		return nil, "", e
-	}
-	if _, e = io.Copy(part, &temp); e != nil {
-		return nil, "", e
-	}
-
-	writer.Close()
-	return body.Bytes(), writer.FormDataContentType(), nil
-}
-
-func subnetUploadReq(body []byte, url string, formDataType string) (*http.Request, error) {
-	uploadDataBody := bytes.NewReader(body)
-	r, e := http.NewRequest(http.MethodPost, url, uploadDataBody)
-	if e != nil {
-		return nil, e
-	}
-	r.Header.Add("Content-Type", formDataType)
-
-	return r, nil
 }
 
 func GenerateRegToken(clusterRegInfo mc.ClusterRegistrationInfo) (string, error) {
