@@ -86,5 +86,10 @@ func StartServer(ctx *cli.Context) error {
 
 	defer server.Shutdown()
 
-	return server.Serve()
+	if err = server.Serve(); err != nil {
+		server.Logf("error serving API: %v", err)
+		return err
+	}
+
+	return nil
 }
