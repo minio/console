@@ -22,7 +22,7 @@ require (
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.23.0
 	github.com/minio/madmin-go/v3 v3.0.50
-	github.com/minio/mc v0.0.0-20240320210729-9043bbf545d2
+	github.com/minio/mc v0.0.0-20240330152952-9f8147bf0e03
 	github.com/minio/minio-go/v7 v7.0.69
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
@@ -155,5 +155,3 @@ require (
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/minio/mc => github.com/anjalshireesh/mc v0.0.0-20240326105237-ee529683a183

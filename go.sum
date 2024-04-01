@@ -8,8 +8,6 @@ github.com/VividCortex/ewma v1.2.0 h1:f58SaIzcDXrSy3kWaHNvuJgJ3Nmz59Zji6XoJR/q1o
 github.com/VividCortex/ewma v1.2.0/go.mod h1:nz4BbCtbLyFDeC9SUHbtcT5644juEuWfUAUnGx7j5l4=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d h1:licZJFw2RwpHMqeKTCYkitsPqHNxTmd4SNR5r94FGM8=
 github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d/go.mod h1:asat636LX7Bqt5lYEZ27JNDcqxfjdBQuJ/MM4CN/Lzo=
-github.com/anjalshireesh/mc v0.0.0-20240326105237-ee529683a183 h1:4vG97QViH4061mEgvcWAim0UyiYlPOjqvSTmhnxFLys=
-github.com/anjalshireesh/mc v0.0.0-20240326105237-ee529683a183/go.mod h1:YgeY0RTYvbm/H6Gzwb+rpRsQ/XREi3NwITZUcTNATOQ=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
 github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
@@ -188,6 +186,8 @@ github.com/minio/kes-go v0.2.1 h1:KnqS+p6xoSFJZbQhmJaz/PbxeA6nQyRqT/ywrn5lU2o=
 github.com/minio/kes-go v0.2.1/go.mod h1:76xf7l41Wrh+IifisABXK2S8uZWYgWV1IGBKC3GdOJk=
 github.com/minio/madmin-go/v3 v3.0.50 h1:+RQMetVFvPQmAOEDN/xmLhwk9+xOzu3rqwnlZEskgvg=
 github.com/minio/madmin-go/v3 v3.0.50/go.mod h1:ZDF7kf5fhmxLhbGTqyq5efs4ao0v4eWf7nOuef/ljJs=
+github.com/minio/mc v0.0.0-20240330152952-9f8147bf0e03 h1:xF1hntqvs/CVEHGBETSrIMTW3iSU3k2j/YCFXGDWoBs=
+github.com/minio/mc v0.0.0-20240330152952-9f8147bf0e03/go.mod h1:RMCe706GTL9EOO6pxzFXd9Vp+3w2L1uctPiycmLDr9U=
 github.com/minio/md5-simd v1.1.2 h1:Gdi1DZK69+ZVMoNHRXJyNcxrMA4dSxoYHZSQbirFg34=
 github.com/minio/md5-simd v1.1.2/go.mod h1:MzdKDxYpY2BT9XQFocsiZf/NKVtR7nkE4RoEpN+20RM=
 github.com/minio/minio-go/v7 v7.0.69 h1:l8AnsQFyY1xiwa/DaQskY4NXSLA2yrGsW5iD9nRPVS0=
