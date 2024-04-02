@@ -21,7 +21,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/madmin-go/v3"
 	"github.com/minio/mc/cmd"
 )
 
@@ -476,131 +475,6 @@ func Test_subnetAuthHeaders(t *testing.T) {
 		t.Run(tt.name, func(_ *testing.T) {
 			if got := subnetAuthHeaders(tt.args.authToken); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("subnetAuthHeaders() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getDriveSpaceInfo(t *testing.T) {
-	type args struct {
-		admInfo madmin.InfoMessage
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  uint64
-		want1 uint64
-	}{
-		{
-			name: "basic",
-			args: args{
-				admInfo: madmin.InfoMessage{
-					Servers: []madmin.ServerProperties{
-						{
-							Disks: []madmin.Disk{
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-							},
-						},
-					},
-				},
-			},
-			want:  1,
-			want1: 1,
-		},
-		{
-			name: "basic two disks",
-			args: args{
-				admInfo: madmin.InfoMessage{
-					Servers: []madmin.ServerProperties{
-						{
-							Disks: []madmin.Disk{
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-							},
-						},
-					},
-				},
-			},
-			want:  2,
-			want1: 2,
-		},
-		{
-			name: "basic two servers two disks",
-			args: args{
-				admInfo: madmin.InfoMessage{
-					Servers: []madmin.ServerProperties{
-						{
-							Disks: []madmin.Disk{
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-							},
-						},
-						{
-							Disks: []madmin.Disk{
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-								{
-									TotalSpace: 1,
-									UsedSpace:  1,
-								},
-							},
-						},
-					},
-				},
-			},
-			want:  4,
-			want1: 4,
-		},
-		{
-			name: "no servers",
-			args: args{
-				admInfo: madmin.InfoMessage{
-					Servers: nil,
-				},
-			},
-			want:  0,
-			want1: 0,
-		},
-		{
-			name: "no disks",
-			args: args{
-				admInfo: madmin.InfoMessage{
-					Servers: []madmin.ServerProperties{
-						{
-							Disks: nil,
-						},
-					},
-				},
-			},
-			want:  0,
-			want1: 0,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(_ *testing.T) {
-			got, got1 := getDriveSpaceInfo(tt.args.admInfo)
-			if got != tt.want {
-				t.Errorf("getDriveSpaceInfo() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("getDriveSpaceInfo() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}
