@@ -2743,6 +2743,41 @@ func init() {
         }
       }
     },
+    "/download-shared-object/{url}": {
+      "get": {
+        "security": [],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "Public"
+        ],
+        "summary": "Downloads an object from a presigned url",
+        "operationId": "DownloadSharedObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "url",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
     "/group/{name}": {
       "get": {
         "tags": [
@@ -11917,6 +11952,41 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/setConfigResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/download-shared-object/{url}": {
+      "get": {
+        "security": [],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "tags": [
+          "Public"
+        ],
+        "summary": "Downloads an object from a presigned url",
+        "operationId": "DownloadSharedObject",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "url",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "type": "file"
             }
           },
           "default": {

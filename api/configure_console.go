@@ -170,6 +170,8 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 
 	registerReleasesHandlers(api)
 
+	registerPublicObjectsHandlers(api)
+
 	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
