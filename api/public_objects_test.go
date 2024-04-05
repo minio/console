@@ -82,7 +82,6 @@ func Test_b64toMinIOStringURL(t *testing.T) {
 				}
 				tAssert.Equal(*tt.expected, *url)
 			}
-
 		})
 	}
 }
