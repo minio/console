@@ -47,6 +47,8 @@ create_policies() {
   mc admin policy create minio conditions-policy-2-$TIMESTAMP web-app/tests/policies/conditionsPolicy2.json
   mc admin policy create minio conditions-policy-3-$TIMESTAMP web-app/tests/policies/conditionsPolicy3.json
   mc admin policy create minio conditions-policy-4-$TIMESTAMP web-app/tests/policies/conditionsPolicy4.json
+  mc admin policy create minio rewind-allowed-$TIMESTAMP web-app/tests/policies/rewind-allowed.json
+  mc admin policy create minio rewind-not-allowed-$TIMESTAMP web-app/tests/policies/rewind-not-allowed.json
 }
 
 create_users() {
@@ -78,6 +80,8 @@ create_users() {
   mc admin user add minio conditions-2-$TIMESTAMP conditions1234
   mc admin user add minio conditions-3-$TIMESTAMP conditions1234
   mc admin user add minio conditions-4-$TIMESTAMP conditions1234
+  mc admin user add minio rewind-allowed-$TIMESTAMP rewindallowed1234
+  mc admin user add minio rewind-not-allowed-$TIMESTAMP rewindnotallowed1234
 }
 
 create_buckets() {
@@ -114,4 +118,6 @@ assign_policies() {
   mc admin policy attach minio conditions-policy-2-$TIMESTAMP --user conditions-2-$TIMESTAMP
   mc admin policy attach minio conditions-policy-3-$TIMESTAMP --user conditions-3-$TIMESTAMP
   mc admin policy attach minio conditions-policy-4-$TIMESTAMP --user conditions-4-$TIMESTAMP
+  mc admin policy attach minio rewind-allowed-$TIMESTAMP --user rewind-allowed-$TIMESTAMP
+  mc admin policy attach minio rewind-not-allowed-$TIMESTAMP --user rewind-not-allowed-$TIMESTAMP
 }

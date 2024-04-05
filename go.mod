@@ -33,7 +33,7 @@ require (
 	github.com/tidwall/gjson v1.17.1
 	github.com/unrolled/secure v1.14.0
 	golang.org/x/crypto v0.21.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	golang.org/x/oauth2 v0.18.0
 	// Added to include security fix for
 	// https://github.com/golang/go/issues/56152

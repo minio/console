@@ -294,3 +294,25 @@ export const conditions4 = Role(
   },
   { preserveUrl: true },
 );
+
+export const rewindEnabled = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "rewind-allowed-" + unixTimestamp)
+      .typeText("#secretKey", "rewindallowed1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true },
+);
+
+export const rewindNotEnabled = Role(
+  loginUrl,
+  async (t) => {
+    await t
+      .typeText("#accessKey", "rewind-not-allowed-" + unixTimestamp)
+      .typeText("#secretKey", "rewindnotallowed1234")
+      .click(submitButton);
+  },
+  { preserveUrl: true },
+);
