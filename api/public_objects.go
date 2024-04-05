@@ -26,12 +26,13 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
+	"github.com/go-openapi/swag"
 	"github.com/minio/console/api/operations"
 	"github.com/minio/console/api/operations/public"
+	xnet "github.com/minio/pkg/v2/net"
 )
 
 func registerPublicObjectsHandlers(api *operations.ConsoleAPI) {
-
 	api.PublicDownloadSharedObjectHandler = public.DownloadSharedObjectHandlerFunc(func(params public.DownloadSharedObjectParams) middleware.Responder {
 		resp, err := getDownloadPublicObjectResponse(params)
 		if err != nil {
@@ -44,16 +45,15 @@ func registerPublicObjectsHandlers(api *operations.ConsoleAPI) {
 func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (middleware.Responder, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 
-	// Validate input URL
-	urlDecoded, err := b64.StdEncoding.DecodeString(params.URL)
+	inputURLDecoded, err := b64toMinIOStringURL(params.URL)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	if _, err := url.ParseRequestURI(string(urlDecoded)); err != nil {
-		return nil, ErrorWithContext(ctx, err)
+	if inputURLDecoded == nil {
+		return nil, ErrorWithContext(ctx, ErrDefault, fmt.Errorf("decoded url is null"))
 	}
 
-	req, err := http.NewRequest(http.MethodGet, string(urlDecoded), nil)
+	req, err := http.NewRequest(http.MethodGet, *inputURLDecoded, nil)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -70,9 +70,9 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 			return
 		}
 
-		urlObj, err := url.Parse(string(urlDecoded))
+		urlObj, err := url.Parse(*inputURLDecoded)
 		if err != nil {
-			fmt.Printf("error parsing url '%s': %s", string(urlDecoded), err)
+			fmt.Printf("error parsing url '%s': %s", *inputURLDecoded, err)
 			http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -84,11 +84,30 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 
 		_, err = io.Copy(rw, resp.Body)
 		if err != nil {
-			fmt.Println("Error copying response body:", err)
+			fmt.Println("error copying response body:", err)
 			http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
 	}), nil
+}
+
+// b64toMinIOStringURL decodes url and validates is a MinIO url endpoint
+func b64toMinIOStringURL(inputEncodedURL string) (*string, error) {
+	inputURLDecoded, err := b64.StdEncoding.DecodeString(inputEncodedURL)
+	if err != nil {
+		return nil, err
+	}
+	// Validate input URL
+	inputURL, err := xnet.ParseHTTPURL(string(inputURLDecoded))
+	if err != nil {
+		return nil, err
+	}
+	// Ensure incoming url points to MinIO Server
+	minIOHost := getMinIOEndpoint()
+	if inputURL.Host != minIOHost {
+		return nil, ErrForbidden
+	}
+	return swag.String(string(inputURLDecoded)), nil
 }
 
 func url2BucketAndObject(u *url.URL) (bucketName, objectName string) {
