@@ -17,9 +17,19 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
-import { testBucketBrowseButtonFor } from "../utils/functions";
+import {
+  namedTestBucketBrowseButtonFor,
+  setUpNamedBucket,
+  setVersionedBucket,
+  testBucketBrowseButtonFor,
+} from "../utils/functions";
+import { Selector } from "testcafe";
+import { deniedError, file } from "../permissions-6/resourceTesting";
 
 fixture("Rewind Testing").page("http://localhost:9090");
+
+const bucketname = "bucketname";
+const test3BucketBrowseButton = namedTestBucketBrowseButtonFor(bucketname);
 
 test
   .before(async (t) => {
@@ -56,4 +66,81 @@ test
   .after(async (t) => {
     // Cleanup created bucket and corresponding uploads
     await functions.cleanUpBucketAndUploads(t, "abucketrewind");
+  });
+
+test
+  .before(async (t) => {
+    await functions.setUpNamedBucket(t, bucketname);
+    await functions.setVersionedBucket(t, bucketname);
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucketname,
+      "test.txt",
+      "web-app/tests/uploads/test.txt",
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucketname,
+      "firstlevel/secondlevel/test.txt",
+      "web-app/tests/uploads/test.txt",
+    );
+  })("Rewind button enabled in bucket", async (t) => {
+    await t
+      .useRole(roles.rewindEnabled)
+      .navigateTo(`http://localhost:9090/browser`)
+      .click(test3BucketBrowseButton)
+      .wait(1500)
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel"),
+      )
+      .wait(1500)
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel"),
+      )
+      .wait(1500)
+      .expect(elements.rewindButton.exists)
+      .ok();
+  })
+  .after(async (t) => {
+    await functions.cleanUpNamedBucketAndUploads(t, bucketname);
+  });
+
+test
+  .before(async (t) => {
+    await functions.setUpNamedBucket(t, bucketname);
+    await functions.setVersionedBucket(t, bucketname);
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucketname,
+      "test.txt",
+      "web-app/tests/uploads/test.txt",
+    );
+    await functions.uploadNamedObjectToBucket(
+      t,
+      bucketname,
+      "firstlevel/secondlevel/test.txt",
+      "web-app/tests/uploads/test.txt",
+    );
+  })("Rewind button disabled in bucket", async (t) => {
+    await t
+      .useRole(roles.rewindNotEnabled)
+      .navigateTo(`http://localhost:9090/browser`)
+      .click(test3BucketBrowseButton)
+      .wait(1500)
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("firstlevel"),
+      )
+      .wait(1500)
+      .click(
+        Selector(".ReactVirtualized__Table__rowColumn").withText("secondlevel"),
+      )
+      .wait(1500)
+      .expect(elements.rewindButton.exists)
+      .ok()
+      .wait(1500)
+      .expect(elements.rewindButton.hasAttribute("disabled"))
+      .ok();
+  })
+  .after(async (t) => {
+    await functions.cleanUpNamedBucketAndUploads(t, bucketname);
   });

@@ -26,6 +26,7 @@ import get from "lodash/get";
 import {
   AccessRuleIcon,
   ActionsList,
+  Badge,
   Box,
   BucketsIcon,
   Button,
@@ -39,7 +40,6 @@ import {
   RefreshIcon,
   ScreenTitle,
   ShareIcon,
-  Badge,
 } from "mds";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
@@ -274,6 +274,11 @@ const ListObjects = () => {
     [pathAsResourceInPolicy, ...sessionGrantWildCards],
     [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
   );
+  const canRewind = hasPermission(bucketName, [
+    IAM_SCOPES.S3_GET_OBJECT,
+    IAM_SCOPES.S3_GET_ACTIONS,
+    IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+  ]);
   const canDelete = hasPermission(
     [pathAsResourceInPolicy, ...sessionGrantWildCards],
     [IAM_SCOPES.S3_DELETE_OBJECT],
@@ -1057,7 +1062,20 @@ const ListObjects = () => {
             actions={
               <Fragment>
                 {!anonymousMode && (
-                  <TooltipWrapper tooltip={"Rewind Bucket"}>
+                  <TooltipWrapper
+                    tooltip={
+                      canRewind
+                        ? "Rewind Bucket"
+                        : permissionTooltipHelper(
+                            [
+                              IAM_SCOPES.S3_GET_OBJECT,
+                              IAM_SCOPES.S3_GET_ACTIONS,
+                              IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
+                            ],
+                            "apply rewind in this bucket",
+                          )
+                    }
+                  >
                     <Button
                       id={"rewind-objects-list"}
                       label={"Rewind"}
@@ -1078,13 +1096,7 @@ const ListObjects = () => {
                       onClick={() => {
                         setRewindSelect(true);
                       }}
-                      disabled={
-                        !isVersioningApplied ||
-                        !hasPermission(bucketName, [
-                          IAM_SCOPES.S3_GET_OBJECT,
-                          IAM_SCOPES.S3_GET_ACTIONS,
-                        ])
-                      }
+                      disabled={!isVersioningApplied || !canRewind}
                     />
                   </TooltipWrapper>
                 )}
