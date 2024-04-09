@@ -72,7 +72,6 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 
 		urlObj, err := url.Parse(*inputURLDecoded)
 		if err != nil {
-			fmt.Printf("error parsing url '%s': %s", *inputURLDecoded, err)
 			http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
@@ -84,7 +83,6 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 
 		_, err = io.Copy(rw, resp.Body)
 		if err != nil {
-			fmt.Println("error copying response body:", err)
 			http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
