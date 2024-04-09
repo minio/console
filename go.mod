@@ -21,8 +21,8 @@ require (
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.2
 	github.com/minio/kes v0.23.0
-	github.com/minio/madmin-go/v3 v3.0.50-0.20240307075442-63b4fc3ac1fd
-	github.com/minio/mc v0.0.0-20240320210729-9043bbf545d2
+	github.com/minio/madmin-go/v3 v3.0.50
+	github.com/minio/mc v0.0.0-20240330152952-9f8147bf0e03
 	github.com/minio/minio-go/v7 v7.0.69
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
@@ -33,7 +33,7 @@ require (
 	github.com/tidwall/gjson v1.17.1
 	github.com/unrolled/secure v1.14.0
 	golang.org/x/crypto v0.21.0
-	golang.org/x/net v0.22.0
+	golang.org/x/net v0.23.0
 	golang.org/x/oauth2 v0.18.0
 	// Added to include security fix for
 	// https://github.com/golang/go/issues/56152

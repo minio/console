@@ -61,6 +61,13 @@ const ListKeys = () => {
   const deleteKey = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.KMS_DELETE_KEY,
   ]);
+  const createKey = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.KMS_CREATE_KEY,
+  ]);
+
+  const importKey = hasPermission(CONSOLE_UI_RESOURCE, [
+    IAM_SCOPES.KMS_IMPORT_KEY,
+  ]);
 
   const displayKeys = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.KMS_LIST_KEYS,
@@ -111,14 +118,15 @@ const ListKeys = () => {
     }
   };
 
-  const tableActions = [
-    {
+  const tableActions: any[] = [];
+  if (deleteKey) {
+    tableActions.push({
       type: "delete",
       onClick: confirmDeleteKey,
       sendOnlyId: true,
       disableButtonFunction: () => !deleteKey,
-    },
-  ];
+    });
+  }
 
   useEffect(() => {
     dispatch(setHelpName("list_keys"));
@@ -178,39 +186,43 @@ const ListKeys = () => {
                 />
               </TooltipWrapper>
             </SecureComponent>
-            <SecureComponent
-              scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
-              resource={CONSOLE_UI_RESOURCE}
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper tooltip={"Import Key"}>
-                <Button
-                  id={"import-key"}
-                  variant={"regular"}
-                  icon={<UploadIcon />}
-                  onClick={() => {
-                    navigate(IAM_PAGES.KMS_KEYS_IMPORT);
-                  }}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
-            <SecureComponent
-              scopes={[IAM_SCOPES.KMS_CREATE_KEY]}
-              resource={CONSOLE_UI_RESOURCE}
-              errorProps={{ disabled: true }}
-            >
-              <TooltipWrapper tooltip={"Create Key"}>
-                <Button
-                  id={"create-key"}
-                  label={"Create Key"}
-                  variant={"callAction"}
-                  icon={<AddIcon />}
-                  onClick={() => navigate(IAM_PAGES.KMS_KEYS_ADD)}
-                />
-              </TooltipWrapper>
-            </SecureComponent>
+            {importKey ? (
+              <SecureComponent
+                scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
+                resource={CONSOLE_UI_RESOURCE}
+                errorProps={{ disabled: true }}
+              >
+                <TooltipWrapper tooltip={"Import Key"}>
+                  <Button
+                    id={"import-key"}
+                    variant={"regular"}
+                    icon={<UploadIcon />}
+                    onClick={() => {
+                      navigate(IAM_PAGES.KMS_KEYS_IMPORT);
+                    }}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+            ) : null}
+            {createKey ? (
+              <SecureComponent
+                scopes={[IAM_SCOPES.KMS_CREATE_KEY]}
+                resource={CONSOLE_UI_RESOURCE}
+                errorProps={{ disabled: true }}
+              >
+                <TooltipWrapper tooltip={"Create Key"}>
+                  <Button
+                    id={"create-key"}
+                    label={"Create Key"}
+                    variant={"callAction"}
+                    icon={<AddIcon />}
+                    onClick={() => navigate(IAM_PAGES.KMS_KEYS_ADD)}
+                  />
+                </TooltipWrapper>
+              </SecureComponent>
+            ) : null}
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ marginTop: "5px" }}>
             <SecureComponent
               scopes={[IAM_SCOPES.KMS_LIST_KEYS]}
               resource={CONSOLE_UI_RESOURCE}
