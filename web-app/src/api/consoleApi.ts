@@ -5277,4 +5277,20 @@ export class Api<
         ...params,
       }),
   };
+  downloadSharedObject = {
+    /**
+     * No description
+     *
+     * @tags Public
+     * @name DownloadSharedObject
+     * @summary Downloads an object from a presigned url
+     * @request GET:/download-shared-object/{url}
+     */
+    downloadSharedObject: (url: string, params: RequestParams = {}) =>
+      this.request<File, ApiError>({
+        path: `/download-shared-object/${url}`,
+        method: "GET",
+        ...params,
+      }),
+  };
 }

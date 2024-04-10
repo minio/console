@@ -18,6 +18,7 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -914,6 +915,7 @@ func Test_shareObject(t *testing.T) {
 	defer cancel()
 	client := s3ClientMock{}
 	type args struct {
+		r         *http.Request
 		versionID string
 		expires   string
 		shareFunc func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
@@ -927,18 +929,44 @@ func Test_shareObject(t *testing.T) {
 		{
 			test: "Get share object url",
 			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
 				versionID: "2121434",
 				expires:   "30s",
 				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
 					return "http://someurl", nil
 				},
 			},
+
 			wantError: nil,
-			expected:  "http://someurl",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+		},
+		{
+			test: "URL with TLS uses https scheme",
+			args: args{
+				r: &http.Request{
+					TLS:  &tls.ConnectionState{},
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+
+			wantError: nil,
+			expected:  "https://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
 			test: "handle invalid expire duration",
 			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
 				versionID: "2121434",
 				expires:   "invalid",
 				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
@@ -950,6 +978,10 @@ func Test_shareObject(t *testing.T) {
 		{
 			test: "handle empty expire duration",
 			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
 				versionID: "2121434",
 				expires:   "",
 				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
@@ -957,11 +989,15 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://someurl",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
 			test: "handle error on share func",
 			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
 				versionID: "2121434",
 				expires:   "3h",
 				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
@@ -975,7 +1011,7 @@ func Test_shareObject(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.test, func(_ *testing.T) {
 			mcShareDownloadMock = tt.args.shareFunc
-			url, err := getShareObjectURL(ctx, client, tt.args.versionID, tt.args.expires)
+			url, err := getShareObjectURL(ctx, client, tt.args.r, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
 				if !reflect.DeepEqual(err, tt.wantError) {
 					t.Errorf("getShareObjectURL() error: `%s`, wantErr: `%s`", err, tt.wantError)

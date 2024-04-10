@@ -49,6 +49,7 @@ import (
 	"github.com/minio/console/api/operations/object"
 	"github.com/minio/console/api/operations/policy"
 	"github.com/minio/console/api/operations/profile"
+	"github.com/minio/console/api/operations/public"
 	"github.com/minio/console/api/operations/release"
 	"github.com/minio/console/api/operations/service"
 	"github.com/minio/console/api/operations/service_account"
@@ -210,6 +211,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectDownloadMultipleObjectsHandler: object.DownloadMultipleObjectsHandlerFunc(func(params object.DownloadMultipleObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.DownloadMultipleObjects has not yet been implemented")
+		}),
+		PublicDownloadSharedObjectHandler: public.DownloadSharedObjectHandlerFunc(func(params public.DownloadSharedObjectParams) middleware.Responder {
+			return middleware.NotImplemented("operation public.DownloadSharedObject has not yet been implemented")
 		}),
 		TieringEditTierCredentialsHandler: tiering.EditTierCredentialsHandlerFunc(func(params tiering.EditTierCredentialsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.EditTierCredentials has not yet been implemented")
@@ -704,6 +708,8 @@ type ConsoleAPI struct {
 	ObjectDownloadObjectHandler object.DownloadObjectHandler
 	// ObjectDownloadMultipleObjectsHandler sets the operation handler for the download multiple objects operation
 	ObjectDownloadMultipleObjectsHandler object.DownloadMultipleObjectsHandler
+	// PublicDownloadSharedObjectHandler sets the operation handler for the download shared object operation
+	PublicDownloadSharedObjectHandler public.DownloadSharedObjectHandler
 	// TieringEditTierCredentialsHandler sets the operation handler for the edit tier credentials operation
 	TieringEditTierCredentialsHandler tiering.EditTierCredentialsHandler
 	// BucketEnableBucketEncryptionHandler sets the operation handler for the enable bucket encryption operation
@@ -1149,6 +1155,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectDownloadMultipleObjectsHandler == nil {
 		unregistered = append(unregistered, "object.DownloadMultipleObjectsHandler")
+	}
+	if o.PublicDownloadSharedObjectHandler == nil {
+		unregistered = append(unregistered, "public.DownloadSharedObjectHandler")
 	}
 	if o.TieringEditTierCredentialsHandler == nil {
 		unregistered = append(unregistered, "tiering.EditTierCredentialsHandler")
@@ -1769,6 +1778,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/objects/download-multiple"] = object.NewDownloadMultipleObjects(o.context, o.ObjectDownloadMultipleObjectsHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/download-shared-object/{url}"] = public.NewDownloadSharedObject(o.context, o.PublicDownloadSharedObjectHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

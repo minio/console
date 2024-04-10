@@ -19,6 +19,7 @@ package api
 import (
 	"context"
 	"encoding/base64"
+	b64 "encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -1077,28 +1078,41 @@ func getShareObjectResponse(session *models.Principal, params objectApi.ShareObj
 	if params.Expires != nil {
 		expireDuration = *params.Expires
 	}
-	url, err := getShareObjectURL(ctx, mcClient, params.VersionID, expireDuration)
+	url, err := getShareObjectURL(ctx, mcClient, params.HTTPRequest, params.VersionID, expireDuration)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
+
 	return url, nil
 }
 
-func getShareObjectURL(ctx context.Context, client MCClient, versionID string, duration string) (url *string, err error) {
+func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, versionID string, duration string) (url *string, err error) {
 	// default duration 7d if not defined
 	if strings.TrimSpace(duration) == "" {
 		duration = "168h"
 	}
-
 	expiresDuration, err := time.ParseDuration(duration)
 	if err != nil {
 		return nil, err
 	}
-	objURL, pErr := client.shareDownload(ctx, versionID, expiresDuration)
+	minioURL, pErr := client.shareDownload(ctx, versionID, expiresDuration)
 	if pErr != nil {
 		return nil, pErr.Cause
 	}
+
+	encodedMinIOURL := b64.StdEncoding.EncodeToString([]byte(minioURL))
+	requestURL := getRequestURLWithScheme(r)
+	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, encodedMinIOURL)
 	return &objURL, nil
+}
+
+func getRequestURLWithScheme(r *http.Request) string {
+	scheme := "http"
+	if r.TLS != nil {
+		scheme = "https"
+	}
+
+	return fmt.Sprintf("%s://%s", scheme, r.Host)
 }
 
 func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.PutObjectLegalHoldParams) *CodedAPIError {
