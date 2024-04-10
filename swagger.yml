@@ -25,7 +25,7 @@ securityDefinitions:
     type: apiKey
 # Apply the key security definition to all APIs
 security:
-  - key: [ ]
+  - key: []
 parameters:
   limit:
     name: limit
@@ -54,7 +54,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
     post:
@@ -74,7 +74,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: [ ]
+      security: []
       tags:
         - Auth
   /login/oauth2/auth:
@@ -94,7 +94,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/ApiError"
-      security: [ ]
+      security: []
       tags:
         - Auth
 
@@ -295,8 +295,8 @@ paths:
     get:
       summary: List Objects
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       operationId: ListObjects
       parameters:
         - name: bucket_name
@@ -411,8 +411,8 @@ paths:
     post:
       summary: Uploads an Object.
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       consumes:
         - multipart/form-data
       parameters:
@@ -438,8 +438,8 @@ paths:
       summary: Download Multiple Objects
       operationId: DownloadMultipleObjects
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       produces:
         - application/octet-stream
       parameters:
@@ -471,8 +471,8 @@ paths:
       summary: Download Object
       operationId: Download Object
       security:
-        - key: [ ]
-        - anonymous: [ ]
+        - key: []
+        - anonymous: []
       produces:
         - application/octet-stream
       parameters:
@@ -542,7 +542,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/legalhold:
     put:
       summary: Put Object's legalhold status
@@ -2885,7 +2884,7 @@ paths:
         - name: order
           in: query
           type: string
-          enum: [ timeDesc, timeAsc ]
+          enum: [timeDesc, timeAsc]
           default: timeDesc
         - name: timeStart
           in: query
@@ -3517,6 +3516,30 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Support
+
+  /download-shared-object/{url}:
+    get:
+      summary: Downloads an object from a presigned url
+      operationId: DownloadSharedObject
+      security: []
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: url
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Public
 
 definitions:
   accountChangePasswordRequest:
@@ -4329,7 +4352,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account, redirect-service-account ]
+        enum: [form, redirect, service-account, redirect-service-account]
       redirectRules:
         type: array
         items:
@@ -4428,7 +4451,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ ok ]
+        enum: [ok]
       operator:
         type: boolean
       distributedMode:
@@ -4459,7 +4482,7 @@ definitions:
           type: string
       values:
         type: array
-        items: { }
+        items: {}
   resultTarget:
     type: object
     properties:
@@ -4915,7 +4938,7 @@ definitions:
         type: string
       service:
         type: string
-        enum: [ replication ]
+        enum: [replication]
       syncMode:
         type: string
       bandwidth:
@@ -6209,7 +6232,7 @@ definitions:
         format: int64
     required:
       - exp
-  
+
   selectedSAs:
     type: array
     items:
