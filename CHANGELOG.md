@@ -2,6 +2,20 @@
 
 # Changelog
 
+## Release v1.2.0
+
+Features:
+
+- Updated file share logic to work as Proxy
+
+Bug Fix:
+
+- Updated project dependencies
+- Fixed Key Permissions UX
+- Added permissions validation to rewind button
+- Fixed Health report upload to SUBNET
+- Misc Cosmetic fixes
+
 ## Release v1.1.1
 
 Bug Fix:
