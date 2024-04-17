@@ -20,13 +20,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/minio/console/pkg"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/minio/console/pkg"
 
 	"github.com/minio/console/pkg/utils"
 
