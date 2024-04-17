@@ -27,6 +27,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/minio/console/pkg"
+
 	"github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/models"
@@ -449,6 +451,7 @@ func NewMinioAdminClient(ctx context.Context, sessionClaims *models.Principal) (
 	if err != nil {
 		return nil, err
 	}
+	adminClient.SetAppInfo(globalAppName, pkg.Version)
 	return adminClient, nil
 }
 
@@ -464,6 +467,7 @@ func newAdminFromClaims(claims *models.Principal, clientIP string) (*madmin.Admi
 	if err != nil {
 		return nil, err
 	}
+	adminClient.SetAppInfo(globalAppName, pkg.Version)
 	adminClient.SetCustomTransport(GetConsoleHTTPClient(getMinIOServer(), clientIP).Transport)
 	return adminClient, nil
 }
@@ -477,7 +481,7 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 	if err != nil {
 		return nil, err
 	}
-
+	minioClient.SetAppInfo(globalAppName, pkg.Version)
 	return minioClient, nil
 }
 
