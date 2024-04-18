@@ -86,7 +86,6 @@ const BucketLifecyclePanel = () => {
           .getBucketLifecycle(bucketName)
           .then((res) => {
             const records = get(res.data, "lifecycle", []);
-            console.log("records", records);
             setLifecycleRecords(records || []);
             setLoadingLifecycle(false);
           })
@@ -196,10 +195,9 @@ const BucketLifecyclePanel = () => {
         if (!el) {
           return <Fragment />;
         }
-        if (el.expiration) {
-          return el.expiration.delete_marker ? "true" : "false";
-        }
-        if (el.transition) {
+        if (el.expiration && el.expiration.delete_marker !== undefined) {
+          return <span>{el.expiration.delete_marker ? "true" : "false"}</span>;
+        } else {
           return <Fragment />;
         }
       },
