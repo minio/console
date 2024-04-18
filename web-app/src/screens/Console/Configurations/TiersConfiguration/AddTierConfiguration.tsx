@@ -98,12 +98,13 @@ const AddTierConfiguration = () => {
 
   useEffect(() => {
     if (saving) {
+      const fieldPrefix = prefix !== "" ? prefix : "*";
       let request = {};
       let fields = {
         name,
         endpoint,
         bucket,
-        prefix,
+        fieldPrefix,
         region,
       };
 
@@ -200,9 +201,6 @@ const AddTierConfiguration = () => {
       valid = false;
     }
     if (bucket === "") {
-      valid = false;
-    }
-    if (prefix === "") {
       valid = false;
     }
     if (region === "" && type !== "minio") {
@@ -445,7 +443,6 @@ const AddTierConfiguration = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPrefix(e.target.value);
                     }}
-                    required
                   />
                   <RegionSelectWrapper
                     onChange={(value) => {
