@@ -98,13 +98,12 @@ const AddTierConfiguration = () => {
 
   useEffect(() => {
     if (saving) {
-      const fieldPrefix = prefix !== "" ? prefix : "*";
       let request = {};
       let fields = {
         name,
         endpoint,
         bucket,
-        fieldPrefix,
+        prefix,
         region,
       };
 
