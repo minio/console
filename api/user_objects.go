@@ -1100,7 +1100,7 @@ func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, ve
 		return nil, pErr.Cause
 	}
 
-	encodedMinIOURL := b64.StdEncoding.EncodeToString([]byte(minioURL))
+	encodedMinIOURL := b64.URLEncoding.EncodeToString([]byte(minioURL))
 	requestURL := getRequestURLWithScheme(r)
 	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, encodedMinIOURL)
 	return &objURL, nil
