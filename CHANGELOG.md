@@ -10,9 +10,10 @@ Features:
 
 Bug Fix:
 
-- Use URL-safe base64 enconding for Share API
-- Make Prefix field optional when Adding Tier
-- Add Console user agent in MinIO Admin Client
+- Fixed vulnerability
+- Used URL-safe base64 enconding for Share API
+- Made Prefix field optional when Adding Tier
+- Added Console user agent in MinIO Admin Client
 
 ## Release v1.2.0
 
