@@ -2,6 +2,18 @@
 
 # Changelog
 
+## Release v1.3.0
+
+Features:
+
+- Adds ExpireDeleteMarker status to BucketLifecycleRule UI
+
+Bug Fix:
+
+- Use URL-safe base64 enconding for Share API
+- Make Prefix field optional when Adding Tier
+- Add Console user agent in MinIO Admin Client
+
 ## Release v1.2.0
 
 Features:
@@ -64,7 +76,7 @@ Deprecated:
 
 Features:
 
-- Updated tines on menus & pages  
+- Updated tines on menus & pages
 
 Bug Fix:
 
