@@ -927,7 +927,7 @@ func Test_shareObject(t *testing.T) {
 		expected  string
 	}{
 		{
-			test: "Get share object url",
+			test: "return sharefunc url base64 encoded with host name",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -944,7 +944,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "URL with TLS uses https scheme",
+			test: "return https scheme if url uses TLS",
 			args: args{
 				r: &http.Request{
 					TLS:  &tls.ConnectionState{},
@@ -961,7 +961,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "https://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "handle invalid expire duration",
+			test: "returns invalid expire duration if expiration is invalid",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -976,7 +976,7 @@ func Test_shareObject(t *testing.T) {
 			wantError: errors.New("time: invalid duration \"invalid\""),
 		},
 		{
-			test: "handle empty expire duration",
+			test: "add default expiration if expiration is empty",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -992,7 +992,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "handle error on share func",
+			test: "return error if sharefunc returns error",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -1005,6 +1005,23 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: errors.New("probe error"),
+		},
+		{
+			test: "return shareFunc url base64 encoded url-safe",
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "3h",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					// https://127.0.0.1:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256 using StdEncoding adds an extra `/` making it not url safe
+					return "https://127.0.0.1:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cHM6Ly8xMjcuMC4wLjE6OTAwMC9jZXN0ZXN0L0F1ZGlvJTIwaWNvbi5zdmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTY=",
 		},
 	}
 

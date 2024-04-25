@@ -202,9 +202,6 @@ const AddTierConfiguration = () => {
     if (bucket === "") {
       valid = false;
     }
-    if (prefix === "") {
-      valid = false;
-    }
     if (region === "" && type !== "minio") {
       valid = false;
     }
@@ -445,7 +442,6 @@ const AddTierConfiguration = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setPrefix(e.target.value);
                     }}
-                    required
                   />
                   <RegionSelectWrapper
                     onChange={(value) => {
