@@ -55,7 +55,7 @@ func getLicenseInfo(client http.Client, license string) (*licverifier.LicenseInf
 }
 
 func fetchLicensePlan() {
-	client := GetConsoleHTTPClient("", "127.0.0.1")
+	client := GetConsoleHTTPClient("127.0.0.1")
 	licenseInfo, err := getLicenseInfo(*client, os.Getenv(EnvSubnetLicense))
 	if err != nil {
 		return

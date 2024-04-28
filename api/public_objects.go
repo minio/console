@@ -57,7 +57,9 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	resp, err := http.DefaultClient.Do(req)
+
+	clnt := PrepareConsoleHTTPClient(getClientIP(params.HTTPRequest))
+	resp, err := clnt.Do(req)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
