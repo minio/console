@@ -33,13 +33,8 @@ export const setUpNamedBucket = (t, name) => {
     accessKey: "minioadmin",
     secretKey: "minioadmin",
   });
-  return new Promise((resolve, reject) => {
-    minioClient.makeBucket(name, "us-east-1", (err) => {
-      if (err) {
-        console.log(err);
-      }
-      resolve("done: " + err);
-    });
+  return minioClient.makeBucket(name, "us-east-1").catch((err) => {
+    console.log(err);
   });
 };
 
@@ -48,7 +43,7 @@ export const uploadObjectToBucket = (t, modifier, objectName, objectPath) => {
   return uploadNamedObjectToBucket(t, bucketName, objectName, objectPath);
 };
 
-export const uploadNamedObjectToBucket = (
+export const uploadNamedObjectToBucket = async (
   t,
   modifier,
   objectName,
@@ -62,14 +57,11 @@ export const uploadNamedObjectToBucket = (
     accessKey: "minioadmin",
     secretKey: "minioadmin",
   });
-  return new Promise((resolve, reject) => {
-    minioClient.fPutObject(bucketName, objectName, objectPath, {}, (err) => {
-      if (err) {
-        console.log(err);
-      }
-      resolve("done");
+  return minioClient
+    .fPutObject(bucketName, objectName, objectPath, {})
+    .catch((err) => {
+      console.log(err);
     });
-  });
 };
 
 export const setVersioned = (t, modifier) => {
@@ -139,9 +131,11 @@ export const cleanUpNamedBucketAndUploads = (t, bucket) => {
 
     var stream = minioClient.listObjects(bucket, "", true);
 
-    let proms = [];
+    let proms: any[] = [];
     stream.on("data", function (obj) {
-      proms.push(minioClient.removeObject(bucket, obj.name));
+      if (obj.name) {
+        proms.push(minioClient.removeObject(bucket, obj.name));
+      }
     });
 
     stream.on("end", () => {
