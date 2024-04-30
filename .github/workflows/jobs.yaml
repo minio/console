@@ -220,7 +220,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -269,7 +269,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -317,7 +317,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -364,7 +364,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -411,7 +411,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -454,7 +454,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -497,7 +497,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -540,7 +540,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -582,7 +582,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -625,7 +625,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -671,7 +671,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio
+          yarn add minio@7.1.3
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
