@@ -220,7 +220,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -239,7 +239,7 @@ jobs:
           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
@@ -269,7 +269,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
 
       - uses: actions/cache@v3
         name: Console Binary Cache
@@ -288,7 +288,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-1/ -q --skip-js-errors -c 3
@@ -317,7 +317,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -335,7 +335,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-2/ -q --skip-js-errors -c 3
@@ -364,7 +364,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -382,7 +382,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-3/ -q --skip-js-errors -c 3
@@ -411,7 +411,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -429,7 +429,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
@@ -454,7 +454,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -472,7 +472,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -497,7 +497,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -515,7 +515,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -540,7 +540,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -557,7 +557,7 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -582,7 +582,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -600,7 +600,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -625,7 +625,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -643,7 +643,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-A/ --skip-js-errors -c 3
@@ -671,7 +671,7 @@ jobs:
         working-directory: ./
         continue-on-error: false
         run: |
-          yarn add minio@7.1.3
+          yarn add minio
       - uses: actions/cache@v3
         name: Console Binary Cache
         with:
@@ -689,7 +689,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-B/ --skip-js-errors -c 3
