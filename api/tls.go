@@ -17,65 +17,35 @@
 package api
 
 import (
-	"crypto/tls"
-	"net"
 	"net/http"
-	"time"
 )
 
 type ConsoleTransport struct {
-	Transport *http.Transport
+	Transport http.RoundTripper
 	ClientIP  string
 }
 
 func (t *ConsoleTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req.Header.Add("X-Forwarded-For", t.ClientIP)
-	resp, err := t.Transport.RoundTrip(req)
-	return resp, err
+	if t.ClientIP != "" {
+		// Do not set an empty x-forwarded-for
+		req.Header.Add(xForwardedFor, t.ClientIP)
+	}
+	return t.Transport.RoundTrip(req)
 }
 
 // PrepareSTSClientTransport :
-func PrepareSTSClientTransport(insecure bool, remoteAddress string) *ConsoleTransport {
-	// This takes github.com/minio/madmin-go/v3/transport.go as an example
-	//
-	// DefaultTransport - this default transport is similar to
-	// http.DefaultTransport but with additional param  DisableCompression
-	// is set to true to avoid decompressing content with 'gzip' encoding.
-	DefaultTransport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   10 * time.Second,
-			KeepAlive: 15 * time.Second,
-		}).DialContext,
-		MaxIdleConns:          1024,
-		MaxIdleConnsPerHost:   1024,
-		IdleConnTimeout:       90 * time.Second,
-		TLSHandshakeTimeout:   10 * time.Second,
-		ExpectContinueTimeout: 10 * time.Second,
-		DisableCompression:    true,
-		TLSClientConfig: &tls.Config{
-			// Can't use SSLv3 because of POODLE and BEAST
-			// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
-			// Can't use TLSv1.1 because of RC4 cipher usage
-			MinVersion:         tls.VersionTLS12,
-			InsecureSkipVerify: insecure,
-			RootCAs:            GlobalRootCAs,
-		},
+func PrepareSTSClientTransport(clientIP string) *ConsoleTransport {
+	return &ConsoleTransport{
+		Transport: GlobalTransport,
+		ClientIP:  clientIP,
 	}
-	t := &ConsoleTransport{
-		Transport: DefaultTransport,
-		ClientIP:  remoteAddress,
-	}
-	return t
 }
 
 // PrepareConsoleHTTPClient returns an http.Client with custom configurations need it by *credentials.STSAssumeRole
 // custom configurations include the use of CA certificates
-func PrepareConsoleHTTPClient(insecure bool, clientIP string) *http.Client {
-	transport := PrepareSTSClientTransport(insecure, clientIP)
+func PrepareConsoleHTTPClient(clientIP string) *http.Client {
 	// Return http client with default configuration
-	c := &http.Client{
-		Transport: transport,
+	return &http.Client{
+		Transport: PrepareSTSClientTransport(clientIP),
 	}
-	return c
 }

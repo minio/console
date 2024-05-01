@@ -341,7 +341,7 @@ func stsCredentials(minioURL, accessKey, secretKey, location, clientIP string) (
 		DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
 	}
 	stsAssumeRole := &credentials.STSAssumeRole{
-		Client:      GetConsoleHTTPClient(minioURL, clientIP),
+		Client:      GetConsoleHTTPClient(clientIP),
 		STSEndpoint: minioURL,
 		Options:     opts,
 	}
@@ -357,7 +357,7 @@ func NewConsoleCredentials(accessKey, secretKey, location, clientIP string) (*cr
 	// LDAP authentication for Console
 	case ldap.GetLDAPEnabled():
 		{
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(minioURL, clientIP), minioURL, accessKey, secretKey)
+			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(clientIP), minioURL, accessKey, secretKey)
 			if err != nil {
 				return nil, err
 			}
@@ -414,7 +414,7 @@ func newMinioClient(claims *models.Principal, clientIP string) (*minio.Client, e
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:     creds,
 		Secure:    secure,
-		Transport: GetConsoleHTTPClient(getMinIOServer(), clientIP).Transport,
+		Transport: GetConsoleHTTPClient(clientIP).Transport,
 	})
 	if err != nil {
 		return nil, err
@@ -426,10 +426,9 @@ func newMinioClient(claims *models.Principal, clientIP string) (*minio.Client, e
 
 // computeObjectURLWithoutEncode returns a MinIO url containing the object filename without encoding
 func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
-	endpoint := getMinIOServer()
-	u, err := xnet.ParseHTTPURL(endpoint)
+	u, err := xnet.ParseHTTPURL(getMinIOServer())
 	if err != nil {
-		return "", fmt.Errorf("the provided endpoint is invalid")
+		return "", fmt.Errorf("the provided endpoint: '%s' is invalid", getMinIOServer())
 	}
 	var p string
 	if strings.TrimSpace(bucketName) != "" {
@@ -438,7 +437,7 @@ func computeObjectURLWithoutEncode(bucketName, prefix string) (string, error) {
 	if strings.TrimSpace(prefix) != "" {
 		p = pathJoinFinalSlash(p, prefix)
 	}
-	return fmt.Sprintf("%s://%s/%s", u.Scheme, u.Host, p), nil
+	return u.String() + "/" + p, nil
 }
 
 // newS3BucketClient creates a new mc S3Client to talk to the server based on a bucket
@@ -479,22 +478,18 @@ func pathJoinFinalSlash(elem ...string) string {
 func newS3Config(endpoint, accessKey, secretKey, sessionToken string, clientIP string) *mc.Config {
 	// We have a valid alias and hostConfig. We populate the/
 	// consoleCredentials from the match found in the config file.
-	s3Config := new(mc.Config)
-
-	s3Config.AppName = globalAppName
-	s3Config.AppVersion = pkg.Version
-	s3Config.Debug = false
-
-	s3Config.HostURL = endpoint
-	s3Config.AccessKey = accessKey
-	s3Config.SecretKey = secretKey
-	s3Config.SessionToken = sessionToken
-	s3Config.Signature = "S3v4"
-
-	insecure := isLocalIPEndpoint(endpoint)
-
-	s3Config.Insecure = insecure
-	s3Config.Transport = PrepareSTSClientTransport(insecure, clientIP).Transport
-
-	return s3Config
+	return &mc.Config{
+		HostURL:      endpoint,
+		AccessKey:    accessKey,
+		SecretKey:    secretKey,
+		SessionToken: sessionToken,
+		Signature:    "S3v4",
+		AppName:      globalAppName,
+		AppVersion:   pkg.Version,
+		Insecure:     isLocalIPEndpoint(endpoint),
+		Transport: &ConsoleTransport{
+			ClientIP:  clientIP,
+			Transport: GlobalTransport,
+		},
+	}
 }
