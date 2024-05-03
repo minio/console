@@ -18,7 +18,6 @@ package api
 
 import (
 	"context"
-	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
@@ -103,11 +102,7 @@ func logoutFromIDPProvider(r *http.Request, state string) error {
 		params.Add("client_secret", providerCfg.ClientSecret)
 		params.Add("refresh_token", refreshToken.Value)
 		client := &http.Client{
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{
-					RootCAs: GlobalRootCAs,
-				},
-			},
+			Transport: GlobalTransport,
 		}
 		_, err := client.PostForm(providerCfg.EndSessionEndpoint, params)
 		if err != nil {

@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2024 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -80,10 +80,11 @@ func Test_computeObjectURLWithoutEncode(t *testing.T) {
 			got, err := computeObjectURLWithoutEncode(tt.args.bucketName, tt.args.prefix)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("computeObjectURLWithoutEncode() errors = %v, wantErr %v", err, tt.wantErr)
-				return
 			}
-			if got != tt.want {
-				t.Errorf("computeObjectURLWithoutEncode() got = %v, want %v", got, tt.want)
+			if err == nil {
+				if got != tt.want {
+					t.Errorf("computeObjectURLWithoutEncode() got = %v, want %v", got, tt.want)
+				}
 			}
 		})
 	}

@@ -191,8 +191,7 @@ func getLoginDetailsResponse(params authApi.LoginDetailParams, openIDProviders o
 	for name, provider := range openIDProviders {
 		// initialize new oauth2 client
 
-		oauth2Client, err := provider.GetOauth2Provider(name, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)),
-			GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
+		oauth2Client, err := provider.GetOauth2Provider(name, nil, r, GetConsoleHTTPClient(getClientIP(params.HTTPRequest)))
 		if err != nil {
 			continue
 		}
@@ -281,8 +280,8 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		}
 
 		// Initialize new identity provider with new oauth2Client per IDPName
-		oauth2Client, err := providerCfg.GetOauth2Provider(IDPName, nil, r, GetConsoleHTTPClient("", getClientIP(params.HTTPRequest)),
-			GetConsoleHTTPClient(getMinIOServer(), getClientIP(params.HTTPRequest)))
+		oauth2Client, err := providerCfg.GetOauth2Provider(IDPName, nil, r,
+			GetConsoleHTTPClient(getClientIP(params.HTTPRequest)))
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
