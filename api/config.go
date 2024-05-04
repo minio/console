@@ -17,10 +17,13 @@
 package api
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"net"
+	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	xcerts "github.com/minio/pkg/v2/certs"
@@ -54,6 +57,31 @@ var (
 	GlobalPublicCerts []*x509.Certificate
 	// GlobalTLSCertsManager custom TLS Manager for SNI support
 	GlobalTLSCertsManager *xcerts.Manager
+	// GlobalTransport is common transport used for all HTTP calls, this is set via
+	// MinIO server to be the correct transport, however we still define some defaults
+	// here just in case.
+	GlobalTransport = &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   10 * time.Second,
+			KeepAlive: 15 * time.Second,
+		}).DialContext,
+		MaxIdleConns:          1024,
+		MaxIdleConnsPerHost:   1024,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 10 * time.Second,
+		DisableCompression:    true, // Set to avoid auto-decompression
+		TLSClientConfig: &tls.Config{
+			// Can't use SSLv3 because of POODLE and BEAST
+			// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
+			// Can't use TLSv1.1 because of RC4 cipher usage
+			MinVersion: tls.VersionTLS12,
+			// Console runs in the same pod/node as MinIO this is acceptable.
+			InsecureSkipVerify: true,
+			RootCAs:            GlobalRootCAs,
+		},
+	}
 )
 
 // MinIOConfig represents application configuration passed in from the MinIO

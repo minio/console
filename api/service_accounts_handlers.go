@@ -153,14 +153,15 @@ func getCreateServiceAccountResponse(session *models.Principal, params saApi.Cre
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	var parsedExpiry time.Time
+	var expiry *time.Time
 	if params.Body.Expiry != "" {
-		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		parsedExpiry, err := time.Parse(time.RFC3339, params.Body.Expiry)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
+		expiry = &parsedExpiry
 	}
-	saCreds, err := createServiceAccount(ctx, userAdminClient, params.Body.Policy, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
+	saCreds, err := createServiceAccount(ctx, userAdminClient, params.Body.Policy, params.Body.Name, params.Body.Description, expiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -203,14 +204,15 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 		return nil, ErrorWithContext(ctx, err)
 	}
 
-	var parsedExpiry time.Time
+	var expiry *time.Time
 	if params.Body.Expiry != "" {
-		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		parsedExpiry, err := time.Parse(time.RFC3339, params.Body.Expiry)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
+		expiry = &parsedExpiry
 	}
-	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
+	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name, params.Body.Name, params.Body.Description, expiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -248,14 +250,15 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 		}
 	}
 
-	var parsedExpiry time.Time
+	var expiry *time.Time
 	if serviceAccount.Expiry != "" {
-		parsedExpiry, err = time.Parse(time.RFC3339, serviceAccount.Expiry)
+		parsedExpiry, err := time.Parse(time.RFC3339, serviceAccount.Expiry)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
+		expiry = &parsedExpiry
 	}
-	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, user, serviceAccount.AccessKey, serviceAccount.SecretKey, serviceAccount.Name, serviceAccount.Description, &parsedExpiry, serviceAccount.Comment)
+	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, user, serviceAccount.AccessKey, serviceAccount.SecretKey, serviceAccount.Name, serviceAccount.Description, expiry, serviceAccount.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -289,15 +292,16 @@ func getCreateServiceAccountCredsResponse(session *models.Principal, params saAp
 		}
 	}
 
-	var parsedExpiry time.Time
+	var expiry *time.Time
 	if params.Body.Expiry != "" {
-		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		parsedExpiry, err := time.Parse(time.RFC3339, params.Body.Expiry)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
+		expiry = &parsedExpiry
 	}
 
-	saCreds, err := createServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, serviceAccount.AccessKey, serviceAccount.SecretKey, params.Body.Name, params.Body.Description, &parsedExpiry, params.Body.Comment)
+	saCreds, err := createServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, serviceAccount.AccessKey, serviceAccount.SecretKey, params.Body.Name, params.Body.Description, expiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -313,6 +317,25 @@ func getUserServiceAccounts(ctx context.Context, userClient MinioAdmin, user str
 	saList := models.ServiceAccounts{}
 
 	for _, acc := range listServAccs.Accounts {
+		if acc.AccountStatus != "" {
+			// Newer releases of MinIO would support enhanced listServiceAccounts()
+			// we can avoid infoServiceAccount() at that point, this scales well
+			// for 100's of service accounts.
+			expiry := ""
+			if acc.Expiration != nil {
+				expiry = acc.Expiration.Format(time.RFC3339)
+			}
+
+			saList = append(saList, &models.ServiceAccountsItems0{
+				AccountStatus: acc.AccountStatus,
+				Description:   acc.Description,
+				Expiration:    expiry,
+				Name:          acc.Name,
+				AccessKey:     acc.AccessKey,
+			})
+			continue
+		}
+
 		aInfo, err := userClient.infoServiceAccount(ctx, acc.AccessKey)
 		if err != nil {
 			continue
@@ -439,14 +462,14 @@ func getServiceAccountInfo(session *models.Principal, params saApi.GetServiceAcc
 }
 
 // setServiceAccountPolicy sets policy for a service account
-func updateServiceAccountDetails(ctx context.Context, userClient MinioAdmin, accessKey string, policy string, expiry time.Time, name string, description string, status string, secretKey string) error {
+func updateServiceAccountDetails(ctx context.Context, userClient MinioAdmin, accessKey string, policy string, expiry *time.Time, name string, description string, status string, secretKey string) error {
 	req := madmin.UpdateServiceAccountReq{
 		NewPolicy:      json.RawMessage(policy),
 		NewSecretKey:   secretKey,
 		NewStatus:      status,
 		NewName:        name,
 		NewDescription: description,
-		NewExpiration:  &expiry,
+		NewExpiration:  expiry,
 	}
 
 	err := userClient.updateServiceAccount(ctx, accessKey, req)
@@ -471,14 +494,15 @@ func updateSetServiceAccountResponse(session *models.Principal, params saApi.Upd
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	var parsedExpiry time.Time
+	var expiry *time.Time
 	if params.Body.Expiry != "" {
-		parsedExpiry, err = time.Parse(time.RFC3339, params.Body.Expiry)
+		parsedExpiry, err := time.Parse(time.RFC3339, params.Body.Expiry)
 		if err != nil {
 			return ErrorWithContext(ctx, err)
 		}
+		expiry = &parsedExpiry
 	}
-	err = updateServiceAccountDetails(ctx, userAdminClient, accessKey, policy, parsedExpiry, params.Body.Name, params.Body.Description, params.Body.Status, params.Body.SecretKey)
+	err = updateServiceAccountDetails(ctx, userAdminClient, accessKey, policy, expiry, params.Body.Name, params.Body.Description, params.Body.Status, params.Body.SecretKey)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

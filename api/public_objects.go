@@ -57,7 +57,9 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
-	resp, err := http.DefaultClient.Do(req)
+
+	clnt := PrepareConsoleHTTPClient(getClientIP(params.HTTPRequest))
+	resp, err := clnt.Do(req)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -91,7 +93,7 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 
 // b64toMinIOStringURL decodes url and validates is a MinIO url endpoint
 func b64toMinIOStringURL(inputEncodedURL string) (*string, error) {
-	inputURLDecoded, err := b64.StdEncoding.DecodeString(inputEncodedURL)
+	inputURLDecoded, err := b64.URLEncoding.DecodeString(inputEncodedURL)
 	if err != nil {
 		return nil, err
 	}

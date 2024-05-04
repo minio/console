@@ -189,6 +189,21 @@ const BucketLifecyclePanel = () => {
       },
     },
     {
+      label: "Expire Delete Marker",
+      elementKey: "expire_delete_marker",
+      renderFunction: (el: LifeCycleItem) => {
+        if (!el) {
+          return <Fragment />;
+        }
+        if (el.expiration && el.expiration.delete_marker !== undefined) {
+          return <span>{el.expiration.delete_marker ? "true" : "false"}</span>;
+        } else {
+          return <Fragment />;
+        }
+      },
+      renderFullObject: true,
+    },
+    {
       label: "Tier",
       elementKey: "storage_class",
       renderFunction: renderStorageClass,

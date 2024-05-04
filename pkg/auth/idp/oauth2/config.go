@@ -52,9 +52,9 @@ type ProviderConfig struct {
 //
 // We only support Authentication with the Authorization Code Flow - spec:
 // https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth
-func (pc ProviderConfig) GetOauth2Provider(name string, scopes []string, r *http.Request, idpClient, stsClient *http.Client) (provider *Provider, err error) {
+func (pc ProviderConfig) GetOauth2Provider(name string, scopes []string, r *http.Request, clnt *http.Client) (provider *Provider, err error) {
 	var ddoc DiscoveryDoc
-	ddoc, err = parseDiscoveryDoc(r.Context(), pc.URL, idpClient)
+	ddoc, err = parseDiscoveryDoc(r.Context(), pc.URL, clnt)
 	if err != nil {
 		return nil, err
 	}
@@ -112,9 +112,7 @@ func (pc ProviderConfig) GetOauth2Provider(name string, scopes []string, r *http
 
 	client.IDPName = name
 	client.UserInfo = pc.Userinfo
-
-	client.provHTTPClient = idpClient
-	client.stsHTTPClient = stsClient
+	client.client = clnt
 
 	return client, nil
 }

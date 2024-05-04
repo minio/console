@@ -96,7 +96,7 @@ func SubnetRegisterWithAPIKey(ctx context.Context, minioClient MinioAdmin, apiKe
 		return false, err
 	}
 	clientIP := utils.ClientIPFromContext(ctx)
-	registerResult, err := subnet.Register(GetConsoleHTTPClient("", clientIP), serverInfo, apiKey, "", "")
+	registerResult, err := subnet.Register(GetConsoleHTTPClient(clientIP), serverInfo, apiKey, "", "")
 	if err != nil {
 		return false, err
 	}
@@ -199,7 +199,6 @@ func SubnetLoginWithMFA(client xhttp.ClientI, username, mfaToken, otp string) (*
 // GetSubnetHTTPClient will return a client with proxy if configured, otherwise will return the default console http client
 func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Client, error) {
 	clientIP := utils.ClientIPFromContext(ctx)
-	subnetHTTPClient := GetConsoleHTTPClient("", clientIP)
 	subnetKey, err := GetSubnetKeyFromMinIOConfig(ctx, minioClient)
 	if err != nil {
 		return nil, err
@@ -209,18 +208,24 @@ func GetSubnetHTTPClient(ctx context.Context, minioClient MinioAdmin) (*xhttp.Cl
 	if subnetKey.Proxy != "" {
 		proxy = subnetKey.Proxy
 	}
+
+	tr := GlobalTransport.Clone()
 	if proxy != "" {
-		subnetProxyURL, err := url.Parse(proxy)
+		u, err := url.Parse(proxy)
 		if err != nil {
 			return nil, err
 		}
-		subnetHTTPClient.Transport.(*ConsoleTransport).Transport.Proxy = http.ProxyURL(subnetProxyURL)
+		tr.Proxy = http.ProxyURL(u)
 	}
 
-	clientI := &xhttp.Client{
-		Client: subnetHTTPClient,
-	}
-	return clientI, nil
+	return &xhttp.Client{
+		Client: &http.Client{
+			Transport: &ConsoleTransport{
+				Transport: tr,
+				ClientIP:  clientIP,
+			},
+		},
+	}, nil
 }
 
 func GetSubnetLoginWithMFAResponse(session *models.Principal, params subnetApi.SubnetLoginMFAParams) (*models.SubnetLoginResponse, *CodedAPIError) {
@@ -322,7 +327,7 @@ func GetSubnetInfoResponse(session *models.Principal, params subnetApi.SubnetInf
 	defer cancel()
 	clientIP := utils.ClientIPFromContext(ctx)
 	client := &xhttp.Client{
-		Client: GetConsoleHTTPClient("", clientIP),
+		Client: GetConsoleHTTPClient(clientIP),
 	}
 	// license gets seeded to us by MinIO
 	seededLicense := os.Getenv(EnvSubnetLicense)
