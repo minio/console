@@ -60,7 +60,7 @@ const AddBucketReplication = () => {
   const [repDeleteMarker, setRepDeleteMarker] = useState<boolean>(true);
   const [repDelete, setRepDelete] = useState<boolean>(true);
   const [metadataSync, setMetadataSync] = useState<boolean>(true);
-  const [repExisting, setRepExisting] = useState<boolean>(false);
+  const [repExisting, setRepExisting] = useState<boolean>(true);
   const [tags, setTags] = useState<string>("");
   const [replicationMode, setReplicationMode] = useState<"async" | "sync">(
     "async",
@@ -124,8 +124,8 @@ const AddBucketReplication = () => {
           if (itemVal.errorString && itemVal.errorString !== "") {
             dispatch(
               setErrorSnackMessage({
-                errorMessage: itemVal.errorString,
-                detailedError: "There was an error",
+                errorMessage: "There was an error",
+                detailedError: itemVal.errorString,
               }),
             );
             // navigate(backLink);
@@ -200,12 +200,7 @@ const AddBucketReplication = () => {
                     matching rule with highest configured priority.
                   </Box>
                   <Box sx={{ paddingTop: "10px" }}>
-                    MinIO supports automatically replicating existing objects in
-                    a bucket, however it does not enable existing object
-                    replication by default. Objects created before replication
-                    was configured or while replication is disabled are not
-                    synchronized to the target deployment unless replication of
-                    existing objects is enabled.
+                    By default, MinIO will enable the replication for existing objects in the bucket automatically. This setting can be changed once the replication rule is configured.
                   </Box>
                   <Box sx={{ paddingTop: "10px" }}>
                     MinIO supports replicating delete operations, where MinIO
@@ -402,6 +397,7 @@ const AddBucketReplication = () => {
                   setRepExisting(e.target.checked);
                 }}
                 description={"Replicate existing objects"}
+                disabled
               />
               <Switch
                 checked={metadataSync}
