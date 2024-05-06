@@ -1293,6 +1293,7 @@ func Test_getObjectInfo(t *testing.T) {
 	type args struct {
 		bucketName string
 		prefix     string
+		versionID  string
 		statFunc   func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
 	}
 	tests := []struct {
@@ -1305,6 +1306,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket1",
 				prefix:     "someprefix",
+				versionID:  "version123",
 				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, nil
 				},
@@ -1316,6 +1318,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket2",
 				prefix:     "someprefi2",
+				versionID:  "version456",
 				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, errors.New("new Error")
 				},
@@ -1326,7 +1329,7 @@ func Test_getObjectInfo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.test, func(_ *testing.T) {
 			minioStatObjectMock = tt.args.statFunc
-			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix)
+			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix, tt.args.versionID)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
 				tAssert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("getObjectInfo() error: `%s`, wantErr: `%s`", err, tt.wantError))

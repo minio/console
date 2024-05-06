@@ -2397,6 +2397,7 @@ export class Api<
       bucketName: string,
       query: {
         prefix: string;
+        versionID?: string;
       },
       params: RequestParams = {},
     ) =>

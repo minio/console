@@ -216,6 +216,7 @@ const ObjectDetailPanel = ({
       api.buckets
         .getObjectMetadata(bucketName, {
           prefix: internalPaths,
+          versionID: actualInfo?.version_id || "",
         })
         .then((res) => {
           let metadata = get(res.data, "objectMetadata", {});
@@ -228,7 +229,7 @@ const ObjectDetailPanel = ({
           setLoadingMetadata(false);
         });
     }
-  }, [bucketName, internalPaths, loadMetadata]);
+  }, [bucketName, internalPaths, loadMetadata, actualInfo?.version_id]);
 
   let tagKeys: string[] = [];
 
