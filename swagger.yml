@@ -4222,6 +4222,8 @@ definitions:
         type: string
       tags:
         type: string
+      replicateExistingObjects:
+        type: boolean
       replicateDeleteMarkers:
         type: boolean
       replicateDeletes:

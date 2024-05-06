@@ -68,6 +68,9 @@ type MultiBucketReplication struct {
 	// replicate deletes
 	ReplicateDeletes bool `json:"replicateDeletes,omitempty"`
 
+	// replicate existing objects
+	ReplicateExistingObjects bool `json:"replicateExistingObjects,omitempty"`
+
 	// replicate metadata
 	ReplicateMetadata bool `json:"replicateMetadata,omitempty"`
 

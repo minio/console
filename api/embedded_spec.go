@@ -7230,6 +7230,9 @@ func init() {
         "replicateDeletes": {
           "type": "boolean"
         },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
         "replicateMetadata": {
           "type": "boolean"
         },
@@ -16634,6 +16637,9 @@ func init() {
           "type": "boolean"
         },
         "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
           "type": "boolean"
         },
         "replicateMetadata": {
