@@ -775,7 +775,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_drive_free_inodes{$__query}`,
+				Expr:         `minio_node_drive_free_inodes{$__query}`,
 				LegendFormat: "Free Inodes [{{server}}:{{drive}}]",
 			},
 		},
