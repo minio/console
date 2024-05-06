@@ -2,6 +2,20 @@
 
 # Changelog
 
+## Release v1.4.0
+
+Features:
+
+- Added VersionID support to metadata details
+- Improved Websockets handlers
+
+Bug Fix:
+
+- Fixed vulnerabilities and updated dependencies
+- Fixed an issue with Download URL decoding
+- Fixed leak in Object Browser Websocket
+- Minor UX fixes
+
 ## Release v1.3.0
 
 Features:
