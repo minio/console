@@ -33,7 +33,8 @@ import (
 type GetObjectMetadataURL struct {
 	BucketName string
 
-	Prefix string
+	Prefix    string
+	VersionID *string
 
 	_basePath string
 	// avoid unkeyed usage
@@ -79,6 +80,14 @@ func (o *GetObjectMetadataURL) Build() (*url.URL, error) {
 	prefixQ := o.Prefix
 	if prefixQ != "" {
 		qs.Set("prefix", prefixQ)
+	}
+
+	var versionIDQ string
+	if o.VersionID != nil {
+		versionIDQ = *o.VersionID
+	}
+	if versionIDQ != "" {
+		qs.Set("versionID", versionIDQ)
 	}
 
 	_result.RawQuery = qs.Encode()

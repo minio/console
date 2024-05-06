@@ -1338,6 +1338,7 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	// defining the client to be used
 	minioClient := minioClient{client: mClient}
 	var prefix string
+	var versionID string
 
 	if params.Prefix != "" {
 		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
@@ -1348,7 +1349,11 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 		prefix = string(decodedPrefix)
 	}
 
-	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix)
+	if params.VersionID != nil {
+		versionID = *params.VersionID
+	}
+
+	objectInfo, err := getObjectInfo(ctx, minioClient, params.BucketName, prefix, versionID)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -1358,8 +1363,8 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	return metadata, nil
 }
 
-func getObjectInfo(ctx context.Context, client MinioClient, bucketName, prefix string) (minio.ObjectInfo, error) {
-	objectData, err := client.statObject(ctx, bucketName, prefix, minio.GetObjectOptions{})
+func getObjectInfo(ctx context.Context, client MinioClient, bucketName, prefix, versionID string) (minio.ObjectInfo, error) {
+	objectData, err := client.statObject(ctx, bucketName, prefix, minio.GetObjectOptions{VersionID: versionID})
 	if err != nil {
 		return minio.ObjectInfo{}, err
 	}
