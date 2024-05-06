@@ -59,6 +59,10 @@ type GetObjectMetadataParams struct {
 	  In: query
 	*/
 	Prefix string
+	/*
+	  In: query
+	*/
+	VersionID *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -79,6 +83,11 @@ func (o *GetObjectMetadataParams) BindRequest(r *http.Request, route *middleware
 
 	qPrefix, qhkPrefix, _ := qs.GetOK("prefix")
 	if err := o.bindPrefix(qPrefix, qhkPrefix, route.Formats); err != nil {
+		res = append(res, err)
+	}
+
+	qVersionID, qhkVersionID, _ := qs.GetOK("versionID")
+	if err := o.bindVersionID(qVersionID, qhkVersionID, route.Formats); err != nil {
 		res = append(res, err)
 	}
 	if len(res) > 0 {
@@ -118,6 +127,24 @@ func (o *GetObjectMetadataParams) bindPrefix(rawData []string, hasKey bool, form
 		return err
 	}
 	o.Prefix = raw
+
+	return nil
+}
+
+// bindVersionID binds and validates parameter VersionID from query.
+func (o *GetObjectMetadataParams) bindVersionID(rawData []string, hasKey bool, formats strfmt.Registry) error {
+	var raw string
+	if len(rawData) > 0 {
+		raw = rawData[len(rawData)-1]
+	}
+
+	// Required: false
+	// AllowEmptyValue: false
+
+	if raw == "" { // empty values pass all other validations
+		return nil
+	}
+	o.VersionID = &raw
 
 	return nil
 }
