@@ -262,23 +262,17 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 	defer close(done)
 
-	for {
-		select {
-		case writeM, ok := <-writeChannel:
-			if !ok {
-				return
-			}
-			jsonData, err := json.Marshal(writeM)
-			if err != nil {
-				LogInfo("Error while marshaling the response", err)
-				return
-			}
+	for writeM := range writeChannel {
+		jsonData, err := json.Marshal(writeM)
+		if err != nil {
+			LogInfo("Error while marshaling the response", err)
+			return
+		}
 
-			err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
-			if err != nil {
-				LogInfo("Error while writing the message", err)
-				return
-			}
+		err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
+		if err != nil {
+			LogInfo("Error while writing the message", err)
+			return
 		}
 	}
 }
