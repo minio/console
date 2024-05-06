@@ -292,7 +292,7 @@ func addRemoteBucket(ctx context.Context, client MinioAdmin, params models.Creat
 	return bucketARN, err
 }
 
-func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repDelMark, repDels, repMeta bool, tags string, priority int32, storageClass string) error {
+func addBucketReplicationItem(ctx context.Context, session *models.Principal, minClient minioClient, bucketName, prefix, destinationARN string, repExistingObj, repDelMark, repDels, repMeta bool, tags string, priority int32, storageClass string) error {
 	// we will tolerate this call failing
 	cfg, err := minClient.getBucketReplication(ctx, bucketName)
 	if err != nil {
@@ -337,13 +337,18 @@ func addBucketReplicationItem(ctx context.Context, session *models.Principal, mi
 		repMetaStatus = "enable"
 	}
 
+	existingRepStatus := "disable"
+	if repExistingObj {
+		existingRepStatus = "enable"
+	}
+
 	opts := replication.Options{
 		Priority:                fmt.Sprintf("%d", maxPrio),
 		RuleStatus:              "enable",
 		DestBucket:              destinationARN,
 		Op:                      replication.AddOption,
 		TagString:               tags,
-		ExistingObjectReplicate: "enable", // enabled by default
+		ExistingObjectReplicate: existingRepStatus,
 		ReplicateDeleteMarkers:  repDelMarkStatus,
 		ReplicateDeletes:        repDelsStatus,
 		ReplicaSync:             repMetaStatus,
@@ -459,6 +464,7 @@ func setMultiBucketReplication(ctx context.Context, session *models.Principal, c
 					sourceBucket,
 					params.Body.Prefix,
 					arn,
+					params.Body.ReplicateExistingObjects,
 					params.Body.ReplicateDeleteMarkers,
 					params.Body.ReplicateDeletes,
 					params.Body.ReplicateMetadata,
