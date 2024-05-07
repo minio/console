@@ -12,7 +12,7 @@
     "lodash": "^4.17.21",
     "luxon": "^3.4.3",
     "mds": "https://github.com/minio/mds.git#v1.0.2",
-    "pdfjs-dist": "3.11.174",
+    "pdfjs-dist": "4.2.67",
     "react": "^18.3.1",
     "react-component-export-image": "^1.0.6",
     "react-copy-to-clipboard": "^5.0.2",
