@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
@@ -1028,7 +1027,7 @@ func Test_shareObject(t *testing.T) {
 		{
 			test: "returns redirect url with share link if redirect url env variable set",
 			setEnvVars: func() {
-				os.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath")
+				t.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath")
 			},
 			args: args{
 				r: &http.Request{
