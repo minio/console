@@ -921,10 +921,11 @@ func Test_shareObject(t *testing.T) {
 		shareFunc func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 	}
 	tests := []struct {
-		test      string
-		args      args
-		wantError error
-		expected  string
+		test       string
+		args       args
+		setEnvVars func()
+		wantError  error
+		expected   string
 	}{
 		{
 			test: "return sharefunc url base64 encoded with host name",
@@ -1023,11 +1024,52 @@ func Test_shareObject(t *testing.T) {
 			wantError: nil,
 			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cHM6Ly8xMjcuMC4wLjE6OTAwMC9jZXN0ZXN0L0F1ZGlvJTIwaWNvbi5zdmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTY=",
 		},
+		{
+			test: "returns redirect url with share link if redirect url env variable set",
+			setEnvVars: func() {
+				t.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath")
+			},
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+		},
+		{
+			test: "returns redirect url with share link if redirect url env variable set with trailing slash",
+			setEnvVars: func() {
+				t.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath/")
+			},
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(_ *testing.T) {
 			mcShareDownloadMock = tt.args.shareFunc
+			if tt.setEnvVars != nil {
+				tt.setEnvVars()
+			}
 			url, err := getShareObjectURL(ctx, client, tt.args.r, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
 				if !reflect.DeepEqual(err, tt.wantError) {

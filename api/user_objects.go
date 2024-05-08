@@ -1112,6 +1112,11 @@ func getRequestURLWithScheme(r *http.Request) string {
 		scheme = "https"
 	}
 
+	redirectURL := getConsoleBrowserRedirectURL()
+	if redirectURL != "" {
+		return strings.TrimSuffix(redirectURL, "/")
+	}
+
 	return fmt.Sprintf("%s://%s", scheme, r.Host)
 }
 
