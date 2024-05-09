@@ -77,25 +77,6 @@ Still in the MinIO folder, run
 make build
 ```
 
-# Testing on Kubernetes
-
-If you want to test console on kubernetes, you can perform all the steps from `Building with MinIO`, but change `Step 3`
-to the following:
-
-```shell
-TAG=miniodev/console:dev make docker
-```
-
-This will build a docker container image that can be used to test with your local kubernetes environment.
-
-For example, if you are using kind:
-
-```shell
-kind load docker-image miniodev/console:dev
-```
-
-and then deploy any `Tenant` that uses this image
-
 # LDAP authentication with Console
 
 ## Setup
