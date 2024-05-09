@@ -47,7 +47,7 @@ var (
 	minioHealMock func(ctx context.Context, bucket, prefix string, healOpts madmin.HealOpts, clientToken string,
 		forceStart, forceStop bool) (healStart madmin.HealStartSuccess, healTaskStatus madmin.HealTaskStatus, err error)
 
-	minioServerHealthInfoMock func(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
+	minioServerHealthInfoMock func(ctx context.Context, deadline time.Duration) (interface{}, string, error)
 
 	minioListPoliciesMock func() (map[string]*iampolicy.Policy, error)
 	minioGetPolicyMock    func(name string) (*iampolicy.Policy, error)
@@ -174,8 +174,8 @@ func (ac AdminClientMock) heal(ctx context.Context, bucket, prefix string, healO
 	return minioHealMock(ctx, bucket, prefix, healOpts, clientToken, forceStart, forceStop)
 }
 
-func (ac AdminClientMock) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
-	return minioServerHealthInfoMock(ctx, healthDataTypes, deadline)
+func (ac AdminClientMock) serverHealthInfo(ctx context.Context, deadline time.Duration) (interface{}, string, error) {
+	return minioServerHealthInfoMock(ctx, deadline)
 }
 
 func (ac AdminClientMock) addOrUpdateIDPConfig(_ context.Context, _, _, _ string, _ bool) (restart bool, err error) {
