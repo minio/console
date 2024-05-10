@@ -467,8 +467,8 @@ export const representationNumber = (number: number | undefined) => {
 
 /** Ref https://developer.mozilla.org/en-US/docs/Glossary/Base64 */
 
-const base64ToBytes = (base64: any): Uint8Array => {
-  const binString: any = atob(base64);
+const base64ToBytes = (base64: string): Uint8Array => {
+  const binString: any = atob(base64.replace(/\//g, "_").replace(/\+/g, "-"));
   // @ts-ignore
   return Uint8Array.from(binString, (m) => m.codePointAt(0));
 };
@@ -477,7 +477,7 @@ const bytesToBase64 = (bytes: any) => {
   const binString = Array.from(bytes, (x: any) => String.fromCodePoint(x)).join(
     "",
   );
-  return btoa(binString);
+  return btoa(binString).replace(/\//g, "_").replace(/\+/g, "-");
 };
 
 export const encodeURLString = (name: string | null) => {

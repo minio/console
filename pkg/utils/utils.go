@@ -23,7 +23,7 @@ import (
 
 // DecodeBase64 : decoded base64 input into utf-8 text
 func DecodeBase64(s string) (string, error) {
-	decodedInput, err := base64.StdEncoding.DecodeString(s)
+	decodedInput, err := base64.URLEncoding.DecodeString(s)
 	if err != nil {
 		return "", err
 	}
