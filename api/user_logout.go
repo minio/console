@@ -21,10 +21,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/go-openapi/errors"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/go-openapi/errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
