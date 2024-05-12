@@ -1,7 +1,0 @@
-node_modules/
-dist/
-target/
-console
-!console/
-web-app/node_modules/
-.git/

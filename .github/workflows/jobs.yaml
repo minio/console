@@ -22,7 +22,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -105,53 +105,23 @@ jobs:
         continue-on-error: false
         run: |
           ./check-deadcode.sh
-  reuse-golang-dependencies:
-    name: reuse golang dependencies
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.21.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          go mod download
 
   latest-minio:
     name: Build latest MinIO
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
         uses: actions/checkout@v3
         with:
           repository: minio/minio
-      - uses: actions/cache@v3
-        id: minio-latest-cache
-        name: MinIO Latest Cache
-        with:
-          path: |
-            ./minio
-          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./go.sum') }}
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v3
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go-minio
       - name: Build on ${{ matrix.os }}
         if: steps.minio-latest-cache.outputs.cache-hit != 'true'
@@ -163,12 +133,11 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -208,7 +177,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -239,7 +208,7 @@ jobs:
           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
@@ -257,7 +226,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -288,7 +257,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-1/ -q --skip-js-errors -c 3
@@ -305,7 +274,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -335,7 +304,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-2/ -q --skip-js-errors -c 3
@@ -352,7 +321,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -382,7 +351,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-3/ -q --skip-js-errors -c 3
@@ -399,7 +368,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -429,7 +398,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
@@ -442,7 +411,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -472,7 +441,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -485,7 +454,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -515,7 +484,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -528,7 +497,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -557,7 +526,7 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -570,7 +539,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -600,7 +569,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -613,7 +582,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -643,7 +612,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-A/ --skip-js-errors -c 3
@@ -659,7 +628,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -689,7 +658,7 @@ jobs:
           (./console server) & (make initialize-permissions)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.0.0
+        run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: npx testcafe "chrome:headless" web-app/tests/permissions-B/ --skip-js-errors -c 3
@@ -703,12 +672,11 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -740,12 +708,11 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -777,14 +744,13 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
       - latest-minio
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
 
     steps:
       - name: Check out code
@@ -816,27 +782,23 @@ jobs:
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          if [ ! -f ../minio ]; then
-              echo "minio binary not found!, so compiling..."
-              make docker VERSION=$VERSION;
-          else
-              echo "Using binary from cache"
-              cp ../minio .
-          fi
+          make docker VERSION=$VERSION;
+
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
+          MINIO_VERSION="minio/minio:$VERSION";
+          echo $MINIO_VERSION;
 
           echo "Create bucket for replication with versioning"
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
+
           echo "Create the folder to put the all.out file"
-          make test-integration MINIO_VERSION=$VERSION;
+          make test-integration MINIO_VERSION=$MINIO_VERSION;
 
       - uses: actions/cache@v3
         id: coverage-cache
@@ -850,7 +812,6 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ubuntu-latest
     steps:
@@ -866,14 +827,13 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
       - latest-minio
     runs-on: [ ubuntu-latest ]
 
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
 
     steps:
       - name: Check out code
@@ -907,20 +867,17 @@ jobs:
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          if [ ! -f ../minio ]; then
-              echo "minio binary not found!, so compiling..."
-              make docker VERSION=$VERSION;
-          else
-              echo "Using binary from cache"
-              cp ../minio .
-          fi
+          make docker VERSION=$VERSION;
+
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
+
           echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
-          make test-replication MINIO_VERSION=$VERSION;
+          MINIO_VERSION="minio/minio:$VERSION";
+          echo $MINIO_VERSION;
+
+          make test-replication MINIO_VERSION=$MINIO_VERSION;
       - uses: actions/cache@v3
         id: coverage-cache-replication
         name: Coverage Cache Replication
@@ -941,14 +898,13 @@ jobs:
     needs:
       - lint-job
       - ui-assets
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
       - latest-minio
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
 
     steps:
       - name: Check out code
@@ -981,26 +937,23 @@ jobs:
           echo "replace github.com/minio/console => ../" >> go.mod
 
           echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.19
+          go mod tidy -compat=1.21
 
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
           echo $VERSION;
           echo "Create MinIO image";
-          if [ ! -f ../minio ]; then
-              echo "minio binary not found!, so compiling..."
-              make docker VERSION=$VERSION;
-          else
-              echo "Using binary from cache"
-              cp ../minio .
-          fi
+          make docker VERSION=$VERSION;
+
           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
+
           echo "We are going to use the built image on test-integration";
-          VERSION="minio/minio:$VERSION";
-          echo $VERSION;
-          make test-sso-integration MINIO_VERSION=$VERSION;
+          MINIO_VERSION="minio/minio:$VERSION";
+          echo $MINIO_VERSION;
+
+          make test-sso-integration MINIO_VERSION=$MINIO_VERSION;
       - uses: actions/cache@v3
         id: coverage-cache-sso
         name: Coverage Cache SSO
@@ -1019,7 +972,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -1089,7 +1042,7 @@ jobs:
           echo "download golang x tools"
           go mod download golang.org/x/tools
           echo "go mod tidy compat mode"
-          go mod tidy -compat=1.19
+          go mod tidy -compat=1.21
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
@@ -1165,7 +1118,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -1201,12 +1154,11 @@ jobs:
     needs:
       - lint-job
       - ui-assets-istanbul-coverage
-      - reuse-golang-dependencies
       - semgrep-static-code-analysis
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.21.x ]
+        go-version: [ 1.22.x ]
         os: [ ubuntu-latest ]
     steps:
       - name: Check out code
@@ -1238,6 +1190,150 @@ jobs:
         run: |
           make console
 
+  cross-compile-1:
+    name: Cross compile
+    needs:
+      - lint-job
+      - ui-assets
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.22.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/ppc64le linux/mips64'"
+
+  cross-compile-2:
+    name: Cross compile 2
+    needs:
+      - lint-job
+      - ui-assets
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.22.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/arm64 linux/s390x'"
+
+  cross-compile-3:
+    name: Cross compile 3
+    needs:
+      - lint-job
+      - ui-assets
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.22.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
+
+  cross-compile-4:
+    name: Cross compile 4
+    needs:
+      - lint-job
+      - ui-assets
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.22.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'windows/amd64 linux/arm'"
+
+  cross-compile-5:
+    name: Cross compile 5
+    needs:
+      - lint-job
+      - ui-assets
+      - semgrep-static-code-analysis
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: [ 1.22.x ]
+        os: [ ubuntu-latest ]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+        id: go
+
+      - name: Build on ${{ matrix.os }}
+        env:
+          GO111MODULE: on
+          GOOS: linux
+        run: |
+          make crosscompile arg1="'linux/386 netbsd/amd64'"
+          
   playwright:
     needs:
       - compile-binary-istanbul-coverage

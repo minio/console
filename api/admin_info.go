@@ -775,7 +775,7 @@ var widgets = []Metric{
 		},
 		Targets: []Target{
 			{
-				Expr:         `minio_cluster_drive_free_inodes{$__query}`,
+				Expr:         `minio_node_drive_free_inodes{$__query}`,
 				LegendFormat: "Free Inodes [{{server}}:{{drive}}]",
 			},
 		},
@@ -994,8 +994,6 @@ func unmarshalPrometheus(ctx context.Context, httpClnt *http.Client, endpoint st
 }
 
 func testPrometheusURL(ctx context.Context, url string) bool {
-	clientIP := utils.ClientIPFromContext(ctx)
-	httpClnt := GetConsoleHTTPClient(url, clientIP)
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url+"/-/healthy", nil)
 	if err != nil {
 		ErrorWithContext(ctx, fmt.Errorf("error Building Request: (%v)", err))
@@ -1003,10 +1001,12 @@ func testPrometheusURL(ctx context.Context, url string) bool {
 	}
 
 	prometheusBearer := getPrometheusAuthToken()
-
 	if prometheusBearer != "" {
 		req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", prometheusBearer))
 	}
+
+	clientIP := utils.ClientIPFromContext(ctx)
+	httpClnt := GetConsoleHTTPClient(clientIP)
 
 	response, err := httpClnt.Do(req)
 	if err != nil {
@@ -1050,7 +1050,7 @@ func getWidgetDetails(ctx context.Context, prometheusURL string, selector string
 		return nil, ErrorWithContext(ctx, errors.New("prometheus URL is unreachable"))
 	}
 	clientIP := utils.ClientIPFromContext(ctx)
-	httpClnt := GetConsoleHTTPClient(prometheusURL, clientIP)
+	httpClnt := GetConsoleHTTPClient(clientIP)
 
 	labelResultsCh := make(chan LabelResults)
 

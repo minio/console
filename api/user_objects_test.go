@@ -921,13 +921,14 @@ func Test_shareObject(t *testing.T) {
 		shareFunc func(ctx context.Context, versionID string, expires time.Duration) (string, *probe.Error)
 	}
 	tests := []struct {
-		test      string
-		args      args
-		wantError error
-		expected  string
+		test       string
+		args       args
+		setEnvVars func()
+		wantError  error
+		expected   string
 	}{
 		{
-			test: "Get share object url",
+			test: "return sharefunc url base64 encoded with host name",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -944,7 +945,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "URL with TLS uses https scheme",
+			test: "return https scheme if url uses TLS",
 			args: args{
 				r: &http.Request{
 					TLS:  &tls.ConnectionState{},
@@ -961,7 +962,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "https://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "handle invalid expire duration",
+			test: "returns invalid expire duration if expiration is invalid",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -976,7 +977,7 @@ func Test_shareObject(t *testing.T) {
 			wantError: errors.New("time: invalid duration \"invalid\""),
 		},
 		{
-			test: "handle empty expire duration",
+			test: "add default expiration if expiration is empty",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -992,7 +993,7 @@ func Test_shareObject(t *testing.T) {
 			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
 		},
 		{
-			test: "handle error on share func",
+			test: "return error if sharefunc returns error",
 			args: args{
 				r: &http.Request{
 					TLS:  nil,
@@ -1006,11 +1007,69 @@ func Test_shareObject(t *testing.T) {
 			},
 			wantError: errors.New("probe error"),
 		},
+		{
+			test: "return shareFunc url base64 encoded url-safe",
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "3h",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					// https://127.0.0.1:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256 using StdEncoding adds an extra `/` making it not url safe
+					return "https://127.0.0.1:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cHM6Ly8xMjcuMC4wLjE6OTAwMC9jZXN0ZXN0L0F1ZGlvJTIwaWNvbi5zdmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTY=",
+		},
+		{
+			test: "returns redirect url with share link if redirect url env variable set",
+			setEnvVars: func() {
+				t.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath")
+			},
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+		},
+		{
+			test: "returns redirect url with share link if redirect url env variable set with trailing slash",
+			setEnvVars: func() {
+				t.Setenv(ConsoleBrowserRedirectURL, "http://proxy-url.com:9012/console/subpath/")
+			},
+			args: args{
+				r: &http.Request{
+					TLS:  nil,
+					Host: "localhost:9090",
+				},
+				versionID: "2121434",
+				expires:   "30s",
+				shareFunc: func(_ context.Context, _ string, _ time.Duration) (string, *probe.Error) {
+					return "http://someurl", nil
+				},
+			},
+			wantError: nil,
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.test, func(_ *testing.T) {
 			mcShareDownloadMock = tt.args.shareFunc
+			if tt.setEnvVars != nil {
+				tt.setEnvVars()
+			}
 			url, err := getShareObjectURL(ctx, client, tt.args.r, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
 				if !reflect.DeepEqual(err, tt.wantError) {
@@ -1276,6 +1335,7 @@ func Test_getObjectInfo(t *testing.T) {
 	type args struct {
 		bucketName string
 		prefix     string
+		versionID  string
 		statFunc   func(ctx context.Context, bucketName string, prefix string, opts minio.GetObjectOptions) (objectInfo minio.ObjectInfo, err error)
 	}
 	tests := []struct {
@@ -1288,6 +1348,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket1",
 				prefix:     "someprefix",
+				versionID:  "version123",
 				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, nil
 				},
@@ -1299,6 +1360,7 @@ func Test_getObjectInfo(t *testing.T) {
 			args: args{
 				bucketName: "bucket2",
 				prefix:     "someprefi2",
+				versionID:  "version456",
 				statFunc: func(_ context.Context, _ string, _ string, _ minio.GetObjectOptions) (minio.ObjectInfo, error) {
 					return minio.ObjectInfo{}, errors.New("new Error")
 				},
@@ -1309,7 +1371,7 @@ func Test_getObjectInfo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.test, func(_ *testing.T) {
 			minioStatObjectMock = tt.args.statFunc
-			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix)
+			_, err := getObjectInfo(ctx, client, tt.args.bucketName, tt.args.prefix, tt.args.versionID)
 			if tt.wantError != nil {
 				fmt.Println(t.Name())
 				tAssert.Equal(tt.wantError.Error(), err.Error(), fmt.Sprintf("getObjectInfo() error: `%s`, wantErr: `%s`", err, tt.wantError))

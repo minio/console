@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { useSelector } from "react-redux";
 import {
@@ -41,8 +41,7 @@ import { setHelpName } from "../../../systemSlice";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-
-var socket: any = null;
+import useWebSocket, { ReadyState } from "react-use-websocket";
 
 const Trace = () => {
   const dispatch = useAppDispatch();
@@ -65,68 +64,82 @@ const Trace = () => {
   const [errors, setErrors] = useState<boolean>(false);
 
   const [toggleFilter, setToggleFilter] = useState<boolean>(false);
+  const [logActive, setLogActive] = useState(false);
+  const [wsUrl, setWsUrl] = useState<string>("");
 
-  const startTrace = () => {
-    dispatch(traceResetMessages());
+  useEffect(() => {
     const url = new URL(window.location.toString());
-    const isDev = process.env.NODE_ENV === "development";
-    const port = isDev ? "9090" : url.port;
-
-    let calls = `${s3 ? "s3," : ""}${internal ? "internal," : ""}${
-      storage ? "storage," : ""
-    }${os ? "os," : ""}`;
-
-    if (all) {
-      calls = "all";
-    }
-    // check if we are using base path, if not this always is `/`
-    const baseLocation = new URL(document.baseURI);
-    const baseUrl = baseLocation.pathname;
-
     const wsProt = wsProtocol(url.protocol);
-    socket = new WebSocket(
-      `${wsProt}://${
-        url.hostname
-      }:${port}${baseUrl}ws/trace?calls=${calls}&threshold=${threshold}&onlyErrors=${
-        errors ? "yes" : "no"
-      }&statusCode=${statusCode}&method=${method}&funcname=${func}&path=${path}`,
+    const port = process.env.NODE_ENV === "development" ? "9090" : url.port;
+    const calls = all
+      ? "all"
+      : (() => {
+          const c = [];
+          if (s3) c.push("s3");
+          if (internal) c.push("internal");
+          if (storage) c.push("storage");
+          if (os) c.push("os");
+          return c.join(",");
+        })();
+
+    // check if we are using base path, if not this always is `/`
+    const baseLocation = new URL(document.baseURI).pathname;
+
+    const wsUrl = new URL(
+      `${wsProt}://${url.hostname}:${port}${baseLocation}ws/trace`,
+    );
+    wsUrl.searchParams.append("calls", calls);
+    wsUrl.searchParams.append("threshold", threshold.toString());
+    wsUrl.searchParams.append("onlyErrors", errors ? "yes" : "no");
+    wsUrl.searchParams.append("statusCode", statusCode);
+    wsUrl.searchParams.append("method", method);
+    wsUrl.searchParams.append("funcname", func);
+    wsUrl.searchParams.append("path", path);
+    setWsUrl(wsUrl.href);
+  }, [
+    all,
+    s3,
+    internal,
+    storage,
+    os,
+    threshold,
+    errors,
+    statusCode,
+    method,
+    func,
+    path,
+  ]);
+
+  const { sendMessage, lastJsonMessage, readyState } =
+    useWebSocket<TraceMessage>(
+      wsUrl,
+      {
+        heartbeat: {
+          message: "ok",
+          interval: 10 * 1000, // send ok every 10 seconds
+          timeout: 365 * 24 * 60 * 60 * 1000, // disconnect after 365 days (workaround, because heartbeat gets no response)
+        },
+      },
+      logActive,
     );
 
-    let interval: any | null = null;
-    if (socket !== null) {
-      socket.onopen = () => {
-        console.log("WebSocket Client Connected");
-        dispatch(setTraceStarted(true));
-        socket.send("ok");
-        interval = setInterval(() => {
-          socket.send("ok");
-        }, 10 * 1000);
-      };
-      socket.onmessage = (message: MessageEvent) => {
-        let m: TraceMessage = JSON.parse(message.data.toString());
-
-        m.ptime = DateTime.fromISO(m.time).toJSDate();
-        m.key = Math.random();
-        dispatch(traceMessageReceived(m));
-      };
-      socket.onclose = () => {
-        clearInterval(interval);
-        console.log("connection closed by server");
-        dispatch(setTraceStarted(false));
-      };
-      return () => {
-        socket.close(1000);
-        clearInterval(interval);
-        console.log("closing websockets");
-        setTraceStarted(false);
-      };
+  useEffect(() => {
+    if (readyState === ReadyState.CONNECTING) {
+      dispatch(traceResetMessages());
+    } else if (readyState === ReadyState.OPEN) {
+      dispatch(setTraceStarted(true));
+    } else if (readyState === ReadyState.CLOSED) {
+      dispatch(setTraceStarted(false));
     }
-  };
+  }, [readyState, dispatch, sendMessage]);
 
-  const stopTrace = () => {
-    socket.close(1000);
-    dispatch(setTraceStarted(false));
-  };
+  useEffect(() => {
+    if (lastJsonMessage) {
+      lastJsonMessage.ptime = DateTime.fromISO(lastJsonMessage.time).toJSDate();
+      lastJsonMessage.key = Math.random();
+      dispatch(traceMessageReceived(lastJsonMessage));
+    }
+  }, [lastJsonMessage, dispatch]);
 
   useEffect(() => {
     dispatch(setHelpName("trace"));
@@ -187,9 +200,7 @@ const Trace = () => {
                     id={"all_calls"}
                     name={"all_calls"}
                     label={"All"}
-                    onChange={() => {
-                      setAll(!all);
-                    }}
+                    onChange={() => setAll(!all)}
                     value={"all"}
                     disabled={traceStarted}
                   />
@@ -198,9 +209,7 @@ const Trace = () => {
                     id={"s3_calls"}
                     name={"s3_calls"}
                     label={"S3"}
-                    onChange={() => {
-                      setS3(!s3);
-                    }}
+                    onChange={() => setS3(!s3)}
                     value={"s3"}
                     disabled={all || traceStarted}
                   />
@@ -209,9 +218,7 @@ const Trace = () => {
                     id={"internal_calls"}
                     name={"internal_calls"}
                     label={"Internal"}
-                    onChange={() => {
-                      setInternal(!internal);
-                    }}
+                    onChange={() => setInternal(!internal)}
                     value={"internal"}
                     disabled={all || traceStarted}
                   />
@@ -220,9 +227,7 @@ const Trace = () => {
                     id={"storage_calls"}
                     name={"storage_calls"}
                     label={"Storage"}
-                    onChange={() => {
-                      setStorage(!storage);
-                    }}
+                    onChange={() => setStorage(!storage)}
                     value={"storage"}
                     disabled={all || traceStarted}
                   />
@@ -231,9 +236,7 @@ const Trace = () => {
                     id={"os_calls"}
                     name={"os_calls"}
                     label={"OS"}
-                    onChange={() => {
-                      setOS(!os);
-                    }}
+                    onChange={() => setOS(!os)}
                     value={"os"}
                     disabled={all || traceStarted}
                   />
@@ -249,9 +252,7 @@ const Trace = () => {
                   <TooltipWrapper tooltip={"More filter options"}>
                     <Button
                       id={"filter-toggle"}
-                      onClick={() => {
-                        setToggleFilter(!toggleFilter);
-                      }}
+                      onClick={() => setToggleFilter(!toggleFilter)}
                       label={"Filters"}
                       icon={<FilterIcon />}
                       variant={"regular"}
@@ -269,7 +270,7 @@ const Trace = () => {
                       label={"Start"}
                       data-test-id={"trace-start-button"}
                       variant="callAction"
-                      onClick={startTrace}
+                      onClick={() => setLogActive(true)}
                       style={{
                         width: "118px",
                       }}
@@ -281,7 +282,7 @@ const Trace = () => {
                       label={"Stop Trace"}
                       data-test-id={"trace-stop-button"}
                       variant="callAction"
-                      onClick={stopTrace}
+                      onClick={() => setLogActive(false)}
                       style={{
                         width: "118px",
                       }}
@@ -330,9 +331,7 @@ const Trace = () => {
                     label="Status Code"
                     placeholder="e.g. 503"
                     value={statusCode}
-                    onChange={(e) => {
-                      setStatusCode(e.target.value);
-                    }}
+                    onChange={(e) => setStatusCode(e.target.value)}
                     disabled={traceStarted}
                   />
 
@@ -343,9 +342,7 @@ const Trace = () => {
                     label="Function Name"
                     placeholder="e.g. FunctionName2055"
                     value={func}
-                    onChange={(e) => {
-                      setFunc(e.target.value);
-                    }}
+                    onChange={(e) => setFunc(e.target.value)}
                     disabled={traceStarted}
                   />
 
@@ -356,9 +353,7 @@ const Trace = () => {
                     label="Method"
                     placeholder="e.g. Method 2056"
                     value={method}
-                    onChange={(e) => {
-                      setMethod(e.target.value);
-                    }}
+                    onChange={(e) => setMethod(e.target.value)}
                     disabled={traceStarted}
                   />
                 </Box>
@@ -384,9 +379,7 @@ const Trace = () => {
                       label="Path"
                       placeholder="e.g. my-bucket/my-prefix/*"
                       value={path}
-                      onChange={(e) => {
-                        setPath(e.target.value);
-                      }}
+                      onChange={(e) => setPath(e.target.value)}
                       disabled={traceStarted}
                     />
                   </Box>
@@ -403,9 +396,7 @@ const Trace = () => {
                       type="number"
                       placeholder="e.g. website.io.3249.114.12"
                       value={`${threshold}`}
-                      onChange={(e) => {
-                        setThreshold(parseInt(e.target.value));
-                      }}
+                      onChange={(e) => setThreshold(parseInt(e.target.value))}
                       disabled={traceStarted}
                     />
                   </Box>
@@ -423,9 +414,7 @@ const Trace = () => {
                     id={"only_errors"}
                     name={"only_errors"}
                     label={"Display only Errors"}
-                    onChange={() => {
-                      setErrors(!errors);
-                    }}
+                    onChange={() => setErrors(!errors)}
                     value={"only_errors"}
                     disabled={traceStarted}
                   />

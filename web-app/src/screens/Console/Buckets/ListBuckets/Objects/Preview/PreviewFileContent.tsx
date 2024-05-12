@@ -51,6 +51,7 @@ const PreviewFile = ({
       api.buckets
         .getObjectMetadata(bucketName, {
           prefix: encodedPath,
+          versionID: actualInfo.version_id || "",
         })
         .then((res) => {
           let metadata = get(res.data, "objectMetadata", {});
@@ -66,7 +67,7 @@ const PreviewFile = ({
           setIsMetaDataLoaded(true);
         });
     }
-  }, [bucketName, objectName, isMetaDataLoaded]);
+  }, [bucketName, objectName, isMetaDataLoaded, actualInfo.version_id]);
 
   useEffect(() => {
     if (bucketName && objectName) {

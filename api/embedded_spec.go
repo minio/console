@@ -1762,6 +1762,11 @@ func init() {
             "name": "prefix",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "name": "versionID",
+            "in": "query"
           }
         ],
         "responses": {
@@ -7225,6 +7230,9 @@ func init() {
         "replicateDeletes": {
           "type": "boolean"
         },
+        "replicateExistingObjects": {
+          "type": "boolean"
+        },
         "replicateMetadata": {
           "type": "boolean"
         },
@@ -10974,6 +10982,11 @@ func init() {
             "name": "prefix",
             "in": "query",
             "required": true
+          },
+          {
+            "type": "string",
+            "name": "versionID",
+            "in": "query"
           }
         ],
         "responses": {
@@ -16624,6 +16637,9 @@ func init() {
           "type": "boolean"
         },
         "replicateDeletes": {
+          "type": "boolean"
+        },
+        "replicateExistingObjects": {
           "type": "boolean"
         },
         "replicateMetadata": {

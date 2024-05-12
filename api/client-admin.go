@@ -24,6 +24,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 	"time"
 
@@ -213,11 +214,11 @@ func (ac AdminClient) listPolicies(ctx context.Context) (map[string]*iampolicy.P
 
 // implements madmin.ListCannedPolicies()
 func (ac AdminClient) getPolicy(ctx context.Context, name string) (*iampolicy.Policy, error) {
-	praw, err := ac.Client.InfoCannedPolicy(ctx, name)
+	info, err := ac.Client.InfoCannedPolicyV2(ctx, name)
 	if err != nil {
 		return nil, err
 	}
-	return iampolicy.ParseConfig(bytes.NewReader(praw))
+	return iampolicy.ParseConfig(bytes.NewReader(info.Policy))
 }
 
 // implements madmin.RemoveCannedPolicy()
@@ -236,6 +237,7 @@ func (ac AdminClient) addPolicy(ctx context.Context, name string, policy *iampol
 
 // implements madmin.SetPolicy()
 func (ac AdminClient) setPolicy(ctx context.Context, policyName, entityName string, isGroup bool) error {
+	// nolint:staticcheck // ignore SA1019
 	return ac.Client.SetPolicy(ctx, policyName, entityName, isGroup)
 }
 
@@ -468,7 +470,7 @@ func newAdminFromClaims(claims *models.Principal, clientIP string) (*madmin.Admi
 		return nil, err
 	}
 	adminClient.SetAppInfo(globalAppName, pkg.Version)
-	adminClient.SetCustomTransport(GetConsoleHTTPClient(getMinIOServer(), clientIP).Transport)
+	adminClient.SetCustomTransport(PrepareSTSClientTransport(clientIP))
 	return adminClient, nil
 }
 
@@ -487,8 +489,8 @@ func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (
 
 // isLocalAddress returns true if the url contains an IPv4/IPv6 hostname
 // that points to the local machine - FQDN are not supported
-func isLocalIPEndpoint(addr string) bool {
-	u, err := url.Parse(addr)
+func isLocalIPEndpoint(endpoint string) bool {
+	u, err := url.Parse(endpoint)
 	if err != nil {
 		return false
 	}
@@ -501,6 +503,9 @@ func isLocalIPAddress(ipAddr string) bool {
 	if ipAddr == "" {
 		return false
 	}
+	if ipAddr == "localhost" {
+		return true
+	}
 	ip := net.ParseIP(ipAddr)
 	return ip != nil && ip.IsLoopback()
 }
@@ -508,43 +513,75 @@ func isLocalIPAddress(ipAddr string) bool {
 // GetConsoleHTTPClient caches different http clients depending on the target endpoint while taking
 // in consideration CA certs stored in ${HOME}/.console/certs/CAs and ${HOME}/.minio/certs/CAs
 // If the target endpoint points to a loopback device, skip the TLS verification.
-func GetConsoleHTTPClient(address string, clientIP string) *http.Client {
-	u, err := url.Parse(address)
-	if err == nil {
-		address = u.Hostname()
-	}
-
-	client := PrepareConsoleHTTPClient(isLocalIPAddress(address), clientIP)
-
-	return client
+func GetConsoleHTTPClient(clientIP string) *http.Client {
+	return PrepareConsoleHTTPClient(clientIP)
 }
 
-func getClientIP(r *http.Request) string {
-	// Try to get the IP address from the X-Real-IP header
-	// If the X-Real-IP header is not present, then it will return an empty string
-	xRealIP := r.Header.Get("X-Real-IP")
-	if xRealIP != "" {
-		return xRealIP
-	}
+var (
+	// De-facto standard header keys.
+	xForwardedFor = http.CanonicalHeaderKey("X-Forwarded-For")
+	xRealIP       = http.CanonicalHeaderKey("X-Real-IP")
+)
 
-	// Try to get the IP address from the X-Forwarded-For header
-	// If the X-Forwarded-For header is not present, then it will return an empty string
-	xForwardedFor := r.Header.Get("X-Forwarded-For")
-	if xForwardedFor != "" {
-		// X-Forwarded-For can contain multiple addresses, we return the first one
-		split := strings.Split(xForwardedFor, ",")
-		if len(split) > 0 {
-			return strings.TrimSpace(split[0])
+var (
+	// RFC7239 defines a new "Forwarded: " header designed to replace the
+	// existing use of X-Forwarded-* headers.
+	// e.g. Forwarded: for=192.0.2.60;proto=https;by=203.0.113.43
+	forwarded = http.CanonicalHeaderKey("Forwarded")
+	// Allows for a sub-match of the first value after 'for=' to the next
+	// comma, semi-colon or space. The match is case-insensitive.
+	forRegex = regexp.MustCompile(`(?i)(?:for=)([^(;|,| )]+)(.*)`)
+)
+
+// getSourceIPFromHeaders retrieves the IP from the X-Forwarded-For, X-Real-IP
+// and RFC7239 Forwarded headers (in that order)
+func getSourceIPFromHeaders(r *http.Request) string {
+	var addr string
+
+	if fwd := r.Header.Get(xForwardedFor); fwd != "" {
+		// Only grab the first (client) address. Note that '192.168.0.1,
+		// 10.1.1.1' is a valid key for X-Forwarded-For where addresses after
+		// the first may represent forwarding proxies earlier in the chain.
+		s := strings.Index(fwd, ", ")
+		if s == -1 {
+			s = len(fwd)
+		}
+		addr = fwd[:s]
+	} else if fwd := r.Header.Get(xRealIP); fwd != "" {
+		// X-Real-IP should only contain one IP address (the client making the
+		// request).
+		addr = fwd
+	} else if fwd := r.Header.Get(forwarded); fwd != "" {
+		// match should contain at least two elements if the protocol was
+		// specified in the Forwarded header. The first element will always be
+		// the 'for=' capture, which we ignore. In the case of multiple IP
+		// addresses (for=8.8.8.8, 8.8.4.4, 172.16.1.20 is valid) we only
+		// extract the first, which should be the client IP.
+		if match := forRegex.FindStringSubmatch(fwd); len(match) > 1 {
+			// IPv6 addresses in Forwarded headers are quoted-strings. We strip
+			// these quotes.
+			addr = strings.Trim(match[1], `"`)
 		}
 	}
 
-	// If neither header is present (or they were empty), then fall back to the connection's remote address
-	ip, _, err := net.SplitHostPort(r.RemoteAddr)
-	if err != nil {
-		// In case there's an error, return an empty string
-		return ""
+	return addr
+}
+
+// getClientIP retrieves the IP from the request headers
+// and falls back to r.RemoteAddr when necessary.
+// however returns without bracketing.
+func getClientIP(r *http.Request) string {
+	addr := getSourceIPFromHeaders(r)
+	if addr == "" {
+		addr = r.RemoteAddr
 	}
-	return ip
+
+	// Default to remote address if headers not set.
+	raddr, _, _ := net.SplitHostPort(addr)
+	if raddr == "" {
+		return addr
+	}
+	return raddr
 }
 
 func (ac AdminClient) speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error) {

@@ -139,6 +139,14 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 
 	defaultActions := policy.IsAllowedActions("", "", conditionValues)
 
+	// Allow Create Access Key when admin:CreateServiceAccount is provided with a condition
+	for _, statement := range policy.Statements {
+		if statement.Effect == "Deny" && len(statement.Conditions) > 0 &&
+			statement.Actions.Contains(minioIAMPolicy.CreateServiceAccountAdminAction) {
+			defaultActions.Add(minioIAMPolicy.Action(minioIAMPolicy.CreateServiceAccountAdminAction))
+		}
+	}
+
 	permissions := map[string]minioIAMPolicy.ActionSet{
 		ConsoleResourceName: defaultActions,
 	}

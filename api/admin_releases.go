@@ -97,7 +97,7 @@ func getReleases(endpoint, repo, currentRelease, search, filter, clientIP string
 	req.URL.RawQuery = q.Encode()
 	req.Header.Set("Content-Type", "application/json")
 
-	client := GetConsoleHTTPClient("", clientIP)
+	client := GetConsoleHTTPClient(clientIP)
 	client.Timeout = time.Second * 5
 
 	resp, err := client.Do(req)

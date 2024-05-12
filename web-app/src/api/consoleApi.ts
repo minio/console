@@ -385,6 +385,7 @@ export interface MultiBucketReplication {
   healthCheckPeriod?: number;
   prefix?: string;
   tags?: string;
+  replicateExistingObjects?: boolean;
   replicateDeleteMarkers?: boolean;
   replicateDeletes?: boolean;
   replicateMetadata?: boolean;
@@ -2397,6 +2398,7 @@ export class Api<
       bucketName: string,
       query: {
         prefix: string;
+        versionID?: string;
       },
       params: RequestParams = {},
     ) =>

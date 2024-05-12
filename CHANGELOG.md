@@ -2,6 +2,33 @@
 
 # Changelog
 
+## Release v1.4.0
+
+Features:
+
+- Added VersionID support to metadata details
+- Improved Websockets handlers
+
+Bug Fix:
+
+- Fixed vulnerabilities and updated dependencies
+- Fixed an issue with Download URL decoding
+- Fixed leak in Object Browser Websocket
+- Minor UX fixes
+
+## Release v1.3.0
+
+Features:
+
+- Adds ExpireDeleteMarker status to BucketLifecycleRule UI
+
+Bug Fix:
+
+- Fixed vulnerability
+- Used URL-safe base64 enconding for Share API
+- Made Prefix field optional when Adding Tier
+- Added Console user agent in MinIO Admin Client
+
 ## Release v1.2.0
 
 Features:
@@ -64,7 +91,7 @@ Deprecated:
 
 Features:
 
-- Updated tines on menus & pages  
+- Updated tines on menus & pages
 
 Bug Fix:
 

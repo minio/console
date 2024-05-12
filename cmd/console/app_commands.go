@@ -19,6 +19,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -42,8 +43,8 @@ func StartServer(ctx *cli.Context) error {
 
 	xctx := context.Background()
 
-	transport := api.PrepareSTSClientTransport(false, api.LocalAddress)
-	if err := logger.InitializeLogger(xctx, transport.Transport); err != nil {
+	transport := api.PrepareSTSClientTransport(api.LocalAddress).Transport.(*http.Transport)
+	if err := logger.InitializeLogger(xctx, transport); err != nil {
 		fmt.Println("error InitializeLogger", err)
 		logger.CriticalIf(xctx, err)
 	}
