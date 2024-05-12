@@ -20,9 +20,12 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/go-openapi/errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -37,10 +40,13 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
 		err := getLogoutResponse(session, params)
 		if err != nil {
-			api.Logger("IDP logout failed: %v", err.APIError)
+			api.Logger("IDP logout failed: %v", err.APIError.DetailedMessage)
 		}
 		// Custom response writer to expire the session cookies
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
+			if err != nil {
+				w.Header().Set("IDP-Logout", fmt.Sprintf("%v", err.APIError.DetailedMessage))
+			}
 			expiredCookie := ExpireSessionCookie()
 			// this will tell the browser to clear the cookie and invalidate user session
 			// additionally we are deleting the cookie from the client side
@@ -104,10 +110,14 @@ func logoutFromIDPProvider(r *http.Request, state string) error {
 		client := &http.Client{
 			Transport: GlobalTransport,
 		}
-		_, err := client.PostForm(providerCfg.EndSessionEndpoint, params)
+		result, err := client.PostForm(providerCfg.EndSessionEndpoint, params)
 		if err != nil {
-			return err
+			return errors.New(500, "failed to logout: %v", err.Error())
+		}
+		if result.StatusCode != 204 {
+			return errors.New(int32(result.StatusCode), "failed to logout")
 		}
 	}
+
 	return nil
 }
