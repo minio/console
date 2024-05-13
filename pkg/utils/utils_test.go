@@ -34,7 +34,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "chinese characters",
 			args: args{
-				s: "5bCP6aO85by+5bCP6aO85by+5bCP6aO85by+L+Wwj+mjvOW8vuWwj+mjvOW8vuWwj+mjvOW8vg==",
+				s: "5bCP6aO85by-5bCP6aO85by-5bCP6aO85by-L-Wwj-mjvOW8vuWwj-mjvOW8vuWwj-mjvOW8vg==",
 			},
 			want:    "小飼弾小飼弾小飼弾/小飼弾小飼弾小飼弾",
 			wantErr: false,
@@ -66,7 +66,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "name with / symbols",
 			args: args{
-				s: "dGVzdC90ZXN0Mi/lsI/po7zlvL7lsI/po7zlvL7lsI/po7zlvL4uanBn",
+				s: "dGVzdC90ZXN0Mi_lsI_po7zlvL7lsI_po7zlvL7lsI_po7zlvL4uanBn",
 			},
 			want:    "test/test2/小飼弾小飼弾小飼弾.jpg",
 			wantErr: false,
