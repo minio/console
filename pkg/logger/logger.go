@@ -31,10 +31,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/minio/pkg/v2/env"
+	"github.com/minio/pkg/v3/env"
 
 	"github.com/minio/console/pkg"
-	"github.com/minio/pkg/v2/certs"
+	"github.com/minio/pkg/v3/certs"
 
 	"github.com/minio/console/pkg/logger/config"
 	"github.com/minio/console/pkg/logger/message/log"

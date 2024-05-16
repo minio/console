@@ -27,9 +27,9 @@ import (
 	"github.com/minio/madmin-go/v3"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
-	"github.com/minio/pkg/v2/policy/condition"
+	"github.com/minio/pkg/v3/policy/condition"
 
-	minioIAMPolicy "github.com/minio/pkg/v2/policy"
+	minioIAMPolicy "github.com/minio/pkg/v3/policy"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"

@@ -35,7 +35,7 @@ import (
 	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/pkg/v2/env"
+	"github.com/minio/pkg/v3/env"
 )
 
 func registerLoginHandlers(api *operations.ConsoleAPI) {

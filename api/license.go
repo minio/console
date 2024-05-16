@@ -20,8 +20,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/minio/pkg/v2/licverifier"
-	"github.com/minio/pkg/v2/subnet"
+	"github.com/minio/pkg/v3/licverifier"
+	"github.com/minio/pkg/v3/subnet"
 )
 
 type SubnetPlan int

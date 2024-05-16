@@ -29,7 +29,7 @@ import (
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/api/operations"
 	"github.com/minio/console/api/operations/public"
-	xnet "github.com/minio/pkg/v2/net"
+	xnet "github.com/minio/pkg/v3/net"
 )
 
 func registerPublicObjectsHandlers(api *operations.ConsoleAPI) {
