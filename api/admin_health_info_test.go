@@ -119,7 +119,7 @@ func Test_serverHealthInfo(t *testing.T) {
 			// make testReceiver channel
 			testReceiver = make(chan madmin.HealthInfo, len(tt.args.mockMessages))
 			// mock function same for all tests, changes mockMessages
-			minioServerHealthInfoMock = func(_ context.Context, _ []madmin.HealthDataType,
+			minioServerHealthInfoMock = func(_ context.Context,
 				_ time.Duration,
 			) (interface{}, string, error) {
 				info := tt.args.mockMessages[0]

@@ -31,7 +31,6 @@ import (
 	"github.com/minio/console/pkg/utils"
 
 	subnet "github.com/minio/console/pkg/subnet"
-	"github.com/minio/madmin-go/v3"
 	mc "github.com/minio/mc/cmd"
 	"github.com/minio/websocket"
 )
@@ -44,21 +43,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	}
 
 	// Fetch info of all servers (cluster or single server)
-	healthDataTypes := []madmin.HealthDataType{
-		madmin.HealthDataTypeMinioInfo,
-		madmin.HealthDataTypeMinioConfig,
-		madmin.HealthDataTypeSysCPU,
-		madmin.HealthDataTypeSysDriveHw,
-		madmin.HealthDataTypeSysDocker,
-		madmin.HealthDataTypeSysOsInfo,
-		madmin.HealthDataTypeSysLoad,
-		madmin.HealthDataTypeSysMem,
-		madmin.HealthDataTypeSysNet,
-		madmin.HealthDataTypeSysProcess,
-	}
-	var err error
-	// Fetch info of all servers (cluster or single server)
-	healthInfo, version, err := client.serverHealthInfo(ctx, healthDataTypes, *deadline)
+	healthInfo, version, err := client.serverHealthInfo(ctx, *deadline)
 	if err != nil {
 		return err
 	}
@@ -75,7 +60,7 @@ func startHealthInfo(ctx context.Context, conn WSConn, client MinioAdmin, deadli
 	}
 
 	ctx = context.WithValue(ctx, utils.ContextClientIP, conn.remoteAddress())
-	err = sendHealthInfoToSubnet(ctx, healthInfo, client)
+	err = sendHealthInfoToSubnet(ctx, compressedDiag, client)
 	report := messageReport{
 		Encoded:          encodedDiag,
 		ServerHealthInfo: healthInfo,
@@ -116,7 +101,7 @@ func updateMcGlobals(subnetTokenConfig subnet.LicenseTokenConfig) error {
 	return nil
 }
 
-func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client MinioAdmin) error {
+func sendHealthInfoToSubnet(ctx context.Context, compressedHealthInfo []byte, client MinioAdmin) error {
 	filename := fmt.Sprintf("health_%d.json.gz", time.Now().Unix())
 	subnetTokenConfig, e := GetSubnetKeyFromMinIOConfig(ctx, client)
 	if e != nil {
@@ -134,10 +119,6 @@ func sendHealthInfoToSubnet(ctx context.Context, healthInfo interface{}, client 
 		if e != nil {
 			return e
 		}
-	}
-	compressedHealthInfo, e := mc.TarGZHealthInfo(healthInfo, madmin.HealthInfoVersion)
-	if e != nil {
-		return e
 	}
 	e = os.WriteFile(filename, compressedHealthInfo, 0o666)
 	if e != nil {
