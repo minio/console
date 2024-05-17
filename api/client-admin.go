@@ -85,7 +85,7 @@ type MinioAdmin interface {
 	addRemoteBucket(ctx context.Context, bucket string, target *madmin.BucketTarget) (string, error)
 	// Account password management
 	changePassword(ctx context.Context, accessKey, secretKey string) error
-	serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error)
+	serverHealthInfo(ctx context.Context, deadline time.Duration) (interface{}, string, error)
 	// List Tiers
 	listTiers(ctx context.Context) ([]*madmin.TierConfig, error)
 	// Tier Info
@@ -389,13 +389,15 @@ func (ac AdminClient) getBucketQuota(ctx context.Context, bucket string) (madmin
 }
 
 // serverHealthInfo implements mc.ServerHealthInfo - Connect to a minio server and call Health Info Management API
-func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []madmin.HealthDataType, deadline time.Duration) (interface{}, string, error) {
+func (ac AdminClient) serverHealthInfo(ctx context.Context, deadline time.Duration) (interface{}, string, error) {
 	info := madmin.HealthInfo{}
 	var healthInfo interface{}
 	var version string
 	var tryCount int
 	for info.Version == "" && tryCount < 10 {
-		resp, version, err := ac.Client.ServerHealthInfo(ctx, healthDataTypes, deadline, "")
+		var resp *http.Response
+		var err error
+		resp, version, err = ac.Client.ServerHealthInfo(ctx, madmin.HealthDataTypesList, deadline, "")
 		if err != nil {
 			return nil, version, err
 		}
@@ -407,7 +409,6 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, healthDataTypes []ma
 		}
 		tryCount++
 		time.Sleep(2 * time.Second)
-
 	}
 	if info.Version == "" {
 		return nil, "", ErrHealthReportFail
