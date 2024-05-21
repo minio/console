@@ -91,7 +91,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable
+          yarn install --immutable --no-check-resolutions
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -1201,7 +1201,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable
+          yarn install --immutable --no-check-resolutions
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -1418,7 +1418,7 @@ jobs:
           yarn add -D @playwright/test
           yarn init -y
           echo "yarn install"
-          yarn install
+          yarn install --no-check-resolutions
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

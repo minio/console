@@ -5,5 +5,5 @@ then
     \. "$NVM_DIR/nvm.sh";
     nvm use;
 fi
-yarn install
+yarn install --no-check-resolutions
 yarn prettier --check .
