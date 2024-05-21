@@ -877,7 +877,7 @@ jobs:
         run: corepack enable
       - name: Install modules
         working-directory: ./web-app
-        run: yarn
+        run: yarn install --immutable --no-check-resolutions
       - name: Run tests
         working-directory: ./web-app
         run: yarn test
