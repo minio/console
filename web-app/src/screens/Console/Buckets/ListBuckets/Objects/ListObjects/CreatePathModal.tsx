@@ -27,7 +27,6 @@ import {
 } from "mds";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
-import { encodeURLString } from "../../../../../../common/utils";
 import { BucketObjectItem } from "./types";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
@@ -101,7 +100,7 @@ const CreatePathModal = ({
       folderPath = folderPath.slice(1); //trim '/'
     }
 
-    const newPath = `/browser/${bucketName}/${encodeURLString(
+    const newPath = `/browser/${encodeURIComponent(bucketName)}/${encodeURIComponent(
       `${folderPath}${cleanPathURL}/`,
     )}`;
 

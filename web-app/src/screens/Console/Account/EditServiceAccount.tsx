@@ -29,7 +29,6 @@ import { errorToHandler } from "api/errors";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
 import { ApiError } from "api/consoleApi";
 import { useAppDispatch } from "store";
-import { encodeURLString } from "common/utils";
 import { setErrorSnackMessage, setModalErrorSnackMessage } from "systemSlice";
 import ModalWrapper from "../Common/ModalWrapper/ModalWrapper";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
@@ -57,10 +56,9 @@ const EditServiceAccount = ({
 
   useEffect(() => {
     if (!loading && selectedAccessKey !== "") {
-      const sourceAccKey = encodeURLString(selectedAccessKey);
       setLoading(true);
       api.serviceAccounts
-        .getServiceAccount(sourceAccKey)
+        .getServiceAccount(selectedAccessKey || "")
         .then((res) => {
           setLoading(false);
           const saInfo = res.data;
@@ -87,7 +85,7 @@ const EditServiceAccount = ({
   const setPolicy = (event: React.FormEvent, newPolicy: string) => {
     event.preventDefault();
     api.serviceAccounts
-      .updateServiceAccount(encodeURLString(selectedAccessKey), {
+      .updateServiceAccount(selectedAccessKey || "", {
         policy: newPolicy,
         description: description,
         expiry: expiry,

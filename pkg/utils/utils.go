@@ -18,17 +18,7 @@ package utils
 
 import (
 	"context"
-	"encoding/base64"
 )
-
-// DecodeBase64 : decoded base64 input into utf-8 text
-func DecodeBase64(s string) (string, error) {
-	decodedInput, err := base64.StdEncoding.DecodeString(s)
-	if err != nil {
-		return "", err
-	}
-	return string(decodedInput), nil
-}
 
 // Key used for Get/SetReqInfo
 type key string

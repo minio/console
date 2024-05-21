@@ -21,13 +21,13 @@ package integration
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -396,7 +396,7 @@ func UploadAnObject(bucketName, fileName string) (*http.Response, error) {
 		contentType + boundaryEnd
 	arrayOfBytes := []byte(file)
 	requestDataBody := bytes.NewReader(arrayOfBytes)
-	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/upload" + "?prefix=" + base64.StdEncoding.EncodeToString([]byte(fileName))
+	apiURL := "http://localhost:9090/api/v1/buckets/" + url.PathEscape(bucketName) + "/objects/upload" + "?prefix=" + url.QueryEscape(fileName)
 	request, err := http.NewRequest(
 		"POST",
 		apiURL,
@@ -423,9 +423,8 @@ func DeleteObject(bucketName, path string, recursive, allVersions bool) (*http.R
 	   DELETE:
 	   {{baseUrl}}/buckets/bucketName/objects?path=Y2VzYXJpby50eHQ=&recursive=false&all_versions=false
 	*/
-	prefixEncoded := base64.StdEncoding.EncodeToString([]byte(path))
-	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects?prefix=" +
-		prefixEncoded + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
+	url := "http://localhost:9090/api/v1/buckets/" + url.PathEscape(bucketName) + "/objects?prefix=" +
+		url.QueryEscape(path) + "&recursive=" + strconv.FormatBool(recursive) + "&all_versions=" +
 		strconv.FormatBool(allVersions)
 	request, err := http.NewRequest(
 		"DELETE",
@@ -444,13 +443,13 @@ func DeleteObject(bucketName, path string, recursive, allVersions bool) (*http.R
 	return response, err
 }
 
-func ListObjects(bucketName, prefix, withVersions string) (*http.Response, error) {
+func ListObjects(bucketName, prefix string, withVersions bool) (*http.Response, error) {
 	/*
 		Helper function to list objects in a bucket.
 		GET: {{baseUrl}}/buckets/:bucket_name/objects
 	*/
 	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects?prefix="+prefix+"&with_versions="+withVersions,
+		"http://localhost:9090/api/v1/buckets/"+url.PathEscape(bucketName)+"/objects?prefix="+url.QueryEscape(prefix)+"&with_versions="+strconv.FormatBool(withVersions),
 		nil)
 	if err != nil {
 		log.Println(err)
@@ -782,7 +781,7 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	}
 
 	// Get versionID
-	listResponse, _ := ListObjects(bucketName, "", "true")
+	listResponse, _ := ListObjects(bucketName, "", true)
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -1063,7 +1062,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	}
 
 	// Get versionID
-	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
+	listResponse, _ := ListObjects(bucketName, validPrefix, true)
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -1231,7 +1230,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	}
 
 	// 3. Get versionID
-	listResponse, _ := ListObjects(bucketName, validPrefix, "true")
+	listResponse, _ := ListObjects(bucketName, validPrefix, true)
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -1448,7 +1447,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	}
 
 	// Get versionID
-	listResponse, _ := ListObjects(bucketName, prefix, "true")
+	listResponse, _ := ListObjects(bucketName, prefix, true)
 	bodyBytes, _ := io.ReadAll(listResponse.Body)
 	listObjs := models.ListObjectsResponse{}
 	err := json.Unmarshal(bodyBytes, &listObjs)
@@ -1613,7 +1612,7 @@ func TestListObjects(t *testing.T) {
 	}
 
 	// 3. List the object
-	listResponse, listError := ListObjects(bucketName, "", "false")
+	listResponse, listError := ListObjects(bucketName, "", false)
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1676,7 +1675,7 @@ func TestDeleteObject(t *testing.T) {
 	}
 
 	// 4. List the objects in the bucket and make sure the object is gone
-	listResponse, listError := ListObjects(bucketName, "", "false")
+	listResponse, listError := ListObjects(bucketName, "", false)
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1852,7 +1851,7 @@ func TestDeleteMultipleObjects(t *testing.T) {
 	}
 
 	// 4. List the objects, empty list is expected!
-	listResponse, listError := ListObjects(bucketName, "", "false")
+	listResponse, listError := ListObjects(bucketName, "", false)
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)
@@ -1918,7 +1917,7 @@ func TestPutObjectTag(t *testing.T) {
 	}
 
 	// 4. Verify the object's tag is set
-	listResponse, listError := ListObjects(bucketName, path, "false")
+	listResponse, listError := ListObjects(bucketName, path, false)
 	assert.Nil(listError)
 	if listError != nil {
 		log.Println(listError)

@@ -22,7 +22,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"
-	"github.com/minio/console/pkg/utils"
 	"github.com/minio/madmin-go/v3"
 
 	groupApi "github.com/minio/console/api/operations/group"
@@ -118,12 +117,7 @@ func getGroupInfoResponse(session *models.Principal, params groupApi.GroupInfoPa
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	groupName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-
-	groupDesc, err := groupInfo(ctx, adminClient, groupName)
+	groupDesc, err := groupInfo(ctx, adminClient, params.Name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -212,12 +206,7 @@ func getRemoveGroupResponse(session *models.Principal, params groupApi.RemoveGro
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	groupName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
-
-	if err := removeGroup(ctx, adminClient, groupName); err != nil {
+	if err := removeGroup(ctx, adminClient, params.Name); err != nil {
 		minioError := madmin.ToErrorResponse(err)
 		err2 := ErrorWithContext(ctx, err)
 		if minioError.Code == "XMinioAdminNoSuchGroup" {
@@ -293,11 +282,6 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 	}
 	expectedGroupUpdate := params.Body
 
-	groupName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -306,7 +290,7 @@ func getUpdateGroupResponse(session *models.Principal, params groupApi.UpdateGro
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	groupUpdated, err := groupUpdate(ctx, adminClient, groupName, expectedGroupUpdate)
+	groupUpdated, err := groupUpdate(ctx, adminClient, params.Name, expectedGroupUpdate)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

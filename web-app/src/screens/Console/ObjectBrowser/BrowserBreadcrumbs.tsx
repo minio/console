@@ -19,7 +19,7 @@ import { useSelector } from "react-redux";
 import CopyToClipboard from "react-copy-to-clipboard";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { encodeURLString, safeDecodeURIComponent } from "../../../common/utils";
+import { safeDecodeURIComponent } from "../../../common/utils";
 import {
   Button,
   CopyIcon,
@@ -137,8 +137,8 @@ const BrowserBreadcrumbs = ({
 
   let breadcrumbsMap = splitPaths.map((objectItem: string, index: number) => {
     const subSplit = `${splitPaths.slice(0, index + 1).join("/")}/`;
-    const route = `/browser/${bucketName}/${
-      subSplit ? `${encodeURLString(subSplit)}` : ``
+    const route = `/browser/${encodeURIComponent(bucketName)}/${
+      subSplit ? `${encodeURIComponent(subSplit)}` : ``
     }`;
 
     if (index === lastBreadcrumbsIndex && objectItem === versionedFile) {
@@ -222,7 +222,7 @@ const BrowserBreadcrumbs = ({
       navigate(
         `/browser/${bucketName}${
           prevPath.length > 0
-            ? `/${encodeURLString(`${prevPath.join("/")}/`)}`
+            ? `/${encodeURIComponent(`${prevPath.join("/")}/`)}`
             : ""
         }`,
       );

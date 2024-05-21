@@ -51,7 +51,6 @@ import {
 } from "../../../common/SecureComponent";
 import { errorToHandler } from "../../../api/errors";
 import withSuspense from "../Common/Components/withSuspense";
-import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
@@ -163,7 +162,7 @@ const Groups = () => {
   );
 
   const viewAction = (group: any) => {
-    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURIComponent(group)}`);
   };
 
   const tableActions = [

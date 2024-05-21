@@ -18,7 +18,6 @@ package api
 
 import (
 	"context"
-	"encoding/base64"
 	"time"
 
 	"github.com/minio/mc/cmd"
@@ -63,17 +62,8 @@ func getObjectsOptionsFromReq(request ObjectsRequest) (*objectsListOpts, error) 
 		Prefix:     "",
 	}
 
-	prefix := request.Prefix
-
-	if prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			LogError("error decoding prefix: %v", err)
-			return nil, err
-		}
-
-		pOptions.Prefix = string(decodedPrefix)
+	if request.Prefix != "" {
+		pOptions.Prefix = SanitizeEncodedPrefix(request.Prefix)
 	}
 
 	if request.Mode == "rewind" {

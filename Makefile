@@ -58,7 +58,7 @@ swagger-console:
 	@echo "Generating swagger server code from yaml"
 	@swagger generate server -A console --main-package=management --server-package=api --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
 	@echo "Generating typescript api"
-	@npx swagger-typescript-api -p ./swagger.yml -o ./web-app/src/api -n consoleApi.ts
+	@npx swagger-typescript-api -p ./swagger.yml -o ./web-app/src/api -n consoleApi.ts --custom-config generator.config.js
 	@git restore api/server.go
 
 

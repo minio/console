@@ -19,7 +19,6 @@ import { listModeColumns, rewindModeColumns } from "./ListObjectsHelpers";
 import { useSelector } from "react-redux";
 import { AppState, useAppDispatch } from "../../../../../../store";
 import { selFeatures } from "../../../../consoleSlice";
-import { encodeURLString } from "../../../../../../common/utils";
 import {
   setLoadingVersions,
   setObjectDetailsView,
@@ -111,18 +110,13 @@ const ListObjectsTable = () => {
 
   const openPath = (object: BucketObject) => {
     const idElement = object.name || "";
-    const newPath = `/browser/${bucketName}${
-      idElement ? `/${encodeURLString(idElement)}` : ``
+    const newPath = `/browser/${encodeURIComponent(bucketName)}${
+      idElement ? `/${encodeURIComponent(idElement)}` : ``
     }`;
 
     // for anonymous start download
     if (anonymousMode && !object.name?.endsWith("/")) {
-      downloadObject(
-        dispatch,
-        bucketName,
-        `${encodeURLString(idElement)}`,
-        object,
-      );
+      downloadObject(dispatch, bucketName, idElement, object);
       return;
     }
     dispatch(setSelectedObjects([]));
@@ -133,11 +127,7 @@ const ListObjectsTable = () => {
       dispatch(setObjectDetailsView(true));
       dispatch(setLoadingVersions(true));
     }
-    dispatch(
-      setSelectedObjectView(
-        `${idElement ? `${encodeURLString(idElement)}` : ``}`,
-      ),
-    );
+    dispatch(setSelectedObjectView(idElement));
   };
   const tableActions: ItemActions[] = [
     {

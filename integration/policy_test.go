@@ -18,12 +18,12 @@ package integration
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 
@@ -177,6 +177,31 @@ func Test_AddPolicyAPI(t *testing.T) {
 }`),
 			},
 			expectedStatus: 400,
+			expectedError:  nil,
+		},
+		{
+			name: "Create Policy - Reserved character in name",
+			args: args{
+				api:  "/policies",
+				name: "space/test?",
+				policy: swag.String(`
+  {
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:GetBucketLocation",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "arn:aws:s3:::*"
+      ]
+    }
+  ]
+}`),
+			},
+			expectedStatus: 201,
 			expectedError:  nil,
 		},
 	}
@@ -491,7 +516,7 @@ func Test_ListPoliciesAPI(t *testing.T) {
 func Test_GetPolicyAPI(t *testing.T) {
 	assert := assert.New(t)
 
-	AddPolicy("getpolicytest", `
+	AddPolicy("test/policy?", `
   {
   "Version": "2012-10-17",
   "Statement": [
@@ -520,7 +545,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 		{
 			name: "Get Policies - Invalid",
 			args: args{
-				api: base64.StdEncoding.EncodeToString([]byte("test3")),
+				api: "test3",
 			},
 			expectedStatus: 500,
 			expectedError:  nil,
@@ -528,7 +553,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 		{
 			name: "Get Policies - Valid",
 			args: args{
-				api: base64.StdEncoding.EncodeToString([]byte("getpolicytest")),
+				api: "test/policy?",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -542,7 +567,7 @@ func Test_GetPolicyAPI(t *testing.T) {
 			}
 
 			request, err := http.NewRequest(
-				"GET", fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", tt.args.api), nil)
+				"GET", fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", url.PathEscape(tt.args.api)), nil)
 			if err != nil {
 				log.Println(err)
 				return
@@ -595,7 +620,7 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistusers")) + "/users",
+				api: "/policies/" + url.PathEscape("policylistusers") + "/users",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -603,7 +628,7 @@ func Test_PolicyListUsersAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Invalid",
 			args: args{
-				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("test2")) + "/users",
+				api: "/policies/" + url.PathEscape("test2") + "/users",
 			},
 			expectedStatus: 404,
 			expectedError:  nil,
@@ -674,7 +699,7 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Valid",
 			args: args{
-				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("policylistgroups")) + "/groups",
+				api: "/policies/" + url.PathEscape("policylistgroups") + "/groups",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -682,7 +707,7 @@ func Test_PolicyListGroupsAPI(t *testing.T) {
 		{
 			name: "List Users for Policy - Invalid",
 			args: args{
-				api: "/policies/" + base64.StdEncoding.EncodeToString([]byte("test3")) + "/groups",
+				api: "/policies/" + url.PathEscape("test3") + "/groups",
 			},
 			expectedStatus: 404,
 			expectedError:  nil,
@@ -751,7 +776,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 		{
 			name: "Delete Policies - Valid",
 			args: args{
-				api:    base64.StdEncoding.EncodeToString([]byte("testdelete")),
+				api:    "testdelete",
 				method: "DELETE",
 			},
 			expectedStatus: 204,
@@ -760,7 +785,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 		{
 			name: "Get Policy After Delete - Invalid",
 			args: args{
-				api:    base64.StdEncoding.EncodeToString([]byte("testdelete")),
+				api:    "testdelete",
 				method: "GET",
 			},
 			expectedStatus: 500,
@@ -775,7 +800,7 @@ func Test_DeletePolicyAPI(t *testing.T) {
 			}
 
 			request, err := http.NewRequest(
-				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", tt.args.api), nil)
+				tt.args.method, fmt.Sprintf("http://localhost:9090/api/v1/policy/%s", url.PathEscape(tt.args.api)), nil)
 			if err != nil {
 				log.Println(err)
 				return
@@ -804,11 +829,6 @@ func Test_GetAUserPolicyAPI(t *testing.T) {
 		log.Println(err)
 		return
 	}
-	// encode usernames to pass to api
-	bName := []byte("getuserpolicyuser")
-	fName := []byte("failname")
-	encodedName := base64.URLEncoding.EncodeToString(bName)
-	encodedFailName := base64.URLEncoding.EncodeToString(fName)
 
 	type args struct {
 		api string
@@ -822,7 +842,7 @@ func Test_GetAUserPolicyAPI(t *testing.T) {
 		{
 			name: "Get User Policy - Invalid",
 			args: args{
-				api: "/user/" + encodedFailName + "/policies",
+				api: "/user/" + url.PathEscape("failname") + "/policies",
 			},
 			expectedStatus: 401,
 			expectedError:  nil,
@@ -830,7 +850,7 @@ func Test_GetAUserPolicyAPI(t *testing.T) {
 		{
 			name: "Get User Policy - Valid",
 			args: args{
-				api: "/user/" + encodedName + "/policies",
+				api: "/user/" + url.PathEscape("getuserpolicyuser") + "/policies",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,

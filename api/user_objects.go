@@ -18,8 +18,6 @@ package api
 
 import (
 	"context"
-	"encoding/base64"
-	b64 "encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -79,16 +77,9 @@ func registerObjectsHandlers(api *operations.ConsoleAPI) {
 	// download object
 	api.ObjectDownloadObjectHandler = objectApi.DownloadObjectHandlerFunc(func(params objectApi.DownloadObjectParams, session *models.Principal) middleware.Responder {
 		isFolder := false
-		ctx := params.HTTPRequest.Context()
 		var prefix string
 		if params.Prefix != "" {
-			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-			if err != nil {
-				apiErr := ErrorWithContext(ctx, err)
-				return objectApi.NewDownloadObjectDefault(400).WithPayload(apiErr.APIError)
-			}
-			prefix = string(decodedPrefix)
+			prefix = SanitizeEncodedPrefix(params.Prefix)
 		}
 
 		folders := strings.Split(prefix, "/")
@@ -197,12 +188,7 @@ func getListObjectsResponse(session *models.Principal, params objectApi.ListObje
 	var withVersions bool
 	var withMetadata bool
 	if params.Prefix != nil {
-		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(*params.Prefix)
 	}
 	if params.Recursive != nil {
 		recursive = *params.Recursive
@@ -423,12 +409,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		return nil, ErrorWithContext(ctx, err)
 	}
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 
 	opts := minio.GetObjectOptions{}
@@ -446,15 +427,7 @@ func getDownloadObjectResponse(session *models.Principal, params objectApi.Downl
 		defer resp.Close()
 
 		isPreview := params.Preview != nil && *params.Preview
-		// override filename is set
-		decodeOverride, err := base64.StdEncoding.DecodeString(*params.OverrideFileName)
-		if err != nil {
-			fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to decode OverrideFileName: %v", err))
-			http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusBadRequest)
-			return
-		}
-
-		overrideName := string(decodeOverride)
+		overrideName := *params.OverrideFileName
 
 		// indicate it's a download / inline content to the browser, and the size of the object
 		var filename string
@@ -540,12 +513,7 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 	var prefix string
 	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 
 	folders := strings.Split(prefix, "/")
@@ -612,15 +580,7 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 		var prefixPath string
 		var filename string
 		if params.Prefix != "" {
-			encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-			decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-			if err != nil {
-				fmtError := ErrorWithContext(ctx, fmt.Errorf("unable to parse encoded prefix %s: %v", encodedPrefix, err))
-				http.Error(rw, fmtError.APIError.DetailedMessage, http.StatusInternalServerError)
-				return
-			}
-
-			prefixPath = string(decodedPrefix)
+			prefixPath = SanitizeEncodedPrefix(params.Prefix)
 		}
 		prefixElements := strings.Split(prefixPath, "/")
 		if len(prefixElements) > 0 {
@@ -777,12 +737,7 @@ func getDeleteObjectResponse(session *models.Principal, params objectApi.DeleteO
 	defer cancel()
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 	if err != nil {
@@ -1008,12 +963,7 @@ func getUploadObjectResponse(session *models.Principal, params objectApi.PostBuc
 func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostBucketsBucketNameObjectsUploadParams) error {
 	var prefix string
 	if params.Prefix != nil {
-		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return err
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(*params.Prefix)
 		// trim any leading '/', since that is not expected
 		// for any object.
 		prefix = strings.TrimPrefix(prefix, "/")
@@ -1060,12 +1010,7 @@ func getShareObjectResponse(session *models.Principal, params objectApi.ShareObj
 	clientIP := utils.ClientIPFromContext(ctx)
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, clientIP)
 	if err != nil {
@@ -1086,7 +1031,7 @@ func getShareObjectResponse(session *models.Principal, params objectApi.ShareObj
 	return url, nil
 }
 
-func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, versionID string, duration string) (url *string, err error) {
+func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, versionID string, duration string) (*string, error) {
 	// default duration 7d if not defined
 	if strings.TrimSpace(duration) == "" {
 		duration = "168h"
@@ -1100,9 +1045,8 @@ func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, ve
 		return nil, pErr.Cause
 	}
 
-	encodedMinIOURL := b64.URLEncoding.EncodeToString([]byte(minioURL))
 	requestURL := getRequestURLWithScheme(r)
-	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, encodedMinIOURL)
+	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, url.PathEscape(minioURL))
 	return &objURL, nil
 }
 
@@ -1131,12 +1075,7 @@ func getSetObjectLegalHoldResponse(session *models.Principal, params objectApi.P
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	err = setObjectLegalHold(ctx, minioClient, params.BucketName, prefix, params.VersionID, *params.Body.Status)
 	if err != nil {
@@ -1166,12 +1105,7 @@ func getSetObjectRetentionResponse(session *models.Principal, params objectApi.P
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	err = setObjectRetention(ctx, minioClient, params.BucketName, params.VersionID, prefix, params.Body)
 	if err != nil {
@@ -1218,12 +1152,7 @@ func deleteObjectRetentionResponse(session *models.Principal, params objectApi.D
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	err = deleteObjectRetention(ctx, minioClient, params.BucketName, prefix, params.VersionID)
 	if err != nil {
@@ -1252,12 +1181,7 @@ func getPutObjectTagsResponse(session *models.Principal, params objectApi.PutObj
 	minioClient := minioClient{client: mClient}
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 	err = putObjectTags(ctx, minioClient, params.BucketName, prefix, params.VersionID, params.Body.Tags)
 	if err != nil {
@@ -1290,12 +1214,7 @@ func getPutObjectRestoreResponse(session *models.Principal, params objectApi.Put
 
 	var prefix string
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 
 	err = restoreObject(ctx, minioClient, params.BucketName, prefix, params.VersionID)
@@ -1346,12 +1265,7 @@ func getObjectMetadataResponse(session *models.Principal, params objectApi.GetOb
 	var versionID string
 
 	if params.Prefix != "" {
-		encodedPrefix := SanitizeEncodedPrefix(params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = SanitizeEncodedPrefix(params.Prefix)
 	}
 
 	if params.VersionID != nil {

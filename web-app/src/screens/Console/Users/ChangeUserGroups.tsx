@@ -26,7 +26,6 @@ import {
 } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import api from "../../../common/api";
@@ -57,7 +56,7 @@ const ChangeUserGroups = ({
     }
 
     api
-      .invoke("GET", `/api/v1/user/${encodeURLString(selectedUser)}`)
+      .invoke("GET", `/api/v1/user/${encodeURIComponent(selectedUser)}`)
       .then((res) => {
         setAddLoading(false);
         setAccessKey(res.accessKey);
@@ -89,7 +88,7 @@ const ChangeUserGroups = ({
     setAddLoading(true);
     if (selectedUser !== null) {
       api
-        .invoke("PUT", `/api/v1/user/${encodeURLString(selectedUser)}`, {
+        .invoke("PUT", `/api/v1/user/${encodeURIComponent(selectedUser)}`, {
           status: enabled ? "enabled" : "disabled",
           groups: selectedGroups,
         })

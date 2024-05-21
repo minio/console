@@ -31,7 +31,6 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   deleteCookie,
-  encodeURLString,
   getCookieValue,
   performDownload,
 } from "../../../common/utils";
@@ -143,11 +142,8 @@ const Inspect = () => {
   };
 
   const performInspect = async () => {
-    const file = encodeURLString(inspectPath);
-    const volume = encodeURLString(volumeName);
-
     let basename = document.baseURI.replace(window.location.origin, "");
-    const urlOfInspectApi = `${basename}/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
+    const urlOfInspectApi = `${basename}/api/v1/admin/inspect?volume=${encodeURIComponent(volumeName)}&file=${encodeURIComponent(inspectPath)}&encrypt=${isEncrypt}`;
 
     makeRequest(urlOfInspectApi)
       .then(async (res) => {

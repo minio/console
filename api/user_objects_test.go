@@ -942,7 +942,7 @@ func Test_shareObject(t *testing.T) {
 			},
 
 			wantError: nil,
-			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
 		},
 		{
 			test: "return https scheme if url uses TLS",
@@ -959,7 +959,7 @@ func Test_shareObject(t *testing.T) {
 			},
 
 			wantError: nil,
-			expected:  "https://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+			expected:  "https://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
 		},
 		{
 			test: "returns invalid expire duration if expiration is invalid",
@@ -990,7 +990,7 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw=",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
 		},
 		{
 			test: "return error if sharefunc returns error",
@@ -1077,7 +1077,7 @@ func Test_shareObject(t *testing.T) {
 					return
 				}
 			} else {
-				tAssert.Equal(*url, tt.expected)
+				tAssert.Equal(tt.expected, *url)
 			}
 		})
 	}

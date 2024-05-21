@@ -34,7 +34,6 @@ import { User, UsersList } from "./types";
 import { usersSort } from "../../../utils/sortFunctions";
 import { actionsTray } from "../Common/FormComponents/common/styleLibrary";
 import { ErrorResponseHandler } from "../../../common/types";
-import { encodeURLString } from "../../../common/utils";
 import {
   addUserToGroupPermissions,
   CONSOLE_UI_RESOURCE,
@@ -148,7 +147,7 @@ const ListUsers = () => {
 
   const viewAction = (selectionElement: any): void => {
     navigate(
-      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.accessKey)}`,
+      `${IAM_PAGES.USERS}/${encodeURIComponent(selectionElement.accessKey)}`,
     );
   };
 
