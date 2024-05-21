@@ -57,6 +57,7 @@ const (
 	ConsoleDevMode                               = "CONSOLE_DEV_MODE"
 	ConsoleAnimatedLogin                         = "CONSOLE_ANIMATED_LOGIN"
 	ConsoleBrowserRedirectURL                    = "CONSOLE_BROWSER_REDIRECT_URL"
+	ConsoleBrowserRedirect                       = "CONSOLE_BROWSER_REDIRECT"
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
 	LocalAddress                                 = "127.0.0.1"

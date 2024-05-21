@@ -307,3 +307,7 @@ func getConsoleAnimatedLogin() bool {
 func getConsoleBrowserRedirectURL() string {
 	return env.Get(ConsoleBrowserRedirectURL, "")
 }
+
+func getConsoleBrowserRedirect() bool {
+	return strings.ToLower(env.Get(ConsoleBrowserRedirect, "on")) == "on"
+}
