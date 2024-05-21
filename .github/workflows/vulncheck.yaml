@@ -49,8 +49,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
       - name: Checks for known security issues with the installed packages
         working-directory: ./web-app
         continue-on-error: false
