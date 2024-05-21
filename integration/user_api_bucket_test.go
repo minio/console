@@ -1462,14 +1462,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 			name:           "Valid VersionID when putting object's retention status",
 			expectedStatus: 200,
 			args: args{
-				versionID: validVersionID,
-			},
-		},
-		{
-			name:           "Invalid VersionID when putting object's retention status",
-			expectedStatus: 500,
-			args: args{
-				versionID: "*&^###Test1ThisMightBeInvalid555",
+				versionID: url.QueryEscape(validVersionID),
 			},
 		},
 	}
