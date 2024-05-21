@@ -506,8 +506,6 @@ const ListObjects = () => {
 
             const blobFile = new Blob([file], { type: file.type });
 
-            let encodedPath = "";
-
             const filePath = get(file, "path", "");
             const fileWebkitRelativePath = get(file, "webkitRelativePath", "");
 
