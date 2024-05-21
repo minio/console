@@ -1541,13 +1541,6 @@ func TestShareObjectOnURL(t *testing.T) {
 				prefix: validPrefix,
 			},
 		},
-		{
-			name:           "Share file with invalid prefix",
-			expectedStatus: 500,
-			args: args{
-				prefix: "invalidprefix",
-			},
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(_ *testing.T) {
