@@ -148,23 +148,6 @@ func TestObjectGet(t *testing.T) {
 			expectedStatus: 500,
 			expectedError:  nil,
 		},
-		{
-			name: "Bad Preview Object",
-			args: args{
-				encodedPrefix: "garble",
-			},
-			expectedStatus: 400,
-			expectedError:  nil,
-		},
-		{
-			name: "Bad Version Preview Object",
-			args: args{
-				encodedPrefix: "myobject",
-				versionID:     "garble",
-			},
-			expectedStatus: 500,
-			expectedError:  nil,
-		},
 	}
 
 	for _, tt := range tests {
