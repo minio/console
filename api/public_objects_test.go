@@ -77,9 +77,9 @@ func Test_checkMinIOStringURL(t *testing.T) {
 			expected:  nil,
 		},
 		{
-			test: "encoded url is url safe decoded",
+			test: "plain url",
 			args: args{
-				encodedURL: "https:%2F%2Flocalhost:9000%2Fcestest%2FAudio%2520icon.svg%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256",
+				encodedURL: "https://localhost:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256",
 			},
 			wantError: nil,
 			expected:  swag.String("https://localhost:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256"),
@@ -92,16 +92,16 @@ func Test_checkMinIOStringURL(t *testing.T) {
 			if tt.wantError != nil {
 				if err != nil {
 					if err.Error() != *tt.wantError {
-						t.Errorf("b64toMinIOStringURL() error: `%v`, wantErr: `%s`, input: `%s`", err, *tt.wantError, tt.args.encodedURL)
+						t.Errorf("checkMinIOStringURL() error: `%v`, wantErr: `%s`, input: `%s`", err, *tt.wantError, tt.args.encodedURL)
 						return
 					}
 				} else {
-					t.Errorf("b64toMinIOStringURL() error: `%v`, wantErr: `%s`, input: `%s`", err, *tt.wantError, tt.args.encodedURL)
+					t.Errorf("checkMinIOStringURL() error: `%v`, wantErr: `%s`, input: `%s`", err, *tt.wantError, tt.args.encodedURL)
 					return
 				}
 			} else {
 				if err != nil {
-					t.Errorf("b64toMinIOStringURL() error: `%s`, wantErr: `%v`, input: `%s`", err, tt.wantError, tt.args.encodedURL)
+					t.Errorf("checkMinIOStringURL() error: `%s`, wantErr: `%v`, input: `%s`", err, tt.wantError, tt.args.encodedURL)
 					return
 				}
 				tAssert.Equal(*tt.expected, *url)
