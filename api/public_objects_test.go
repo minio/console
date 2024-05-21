@@ -79,7 +79,7 @@ func Test_checkMinIOStringURL(t *testing.T) {
 		{
 			test: "encoded url is url safe decoded",
 			args: args{
-				encodedURL: "aHR0cHM6Ly9sb2NhbGhvc3Q6OTAwMC9jZXN0ZXN0L0F1ZGlvJTIwaWNvbi5zdmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTY=",
+				encodedURL: "https:%2F%2Flocalhost:9000%2Fcestest%2FAudio%2520icon.svg%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256",
 			},
 			wantError: nil,
 			expected:  swag.String("https://localhost:9000/cestest/Audio%20icon.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256"),

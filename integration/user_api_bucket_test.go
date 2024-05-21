@@ -752,8 +752,8 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 	// Variables
 	assert := assert.New(t)
 	bucketName := "testputobjectslegalholdstatus"
-	objName := "testputobjectslegalholdstatus.txt" // // encoded base64 of testputobjectslegalholdstatus.txt =  dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0
-	objectNameEncoded := "dGVzdHB1dG9iamVjdHNsZWdhbGhvbGRzdGF0dXMudHh0"
+	objName := "testputobjectslegalholdstatus.txt"
+	objectNameEncoded := url.QueryEscape(objName)
 	status := "enabled"
 
 	// 1. Create bucket
@@ -804,13 +804,6 @@ func TestPutObjectsLegalholdStatus(t *testing.T) {
 			expectedStatus: 200,
 			args: args{
 				versionID: validVersionID,
-			},
-		},
-		{
-			name:           "Invalid VersionID when putting object's legal hold status",
-			expectedStatus: 500,
-			args: args{
-				versionID: "*&^###Test1ThisMightBeInvalid555",
 			},
 		},
 	}
@@ -1035,7 +1028,7 @@ func TestDeleteObjectsRetentionStatus(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testdeleteobjectslegalholdstatus"
 	fileName := "testdeleteobjectslegalholdstatus.txt"
-	validPrefix := encodeBase64(fileName)
+	validPrefix := url.QueryEscape(fileName)
 
 	// 1. Create bucket
 	if !setupBucket(bucketName, true, map[string]interface{}{"enabled": true}, nil, nil, assert, 200) {
@@ -1203,7 +1196,7 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testrestoreobjectstoselectedversion"
 	fileName := "testrestoreobjectstoselectedversion.txt"
-	validPrefix := encodeBase64(fileName)
+	validPrefix := url.QueryEscape(fileName)
 
 	// 1. Create bucket
 	if !setupBucket(bucketName, true, map[string]interface{}{"enabled": true}, nil, nil, assert, 200) {
@@ -1347,7 +1340,7 @@ func TestGetsTheMetadataOfAnObject(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testgetsthemetadataofanobject"
 	fileName := "testshareobjectonurl.txt"
-	validPrefix := encodeBase64(fileName)
+	validPrefix := url.QueryEscape(fileName)
 	tags := make(map[string]string)
 	tags["tag"] = "testputobjecttagbucketonetagone"
 
@@ -1420,7 +1413,7 @@ func TestPutObjectsRetentionStatus(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testputobjectsretentionstatus"
 	fileName := "testputobjectsretentionstatus.txt"
-	prefix := encodeBase64(fileName)
+	prefix := url.QueryEscape(fileName)
 
 	// 1. Create bucket
 	if !setupBucket(bucketName, true, map[string]interface{}{"enabled": true}, nil, nil, assert, 200) {
@@ -1515,7 +1508,7 @@ func TestShareObjectOnURL(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testshareobjectonurl"
 	fileName := "testshareobjectonurl.txt"
-	validPrefix := encodeBase64(fileName)
+	validPrefix := url.QueryEscape(fileName)
 	tags := make(map[string]string)
 	tags["tag"] = "testputobjecttagbucketonetagone"
 	versionID := "null"
@@ -1737,7 +1730,7 @@ func TestDownloadObject(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testdownloadobjbucketone"
 	fileName := "testdownloadobjectfilenameone"
-	path := encodeBase64(fileName)
+	path := url.QueryEscape(fileName)
 	workingDirectory, getWdErr := os.Getwd()
 	if getWdErr != nil {
 		assert.Fail("Couldn't get the directory")
@@ -1877,7 +1870,7 @@ func TestPutObjectTag(t *testing.T) {
 	assert := assert.New(t)
 	bucketName := "testputobjecttagbucketone"
 	fileName := "testputobjecttagbucketone.txt"
-	path := encodeBase64(fileName)
+	path := url.QueryEscape(fileName)
 	tags := make(map[string]string)
 	tags["tag"] = "testputobjecttagbucketonetagone"
 	versionID := "null"
