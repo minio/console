@@ -36,7 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start",
-    "find-deadcode": "ts-prune -s consoleApi.ts | (! grep -v 'used in module')"
+    "find-deadcode": "ts-prune -s consoleApi.ts | sh -c '(! grep -v \"used in module\")'"
   },
   "eslintConfig": {
     "extends": "react-app",

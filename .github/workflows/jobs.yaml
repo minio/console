@@ -102,11 +102,11 @@ jobs:
         continue-on-error: false
         run: |
           ./check-prettier.sh
-      # - name: Check for dead code
-      #   working-directory: ./web-app
-      #   continue-on-error: false
-      #   run: |
-      #     ./check-deadcode.sh
+      - name: Check for dead code
+        working-directory: ./web-app
+        continue-on-error: false
+        run: |
+          ./check-deadcode.sh
 
   latest-minio:
     name: Build latest MinIO
