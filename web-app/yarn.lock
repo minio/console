@@ -2485,7 +2485,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.43.1":
+"@playwright/test@npm:^1.44.0":
   version: 1.44.0
   resolution: "@playwright/test@npm:1.44.0"
   dependencies:
@@ -18070,7 +18070,7 @@ __metadata:
   resolution: "web-app@workspace:."
   dependencies:
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
-    "@playwright/test": "npm:^1.43.1"
+    "@playwright/test": "npm:^1.44.0"
     "@reduxjs/toolkit": "npm:^1.9.6"
     "@types/lodash": "npm:^4.17.0"
     "@types/luxon": "npm:^3.4.2"
