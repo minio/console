@@ -53,6 +53,8 @@ jobs:
       - name: Read .nvmrc
         id: node_version
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -69,7 +71,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --frozen-lockfile --immutable
+          yarn install --immutable --no-check-resolutions
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -171,6 +173,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -187,7 +191,7 @@ jobs:
           yarn add -D create-react-app
           yarn init -y
           echo "yarn install"
-          yarn install
+          yarn install --no-check-resolutions
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps

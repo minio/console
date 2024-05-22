@@ -41,13 +41,23 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
       - name: Checks for known security issues with the installed packages
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn audit --groups dependencies
+          # Ignore "pdfjs-dist" advisory, because it's a dependency
+          # of "react-pdf" that cannot be upgraded. Because the
+          # "isEvalSupported" value is always set to "false", it
+          # isn't a security problem. See also
+          # - https://github.com/wojtekmaj/react-pdf/issues/1789
+          # - https://github.com/wojtekmaj/react-pdf/discussions/1786
+          # - https://www.npmjs.com/advisories/1097244    
+          yarn npm audit --recursive --environment production --no-deprecations --ignore 1097244

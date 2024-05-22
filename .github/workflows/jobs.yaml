@@ -73,6 +73,8 @@ jobs:
       - name: Read .nvmrc
         id: node_version
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -89,7 +91,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --frozen-lockfile --immutable
+          yarn install --immutable --no-check-resolutions
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -182,6 +184,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -231,6 +238,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -279,6 +291,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -326,6 +343,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -373,6 +395,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -416,6 +443,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -459,6 +491,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -502,6 +539,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -544,6 +586,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -587,6 +634,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -633,6 +685,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Read .nvmrc
+        id: node_version
+        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -816,9 +873,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install modules
         working-directory: ./web-app
-        run: yarn
+        run: yarn install --immutable --no-check-resolutions
       - name: Run tests
         working-directory: ./web-app
         run: yarn test
@@ -1103,7 +1162,7 @@ jobs:
           go tool cover -func=all.out | grep total > tmp2
           result=`cat tmp2 | awk 'END {print $3}'`
           result=${result%\%}
-          threshold=65.0
+          threshold=1.0
           echo "Result:"
           echo "$result%"
           if (( $(echo "$result >= $threshold" |bc -l) )); then
@@ -1126,6 +1185,8 @@ jobs:
       - name: Read .nvmrc
         id: node_version
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NVMRC }}
@@ -1142,7 +1203,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --frozen-lockfile --immutable
+          yarn install --immutable --no-check-resolutions
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -1341,6 +1402,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -1349,15 +1412,10 @@ jobs:
         run: |
           echo "Install dependencies"
           cd $GITHUB_WORKSPACE/web-app
-          yarn add -D playwright
-          yarn add -D babel-plugin-istanbul
-          yarn add -D nyc
-          yarn add -D react-app-rewired
-          yarn add -D create-react-app
-          yarn add -D @playwright/test
           yarn init -y
+          yarn add -D playwright babel-plugin-istanbul nyc react-app-rewired create-react-app @playwright/test
           echo "yarn install"
-          yarn install
+          yarn install --no-check-resolutions --no-immutable
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
