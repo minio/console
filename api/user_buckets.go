@@ -1013,7 +1013,7 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 	defer cancel()
 	prefix := ""
 	if params.Prefix != nil {
-		prefix = SanitizeEncodedPrefix(*params.Prefix)
+		prefix = *params.Prefix
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 	if err != nil {

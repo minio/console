@@ -231,10 +231,10 @@ const ListObjects = () => {
 
   const bucketName = params.bucketName || "";
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
-  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
+  const internalPaths =
+    pathSegment.length === 2 ? decodeURIComponent(pathSegment[1]) : "";
 
-  const pageTitle = decodeURIComponent(internalPaths);
-  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+  const currentPath = internalPaths.split("/").filter((i: string) => i !== "");
 
   let uploadPath = [bucketName];
   if (currentPath.length > 0) {
@@ -803,8 +803,7 @@ const ListObjects = () => {
     if (detailsOpen && selectedInternalPaths !== null) {
       // We change URL to be the contained folder
 
-      const decodedPath = decodeURIComponent(internalPaths);
-      const splitURLS = decodedPath.split("/");
+      const splitURLS = internalPaths.split("/");
 
       // We remove the last section of the URL as it should be a file
       splitURLS.pop();
@@ -1215,7 +1214,7 @@ const ListObjects = () => {
                     >
                       <BrowserBreadcrumbs
                         bucketName={bucketName}
-                        internalPaths={pageTitle}
+                        internalPaths={internalPaths}
                         additionalOptions={
                           !isVersioningApplied || rewindEnabled ? null : (
                             <Checkbox

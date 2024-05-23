@@ -59,11 +59,7 @@ type ObjectResponse struct {
 func getObjectsOptionsFromReq(request ObjectsRequest) (*objectsListOpts, error) {
 	pOptions := objectsListOpts{
 		BucketName: request.BucketName,
-		Prefix:     "",
-	}
-
-	if request.Prefix != "" {
-		pOptions.Prefix = SanitizeEncodedPrefix(request.Prefix)
+		Prefix:     request.Prefix,
 	}
 
 	if request.Mode == "rewind" {
