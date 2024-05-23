@@ -8,7 +8,8 @@ assignees: ''
 ---
 
 ## NOTE
-If this case is urgent, please subscribe to [SUBNET](https://min.io/pricing) so that our 24/7 support team may help you faster.
+
+Please subscribe to our [paid subscription plans](https://min.io/pricing) for 24x7 support from our Engineering team.
 
 <!--- Provide a general summary of the issue in the title above -->
 
