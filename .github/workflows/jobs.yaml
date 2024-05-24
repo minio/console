@@ -28,7 +28,7 @@ jobs:
           GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
           GH_CONTEXT: ${{ toJSON(github) }}
         run: |
-          PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/:\\/*//"`
+          PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
           echo "Owner: $GH_OWNER"
           echo "Branch: $GH_BRANCH"
           echo "PR repo: $GH_PR_REPO"
