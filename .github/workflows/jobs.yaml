@@ -23,8 +23,17 @@ jobs:
     steps:
       - name: Dump GitHub context
         env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
+          GH_OWNER: ${{ github.repository_owner }}
+          GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+          GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          GH_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/:.*//"`
+          echo "Owner: $GH_OWNER"
+          echo "Branch: $GH_BRANCH"
+          echo "PR repo: $GH_PR_REPO"
+          echo "PR account: $PR_ACCOUNT"
+          echo "$GH_CONTEXT"
 
 # jobs:
 #   lint-job:
