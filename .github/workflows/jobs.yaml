@@ -17,1441 +17,1504 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-job:
-    name: Checking Lint
+  test:
+    name: Test
     runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
+      - name: Dump GitHub context
         env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make verifiers
-
-  semgrep-static-code-analysis:
-    name: "semgrep checks"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@v3
-      - name: Scanning code on ${{ matrix.os }}
-        continue-on-error: false
-        run: |
-          # Install semgrep rather than using a container due to:
-          # https://github.com/actions/checkout/issues/334
-          sudo apt install -y python3-pip || apt install -y python3-pip
-          pip3 install semgrep
-          semgrep --config semgrep.yaml $(pwd)/web-app --error
-
-  ui-assets:
-    name: "React Code Has No Warnings & Prettified"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
-      - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
-        with:
-          path: |
-            ./web-app/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-      - name: Install Dependencies
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          yarn install --immutable --no-check-resolutions
-      - name: Check for Warnings in build output
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          ./check-warnings.sh
-      - name: Check if Files are Prettified
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          ./check-prettier.sh
-      - name: Check for dead code
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          ./check-deadcode.sh
-
-  latest-minio:
-    name: Build latest MinIO
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-    steps:
-      # To build minio image, we need to clone the repository first
-      - name: Clone github.com/minio/minio
-        uses: actions/checkout@v3
-        with:
-          repository: minio/minio
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-        id: go-minio
-      - name: Build on ${{ matrix.os }}
-        if: steps.minio-latest-cache.outputs.cache-hit != 'true'
-        run: |
-          echo "Create minio binary";
-          make build;
-  compile-binary:
-    name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-      - uses: actions/cache@v3
-        id: assets-cache
-        name: Assets Cache
-        with:
-          path: |
-            ./web-app/build/
-          key: ${{ runner.os }}-assets-${{ github.run_id }}
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
-
-  test-nginx-subpath:
-    name: Test Subpath with Nginx
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, MinIO and Nginx
-        run: |
-          (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
-
-      - name: Clean up docker
-        if: always()
-        run: |
-          make cleanup-minio-nginx
-
-  all-permissions-1:
-    name: Permissions Tests Part 1
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-1/ -q --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
-  all-permissions-2:
-    name: Permissions Tests Part 2
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-2/ -q --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
-  all-permissions-3:
-    name: Permissions Tests Part 3
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 10
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-3/ -q --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
-  all-permissions-4:
-    name: Permissions Tests Part 4
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    timeout-minutes: 15
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        timeout-minutes: 10
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-4/ --skip-js-errors
-
-  all-permissions-5:
-    name: Permissions Tests Part 5
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        timeout-minutes: 5
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-5/ --skip-js-errors
-
-  all-permissions-6:
-    name: Permissions Tests Part 6
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        timeout-minutes: 5
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-6/ --skip-js-errors
-
-  all-permissions-7:
-    name: Permissions Tests Part 7
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        timeout-minutes: 5
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-7/ --skip-js-errors
-
-  all-permissions-8:
-    name: Permissions Tests Part 8
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        timeout-minutes: 5
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-8/ --skip-js-errors
-
-  all-permissions-A:
-    name: Permissions Tests Part A
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-A/ --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
-  all-permissions-B:
-    name: Permissions Tests Part B
-    needs:
-      - compile-binary
-    runs-on: [ ubuntu-latest ]
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
-      - uses: actions/cache@v3
-        name: Console Binary Cache
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-${{ github.run_id }}
-
-      - name: clean-previous-containers-if-any
-        run: |
-          docker stop minio || true;
-          docker container prune -f || true;
-
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
-
-      - name: Install TestCafe
-        run: npm install testcafe@3.5.0
-
-      - name: Run TestCafe Tests
-        run: npx testcafe "chrome:headless" web-app/tests/permissions-B/ --skip-js-errors -c 3
-
-      - name: Clean up users & policies
-        run: |
-          make cleanup-permissions
-
-  test-pkg-on-go:
-    name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make test-pkg
-
-      - uses: actions/cache@v3
-        id: coverage-cache-pkg
-        name: Coverage Cache Pkg
-        with:
-          path: |
-            ./pkg/coverage/
-          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
-  test-api-on-go:
-    name: Test API on Go ${{ matrix.go-version }} and ${{ matrix.os }}
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make test
-
-      - uses: actions/cache@v3
-        id: coverage-cache-api
-        name: Coverage Cache API
-        with:
-          path: |
-            ./api/coverage/
-          key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
-  b-integration-tests:
-    name: Integration Tests with Latest Distributed MinIO
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-      - latest-minio
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Clone github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-          repository: minio/minio
-          path: "minio_repository"
-      - uses: actions/cache@v3
-        id: minio-latest-cache
-        name: MinIO Latest Cache
-        with:
-          path: |
-            ./minio
-          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create MinIO image";
-          make docker VERSION=$VERSION;
-
-          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-          echo "We are going to use the built image on test-integration";
-          MINIO_VERSION="minio/minio:$VERSION";
-          echo $MINIO_VERSION;
-
-          echo "Create bucket for replication with versioning"
-          echo "Download mc for Ubuntu"
-          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
-          echo "Change the permissions to execute mc command"
-          chmod +x mc
-
-          echo "Create the folder to put the all.out file"
-          make test-integration MINIO_VERSION=$MINIO_VERSION;
-
-      - uses: actions/cache@v3
-        id: coverage-cache
-        name: Coverage Cache
-        with:
-          path: |
-            ./integration/coverage/
-          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
-  react-tests:
-    name: React Tests
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Enable Corepack
-        run: corepack enable
-      - name: Install modules
-        working-directory: ./web-app
-        run: yarn install --immutable --no-check-resolutions
-      - name: Run tests
-        working-directory: ./web-app
-        run: yarn test
-  replication:
-    name: Site Replication Test
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-      - latest-minio
-    runs-on: [ ubuntu-latest ]
-
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Clone github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-          repository: minio/minio
-          path: "minio_repository"
-      - uses: actions/cache@v3
-        id: minio-latest-cache
-        name: MinIO Latest Cache
-        with:
-          path: |
-            ./minio
-          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
-
-      - name: Build on ${{ matrix.os }}
-        run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create MinIO image";
-          make docker VERSION=$VERSION;
-
-          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-
-          echo "We are going to use the built image on test-integration";
-          MINIO_VERSION="minio/minio:$VERSION";
-          echo $MINIO_VERSION;
-
-          make test-replication MINIO_VERSION=$MINIO_VERSION;
-      - uses: actions/cache@v3
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
-
-      # To save our replication.out file into an artifact.
-      # By default, GitHub stores build logs and artifacts for 90 days.
-      - uses: actions/upload-artifact@v3
-        with:
-          name: replication-artifact
-          path: ./replication/coverage/replication.out
-          if-no-files-found: error
-  sso-integration:
-    name: SSO Integration Test
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-      - latest-minio
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Clone github.com/minio/minio
-        uses: actions/checkout@master
-        with:
-          repository: minio/minio
-          path: "minio_repository"
-      - uses: actions/cache@v3
-        id: minio-latest-cache
-        name: MinIO Latest Cache
-        with:
-          path: |
-            ./minio
-          key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
-
-      - name: Build on ${{ matrix.os }}
-        run: |
-          echo "The idea is to build minio image from downloaded repository";
-          cd $GITHUB_WORKSPACE/minio_repository;
-          echo "replace github.com/minio/console => ../" >> go.mod
-
-          echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.21
-
-          echo "Get git version to build MinIO Image";
-          VERSION=`git rev-parse HEAD`;
-          echo $VERSION;
-          echo "Create MinIO image";
-          make docker VERSION=$VERSION;
-
-          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
-          echo "Jumping back to console repository to run the integration test"
-          cd $GITHUB_WORKSPACE;
-
-          echo "We are going to use the built image on test-integration";
-          MINIO_VERSION="minio/minio:$VERSION";
-          echo $MINIO_VERSION;
-
-          make test-sso-integration MINIO_VERSION=$MINIO_VERSION;
-      - uses: actions/cache@v3
-        id: coverage-cache-sso
-        name: Coverage Cache SSO
-        with:
-          path: |
-            ./sso-integration/coverage/
-          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
-  coverage:
-    name: "Coverage Limit Check"
-    needs:
-      - b-integration-tests
-      - test-api-on-go
-      - test-pkg-on-go
-      - sso-integration
-      - replication
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-      - name: Check out gocovmerge as a nested repository
-        uses: actions/checkout@v3
-        with:
-          repository: wadey/gocovmerge
-          path: gocovmerge
-
-      - uses: actions/cache@v3
-        id: coverage-cache
-        name: Coverage Cache
-        with:
-          path: |
-            ./integration/coverage/
-          key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
-
-      - uses: actions/cache@v3
-        id: coverage-cache-sso
-        name: Coverage Cache SSO
-        with:
-          path: |
-            ./sso-integration/coverage/
-          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
-
-      - uses: actions/cache@v3
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
-
-      - uses: actions/cache@v3
-        id: coverage-cache-api
-        name: Coverage Cache API
-        with:
-          path: |
-            ./api/coverage/
-          key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
-
-      - uses: actions/cache@v3
-        id: coverage-cache-pkg
-        name: Coverage Cache Pkg
-        with:
-          path: |
-            ./pkg/coverage/
-          key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
-
-      # Get the replication.out file from the artifact since this is working for self host runner.
-      - uses: actions/download-artifact@v3
-        with:
-          name: replication-artifact
-          path: replication/coverage
-
-      - name: Get coverage
-        run: |
-          echo "change directory to gocovmerge"
-          cd gocovmerge
-          echo "download golang x tools"
-          go mod download golang.org/x/tools
-          echo "go mod tidy compat mode"
-          go mod tidy -compat=1.21
-          echo "go build gocoverage.go"
-          go build gocovmerge.go
-          echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
-          echo "Download mc for Ubuntu"
-          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
-          echo "Change the permissions to execute mc command"
-          chmod +x mc
-          echo "Only run our test if play is up and running since we require it for replication tests here."
-          PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
-          if [ $PLAY_IS_ON == 1 ]
-          then
-            echo "Play is up and running, we will proceed with the play part for coverage"
-            echo "Create the folder to put the all.out file"
-            ./mc mb --ignore-existing play/builds/
-            echo "Copy the all.out file to play bucket"
-            echo ${{ github.repository }}
-            echo ${{ github.event.number }}
-            echo ${{ github.run_id }}
-            # mc cp can fail due to lack of space: mc: <ERROR> Failed to copy `all.out`.
-            # Storage backend has reached its minimum free disk threshold. Please delete a few objects to proceed.
-            ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=all.out -o coverage.html
-            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            # save all other coverage
-            go tool cover -html=../integration/coverage/system.out -o system.html
-            ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../replication/coverage/replication.out -o replication.html
-            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../sso-integration/coverage/sso-system.out -o sso-system.html
-            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../api/coverage/coverage.out -o coverage.html
-            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../pkg/coverage/coverage-pkg.out -o coverage-pkg.html
-            ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc anonymous set public play/builds
-          else
-            echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
-          fi
-          echo "grep to obtain the result"
-          go tool cover -func=all.out | grep total > tmp2
-          result=`cat tmp2 | awk 'END {print $3}'`
-          result=${result%\%}
-          threshold=1.0
-          echo "Result:"
-          echo "$result%"
-          if (( $(echo "$result >= $threshold" |bc -l) )); then
-            echo "It is equal or greater than threshold ($threshold%), passed!"
-          else
-            echo "It is smaller than threshold ($threshold%) value, failed!"
-            exit 1
-          fi
-
-  ui-assets-istanbul-coverage:
-    name: "Assets with Istanbul Plugin for coverage"
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
-      - uses: actions/cache@v3
-        id: assets-cache-istanbul-coverage
-        name: Assets Cache Istanbul Coverage
-        with:
-          path: |
-            ./web-app/build/
-          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
-      - name: Install Dependencies
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          yarn install --immutable --no-check-resolutions
-      - name: Check for Warnings in build output
-        working-directory: ./web-app
-        continue-on-error: false
-        run: |
-          ./check-warnings-istanbul-coverage.sh
-
-  compile-binary-istanbul-coverage:
-    name: "Compile Console Binary with Istanbul Plugin for Coverage"
-    needs:
-      - lint-job
-      - ui-assets-istanbul-coverage
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-      - uses: actions/cache@v3
-        name: Console Binary Cache Istanbul Coverage
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
-      - uses: actions/cache@v3
-        id: assets-cache-istanbul-coverage
-        name: Assets Cache Istanbul Coverage
-        with:
-          path: |
-            ./web-app/build/
-          key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make console
-
-  cross-compile-1:
-    name: Cross compile
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/ppc64le linux/mips64'"
-
-  cross-compile-2:
-    name: Cross compile 2
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/arm64 linux/s390x'"
-
-  cross-compile-3:
-    name: Cross compile 3
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
-
-  cross-compile-4:
-    name: Cross compile 4
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'windows/amd64 linux/arm'"
-
-  cross-compile-5:
-    name: Cross compile 5
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-        id: go
-
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make crosscompile arg1="'linux/386 netbsd/amd64'"
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+# jobs:
+#   lint-job:
+#     name: Checking Lint
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make verifiers
+
+#   semgrep-static-code-analysis:
+#     name: "semgrep checks"
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out source code
+#         uses: actions/checkout@v3
+#       - name: Scanning code on ${{ matrix.os }}
+#         continue-on-error: false
+#         run: |
+#           # Install semgrep rather than using a container due to:
+#           # https://github.com/actions/checkout/issues/334
+#           sudo apt install -y python3-pip || apt install -y python3-pip
+#           pip3 install semgrep
+#           semgrep --config semgrep.yaml $(pwd)/web-app --error
+
+#   ui-assets:
+#     name: "React Code Has No Warnings & Prettified"
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#           cache: "yarn"
+#           cache-dependency-path: web-app/yarn.lock
+#       - uses: actions/cache@v3
+#         id: assets-cache
+#         name: Assets Cache
+#         with:
+#           path: |
+#             ./web-app/build/
+#           key: ${{ runner.os }}-assets-${{ github.run_id }}
+#       - name: Install Dependencies
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           yarn install --immutable --no-check-resolutions
+#       - name: Check for Warnings in build output
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           ./check-warnings.sh
+#       - name: Check if Files are Prettified
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           ./check-prettier.sh
+#       - name: Check for dead code
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           ./check-deadcode.sh
+
+#   latest-minio:
+#     name: Build latest MinIO
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#     steps:
+#       # To build minio image, we need to clone the repository first
+#       - name: Clone github.com/minio/minio
+#         uses: actions/checkout@v3
+#         with:
+#           repository: minio/minio
+#       - name: Check-out matching MinIO branch
+#         env:
+#           GH_OWNER: ${{ github.repository_owner }}
+#           GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+#         run: |
+#           if [ ! "$GH_OWNER" = "minio" ]; then
+#             ALTREPO="https://github.com/$GH_OWNER/minio.git"
+#             echo "Attempting to fetch $ALTREPO..."
+#             git remote add alt $ALTREPO
+#             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+#           fi
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#         id: go-minio
+#       - name: Build on ${{ matrix.os }}
+#         if: steps.minio-latest-cache.outputs.cache-hit != 'true'
+#         run: |
+#           echo "Create minio binary";
+#           make build;
+#   compile-binary:
+#     name: Compiles on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+#       - uses: actions/cache@v3
+#         id: assets-cache
+#         name: Assets Cache
+#         with:
+#           path: |
+#             ./web-app/build/
+#           key: ${{ runner.os }}-assets-${{ github.run_id }}
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make console
+
+#   test-nginx-subpath:
+#     name: Test Subpath with Nginx
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     timeout-minutes: 10
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, MinIO and Nginx
+#         run: |
+#           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
+
+#       - name: Clean up docker
+#         if: always()
+#         run: |
+#           make cleanup-minio-nginx
+
+#   all-permissions-1:
+#     name: Permissions Tests Part 1
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     timeout-minutes: 10
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-1/ -q --skip-js-errors -c 3
+
+#       - name: Clean up users & policies
+#         run: |
+#           make cleanup-permissions
+
+#   all-permissions-2:
+#     name: Permissions Tests Part 2
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     timeout-minutes: 10
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-2/ -q --skip-js-errors -c 3
+
+#       - name: Clean up users & policies
+#         run: |
+#           make cleanup-permissions
+
+#   all-permissions-3:
+#     name: Permissions Tests Part 3
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     timeout-minutes: 10
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-3/ -q --skip-js-errors -c 3
+
+#       - name: Clean up users & policies
+#         run: |
+#           make cleanup-permissions
+
+#   all-permissions-4:
+#     name: Permissions Tests Part 4
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     timeout-minutes: 15
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         timeout-minutes: 10
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-4/ --skip-js-errors
+
+#   all-permissions-5:
+#     name: Permissions Tests Part 5
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         timeout-minutes: 5
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-5/ --skip-js-errors
+
+#   all-permissions-6:
+#     name: Permissions Tests Part 6
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         timeout-minutes: 5
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-6/ --skip-js-errors
+
+#   all-permissions-7:
+#     name: Permissions Tests Part 7
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         timeout-minutes: 5
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-7/ --skip-js-errors
+
+#   all-permissions-8:
+#     name: Permissions Tests Part 8
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         timeout-minutes: 5
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-8/ --skip-js-errors
+
+#   all-permissions-A:
+#     name: Permissions Tests Part A
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-A/ --skip-js-errors -c 3
+
+#       - name: Clean up users & policies
+#         run: |
+#           make cleanup-permissions
+
+#   all-permissions-B:
+#     name: Permissions Tests Part B
+#     needs:
+#       - compile-binary
+#     runs-on: [ ubuntu-latest ]
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#       - name: Install MinIO JS
+#         working-directory: ./
+#         continue-on-error: false
+#         run: |
+#           yarn add minio
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-${{ github.run_id }}
+
+#       - name: clean-previous-containers-if-any
+#         run: |
+#           docker stop minio || true;
+#           docker container prune -f || true;
+
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
+
+#       - name: Install TestCafe
+#         run: npm install testcafe@3.5.0
+
+#       - name: Run TestCafe Tests
+#         run: npx testcafe "chrome:headless" web-app/tests/permissions-B/ --skip-js-errors -c 3
+
+#       - name: Clean up users & policies
+#         run: |
+#           make cleanup-permissions
+
+#   test-pkg-on-go:
+#     name: Test Pkg on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make test-pkg
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-pkg
+#         name: Coverage Cache Pkg
+#         with:
+#           path: |
+#             ./pkg/coverage/
+#           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+#   test-api-on-go:
+#     name: Test API on Go ${{ matrix.go-version }} and ${{ matrix.os }}
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make test
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-api
+#         name: Coverage Cache API
+#         with:
+#           path: |
+#             ./api/coverage/
+#           key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
+#   b-integration-tests:
+#     name: Integration Tests with Latest Distributed MinIO
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#       - latest-minio
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Clone github.com/minio/minio
+#         uses: actions/checkout@master
+#         with:
+#           repository: minio/minio
+#           path: "minio_repository"
+#       - name: Check-out matching MinIO branch
+#         env:
+#           GH_OWNER: ${{ github.repository_owner }}
+#           GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+#         run: |
+#           cd minio_repository
+#           if [ ! "$GH_OWNER" = "minio" ]; then
+#             ALTREPO="https://github.com/$GH_OWNER/minio.git"
+#             echo "Attempting to fetch $ALTREPO..."
+#             git remote add alt $ALTREPO
+#             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+#           fi
+#       - uses: actions/cache@v3
+#         id: minio-latest-cache
+#         name: MinIO Latest Cache
+#         with:
+#           path: |
+#             ./minio
+#           key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         run: |
+#           echo "The idea is to build minio image from downloaded repository";
+#           cd $GITHUB_WORKSPACE/minio_repository;
+#           echo "Get git version to build MinIO Image";
+#           VERSION=`git rev-parse HEAD`;
+#           echo $VERSION;
+#           echo "Create MinIO image";
+#           make docker VERSION=$VERSION;
+
+#           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
+#           echo "Jumping back to console repository to run the integration test"
+#           cd $GITHUB_WORKSPACE;
+#           echo "We are going to use the built image on test-integration";
+#           MINIO_VERSION="minio/minio:$VERSION";
+#           echo $MINIO_VERSION;
+
+#           echo "Create bucket for replication with versioning"
+#           echo "Download mc for Ubuntu"
+#           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
+#           echo "Change the permissions to execute mc command"
+#           chmod +x mc
+
+#           echo "Create the folder to put the all.out file"
+#           make test-integration MINIO_VERSION=$MINIO_VERSION;
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache
+#         name: Coverage Cache
+#         with:
+#           path: |
+#             ./integration/coverage/
+#           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+#   react-tests:
+#     name: React Tests
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - name: Install modules
+#         working-directory: ./web-app
+#         run: yarn install --immutable --no-check-resolutions
+#       - name: Run tests
+#         working-directory: ./web-app
+#         run: yarn test
+#   replication:
+#     name: Site Replication Test
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#       - latest-minio
+#     runs-on: [ ubuntu-latest ]
+
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Clone github.com/minio/minio
+#         uses: actions/checkout@master
+#         with:
+#           repository: minio/minio
+#           path: "minio_repository"
+#       - name: Check-out matching MinIO branch
+#         env:
+#           GH_OWNER: ${{ github.repository_owner }}
+#           GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+#         run: |
+#           cd minio_repository
+#           if [ ! "$GH_OWNER" = "minio" ]; then
+#             ALTREPO="https://github.com/$GH_OWNER/minio.git"
+#             echo "Attempting to fetch $ALTREPO..."
+#             git remote add alt $ALTREPO
+#             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+#           fi
+#       - uses: actions/cache@v3
+#         id: minio-latest-cache
+#         name: MinIO Latest Cache
+#         with:
+#           path: |
+#             ./minio
+#           key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
+
+#       - name: Build on ${{ matrix.os }}
+#         run: |
+#           echo "The idea is to build minio image from downloaded repository";
+#           cd $GITHUB_WORKSPACE/minio_repository;
+#           echo "Get git version to build MinIO Image";
+#           VERSION=`git rev-parse HEAD`;
+#           echo $VERSION;
+#           echo "Create MinIO image";
+#           make docker VERSION=$VERSION;
+
+#           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
+#           echo "Jumping back to console repository to run the integration test"
+#           cd $GITHUB_WORKSPACE;
+
+#           echo "We are going to use the built image on test-integration";
+#           MINIO_VERSION="minio/minio:$VERSION";
+#           echo $MINIO_VERSION;
+
+#           make test-replication MINIO_VERSION=$MINIO_VERSION;
+#       - uses: actions/cache@v3
+#         id: coverage-cache-replication
+#         name: Coverage Cache Replication
+#         with:
+#           path: |
+#             ./replication/coverage/
+#           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
+#       # To save our replication.out file into an artifact.
+#       # By default, GitHub stores build logs and artifacts for 90 days.
+#       - uses: actions/upload-artifact@v3
+#         with:
+#           name: replication-artifact
+#           path: ./replication/coverage/replication.out
+#           if-no-files-found: error
+#   sso-integration:
+#     name: SSO Integration Test
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#       - latest-minio
+#     runs-on: ubuntu-latest
+
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Clone github.com/minio/minio
+#         uses: actions/checkout@master
+#         with:
+#           repository: minio/minio
+#           path: "minio_repository"
+#       - name: Check-out matching MinIO branch
+#         env:
+#           GH_OWNER: ${{ github.repository_owner }}
+#           GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+#         run: |
+#           cd minio_repository
+#           if [ ! "$GH_OWNER" = "minio" ]; then
+#             ALTREPO="https://github.com/$GH_OWNER/minio.git"
+#             echo "Attempting to fetch $ALTREPO..."
+#             git remote add alt $ALTREPO
+#             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+#           fi
+
+#       - name: Checkout proper minio/minio branch
+#         run: |
+
+#           git checkout "${{ github.head_ref || github.ref_name }}" || echo "Okay, we'll stay on the master branch"
+
+#       - uses: actions/cache@v3
+#         id: minio-latest-cache
+#         name: MinIO Latest Cache
+#         with:
+#           path: |
+#             ./minio
+#           key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
+
+#       - name: Build on ${{ matrix.os }}
+#         run: |
+#           echo "The idea is to build minio image from downloaded repository";
+#           cd $GITHUB_WORKSPACE/minio_repository;
+#           echo "replace github.com/minio/console => ../" >> go.mod
+
+#           echo "updates to go.mod needed; to update it: go mod tidy"
+#           go mod tidy -compat=1.21
+
+#           echo "Get git version to build MinIO Image";
+#           VERSION=`git rev-parse HEAD`;
+#           echo $VERSION;
+#           echo "Create MinIO image";
+#           make docker VERSION=$VERSION;
+
+#           docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
+#           echo "Jumping back to console repository to run the integration test"
+#           cd $GITHUB_WORKSPACE;
+
+#           echo "We are going to use the built image on test-integration";
+#           MINIO_VERSION="minio/minio:$VERSION";
+#           echo $MINIO_VERSION;
+
+#           make test-sso-integration MINIO_VERSION=$MINIO_VERSION;
+#       - uses: actions/cache@v3
+#         id: coverage-cache-sso
+#         name: Coverage Cache SSO
+#         with:
+#           path: |
+#             ./sso-integration/coverage/
+#           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
+#   coverage:
+#     name: "Coverage Limit Check"
+#     needs:
+#       - b-integration-tests
+#       - test-api-on-go
+#       - test-pkg-on-go
+#       - sso-integration
+#       - replication
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+#       - name: Check out gocovmerge as a nested repository
+#         uses: actions/checkout@v3
+#         with:
+#           repository: wadey/gocovmerge
+#           path: gocovmerge
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache
+#         name: Coverage Cache
+#         with:
+#           path: |
+#             ./integration/coverage/
+#           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-sso
+#         name: Coverage Cache SSO
+#         with:
+#           path: |
+#             ./sso-integration/coverage/
+#           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-replication
+#         name: Coverage Cache Replication
+#         with:
+#           path: |
+#             ./replication/coverage/
+#           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-api
+#         name: Coverage Cache API
+#         with:
+#           path: |
+#             ./api/coverage/
+#           key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
+
+#       - uses: actions/cache@v3
+#         id: coverage-cache-pkg
+#         name: Coverage Cache Pkg
+#         with:
+#           path: |
+#             ./pkg/coverage/
+#           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
+
+#       # Get the replication.out file from the artifact since this is working for self host runner.
+#       - uses: actions/download-artifact@v3
+#         with:
+#           name: replication-artifact
+#           path: replication/coverage
+
+#       - name: Get coverage
+#         run: |
+#           echo "change directory to gocovmerge"
+#           cd gocovmerge
+#           echo "download golang x tools"
+#           go mod download golang.org/x/tools
+#           echo "go mod tidy compat mode"
+#           go mod tidy -compat=1.21
+#           echo "go build gocoverage.go"
+#           go build gocovmerge.go
+#           echo "put together the outs for final coverage resolution"
+#           ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+#           echo "Download mc for Ubuntu"
+#           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
+#           echo "Change the permissions to execute mc command"
+#           chmod +x mc
+#           echo "Only run our test if play is up and running since we require it for replication tests here."
+#           PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
+#           if [ $PLAY_IS_ON == 1 ]
+#           then
+#             echo "Play is up and running, we will proceed with the play part for coverage"
+#             echo "Create the folder to put the all.out file"
+#             ./mc mb --ignore-existing play/builds/
+#             echo "Copy the all.out file to play bucket"
+#             echo ${{ github.repository }}
+#             echo ${{ github.event.number }}
+#             echo ${{ github.run_id }}
+#             # mc cp can fail due to lack of space: mc: <ERROR> Failed to copy `all.out`.
+#             # Storage backend has reached its minimum free disk threshold. Please delete a few objects to proceed.
+#             ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp all.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             go tool cover -html=all.out -o coverage.html
+#             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             # save all other coverage
+#             go tool cover -html=../integration/coverage/system.out -o system.html
+#             ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             go tool cover -html=../replication/coverage/replication.out -o replication.html
+#             ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             go tool cover -html=../sso-integration/coverage/sso-system.out -o sso-system.html
+#             ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             go tool cover -html=../api/coverage/coverage.out -o coverage.html
+#             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp ../api/coverage/coverage.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             go tool cover -html=../pkg/coverage/coverage-pkg.out -o coverage-pkg.html
+#             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
+#             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
+#             ./mc anonymous set public play/builds
+#           else
+#             echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
+#           fi
+#           echo "grep to obtain the result"
+#           go tool cover -func=all.out | grep total > tmp2
+#           result=`cat tmp2 | awk 'END {print $3}'`
+#           result=${result%\%}
+#           threshold=1.0
+#           echo "Result:"
+#           echo "$result%"
+#           if (( $(echo "$result >= $threshold" |bc -l) )); then
+#             echo "It is equal or greater than threshold ($threshold%), passed!"
+#           else
+#             echo "It is smaller than threshold ($threshold%) value, failed!"
+#             exit 1
+#           fi
+
+#   ui-assets-istanbul-coverage:
+#     name: "Assets with Istanbul Plugin for coverage"
+#     runs-on: ubuntu-latest
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Read .nvmrc
+#         id: node_version
+#         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NVMRC }}
+#           cache: "yarn"
+#           cache-dependency-path: web-app/yarn.lock
+#       - uses: actions/cache@v3
+#         id: assets-cache-istanbul-coverage
+#         name: Assets Cache Istanbul Coverage
+#         with:
+#           path: |
+#             ./web-app/build/
+#           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
+#       - name: Install Dependencies
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           yarn install --immutable --no-check-resolutions
+#       - name: Check for Warnings in build output
+#         working-directory: ./web-app
+#         continue-on-error: false
+#         run: |
+#           ./check-warnings-istanbul-coverage.sh
+
+#   compile-binary-istanbul-coverage:
+#     name: "Compile Console Binary with Istanbul Plugin for Coverage"
+#     needs:
+#       - lint-job
+#       - ui-assets-istanbul-coverage
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache Istanbul Coverage
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
+#       - uses: actions/cache@v3
+#         id: assets-cache-istanbul-coverage
+#         name: Assets Cache Istanbul Coverage
+#         with:
+#           path: |
+#             ./web-app/build/
+#           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make console
+
+#   cross-compile-1:
+#     name: Cross compile
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make crosscompile arg1="'linux/ppc64le linux/mips64'"
+
+#   cross-compile-2:
+#     name: Cross compile 2
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make crosscompile arg1="'linux/arm64 linux/s390x'"
+
+#   cross-compile-3:
+#     name: Cross compile 3
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make crosscompile arg1="'darwin/amd64 freebsd/amd64'"
+
+#   cross-compile-4:
+#     name: Cross compile 4
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make crosscompile arg1="'windows/amd64 linux/arm'"
+
+#   cross-compile-5:
+#     name: Cross compile 5
+#     needs:
+#       - lint-job
+#       - ui-assets
+#       - semgrep-static-code-analysis
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       matrix:
+#         go-version: [ 1.22.x ]
+#         os: [ ubuntu-latest ]
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v3
+
+#       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
+#         uses: actions/setup-go@v3
+#         with:
+#           go-version: ${{ matrix.go-version }}
+#           cache: true
+#         id: go
+
+#       - name: Build on ${{ matrix.os }}
+#         env:
+#           GO111MODULE: on
+#           GOOS: linux
+#         run: |
+#           make crosscompile arg1="'linux/386 netbsd/amd64'"
           
-  playwright:
-    needs:
-      - compile-binary-istanbul-coverage
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Enable Corepack
-        run: corepack enable
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
+#   playwright:
+#     needs:
+#       - compile-binary-istanbul-coverage
+#     timeout-minutes: 60
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Enable Corepack
+#         run: corepack enable
+#       - uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
 
-      - name: Install dependencies
-        run: |
-          echo "Install dependencies"
-          cd $GITHUB_WORKSPACE/web-app
-          yarn init -y
-          yarn add -D playwright babel-plugin-istanbul nyc react-app-rewired create-react-app @playwright/test
-          echo "yarn install"
-          yarn install --no-check-resolutions --no-immutable
+#       - name: Install dependencies
+#         run: |
+#           echo "Install dependencies"
+#           cd $GITHUB_WORKSPACE/web-app
+#           yarn init -y
+#           yarn add -D playwright babel-plugin-istanbul nyc react-app-rewired create-react-app @playwright/test
+#           echo "yarn install"
+#           yarn install --no-check-resolutions --no-immutable
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+#       - name: Install Playwright Browsers
+#         run: npx playwright install --with-deps
 
-      - uses: actions/cache@v3
-        name: Console Binary Cache Istanbul Coverage
-        with:
-          path: |
-            ./console
-          key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
+#       - uses: actions/cache@v3
+#         name: Console Binary Cache Istanbul Coverage
+#         with:
+#           path: |
+#             ./console
+#           key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
 
-      - name: Start Console, front-end app and initialize users/policies
-        run: |
-          (./console server) & (make initialize-permissions)
+#       - name: Start Console, front-end app and initialize users/policies
+#         run: |
+#           (./console server) & (make initialize-permissions)
 
-      - name: Run Playwright tests
-        run: |
-          echo "Run tests under playwright folder only"
-          cd $GITHUB_WORKSPACE/web-app
-          yarn remove playwright
-          yarn add --dev @playwright/test
-          echo "npx playwright test"
-          npx playwright test # To run the tests
-          echo "npx nyc report"
-          npx nyc report # To see report printed in logs as text
-          echo "npx nyc report --reporter=html"
-          npx nyc report --reporter=html # to see report in ./coverage/index.html
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 30
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: coverage
-          path: coverage/
-          retention-days: 30
+#       - name: Run Playwright tests
+#         run: |
+#           echo "Run tests under playwright folder only"
+#           cd $GITHUB_WORKSPACE/web-app
+#           yarn remove playwright
+#           yarn add --dev @playwright/test
+#           echo "npx playwright test"
+#           npx playwright test # To run the tests
+#           echo "npx nyc report"
+#           npx nyc report # To see report printed in logs as text
+#           echo "npx nyc report --reporter=html"
+#           npx nyc report --reporter=html # to see report in ./coverage/index.html
+#       - uses: actions/upload-artifact@v3
+#         if: always()
+#         with:
+#           name: playwright-report
+#           path: playwright-report/
+#           retention-days: 30
+#       - uses: actions/upload-artifact@v3
+#         if: always()
+#         with:
+#           name: coverage
+#           path: coverage/
+#           retention-days: 30
