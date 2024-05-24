@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/pkg/v2/licverifier"
+	"github.com/minio/pkg/v3/licverifier"
 )
 
 var (

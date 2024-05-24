@@ -20,7 +20,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/minio/pkg/v2/licverifier"
+	"github.com/minio/pkg/v3/licverifier"
 )
 
 // GetLicenseInfoFromJWT will return license metadata from a jwt string license

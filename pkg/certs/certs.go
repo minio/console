@@ -29,8 +29,8 @@ import (
 	"strings"
 
 	"github.com/minio/cli"
-	xcerts "github.com/minio/pkg/v2/certs"
-	"github.com/minio/pkg/v2/env"
+	xcerts "github.com/minio/pkg/v3/certs"
+	"github.com/minio/pkg/v3/env"
 	"github.com/mitchellh/go-homedir"
 )
 

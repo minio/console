@@ -32,7 +32,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"
 	"github.com/minio/console/models"
-	iampolicy "github.com/minio/pkg/v2/policy"
+	iampolicy "github.com/minio/pkg/v3/policy"
 
 	policies "github.com/minio/console/api/policy"
 )

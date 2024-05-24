@@ -29,7 +29,7 @@ import (
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/utils"
 	"github.com/minio/madmin-go/v3"
-	iampolicy "github.com/minio/pkg/v2/policy"
+	iampolicy "github.com/minio/pkg/v3/policy"
 )
 
 func registerServiceAccountsHandlers(api *operations.ConsoleAPI) {

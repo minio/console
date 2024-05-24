@@ -44,9 +44,9 @@ import (
 	"github.com/klauspost/compress/gzhttp"
 
 	portal_ui "github.com/minio/console/web-app"
-	"github.com/minio/pkg/v2/env"
-	"github.com/minio/pkg/v2/mimedb"
-	xnet "github.com/minio/pkg/v2/net"
+	"github.com/minio/pkg/v3/env"
+	"github.com/minio/pkg/v3/mimedb"
+	xnet "github.com/minio/pkg/v3/net"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
