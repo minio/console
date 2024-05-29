@@ -260,14 +260,8 @@ func getBucketReplicationResponse(session *models.Principal, params bucketApi.Ge
 	var rules []*models.BucketReplicationRule
 
 	for _, rule := range res.Rules {
-		repDelMarkerStatus := false
-		if rule.DeleteMarkerReplication.Status == "enable" {
-			repDelMarkerStatus = true
-		}
-		repDelStatus := false
-		if rule.DeleteReplication.Status == "enable" {
-			repDelMarkerStatus = true
-		}
+		repDelMarkerStatus := rule.DeleteMarkerReplication.Status == replication.Enabled
+		repDelStatus := rule.DeleteReplication.Status == replication.Enabled
 
 		rules = append(rules, &models.BucketReplicationRule{
 			DeleteMarkerReplication: repDelMarkerStatus,
@@ -322,22 +316,10 @@ func getBucketReplicationRuleResponse(session *models.Principal, params bucketAp
 		return nil, ErrorWithContext(ctx, errors.New("no rule is set with this ID"))
 	}
 
-	repDelMarkerStatus := false
-	if foundRule.DeleteMarkerReplication.Status == "Enabled" {
-		repDelMarkerStatus = true
-	}
-	repDelStatus := false
-	if foundRule.DeleteReplication.Status == "Enabled" {
-		repDelStatus = true
-	}
-	existingObjects := false
-	if foundRule.ExistingObjectReplication.Status == "Enabled" {
-		existingObjects = true
-	}
-	metadataModifications := false
-	if foundRule.SourceSelectionCriteria.ReplicaModifications.Status == "Enabled" {
-		metadataModifications = true
-	}
+	repDelMarkerStatus := foundRule.DeleteMarkerReplication.Status == replication.Enabled
+	repDelStatus := foundRule.DeleteReplication.Status == replication.Enabled
+	existingObjects := foundRule.ExistingObjectReplication.Status == replication.Enabled
+	metadataModifications := foundRule.SourceSelectionCriteria.ReplicaModifications.Status == replication.Enabled
 
 	returnRule := &models.BucketReplicationRule{
 		DeleteMarkerReplication: repDelMarkerStatus,
@@ -729,6 +711,7 @@ func getBucketInfo(ctx context.Context, client MinioClient, adminClient MinioAdm
 	for _, bucket := range info.Buckets {
 		if bucket.Name == bucketName {
 			bucketInfo = bucket
+			break
 		}
 	}
 
