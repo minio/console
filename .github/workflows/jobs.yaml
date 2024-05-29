@@ -91,7 +91,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable --no-check-resolutions
+          yarn install --immutable
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -877,7 +877,7 @@ jobs:
         run: corepack enable
       - name: Install modules
         working-directory: ./web-app
-        run: yarn install --immutable --no-check-resolutions
+        run: yarn install --immutable
       - name: Run tests
         working-directory: ./web-app
         run: yarn test
@@ -1203,7 +1203,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable --no-check-resolutions
+          yarn install --immutable
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -1415,7 +1415,7 @@ jobs:
           yarn init -y
           yarn add -D playwright babel-plugin-istanbul nyc react-app-rewired create-react-app @playwright/test
           echo "yarn install"
-          yarn install --no-check-resolutions --no-immutable
+          yarn install --no-immutable
 
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
