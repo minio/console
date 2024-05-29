@@ -19,11 +19,11 @@ concurrency:
 jobs:
   lint-job:
     name: Checking Lint
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
+        os: [ubuntu-latest]
     steps:
       - name: Check out source code
         uses: actions/checkout@v3
@@ -65,8 +65,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -110,10 +110,10 @@ jobs:
 
   latest-minio:
     name: Build latest MinIO
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
+        go-version: [1.22.x]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -151,8 +151,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -187,12 +187,12 @@ jobs:
     name: Test Subpath with Nginx
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -241,12 +241,12 @@ jobs:
     name: Permissions Tests Part 1
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -294,12 +294,12 @@ jobs:
     name: Permissions Tests Part 2
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -346,12 +346,12 @@ jobs:
     name: Permissions Tests Part 3
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -398,12 +398,12 @@ jobs:
     name: Permissions Tests Part 4
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -447,11 +447,11 @@ jobs:
     name: Permissions Tests Part 5
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -495,11 +495,11 @@ jobs:
     name: Permissions Tests Part 6
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -543,11 +543,11 @@ jobs:
     name: Permissions Tests Part 7
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -590,11 +590,11 @@ jobs:
     name: Permissions Tests Part 8
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -638,11 +638,11 @@ jobs:
     name: Permissions Tests Part A
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -689,11 +689,11 @@ jobs:
     name: Permissions Tests Part B
     needs:
       - compile-binary
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -745,8 +745,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -781,8 +781,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -819,7 +819,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
+        go-version: [1.22.x]
 
     steps:
       - name: Check out code
@@ -912,11 +912,11 @@ jobs:
       - ui-assets
       - semgrep-static-code-analysis
       - latest-minio
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ubuntu-latest]
 
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
+        go-version: [1.22.x]
 
     steps:
       - name: Check out code
@@ -999,7 +999,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
+        go-version: [1.22.x]
 
     steps:
       - name: Check out code
@@ -1085,8 +1085,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1231,8 +1231,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1273,8 +1273,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1314,8 +1314,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1343,8 +1343,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1371,8 +1371,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1400,8 +1400,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1429,8 +1429,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [ 1.22.x ]
-        os: [ ubuntu-latest ]
+        go-version: [1.22.x]
+        os: [ubuntu-latest]
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -1448,7 +1448,7 @@ jobs:
           GOOS: linux
         run: |
           make crosscompile arg1="'linux/386 netbsd/amd64'"
-          
+
   playwright:
     needs:
       - compile-binary-istanbul-coverage

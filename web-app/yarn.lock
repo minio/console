@@ -3304,14 +3304,14 @@ __metadata:
   linkType: hard
 
 "@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^4.17.33":
-  version: 4.19.1
-  resolution: "@types/express-serve-static-core@npm:4.19.1"
+  version: 4.19.2
+  resolution: "@types/express-serve-static-core@npm:4.19.2"
   dependencies:
     "@types/node": "npm:*"
     "@types/qs": "npm:*"
     "@types/range-parser": "npm:*"
     "@types/send": "npm:*"
-  checksum: 10c0/8e202374a7013fbbc5a3abd5111dd7ab73c4a6e9da4ffc1808d6e68be7a1dbd37e013b74e47aa6febc8efa459120058a1cbde6f2d509b2ad28fac301e1ee353a
+  checksum: 10c0/471060bbab7be4bbf2c24f5628e1fa2edbfd29fb47a99ba77984e9c0ac33b105a660cfc384ddd1e6fb6f45d9515e70422eefc9a7ba317565919ebcd5db251107
   languageName: node
   linkType: hard
 
@@ -7171,9 +7171,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.668":
-  version: 1.4.783
-  resolution: "electron-to-chromium@npm:1.4.783"
-  checksum: 10c0/d112e5602e2ee7516ead648e2d2449027f1106147858442781ac475f9a3861a783cb6c8f4638316800f5eff2c4a1f046cd412704678c90479c5417bf204de572
+  version: 1.4.784
+  resolution: "electron-to-chromium@npm:1.4.784"
+  checksum: 10c0/94180964f00c282ecb1a057c05d88e1cbb8cb2e7b5c6ef47eee1718c384b3b51342b7b449bd54dfbd6883783329f10df1a32965dcaadff7df00d453f0014dc76
   languageName: node
   linkType: hard
 
@@ -11738,7 +11738,7 @@ __metadata:
     react-calendar: "npm:^5.0.0"
     react-virtualized: "npm:^9.22.5"
     styled-components: "npm:^5.3.11"
-  checksum: 10c0/f3844e6ae408add2d79d669521d3dc3438d689712df12cec949ee250ab141cf8d18980a690c67f867884efbe4ef528727224b6c07a1dba1d5fb399383122b093
+  checksum: 10c0/9ead684c2f1d67328239a580120aef569810b577d7be1cc27e35fbb77c04ae08eb4ad65adc2e38afe3241148784f6b7f2d3c615266bce6a2ad0396bf80c82f08
   languageName: node
   linkType: hard
 
