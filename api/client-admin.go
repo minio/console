@@ -96,6 +96,8 @@ type MinioAdmin interface {
 	editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error
 	// verify Tier status
 	verifyTierStatus(ctx context.Context, tierName string) error
+	// remove empty Tier
+	removeTier(ctx context.Context, tierName string) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 	// Site Relication
@@ -446,6 +448,11 @@ func (ac AdminClient) editTierCreds(ctx context.Context, tierName string, creds 
 // implements madmin.VerifyTier()
 func (ac AdminClient) verifyTierStatus(ctx context.Context, tierName string) error {
 	return ac.Client.VerifyTier(ctx, tierName)
+}
+
+// implements madmin.RemoveTier()
+func (ac AdminClient) removeTier(ctx context.Context, tierName string) error {
+	return ac.Client.RemoveTier(ctx, tierName)
 }
 
 func NewMinioAdminClient(ctx context.Context, sessionClaims *models.Principal) (*madmin.AdminClient, error) {

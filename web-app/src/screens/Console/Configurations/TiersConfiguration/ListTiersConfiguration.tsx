@@ -41,7 +41,10 @@ import { actionsTray } from "../../Common/FormComponents/common/styleLibrary";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
+  IAM_PERMISSIONS,
+  IAM_ROLES,
   IAM_SCOPES,
+  S3_ALL_RESOURCES,
 } from "../../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -61,6 +64,7 @@ import DistributedOnly from "../../Common/DistributedOnly/DistributedOnly";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../../HelpMenu";
+import DeleteTierConfirmModal from "./DeleteTierConfirmModal";
 
 const UpdateTierCredentialsModal = withSuspense(
   React.lazy(() => import("./UpdateTierCredentialsModal")),
@@ -75,6 +79,9 @@ const ListTiersConfiguration = () => {
   const [filter, setFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [updateCredentialsOpen, setUpdateCredentialsOpen] =
+    useState<boolean>(false);
+
+  const [deleteTierModalOpen, setDeleteTierModalOpen] =
     useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<Tier>({
     type: "unsupported",
@@ -261,6 +268,10 @@ const ListTiersConfiguration = () => {
   const closeTierCredentials = () => {
     setUpdateCredentialsOpen(false);
   };
+  const closeDeleteTier = () => {
+    setDeleteTierModalOpen(false);
+    setIsLoading(true);
+  };
 
   useEffect(() => {
     dispatch(setHelpName("list-tiers-configuration"));
@@ -274,6 +285,13 @@ const ListTiersConfiguration = () => {
           open={updateCredentialsOpen}
           tierData={selectedTier}
           closeModalAndRefresh={closeTierCredentials}
+        />
+      )}
+      {deleteTierModalOpen && (
+        <DeleteTierConfirmModal
+          open={deleteTierModalOpen}
+          tierName={get(selectedTier, `${selectedTier.type}.name`, "")}
+          closeModalAndRefresh={closeDeleteTier}
         />
       )}
       <PageHeaderWrapper label="Tiers" actions={<HelpMenu />} />
@@ -355,6 +373,19 @@ const ListTiersConfiguration = () => {
                               onClick: (tierData: Tier) => {
                                 setSelectedTier(tierData);
                                 setUpdateCredentialsOpen(true);
+                              },
+                            },
+                            {
+                              type: "delete",
+                              isDisabled: !hasPermission(
+                                "*",
+                                IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
+                                true,
+                              ),
+
+                              onClick: (tierData: Tier) => {
+                                setSelectedTier(tierData);
+                                setDeleteTierModalOpen(true);
                               },
                             },
                           ]}

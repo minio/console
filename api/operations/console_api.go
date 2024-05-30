@@ -467,6 +467,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		PolicyRemovePolicyHandler: policy.RemovePolicyHandlerFunc(func(params policy.RemovePolicyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation policy.RemovePolicy has not yet been implemented")
 		}),
+		TieringRemoveTierHandler: tiering.RemoveTierHandlerFunc(func(params tiering.RemoveTierParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.RemoveTier has not yet been implemented")
+		}),
 		UserRemoveUserHandler: user.RemoveUserHandlerFunc(func(params user.RemoveUserParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation user.RemoveUser has not yet been implemented")
 		}),
@@ -878,6 +881,8 @@ type ConsoleAPI struct {
 	GroupRemoveGroupHandler group.RemoveGroupHandler
 	// PolicyRemovePolicyHandler sets the operation handler for the remove policy operation
 	PolicyRemovePolicyHandler policy.RemovePolicyHandler
+	// TieringRemoveTierHandler sets the operation handler for the remove tier operation
+	TieringRemoveTierHandler tiering.RemoveTierHandler
 	// UserRemoveUserHandler sets the operation handler for the remove user operation
 	UserRemoveUserHandler user.RemoveUserHandler
 	// ConfigurationResetConfigHandler sets the operation handler for the reset config operation
@@ -1410,6 +1415,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.PolicyRemovePolicyHandler == nil {
 		unregistered = append(unregistered, "policy.RemovePolicyHandler")
+	}
+	if o.TieringRemoveTierHandler == nil {
+		unregistered = append(unregistered, "tiering.RemoveTierHandler")
 	}
 	if o.UserRemoveUserHandler == nil {
 		unregistered = append(unregistered, "user.RemoveUserHandler")
@@ -2118,6 +2126,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/policy/{name}"] = policy.NewRemovePolicy(o.context, o.PolicyRemovePolicyHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/admin/tiers/{name}/remove"] = tiering.NewRemoveTier(o.context, o.TieringRemoveTierHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}

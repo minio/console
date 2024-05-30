@@ -1761,7 +1761,7 @@ export class HttpClient<SecurityDataType = unknown> {
             : payloadFormatter(body),
       },
     ).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
+      const r = response.clone() as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
 
@@ -4539,6 +4539,23 @@ export class Api<
         body: body,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tiering
+     * @name RemoveTier
+     * @summary Remove Tier
+     * @request DELETE:/admin/tiers/{name}/remove
+     * @secure
+     */
+    removeTier: (name: string, params: RequestParams = {}) =>
+      this.request<void, ApiError>({
+        path: `/admin/tiers/${name}/remove`,
+        method: "DELETE",
+        secure: true,
         ...params,
       }),
 
