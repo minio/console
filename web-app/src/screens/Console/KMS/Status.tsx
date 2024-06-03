@@ -203,19 +203,20 @@ const Status = () => {
                   label={"Key Management Service Endpoints:"}
                   value={
                     <Fragment>
-                      {status.endpoints?.map((e: any, i: number) => (
-                        <LabelWithIcon
-                          key={i}
-                          icon={
-                            e.status === "online" ? (
-                              <EnabledIcon />
-                            ) : (
-                              <DisabledIcon />
-                            )
-                          }
-                          label={e.url}
-                        />
-                      ))}
+                      {status.endpoints &&
+                        status.endpoints.map((e: any, i: number) => (
+                          <LabelWithIcon
+                            key={i}
+                            icon={
+                              e.status === "online" ? (
+                                <EnabledIcon />
+                              ) : (
+                                <DisabledIcon />
+                              )
+                            }
+                            label={e.url}
+                          />
+                        ))}
                     </Fragment>
                   }
                 />
