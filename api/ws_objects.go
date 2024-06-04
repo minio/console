@@ -35,7 +35,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 	defer func() {
 		// We close socket at the end of requests
 		wsc.conn.close()
-		cancelContexts.Range(func(key, value interface{}) bool {
+		cancelContexts.Range(func(_, value interface{}) bool {
 			cancelFunc := value.(context.CancelFunc)
 			cancelFunc()
 			return true
