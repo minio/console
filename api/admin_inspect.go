@@ -22,7 +22,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -35,14 +34,6 @@ import (
 
 func registerInspectHandler(api *operations.ConsoleAPI) {
 	api.InspectInspectHandler = inspectApi.InspectHandlerFunc(func(params inspectApi.InspectParams, principal *models.Principal) middleware.Responder {
-		if v, err := base64.URLEncoding.DecodeString(params.File); err == nil && utf8.Valid(v) {
-			params.File = string(v)
-		}
-
-		if v, err := base64.URLEncoding.DecodeString(params.Volume); err == nil && utf8.Valid(v) {
-			params.Volume = string(v)
-		}
-
 		k, r, err := getInspectResult(principal, &params)
 		if err != nil {
 			return inspectApi.NewInspectDefault(err.Code).WithPayload(err.APIError)
