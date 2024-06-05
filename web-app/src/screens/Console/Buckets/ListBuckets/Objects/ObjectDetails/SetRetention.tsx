@@ -20,7 +20,6 @@ import { useSelector } from "react-redux";
 import { BucketObject, ObjectRetentionMode } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { encodeURLString } from "common/utils";
 import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
 import { twoDigitDate } from "../../../../Common/FormComponents/DateSelector/utils";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
@@ -106,7 +105,7 @@ const SetRetention = ({
       .putObjectRetention(
         bucketName,
         {
-          prefix: encodeURLString(selectedObject),
+          prefix: selectedObject,
           version_id: versionId || "",
         },
         {
@@ -130,7 +129,7 @@ const SetRetention = ({
   ) => {
     api.buckets
       .deleteObjectRetention(bucketName, {
-        prefix: encodeURLString(selectedObject),
+        prefix: selectedObject,
         version_id: versionId || "",
       })
       .then(() => {

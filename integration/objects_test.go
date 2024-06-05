@@ -19,12 +19,12 @@ package integration
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 	"time"
@@ -90,7 +90,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Preview Object",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject")),
+				encodedPrefix: "myobject",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -98,7 +98,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Preview image",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 			},
 			expectedStatus: 200,
 			expectedError:  nil,
@@ -106,7 +106,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Get Range of bytes",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 				bytesRange:    "bytes=1-4",
 			},
 			expectedStatus: 206,
@@ -115,7 +115,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Get Range of bytes empty start",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 				bytesRange:    "bytes=-4",
 			},
 			expectedStatus: 206,
@@ -124,7 +124,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Get Invalid Range of bytes",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 				bytesRange:    "bytes=9-12",
 			},
 			expectedStatus: 500,
@@ -133,7 +133,7 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Get Larger Range of bytes empty start",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 				bytesRange:    "bytes=-12",
 			},
 			expectedStatus: 206,
@@ -142,25 +142,8 @@ func TestObjectGet(t *testing.T) {
 		{
 			name: "Get invalid seek start Range of bytes",
 			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject.jpg")),
+				encodedPrefix: "myobject.jpg",
 				bytesRange:    "bytes=12-16",
-			},
-			expectedStatus: 500,
-			expectedError:  nil,
-		},
-		{
-			name: "Bad Preview Object",
-			args: args{
-				encodedPrefix: "garble",
-			},
-			expectedStatus: 400,
-			expectedError:  nil,
-		},
-		{
-			name: "Bad Version Preview Object",
-			args: args{
-				encodedPrefix: base64.StdEncoding.EncodeToString([]byte("myobject")),
-				versionID:     "garble",
 			},
 			expectedStatus: 500,
 			expectedError:  nil,
@@ -172,7 +155,7 @@ func TestObjectGet(t *testing.T) {
 			client := &http.Client{
 				Timeout: 3 * time.Second,
 			}
-			destination := fmt.Sprintf("/api/v1/buckets/%s/objects/download?preview=true&prefix=%s&version_id=%s", bucketName, tt.args.encodedPrefix, tt.args.versionID)
+			destination := fmt.Sprintf("/api/v1/buckets/%s/objects/download?preview=true&prefix=%s&version_id=%s", url.PathEscape(bucketName), url.QueryEscape(tt.args.encodedPrefix), url.QueryEscape(tt.args.versionID))
 			finalURL := fmt.Sprintf("http://localhost:9090%s", destination)
 			request, err := http.NewRequest("GET", finalURL, nil)
 			if err != nil {
@@ -198,7 +181,7 @@ func TestObjectGet(t *testing.T) {
 }
 
 func downloadMultipleFiles(bucketName string, objects []string) (*http.Response, error) {
-	requestURL := fmt.Sprintf("http://localhost:9090/api/v1/buckets/%s/objects/download-multiple", bucketName)
+	requestURL := fmt.Sprintf("http://localhost:9090/api/v1/buckets/%s/objects/download-multiple", url.PathEscape(bucketName))
 
 	postReqParams, _ := json.Marshal(objects)
 	reqBody := bytes.NewReader(postReqParams)

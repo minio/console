@@ -467,38 +467,6 @@ export const representationNumber = (number: number | undefined) => {
 
 /** Ref https://developer.mozilla.org/en-US/docs/Glossary/Base64 */
 
-const base64ToBytes = (base64: any): Uint8Array => {
-  const binString: any = atob(base64);
-  // @ts-ignore
-  return Uint8Array.from(binString, (m) => m.codePointAt(0));
-};
-
-const bytesToBase64 = (bytes: any) => {
-  const binString = Array.from(bytes, (x: any) => String.fromCodePoint(x)).join(
-    "",
-  );
-  return btoa(binString);
-};
-
-export const encodeURLString = (name: string | null) => {
-  if (!name) {
-    return "";
-  }
-  try {
-    return bytesToBase64(new TextEncoder().encode(name));
-  } catch (err) {
-    return "";
-  }
-};
-
-export const decodeURLString = (text: string) => {
-  try {
-    return new TextDecoder().decode(base64ToBytes(text));
-  } catch (err) {
-    return text;
-  }
-};
-
 export const performDownload = (blob: Blob, fileName: string) => {
   const link = document.createElement("a");
   link.href = window.URL.createObjectURL(blob);

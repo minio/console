@@ -34,7 +34,6 @@ import {
   WebsocketRequest,
   WebsocketResponse,
 } from "../screens/Console/Buckets/ListBuckets/Objects/ListObjects/types";
-import { decodeURLString, encodeURLString } from "../common/utils";
 import { permissionItems } from "../screens/Console/Buckets/ListBuckets/Objects/utils";
 import { setErrorSnackMessage } from "../systemSlice";
 
@@ -108,11 +107,9 @@ export const objectBrowserWSMiddleware = (
               let pathPrefix = "";
 
               if (internalPathsPrefix) {
-                const decodedPath = decodeURLString(internalPathsPrefix);
-
-                pathPrefix = decodedPath.endsWith("/")
-                  ? decodedPath
-                  : decodedPath + "/";
+                pathPrefix = internalPathsPrefix.endsWith("/")
+                  ? internalPathsPrefix
+                  : internalPathsPrefix + "/";
               }
 
               const permitItems = permissionItems(
@@ -202,7 +199,7 @@ export const objectBrowserWSMiddleware = (
 
             const request: WebsocketRequest = {
               bucket_name: dataPayload.bucketName,
-              prefix: encodeURLString(dataPayload.path),
+              prefix: dataPayload.path,
               mode: dataPayload.rewindMode ? "rewind" : "objects",
               date: dataPayload.date,
               request_id: newRequestID,

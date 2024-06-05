@@ -54,7 +54,7 @@ test
       const uploadButton = elements.uploadButton;
       await t
         .useRole(roles.bucketWritePrefixOnly)
-        .navigateTo("http://localhost:9090/browser/testcafe/d3JpdGU=")
+        .navigateTo("http://localhost:9090/browser/testcafe/write")
         .click(uploadButton)
         .expect(
           Selector("div")

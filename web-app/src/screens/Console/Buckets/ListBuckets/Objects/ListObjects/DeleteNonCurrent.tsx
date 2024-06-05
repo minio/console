@@ -16,7 +16,6 @@
 
 import React, { Fragment, useEffect, useState } from "react";
 
-import { decodeURLString } from "../../../../../../common/utils";
 import { ConfirmDeleteIcon, Switch, Grid, InputBox } from "mds";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
@@ -102,7 +101,7 @@ const DeleteNonCurrentVersions = ({
       confirmationContent={
         <Fragment>
           Are you sure you want to delete all the non-current versions for:{" "}
-          <b>{decodeURLString(selectedObject)}</b>? <br />
+          <b>{selectedObject}</b>? <br />
           {canBypass && (
             <Fragment>
               <div

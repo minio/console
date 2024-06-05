@@ -1,26 +1,13 @@
 rules:
-  - id: js-func-encode-uri-Component
-    patterns:
-      - pattern: encodeURIComponent($X)
-      - pattern-not-inside: |
-          export const encodeURLString = (...) => {
-            ...
-          };
-    message: Use encodeURLString() instead of encodeURIComponent()
-    languages:
-      - typescript
-      - javascript
-    severity: WARNING
-    fix: encodeURLString($X)
   - id: js-func-encode-uri
     patterns:
       - pattern: encodeURI($X)
-    message: Use encodeURLString() instead of encodeURI()
+    message: Use encodeURIComponent() instead of encodeURI()
     languages:
       - typescript
       - javascript
     severity: WARNING
-    fix: encodeURLString($X)
+    fix: encodeURIComponent($X)
   - id: js-dangerous-func-document-write
     patterns:
       - pattern: document.write(...)

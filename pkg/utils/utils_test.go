@@ -18,6 +18,7 @@ package utils
 
 import (
 	"context"
+	"net/url"
 	"testing"
 )
 
@@ -34,7 +35,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "chinese characters",
 			args: args{
-				s: "5bCP6aO85by+5bCP6aO85by+5bCP6aO85by+L+Wwj+mjvOW8vuWwj+mjvOW8vuWwj+mjvOW8vg==",
+				s: "%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE%2F%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE",
 			},
 			want:    "小飼弾小飼弾小飼弾/小飼弾小飼弾小飼弾",
 			wantErr: false,
@@ -42,7 +43,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "spaces and & symbol",
 			args: args{
-				s: "YSBhIC0gYSBhICYgYSBhIC0gYSBhIGE=",
+				s: "a%20a%20-%20a%20a%20%26%20a%20a%20-%20a%20a%20a",
 			},
 			want:    "a a - a a & a a - a a a",
 			wantErr: false,
@@ -50,7 +51,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "the infamous fly me to the moon",
 			args: args{
-				s: "MDIlMjAtJTIwRkxZJTIwTUUlMjBUTyUyMFRIRSUyME1PT04lMjA=",
+				s: "02%2520-%2520FLY%2520ME%2520TO%2520THE%2520MOON%2520",
 			},
 			want:    "02%20-%20FLY%20ME%20TO%20THE%20MOON%20",
 			wantErr: false,
@@ -58,7 +59,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "random symbols",
 			args: args{
-				s: "IUAjJCVeJiooKV8r",
+				s: "!%40%23%24%25%5E%26*()_%2B",
 			},
 			want:    "!@#$%^&*()_+",
 			wantErr: false,
@@ -66,7 +67,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "name with / symbols",
 			args: args{
-				s: "dGVzdC90ZXN0Mi/lsI/po7zlvL7lsI/po7zlvL7lsI/po7zlvL4uanBn",
+				s: "test%2Ftest2%2F%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE%E5%B0%8F%E9%A3%BC%E5%BC%BE.jpg",
 			},
 			want:    "test/test2/小飼弾小飼弾小飼弾.jpg",
 			wantErr: false,
@@ -74,7 +75,7 @@ func TestDecodeInput(t *testing.T) {
 		{
 			name: "decoding fails",
 			args: args{
-				s: "this should fail",
+				s: "%%this should fail%%",
 			},
 			want:    "",
 			wantErr: true,
@@ -82,7 +83,7 @@ func TestDecodeInput(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(_ *testing.T) {
-			got, err := DecodeBase64(tt.args.s)
+			got, err := url.QueryUnescape(tt.args.s)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DecodeBase64() error = %v, wantErr %v", err, tt.wantErr)
 				return

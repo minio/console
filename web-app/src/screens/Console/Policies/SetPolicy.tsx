@@ -20,7 +20,6 @@ import { useSelector } from "react-redux";
 import { Button, FormLayout, ReadBox, Grid, ProgressBar } from "mds";
 
 import { ErrorResponseHandler } from "../../../common/types";
-import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { AppState, useAppDispatch } from "../../../store";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
@@ -83,7 +82,7 @@ const SetPolicy = ({
   const fetchGroupInformation = () => {
     if (selectedGroups?.length === 1) {
       api
-        .invoke("GET", `/api/v1/group/${encodeURLString(selectedGroups[0])}`)
+        .invoke("GET", `/api/v1/group/${encodeURIComponent(selectedGroups[0])}`)
         .then((res: any) => {
           const groupPolicy: String = get(res, "policy", "");
           setActualPolicy(groupPolicy.split(","));

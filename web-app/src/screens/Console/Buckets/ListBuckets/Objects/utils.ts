@@ -15,7 +15,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import { BucketObjectItem } from "./ListObjects/types";
-import { decodeURLString, encodeURLString } from "../../../../../common/utils";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
 import store from "../../../../../store";
 import { ContentType, PermissionResource } from "api/consoleApi";
@@ -66,7 +65,7 @@ export const downloadSelectedAsZip = async (
 };
 
 const isFolder = (objectPath: string) => {
-  return decodeURLString(objectPath).endsWith("/");
+  return objectPath.endsWith("/");
 };
 
 export const download = (
@@ -88,9 +87,9 @@ export const download = (
 
   let path = `${
     window.location.origin
-  }${basename}api/v1/buckets/${bucketName}/objects/download?prefix=${objectPath}${
+  }${basename}api/v1/buckets/${encodeURIComponent(bucketName)}/objects/download?prefix=${encodeURIComponent(objectPath)}${
     overrideFileName !== null && overrideFileName.trim() !== ""
-      ? `&override_file_name=${encodeURLString(overrideFileName || "")}`
+      ? `&override_file_name=${encodeURIComponent(overrideFileName || "")}`
       : ""
   }`;
   if (versionID) {

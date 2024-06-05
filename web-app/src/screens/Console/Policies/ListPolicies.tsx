@@ -42,7 +42,6 @@ import {
   SecureComponent,
 } from "../../../common/SecureComponent";
 import { Policy } from "../../../api/consoleApi";
-import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "../../../api";
@@ -142,7 +141,7 @@ const ListPolicies = () => {
   };
 
   const viewAction = (policy: any) => {
-    navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
+    navigate(`${IAM_PAGES.POLICIES}/${encodeURIComponent(policy.name)}`);
   };
 
   const tableActions = [

@@ -18,7 +18,6 @@ package api
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -1014,12 +1013,7 @@ func getBucketRewindResponse(session *models.Principal, params bucketApi.GetBuck
 	defer cancel()
 	prefix := ""
 	if params.Prefix != nil {
-		encodedPrefix := SanitizeEncodedPrefix(*params.Prefix)
-		decodedPrefix, err := base64.StdEncoding.DecodeString(encodedPrefix)
-		if err != nil {
-			return nil, ErrorWithContext(ctx, err)
-		}
-		prefix = string(decodedPrefix)
+		prefix = *params.Prefix
 	}
 	s3Client, err := newS3BucketClient(session, params.BucketName, prefix, getClientIP(params.HTTPRequest))
 	if err != nil {

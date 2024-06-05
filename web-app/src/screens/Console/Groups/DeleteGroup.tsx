@@ -16,7 +16,6 @@
 
 import React, { Fragment, useState } from "react";
 import { ConfirmDeleteIcon } from "mds";
-import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
@@ -46,7 +45,7 @@ const DeleteGroup = ({
     for (let group of selectedGroups) {
       setLoadingDelete(true);
       api.group
-        .removeGroup(encodeURLString(group))
+        .removeGroup(group)
         .then((_) => {
           closeDeleteModalAndRefresh(true);
         })

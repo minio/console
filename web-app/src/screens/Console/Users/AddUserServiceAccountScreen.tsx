@@ -35,11 +35,7 @@ import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
 import { NewServiceAccount } from "../Common/CredentialsPrompt/types";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import { ErrorResponseHandler } from "../../../common/types";
-import {
-  decodeURLString,
-  encodeURLString,
-  getRandomString,
-} from "../../../common/utils";
+import { getRandomString } from "../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import CodeMirrorWrapper from "../Common/FormComponents/CodeMirrorWrapper/CodeMirrorWrapper";
@@ -64,7 +60,7 @@ const AddServiceAccount = () => {
     useState<NewServiceAccount | null>(null);
   const [policyJSON, setPolicyJSON] = useState<string>("");
 
-  const userName = decodeURLString(params.userName || "");
+  const userName = params.userName || "";
 
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -77,7 +73,7 @@ const AddServiceAccount = () => {
       api
         .invoke(
           "POST",
-          `/api/v1/user/${encodeURLString(
+          `/api/v1/user/${encodeURIComponent(
             userName,
           )}/service-account-credentials`,
           {
@@ -120,7 +116,7 @@ const AddServiceAccount = () => {
   useEffect(() => {
     if (isRestrictedByPolicy) {
       api
-        .invoke("GET", `/api/v1/user/${encodeURLString(userName)}/policies`)
+        .invoke("GET", `/api/v1/user/${encodeURIComponent(userName)}/policies`)
 
         .then((res) => {
           setPolicyJSON(JSON.stringify(JSON.parse(res.policy), null, 4));
@@ -144,7 +140,7 @@ const AddServiceAccount = () => {
 
   const closeCredentialsModal = () => {
     setNewServiceAccount(null);
-    navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
+    navigate(`${IAM_PAGES.USERS}/${encodeURIComponent(userName)}`);
   };
 
   useEffect(() => {
@@ -169,7 +165,7 @@ const AddServiceAccount = () => {
           label={
             <BackLink
               onClick={() =>
-                navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`)
+                navigate(`${IAM_PAGES.USERS}/${encodeURIComponent(userName)}`)
               }
               label={"User Details - " + userName}
             />

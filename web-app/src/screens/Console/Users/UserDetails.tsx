@@ -35,7 +35,6 @@ import {
 } from "mds";
 import { IPolicyItem } from "./types";
 import { ErrorResponseHandler } from "../../../common/types";
-import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import {
   assignGroupPermissions,
@@ -91,7 +90,7 @@ const UserDetails = () => {
   const disableEnabled =
     hasPermission(CONSOLE_UI_RESOURCE, disableUserPermissions) && enabled;
 
-  const userName = decodeURLString(params.userName || "");
+  const userName = params.userName || "";
 
   const changeUserPassword = () => {
     setChangeUserPasswordModalOpen(true);
@@ -121,7 +120,7 @@ const UserDetails = () => {
     }
     setLoading(true);
     api
-      .invoke("GET", `/api/v1/user/${encodeURLString(userName)}`)
+      .invoke("GET", `/api/v1/user/${encodeURIComponent(userName)}`)
       .then((res) => {
         setAddLoading(false);
         const memberOf = res.memberOf || [];
@@ -162,7 +161,7 @@ const UserDetails = () => {
     }
     setAddLoading(true);
     api
-      .invoke("PUT", `/api/v1/user/${encodeURLString(userName)}`, {
+      .invoke("PUT", `/api/v1/user/${encodeURIComponent(userName)}`, {
         status: isEnabled ? "enabled" : "disabled",
         groups: selectedGroups,
       })
@@ -192,7 +191,7 @@ const UserDetails = () => {
   };
 
   const groupViewAction = (group: any) => {
-    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group.group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURIComponent(group.group)}`);
   };
 
   const groupTableActions = [
@@ -493,7 +492,7 @@ const UserDetails = () => {
                               type: "view",
                               onClick: (policy: IPolicyItem) => {
                                 navigate(
-                                  `${IAM_PAGES.POLICIES}/${encodeURLString(
+                                  `${IAM_PAGES.POLICIES}/${encodeURIComponent(
                                     policy.policy,
                                   )}`,
                                 );
