@@ -120,6 +120,18 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: minio/minio
+      - name: Check-out matching MinIO branch
+        env:
+          GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+          GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+            ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
+            echo "Attempting to fetch $ALTREPO..."
+            git remote add alt $ALTREPO
+            (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+          fi
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
         uses: actions/setup-go@v3
         with:
@@ -817,6 +829,18 @@ jobs:
         with:
           repository: minio/minio
           path: "minio_repository"
+      - name: Check-out matching MinIO branch
+        env:
+          GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+          GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+            ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
+            echo "Attempting to fetch $ALTREPO..."
+            git remote add alt $ALTREPO
+            (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+          fi
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
@@ -910,6 +934,18 @@ jobs:
         with:
           repository: minio/minio
           path: "minio_repository"
+      - name: Check-out matching MinIO branch
+        env:
+          GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+          GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+            ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
+            echo "Attempting to fetch $ALTREPO..."
+            git remote add alt $ALTREPO
+            (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+          fi
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
@@ -981,6 +1017,24 @@ jobs:
         with:
           repository: minio/minio
           path: "minio_repository"
+      - name: Check-out matching MinIO branch
+        env:
+          GH_BRANCH: ${{ github.head_ref || github.ref_name }}
+          GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+            ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
+            echo "Attempting to fetch $ALTREPO..."
+            git remote add alt $ALTREPO
+            (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
+          fi
+
+      - name: Checkout proper minio/minio branch
+        run: |
+
+          git checkout "${{ github.head_ref || github.ref_name }}" || echo "Okay, we'll stay on the master branch"
+
       - uses: actions/cache@v3
         id: minio-latest-cache
         name: MinIO Latest Cache
