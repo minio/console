@@ -17,7 +17,6 @@
 import React, { Fragment, useState } from "react";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { ConfirmDeleteIcon } from "mds";
-import { encodeURLString } from "../../../common/utils";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
@@ -47,7 +46,7 @@ const DeleteServiceAccount = ({
   const onConfirmDelete = () => {
     setLoadingDelete(true);
     api.serviceAccounts
-      .deleteServiceAccount(encodeURLString(selectedServiceAccount))
+      .deleteServiceAccount(selectedServiceAccount)
       .then((_) => {
         closeDeleteModalAndRefresh(true);
       })

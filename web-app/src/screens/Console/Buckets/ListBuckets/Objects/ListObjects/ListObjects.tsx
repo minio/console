@@ -48,11 +48,7 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import { DateTime } from "luxon";
-import {
-  decodeURLString,
-  encodeURLString,
-  niceBytesInt,
-} from "../../../../../../common/utils";
+import { niceBytesInt } from "../../../../../../common/utils";
 import BrowserBreadcrumbs from "../../../../ObjectBrowser/BrowserBreadcrumbs";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import { ErrorResponseHandler } from "../../../../../../common/types";
@@ -235,10 +231,10 @@ const ListObjects = () => {
 
   const bucketName = params.bucketName || "";
   const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
-  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
+  const internalPaths =
+    pathSegment.length === 2 ? decodeURIComponent(pathSegment[1]) : "";
 
-  const pageTitle = decodeURLString(internalPaths);
-  const currentPath = pageTitle.split("/").filter((i: string) => i !== "");
+  const currentPath = internalPaths.split("/").filter((i: string) => i !== "");
 
   let uploadPath = [bucketName];
   if (currentPath.length > 0) {
@@ -316,12 +312,11 @@ const ListObjects = () => {
 
   const fetchMetadata = useCallback(() => {
     const objectName = selectedObjects[0];
-    const encodedPath = encodeURLString(objectName);
 
-    if (!isMetaDataLoaded && encodedPath) {
+    if (!isMetaDataLoaded && objectName) {
       api.buckets
         .getObjectMetadata(bucketName, {
-          prefix: encodedPath,
+          prefix: objectName,
         })
         .then((res) => {
           let metadata = get(res.data, "objectMetadata", {});
@@ -511,8 +506,6 @@ const ListObjects = () => {
 
             const blobFile = new Blob([file], { type: file.type });
 
-            let encodedPath = "";
-
             const filePath = get(file, "path", "");
             const fileWebkitRelativePath = get(file, "webkitRelativePath", "");
 
@@ -552,17 +545,15 @@ const ListObjects = () => {
             }
 
             if (prefixPath !== "") {
-              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(
+              uploadUrl = `${uploadUrl}?prefix=${encodeURIComponent(
                 prefixPath + fileName,
               )}`;
             } else {
-              uploadUrl = `${uploadUrl}?prefix=${encodeURLString(fileName)}`;
+              uploadUrl = `${uploadUrl}?prefix=${encodeURIComponent(fileName)}`;
             }
 
-            encodedPath = encodeURLString(prefixPath);
-
-            const identity = encodeURLString(
-              `${bucketName}-${encodedPath}-${new Date().getTime()}-${Math.random()}`,
+            const identity = encodeURIComponent(
+              `${bucketName}-${prefixPath}-${new Date().getTime()}-${Math.random()}`,
             );
 
             let xhr = new XMLHttpRequest();
@@ -666,7 +657,7 @@ const ListObjects = () => {
                   done: false,
                   instanceID: identity,
                   percentage: 0,
-                  prefix: `${decodeURLString(encodedPath)}${fileName}`,
+                  prefix: `${prefixPath}${fileName}`,
                   type: "upload",
                   waitingForFile: false,
                   failed: false,
@@ -812,8 +803,7 @@ const ListObjects = () => {
     if (detailsOpen && selectedInternalPaths !== null) {
       // We change URL to be the contained folder
 
-      const decodedPath = decodeURLString(internalPaths);
-      const splitURLS = decodedPath.split("/");
+      const splitURLS = internalPaths.split("/");
 
       // We remove the last section of the URL as it should be a file
       splitURLS.pop();
@@ -824,7 +814,9 @@ const ListObjects = () => {
         URLItem = `${splitURLS.join("/")}/`;
       }
 
-      navigate(`/browser/${bucketName}/${encodeURLString(URLItem)}`);
+      navigate(
+        `/browser/${encodeURIComponent(bucketName)}/${encodeURIComponent(URLItem)}`,
+      );
     }
 
     dispatch(setObjectDetailsView(false));
@@ -1222,7 +1214,7 @@ const ListObjects = () => {
                     >
                       <BrowserBreadcrumbs
                         bucketName={bucketName}
-                        internalPaths={pageTitle}
+                        internalPaths={internalPaths}
                         additionalOptions={
                           !isVersioningApplied || rewindEnabled ? null : (
                             <Checkbox

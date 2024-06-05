@@ -28,10 +28,7 @@ import {
 import CopyToClipboard from "react-copy-to-clipboard";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import DaysSelector from "../../../../Common/FormComponents/DaysSelector/DaysSelector";
-import {
-  encodeURLString,
-  niceTimeFromSeconds,
-} from "../../../../../../common/utils";
+import { niceTimeFromSeconds } from "../../../../../../common/utils";
 import {
   selDistSet,
   setModalErrorSnackMessage,
@@ -90,7 +87,7 @@ const ShareFile = ({
       if (distributedSetup) {
         api.buckets
           .listObjects(bucketName, {
-            prefix: encodeURLString(dataObject.name || ""),
+            prefix: dataObject.name || "",
             with_versions: distributedSetup,
           })
           .then((res) => {
@@ -138,7 +135,7 @@ const ShareFile = ({
       if (diffDate > 0) {
         api.buckets
           .shareObject(bucketName, {
-            prefix: encodeURLString(dataObject.name || ""),
+            prefix: dataObject.name || "",
             version_id: versionID,
             expires: selectedDate !== "" ? `${diffDate}s` : "",
           })

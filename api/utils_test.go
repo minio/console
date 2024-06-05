@@ -153,37 +153,6 @@ func TestExpireSessionCookie(t *testing.T) {
 	}
 }
 
-func TestSanitizeEncodedPrefix(t *testing.T) {
-	type args struct {
-		rawPrefix string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "replace spaces with +",
-			args: args{
-				rawPrefix: "hello world",
-			},
-			want: "hello+world",
-		},
-		{
-			name: "replace spaces with +",
-			args: args{
-				rawPrefix: "   hello-world   ",
-			},
-			want: "+++hello-world+++",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(_ *testing.T) {
-			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
-		})
-	}
-}
-
 func Test_isSafeToPreview(t *testing.T) {
 	type args struct {
 		str string
@@ -290,30 +259,6 @@ func TestValidateEncodedStyles(t *testing.T) {
 			} else {
 				assert.Nilf(t, ValidateEncodedStyles(tt.args.encodedStyles), "Did not wanted an error")
 			}
-		})
-	}
-}
-
-func TestSanitizeEncodedPrefix1(t *testing.T) {
-	type args struct {
-		rawPrefix string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		{
-			name: "input sanitized",
-			args: args{
-				rawPrefix: "x y",
-			},
-			want: "x+y",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(_ *testing.T) {
-			assert.Equalf(t, tt.want, SanitizeEncodedPrefix(tt.args.rawPrefix), "SanitizeEncodedPrefix(%v)", tt.args.rawPrefix)
 		})
 	}
 }

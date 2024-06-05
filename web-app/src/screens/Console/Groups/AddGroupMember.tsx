@@ -17,7 +17,6 @@
 import React, { useState } from "react";
 import { AddMembersToGroupIcon, Button, FormLayout, Grid, ReadBox } from "mds";
 import { modalStyleUtils } from "../Common/FormComponents/common/styleLibrary";
-import { encodeURLString } from "../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { api } from "api";
@@ -48,7 +47,7 @@ const AddGroupMember = ({
 
   function addMembersToGroup() {
     return api.group
-      .updateGroup(encodeURLString(selectedGroup), {
+      .updateGroup(selectedGroup, {
         members: selectedUsers,
         status: groupStatus,
       })

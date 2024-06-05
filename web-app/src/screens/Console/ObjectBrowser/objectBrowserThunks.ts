@@ -16,7 +16,7 @@
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AppState } from "../../../store";
-import { encodeURLString, getClientOS } from "../../../common/utils";
+import { getClientOS } from "../../../common/utils";
 import { BucketObjectItem } from "../Buckets/ListBuckets/Objects/ListObjects/types";
 import { makeid, storeCallForObjectWithID } from "./transferManager";
 import {
@@ -46,7 +46,7 @@ export const downloadSelected = createAsyncThunk(
     const state = getState() as AppState;
 
     const downloadObject = (object: BucketObjectItem) => {
-      const identityDownload = encodeURLString(
+      const identityDownload = encodeURIComponent(
         `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`,
       );
 
@@ -54,7 +54,7 @@ export const downloadSelected = createAsyncThunk(
 
       const downloadCall = download(
         bucketName,
-        encodeURLString(object.name),
+        object.name,
         object.version_id,
         object.size,
         null,

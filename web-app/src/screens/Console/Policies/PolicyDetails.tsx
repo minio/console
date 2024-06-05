@@ -59,7 +59,6 @@ import {
 import withSuspense from "../Common/Components/withSuspense";
 
 import PolicyView from "./PolicyView";
-import { decodeURLString, encodeURLString } from "../../../common/utils";
 import {
   setErrorSnackMessage,
   setHelpName,
@@ -89,7 +88,7 @@ const PolicyDetails = () => {
   const [groupList, setGroupList] = useState<string[]>([]);
   const [addLoading, setAddLoading] = useState<boolean>(false);
 
-  const policyName = decodeURLString(params.policyName || "");
+  const policyName = params.policyName || "";
 
   const [policyDefinition, setPolicyDefinition] = useState<string>("");
   const [loadingPolicy, setLoadingPolicy] = useState<boolean>(true);
@@ -183,7 +182,7 @@ const PolicyDetails = () => {
       if (loadingUsers) {
         if (displayUsers && !ldapIsEnabled) {
           api.policies
-            .listUsersForPolicy(encodeURLString(policyName))
+            .listUsersForPolicy(policyName)
             .then((result) => {
               setUserList(result.data ?? []);
               setLoadingUsers(false);
@@ -202,7 +201,7 @@ const PolicyDetails = () => {
       if (loadingGroups) {
         if (displayGroups && !ldapIsEnabled) {
           api.policies
-            .listGroupsForPolicy(encodeURLString(policyName))
+            .listGroupsForPolicy(policyName)
             .then((result) => {
               setGroupList(result.data ?? []);
               setLoadingGroups(false);
@@ -220,7 +219,7 @@ const PolicyDetails = () => {
       if (loadingPolicy) {
         if (displayPolicy) {
           api.policy
-            .policyInfo(encodeURLString(policyName))
+            .policyInfo(policyName)
             .then((result) => {
               if (result.data) {
                 setPolicy(result.data);
@@ -283,7 +282,7 @@ const PolicyDetails = () => {
   };
 
   const userViewAction = (user: any) => {
-    navigate(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
+    navigate(`${IAM_PAGES.USERS}/${encodeURIComponent(user)}`);
   };
   const userTableActions = [
     {
@@ -298,7 +297,7 @@ const PolicyDetails = () => {
   );
 
   const groupViewAction = (group: any) => {
-    navigate(`${IAM_PAGES.GROUPS}/${encodeURLString(group)}`);
+    navigate(`${IAM_PAGES.GROUPS}/${encodeURIComponent(group)}`);
   };
 
   const groupTableActions = [

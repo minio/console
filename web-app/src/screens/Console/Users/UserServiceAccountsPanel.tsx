@@ -31,7 +31,6 @@ import {
   IAM_SCOPES,
 } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
-import { encodeURLString } from "../../../common/utils";
 import {
   setErrorSnackMessage,
   setHelpName,
@@ -75,7 +74,10 @@ const UserServiceAccountsPanel = ({
   useEffect(() => {
     if (loading) {
       api
-        .invoke("GET", `/api/v1/user/${encodeURLString(user)}/service-accounts`)
+        .invoke(
+          "GET",
+          `/api/v1/user/${encodeURIComponent(user)}/service-accounts`,
+        )
         .then((res: ServiceAccounts) => {
           setLoading(false);
           const sortedRows = res.sort(usersSort);
@@ -233,7 +235,7 @@ const UserServiceAccountsPanel = ({
                   icon={<AddIcon />}
                   onClick={() => {
                     navigate(
-                      `/identity/users/new-user-sa/${encodeURLString(user)}`,
+                      `/identity/users/new-user-sa/${encodeURIComponent(user)}`,
                     );
                   }}
                   disabled={!hasPolicy}

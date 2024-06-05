@@ -53,7 +53,6 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../common/SecureComponent";
-import { decodeURLString, encodeURLString } from "../../../common/utils";
 import { setHelpName, setModalErrorSnackMessage } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 import { setSelectedPolicies } from "../Users/AddUsersSlice";
@@ -82,8 +81,6 @@ const GroupsDetails = () => {
   const [memberFilter, setMemberFilter] = useState<string>("");
   const [currentTab, setCurrentTab] = useState<string>("members");
 
-  const groupName = decodeURLString(params.groupName || "");
-
   const { members = [], policy = "", status: groupEnabled } = groupDetails;
 
   const filteredMembers = members.filter((elementItem) =>
@@ -102,11 +99,11 @@ const GroupsDetails = () => {
   }, []);
 
   useEffect(() => {
-    if (groupName) {
+    if (params.groupName) {
       fetchGroupInfo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupName]);
+  }, [params.groupName]);
 
   const groupPolicies = formatPolicy(policy);
   const isGroupEnabled = groupEnabled === "enabled";
@@ -138,7 +135,7 @@ const GroupsDetails = () => {
   function fetchGroupInfo() {
     if (getGroupDetails) {
       api.group
-        .groupInfo(encodeURLString(groupName))
+        .groupInfo(params.groupName || "")
         .then((res) => {
           setGroupDetails(res.data);
         })
@@ -151,7 +148,7 @@ const GroupsDetails = () => {
 
   function toggleGroupStatus(nextStatus: boolean) {
     return api.group
-      .updateGroup(encodeURLString(groupName), {
+      .updateGroup(params.groupName || "", {
         members: members,
         status: nextStatus ? "enabled" : "disabled",
       })
@@ -242,7 +239,9 @@ const GroupsDetails = () => {
                 {
                   type: "view",
                   onClick: (userName) => {
-                    navigate(`${IAM_PAGES.USERS}/${encodeURLString(userName)}`);
+                    navigate(
+                      `${IAM_PAGES.USERS}/${encodeURIComponent(userName)}`,
+                    );
                   },
                   isDisabled: !viewUser,
                 },
@@ -312,7 +311,9 @@ const GroupsDetails = () => {
               {
                 type: "view",
                 onClick: (policy) => {
-                  navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy)}`);
+                  navigate(
+                    `${IAM_PAGES.POLICIES}/${encodeURIComponent(policy)}`,
+                  );
                 },
                 isDisabled: !canViewPolicy,
               },
@@ -332,7 +333,7 @@ const GroupsDetails = () => {
       {policyOpen ? (
         <SetPolicy
           open={policyOpen}
-          selectedGroups={[groupName]}
+          selectedGroups={[params.groupName || ""]}
           selectedUser={null}
           closeModalAndRefresh={() => {
             setPolicyOpen(false);
@@ -344,7 +345,7 @@ const GroupsDetails = () => {
 
       {usersOpen ? (
         <AddGroupMember
-          selectedGroup={groupName}
+          selectedGroup={params.groupName}
           onSaveClick={() => {}}
           title={memberActionText}
           groupStatus={groupEnabled}
@@ -360,7 +361,7 @@ const GroupsDetails = () => {
       {deleteOpen && (
         <DeleteGroup
           deleteOpen={deleteOpen}
-          selectedGroups={[groupName]}
+          selectedGroups={[params.groupName || ""]}
           closeDeleteModalAndRefresh={(isDelSuccess: boolean) => {
             setDeleteOpen(false);
             if (isDelSuccess) {
@@ -388,7 +389,7 @@ const GroupsDetails = () => {
                 <GroupsIcon width={40} />
               </Fragment>
             }
-            title={groupName}
+            title={params.groupName || ""}
             subTitle={null}
             bottomBorder
             actions={

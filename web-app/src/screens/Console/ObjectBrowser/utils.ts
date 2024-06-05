@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { encodeURLString, getClientOS } from "../../../common/utils";
+import { getClientOS } from "../../../common/utils";
 import { makeid, storeCallForObjectWithID } from "./transferManager";
 import { download } from "../Buckets/ListBuckets/Objects/utils";
 import {
@@ -35,7 +35,7 @@ export const downloadObject = (
   internalPaths: string,
   object: BucketObject,
 ) => {
-  const identityDownload = encodeURLString(
+  const identityDownload = encodeURIComponent(
     `${bucketName}-${object.name}-${new Date().getTime()}-${Math.random()}`,
   );
 

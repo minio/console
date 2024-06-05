@@ -211,11 +211,6 @@ func ValidateEncodedStyles(encodedStyles string) error {
 	return nil
 }
 
-// SanitizeEncodedPrefix replaces spaces for + since those are lost when you do GET parameters
-func SanitizeEncodedPrefix(rawPrefix string) string {
-	return strings.ReplaceAll(rawPrefix, " ", "+")
-}
-
 var safeMimeTypes = []string{
 	"image/jpeg",
 	"image/apng",
