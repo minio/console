@@ -41,7 +41,6 @@ import { downloadObject } from "../../../../ObjectBrowser/utils";
 import { BucketObject, BucketVersioningResponse } from "api/consoleApi";
 import { AllowedPreviews, previewObjectType } from "../utils";
 import {
-  decodeURLString,
   niceBytes,
   niceBytesInt,
   niceDaysInt,
@@ -130,7 +129,7 @@ const ObjectDetailPanel = ({
   const [metaData, setMetaData] = useState<any | null>(null);
   const [loadMetadata, setLoadingMetadata] = useState<boolean>(false);
 
-  const internalPathsDecoded = decodeURLString(internalPaths) || "";
+  const internalPathsDecoded = internalPaths || "";
   const allPathData = internalPathsDecoded.split("/");
   const currentItem = allPathData.pop() || "";
 

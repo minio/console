@@ -24,9 +24,7 @@ import {
   Box,
 } from "mds";
 import {
-  decodeURLString,
   deleteCookie,
-  encodeURLString,
   getCookieValue,
   performDownload,
 } from "../../../../../../common/utils";
@@ -63,11 +61,8 @@ const InspectObject = ({
   };
 
   const performInspect = async () => {
-    const file = encodeURLString(inspectPath + "/xl.meta");
-    const volume = encodeURLString(volumeName);
-
     let basename = document.baseURI.replace(window.location.origin, "");
-    const urlOfInspectApi = `${window.location.origin}${basename}/api/v1/admin/inspect?volume=${volume}&file=${file}&encrypt=${isEncrypt}`;
+    const urlOfInspectApi = `${window.location.origin}${basename}/api/v1/admin/inspect?volume=${encodeURIComponent(volumeName)}&file=${encodeURIComponent(inspectPath + "/xl.meta")}&encrypt=${isEncrypt}`;
 
     makeRequest(urlOfInspectApi)
       .then(async (res) => {
@@ -126,8 +121,7 @@ const InspectObject = ({
               onSubmit(e);
             }}
           >
-            Would you like to encrypt <b>{decodeURLString(inspectPath)}</b>?{" "}
-            <br />
+            Would you like to encrypt <b>{inspectPath}</b>? <br />
             <Switch
               label={"Encrypt"}
               indicatorLabels={["Yes", "No"]}

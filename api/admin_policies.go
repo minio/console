@@ -26,7 +26,6 @@ import (
 
 	bucketApi "github.com/minio/console/api/operations/bucket"
 	policyApi "github.com/minio/console/api/operations/policy"
-	"github.com/minio/console/pkg/utils"
 	s3 "github.com/minio/minio-go/v7"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -308,10 +307,6 @@ func getListPoliciesResponse(session *models.Principal, params policyApi.ListPol
 func getListUsersForPolicyResponse(session *models.Principal, params policyApi.ListUsersForPolicyParams) ([]string, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	policy, err := utils.DecodeBase64(params.Policy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -325,12 +320,12 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	}
 	found := false
 	for i := range policies {
-		if policies[i].Name == policy {
+		if policies[i].Name == params.Policy {
 			found = true
 		}
 	}
 	if !found {
-		return nil, ErrorWithContext(ctx, ErrPolicyNotFound, fmt.Errorf("the policy %s does not exist", policy))
+		return nil, ErrorWithContext(ctx, ErrPolicyNotFound, fmt.Errorf("the policy %s does not exist", params.Policy))
 	}
 	users, err := listUsers(ctx, adminClient)
 	if err != nil {
@@ -340,7 +335,7 @@ func getListUsersForPolicyResponse(session *models.Principal, params policyApi.L
 	var filteredUsers []string
 	for _, user := range users {
 		for _, upolicy := range user.Policy {
-			if upolicy == policy {
+			if upolicy == params.Policy {
 				filteredUsers = append(filteredUsers, user.AccessKey)
 				break
 			}
@@ -397,12 +392,7 @@ func getSAUserPolicyResponse(session *models.Principal, params policyApi.GetSAUs
 	}
 	userAdminClient := AdminClient{Client: mAdminClient}
 
-	userName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-
-	user, err := getUserInfo(ctx, userAdminClient, userName)
+	user, err := getUserInfo(ctx, userAdminClient, params.Name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -467,10 +457,6 @@ func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.
 	}
 	// create a minioClient interface implementation
 	// defining the client to be used
-	policy, err := utils.DecodeBase64(params.Policy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 	adminClient := AdminClient{Client: mAdmin}
 	policies, err := listPolicies(ctx, adminClient)
 	if err != nil {
@@ -478,12 +464,12 @@ func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.
 	}
 	found := false
 	for i := range policies {
-		if policies[i].Name == policy {
+		if policies[i].Name == params.Policy {
 			found = true
 		}
 	}
 	if !found {
-		return nil, ErrorWithContext(ctx, ErrPolicyNotFound, fmt.Errorf("the policy %s does not exist", policy))
+		return nil, ErrorWithContext(ctx, ErrPolicyNotFound, fmt.Errorf("the policy %s does not exist", params.Policy))
 	}
 
 	groups, err := adminClient.listGroups(ctx)
@@ -499,7 +485,7 @@ func getListGroupsForPolicyResponse(session *models.Principal, params policyApi.
 		}
 		groupPolicies := strings.Split(info.Policy, ",")
 		for _, groupPolicy := range groupPolicies {
-			if groupPolicy == policy {
+			if groupPolicy == params.Policy {
 				filteredGroups = append(filteredGroups, group)
 			}
 		}
@@ -524,10 +510,6 @@ func getRemovePolicyResponse(session *models.Principal, params policyApi.RemoveP
 	if params.Name == "" {
 		return ErrorWithContext(ctx, ErrPolicyNameNotInRequest)
 	}
-	policyName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
 	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
@@ -536,7 +518,7 @@ func getRemovePolicyResponse(session *models.Principal, params policyApi.RemoveP
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
 
-	if err := removePolicy(ctx, adminClient, policyName); err != nil {
+	if err := removePolicy(ctx, adminClient, params.Name); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
@@ -623,11 +605,7 @@ func getPolicyInfoResponse(session *models.Principal, params policyApi.PolicyInf
 	// create a MinIO Admin Client interface implementation
 	// defining the client to be used
 	adminClient := AdminClient{Client: mAdmin}
-	policyName, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	policy, err := policyInfo(ctx, adminClient, policyName)
+	policy, err := policyInfo(ctx, adminClient, params.Name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}

@@ -18,7 +18,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setErrorSnackMessage } from "../../../systemSlice";
 import { ConfirmDeleteIcon, DataTable, InformativeMessage, Loader } from "mds";
-import { encodeURLString } from "../../../common/utils";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import ConfirmDialog from "../Common/ModalWrapper/ConfirmDialog";
 import { useAppDispatch } from "../../../store";
@@ -78,7 +77,7 @@ const DeleteUser = ({
   ));
   const viewAction = (selectionElement: any): void => {
     navigate(
-      `${IAM_PAGES.USERS}/${encodeURLString(selectionElement.userName)}`,
+      `${IAM_PAGES.USERS}/${encodeURIComponent(selectionElement.userName)}`,
     );
     onClose();
   };
@@ -101,7 +100,7 @@ const DeleteUser = ({
         closeDeleteModalAndRefresh(true);
       } else {
         api.user
-          .removeUser(encodeURLString(user))
+          .removeUser(user)
           .then((res) => {
             closeDeleteModalAndRefresh(true);
             navigate(`${IAM_PAGES.USERS}`);

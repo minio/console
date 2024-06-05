@@ -19,7 +19,6 @@ import { Box, RecoverIcon } from "mds";
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { encodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import { setErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
@@ -48,7 +47,7 @@ const RestoreFileVersion = ({
 
     api.buckets
       .putObjectRestore(bucketName, {
-        prefix: encodeURLString(objectPath),
+        prefix: objectPath,
         version_id: versionToRestore.version_id || "",
       })
       .then(() => {

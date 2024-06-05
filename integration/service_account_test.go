@@ -18,11 +18,11 @@ package integration
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"testing"
 	"time"
 
@@ -92,7 +92,7 @@ func TestAddServiceAccount(t *testing.T) {
 	// {{baseUrl}}/user?name=proident velit
 	// Investiga como se borra en el browser.
 	request, err = http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/service-accounts/"+base64.StdEncoding.EncodeToString([]byte("testuser1")), nil)
+		"DELETE", "http://localhost:9090/api/v1/service-accounts/"+url.PathEscape("testuser1"), nil)
 	if err != nil {
 		log.Println(err)
 		return

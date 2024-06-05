@@ -20,7 +20,6 @@ import { useLocation, useParams } from "react-router-dom";
 import { api } from "api";
 import { AppState, useAppDispatch } from "../../../../store";
 import { IAM_SCOPES } from "../../../../common/SecureComponent/permissions";
-import { decodeURLString, encodeURLString } from "../../../../common/utils";
 import {
   resetMessages,
   setIsVersioned,
@@ -77,8 +76,11 @@ const BrowserHandler = () => {
   const records = useSelector((state: AppState) => state.objectBrowser.records);
 
   const bucketName = params.bucketName || "";
-  const pathSegment = location.pathname.split(`/browser/${bucketName}/`);
-  const internalPaths = pathSegment.length === 2 ? pathSegment[1] : "";
+  const pathSegment = location.pathname.split(
+    `/browser/${encodeURIComponent(bucketName)}/`,
+  );
+  const internalPaths =
+    pathSegment.length === 2 ? decodeURIComponent(pathSegment[1]) : "";
 
   const initWSRequest = useCallback(
     (path: string) => {
@@ -105,18 +107,13 @@ const BrowserHandler = () => {
   // Common path load
   const pathLoad = useCallback(
     (forceLoad: boolean = false) => {
-      const decodedInternalPaths = decodeURLString(internalPaths);
-
       // We exit Versions mode in case of path change
       dispatch(setVersionsModeEnabled({ status: false }));
 
-      let searchPath = decodedInternalPaths;
+      let searchPath = internalPaths;
 
-      if (!decodedInternalPaths.endsWith("/") && decodedInternalPaths !== "") {
-        searchPath = `${decodedInternalPaths
-          .split("/")
-          .slice(0, -1)
-          .join("/")}/`;
+      if (!internalPaths.endsWith("/") && internalPaths !== "") {
+        searchPath = `${internalPaths.split("/").slice(0, -1).join("/")}/`;
       }
 
       if (searchPath === "/") {
@@ -151,11 +148,9 @@ const BrowserHandler = () => {
 
   // Object Details handler
   useEffect(() => {
-    const decodedIPaths = decodeURLString(internalPaths);
-
     dispatch(setLoadingVersioning(true));
 
-    if (decodedIPaths.endsWith("/") || decodedIPaths === "") {
+    if (internalPaths.endsWith("/") || internalPaths === "") {
       dispatch(setObjectDetailsView(false));
       dispatch(setSelectedObjectView(null));
       dispatch(setLoadingLocking(true));
@@ -163,11 +158,7 @@ const BrowserHandler = () => {
       dispatch(setLoadingObjectInfo(true));
       dispatch(setObjectDetailsView(true));
       dispatch(setLoadingVersions(true));
-      dispatch(
-        setSelectedObjectView(
-          `${decodedIPaths ? `${encodeURLString(decodedIPaths)}` : ``}`,
-        ),
-      );
+      dispatch(setSelectedObjectView(internalPaths || ""));
     }
   }, [bucketName, internalPaths, rewindDate, rewindEnabled, dispatch]);
 

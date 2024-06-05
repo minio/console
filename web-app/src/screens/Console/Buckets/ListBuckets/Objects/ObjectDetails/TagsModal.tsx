@@ -32,7 +32,6 @@ import {
 import { BucketObject } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { encodeURLString } from "common/utils";
 import { useSelector } from "react-redux";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
 import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
@@ -71,8 +70,6 @@ const AddTagModal = ({
   const [deleteKey, setDeleteKey] = useState<string>("");
   const [deleteLabel, setDeleteLabel] = useState<string>("");
 
-  const selectedObject = encodeURLString(actualInfo.name || "");
-
   const currentTags = actualInfo.tags;
   const currTagKeys = Object.keys(currentTags || {});
 
@@ -96,7 +93,7 @@ const AddTagModal = ({
     api.buckets
       .putObjectTags(
         bucketName,
-        { prefix: selectedObject, version_id: verID },
+        { prefix: actualInfo.name || "", version_id: verID },
         { tags: newTagList },
       )
       .then(() => {
@@ -118,7 +115,7 @@ const AddTagModal = ({
     api.buckets
       .putObjectTags(
         bucketName,
-        { prefix: selectedObject, version_id: verID },
+        { prefix: actualInfo.name || "", version_id: verID },
         { tags: cleanObject },
       )
       .then(() => {

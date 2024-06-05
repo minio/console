@@ -22,7 +22,6 @@ import { useAppDispatch } from "../../../store";
 import { api } from "api";
 import { ApiError, HttpResponse } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
-import { encodeURLString } from "common/utils";
 
 interface IDeletePolicyProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -47,7 +46,7 @@ const DeletePolicy = ({
   const onConfirmDelete = () => {
     setLoadingDelete(true);
     api.policy
-      .removePolicy(encodeURLString(selectedPolicy))
+      .removePolicy(selectedPolicy)
       .then((_) => {
         closeDeleteModalAndRefresh(true);
       })

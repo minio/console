@@ -17,7 +17,6 @@
 package api
 
 import (
-	b64 "encoding/base64"
 	"fmt"
 	"io"
 	"net/http"
@@ -45,7 +44,7 @@ func registerPublicObjectsHandlers(api *operations.ConsoleAPI) {
 func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (middleware.Responder, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
 
-	inputURLDecoded, err := b64toMinIOStringURL(params.URL)
+	inputURLDecoded, err := checkMinIOStringURL(params.URL)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -91,23 +90,19 @@ func getDownloadPublicObjectResponse(params public.DownloadSharedObjectParams) (
 	}), nil
 }
 
-// b64toMinIOStringURL decodes url and validates is a MinIO url endpoint
-func b64toMinIOStringURL(inputEncodedURL string) (*string, error) {
-	inputURLDecoded, err := b64.URLEncoding.DecodeString(inputEncodedURL)
-	if err != nil {
-		return nil, err
-	}
+// checkMinIOStringURL decodes url and validates is a MinIO url endpoint
+func checkMinIOStringURL(inputURL string) (*string, error) {
 	// Validate input URL
-	inputURL, err := xnet.ParseHTTPURL(string(inputURLDecoded))
+	parsedURL, err := xnet.ParseHTTPURL(inputURL)
 	if err != nil {
 		return nil, err
 	}
 	// Ensure incoming url points to MinIO Server
 	minIOHost := getMinIOEndpoint()
-	if inputURL.Host != minIOHost {
+	if parsedURL.Host != minIOHost {
 		return nil, ErrForbidden
 	}
-	return swag.String(string(inputURLDecoded)), nil
+	return swag.String(inputURL), nil
 }
 
 func url2BucketAndObject(u *url.URL) (bucketName, objectName string) {

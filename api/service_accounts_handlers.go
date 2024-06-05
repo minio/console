@@ -27,7 +27,6 @@ import (
 	saApi "github.com/minio/console/api/operations/service_account"
 	userApi "github.com/minio/console/api/operations/user"
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/utils"
 	"github.com/minio/madmin-go/v3"
 	iampolicy "github.com/minio/pkg/v3/policy"
 )
@@ -199,10 +198,6 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-	name, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 
 	var expiry *time.Time
 	if params.Body.Expiry != "" {
@@ -212,7 +207,7 @@ func getCreateAUserServiceAccountResponse(session *models.Principal, params user
 		}
 		expiry = &parsedExpiry
 	}
-	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, name, params.Body.Name, params.Body.Description, expiry, params.Body.Comment)
+	saCreds, err := createAUserServiceAccount(ctx, userAdminClient, params.Body.Policy, params.Name, params.Body.Name, params.Body.Description, expiry, params.Body.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -233,14 +228,10 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 	serviceAccount := params.Body
-	user, err := utils.DecodeBase64(params.Name)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	if user == serviceAccount.AccessKey {
+	if params.Name == serviceAccount.AccessKey {
 		return nil, ErrorWithContext(ctx, errors.New("Access Key already in use"))
 	}
-	accounts, err := userAdminClient.listServiceAccounts(ctx, user)
+	accounts, err := userAdminClient.listServiceAccounts(ctx, params.Name)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -258,7 +249,7 @@ func getCreateAUserServiceAccountCredsResponse(session *models.Principal, params
 		}
 		expiry = &parsedExpiry
 	}
-	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, user, serviceAccount.AccessKey, serviceAccount.SecretKey, serviceAccount.Name, serviceAccount.Description, expiry, serviceAccount.Comment)
+	saCreds, err := createAUserServiceAccountCreds(ctx, userAdminClient, serviceAccount.Policy, params.Name, serviceAccount.AccessKey, serviceAccount.SecretKey, serviceAccount.Name, serviceAccount.Description, expiry, serviceAccount.Comment)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -366,10 +357,6 @@ func getUserServiceAccountsResponse(ctx context.Context, session *models.Princip
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-	user, err = utils.DecodeBase64(user)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 	serviceAccounts, err := getUserServiceAccounts(ctx, userAdminClient, user)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -386,10 +373,6 @@ func deleteServiceAccount(ctx context.Context, userClient MinioAdmin, accessKey 
 func getDeleteServiceAccountResponse(session *models.Principal, params saApi.DeleteServiceAccountParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey, err := utils.DecodeBase64(params.AccessKey)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
 	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
@@ -397,7 +380,7 @@ func getDeleteServiceAccountResponse(session *models.Principal, params saApi.Del
 	// create a MinIO user Admin Client interface implementation
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
-	if err := deleteServiceAccount(ctx, userAdminClient, accessKey); err != nil {
+	if err := deleteServiceAccount(ctx, userAdminClient, params.AccessKey); err != nil {
 		return ErrorWithContext(ctx, err)
 	}
 	return nil
@@ -441,10 +424,6 @@ func getServiceAccountDetails(ctx context.Context, userClient MinioAdmin, access
 func getServiceAccountInfo(session *models.Principal, params saApi.GetServiceAccountParams) (*models.ServiceAccount, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey, err := utils.DecodeBase64(params.AccessKey)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
@@ -453,7 +432,7 @@ func getServiceAccountInfo(session *models.Principal, params saApi.GetServiceAcc
 	// defining the client to be used
 	userAdminClient := AdminClient{Client: userAdmin}
 
-	serviceAccount, err := getServiceAccountDetails(ctx, userAdminClient, accessKey)
+	serviceAccount, err := getServiceAccountDetails(ctx, userAdminClient, params.AccessKey)
 	if err != nil {
 		return nil, ErrorWithContext(ctx, err)
 	}
@@ -481,10 +460,6 @@ func updateServiceAccountDetails(ctx context.Context, userClient MinioAdmin, acc
 func updateSetServiceAccountResponse(session *models.Principal, params saApi.UpdateServiceAccountParams) *CodedAPIError {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
-	accessKey, err := utils.DecodeBase64(params.AccessKey)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
 	policy := *params.Body.Policy
 	userAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
 	if err != nil {
@@ -502,7 +477,7 @@ func updateSetServiceAccountResponse(session *models.Principal, params saApi.Upd
 		}
 		expiry = &parsedExpiry
 	}
-	err = updateServiceAccountDetails(ctx, userAdminClient, accessKey, policy, expiry, params.Body.Name, params.Body.Description, params.Body.Status, params.Body.SecretKey)
+	err = updateServiceAccountDetails(ctx, userAdminClient, params.AccessKey, policy, expiry, params.Body.Name, params.Body.Description, params.Body.Status, params.Body.SecretKey)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

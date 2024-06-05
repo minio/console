@@ -16,7 +16,6 @@
 
 import React, { Fragment, useState } from "react";
 import { ErrorResponseHandler } from "../../../../../../common/types";
-import { decodeURLString } from "../../../../../../common/utils";
 import ConfirmDialog from "../../../../Common/ModalWrapper/ConfirmDialog";
 import useApi from "../../../../Common/Hooks/useApi";
 import { ConfirmDeleteIcon, Switch } from "mds";
@@ -76,13 +75,12 @@ const DeleteObject = ({
     return null;
   }
   const onConfirmDelete = () => {
-    const decodedSelectedObject = decodeURLString(selectedObject);
-    const recursive = decodedSelectedObject.endsWith("/");
+    const recursive = selectedObject.endsWith("/");
     invokeDeleteApi(
       "DELETE",
-      `/api/v1/buckets/${selectedBucket}/objects?prefix=${selectedObject}${
+      `/api/v1/buckets/${encodeURIComponent(selectedBucket)}/objects?prefix=${encodeURIComponent(selectedObject)}${
         selectedVersion !== ""
-          ? `&version_id=${selectedVersion}`
+          ? `&version_id=${encodeURIComponent(selectedVersion)}`
           : `&recursive=${recursive}&all_versions=${deleteVersions}`
       }${bypassGovernance ? "&bypass=true" : ""}`,
     );
@@ -100,7 +98,7 @@ const DeleteObject = ({
       confirmationContent={
         <Fragment>
           Are you sure you want to delete: <br />
-          <b>{decodeURLString(selectedObject)}</b>{" "}
+          <b>{selectedObject}</b>{" "}
           {selectedVersion !== "" ? (
             <Fragment>
               <br />

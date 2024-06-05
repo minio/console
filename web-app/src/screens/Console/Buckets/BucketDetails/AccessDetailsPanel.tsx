@@ -29,7 +29,6 @@ import {
   hasPermission,
   SecureComponent,
 } from "../../../../common/SecureComponent";
-import { encodeURLString } from "../../../../common/utils";
 import { setErrorSnackMessage, setHelpName } from "../../../../systemSlice";
 import { selBucketDetailsLoading } from "./bucketDetailsSlice";
 import { useAppDispatch } from "../../../../store";
@@ -85,7 +84,7 @@ const AccessDetails = () => {
       type: "view",
       disableButtonFunction: () => !viewPolicy,
       onClick: (policy: any) => {
-        navigate(`${IAM_PAGES.POLICIES}/${encodeURLString(policy.name)}`);
+        navigate(`${IAM_PAGES.POLICIES}/${encodeURIComponent(policy.name)}`);
       },
     },
   ];
@@ -95,7 +94,7 @@ const AccessDetails = () => {
       type: "view",
       disableButtonFunction: () => !viewUser,
       onClick: (user: any) => {
-        navigate(`${IAM_PAGES.USERS}/${encodeURLString(user)}`);
+        navigate(`${IAM_PAGES.USERS}/${encodeURIComponent(user)}`);
       },
     },
   ];

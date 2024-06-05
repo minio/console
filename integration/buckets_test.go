@@ -18,7 +18,6 @@ package integration
 
 import (
 	"bytes"
-	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -35,14 +34,6 @@ import (
 )
 
 var token string
-
-func encodeBase64(fileName string) string {
-	/*
-		Helper function to encode in base64 the file name so we can get the path
-	*/
-	path := b64.StdEncoding.EncodeToString([]byte(fileName))
-	return path
-}
 
 func inspectHTTPResponse(httpResponse *http.Response) string {
 	/*

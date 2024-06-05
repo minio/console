@@ -21,7 +21,6 @@ import { BucketObject, ObjectLegalHoldStatus } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { modalStyleUtils } from "../../../../Common/FormComponents/common/styleLibrary";
-import { encodeURLString } from "../../../../../../common/utils";
 import { setModalErrorSnackMessage } from "../../../../../../systemSlice";
 import { useAppDispatch } from "../../../../../../store";
 import ModalWrapper from "../../../../Common/ModalWrapper/ModalWrapper";
@@ -59,7 +58,7 @@ const SetLegalHoldModal = ({
       .putObjectLegalHold(
         bucketName,
         {
-          prefix: encodeURLString(objectName),
+          prefix: objectName,
           version_id: versionId || "",
         },
         {

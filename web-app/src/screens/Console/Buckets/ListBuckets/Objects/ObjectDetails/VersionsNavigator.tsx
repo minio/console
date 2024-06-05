@@ -31,7 +31,7 @@ import {
 } from "mds";
 import ShareFile from "./ShareFile";
 
-import { decodeURLString, niceBytesInt } from "../../../../../../common/utils";
+import { niceBytesInt } from "../../../../../../common/utils";
 import RestoreFileVersion from "./RestoreFileVersion";
 
 import { AppState, useAppDispatch } from "../../../../../../store";
@@ -128,11 +128,9 @@ const VersionsNavigator = ({
         .then((res) => {
           const result = get(res.data, "objects", []);
 
-          const decodedInternalPaths = decodeURLString(internalPaths);
-
           // Filter the results prefixes as API can return more files than expected.
           const filteredPrefixes = result.filter(
-            (item: BucketObject) => item.name === decodedInternalPaths,
+            (item: BucketObject) => item.name === internalPaths,
           );
 
           if (distributedSetup) {
@@ -356,7 +354,7 @@ const VersionsNavigator = ({
       {delSelectedVOpen && (
         <DeleteSelectedVersions
           selectedBucket={bucketName}
-          selectedObject={decodeURLString(internalPaths)}
+          selectedObject={internalPaths}
           deleteOpen={delSelectedVOpen}
           selectedVersions={selectedItems}
           closeDeleteModalAndRefresh={closeSelectedVersions}
@@ -383,7 +381,7 @@ const VersionsNavigator = ({
             <Grid item xs={12}>
               <BrowserBreadcrumbs
                 bucketName={bucketName}
-                internalPaths={decodeURLString(internalPaths)}
+                internalPaths={internalPaths}
                 hidePathButton={true}
               />
             </Grid>

@@ -26,7 +26,6 @@ import { IAM_SCOPES } from "../../../../../../common/SecureComponent/permissions
 import { useSelector } from "react-redux";
 import { BucketVersioningResponse } from "api/consoleApi";
 import { api } from "../../../../../../api";
-import { encodeURLString } from "../../../../../../common/utils";
 
 interface IDeleteObjectProps {
   closeDeleteModalAndRefresh: (refresh: boolean) => void;
@@ -92,7 +91,7 @@ const DeleteObject = ({
         const firstObject = selectedObjects[0];
         api.buckets
           .deleteObject(selectedBucket, {
-            prefix: encodeURLString(firstObject),
+            prefix: firstObject,
             all_versions: deleteVersions,
             bypass: bypassGovernance,
             recursive: firstObject.endsWith("/"), //if it is just a prefix

@@ -18,7 +18,6 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { ProgressBar, Grid, Box, InformativeMessage } from "mds";
 import get from "lodash/get";
 import { AllowedPreviews, previewObjectType } from "../utils";
-import { encodeURLString } from "../../../../../../common/utils";
 import { api } from "../../../../../../api";
 import PreviewPDF from "./PreviewPDF";
 import { downloadObject } from "../../../../ObjectBrowser/utils";
@@ -47,10 +46,9 @@ const PreviewFile = ({
 
   const fetchMetadata = useCallback(() => {
     if (!isMetaDataLoaded) {
-      const encodedPath = encodeURLString(objectName);
       api.buckets
         .getObjectMetadata(bucketName, {
-          prefix: encodedPath,
+          prefix: objectName,
           versionID: actualInfo.version_id || "",
         })
         .then((res) => {
@@ -78,9 +76,8 @@ const PreviewFile = ({
   let path = "";
 
   if (actualInfo) {
-    const encodedPath = encodeURLString(actualInfo.name || "");
     let basename = document.baseURI.replace(window.location.origin, "");
-    path = `${window.location.origin}${basename}api/v1/buckets/${bucketName}/objects/download?preview=true&prefix=${encodedPath}`;
+    path = `${window.location.origin}${basename}api/v1/buckets/${encodeURIComponent(bucketName)}/objects/download?preview=true&prefix=${encodeURIComponent(actualInfo.name || "")}`;
     if (actualInfo.version_id) {
       path = path.concat(`&version_id=${actualInfo.version_id}`);
     }
