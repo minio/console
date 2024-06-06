@@ -102,7 +102,12 @@ func getBucketLifecycle(ctx context.Context, client MinioClient, bucketName stri
 				Value: tagData.Value,
 			})
 		}
-
+		if rule.RuleFilter.Tag.Key != "" {
+			tags = append(tags, &models.LifecycleTag{
+				Key:   rule.RuleFilter.Tag.Key,
+				Value: rule.RuleFilter.Tag.Value,
+			})
+		}
 		rulePrefix := rule.RuleFilter.And.Prefix
 
 		if rulePrefix == "" {
