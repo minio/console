@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2024 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -15,15 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import get from "lodash/get";
 import { ConfirmModalIcon } from "mds";
-import { Tier } from "api/consoleApi";
 import { api } from "api";
 import { errorToHandler } from "api/errors";
-import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
-import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import ConfirmDialog from "screens/Console/Common/ModalWrapper/ConfirmDialog";
 
 interface ITierDeleteModal {
