@@ -44,7 +44,6 @@ import {
   IAM_PERMISSIONS,
   IAM_ROLES,
   IAM_SCOPES,
-  S3_ALL_RESOURCES,
 } from "../../../../common/SecureComponent/permissions";
 import {
   hasPermission,
@@ -382,7 +381,6 @@ const ListTiersConfiguration = () => {
                                 IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
                                 true,
                               ),
-
                               onClick: (tierData: Tier) => {
                                 setSelectedTier(tierData);
                                 setDeleteTierModalOpen(true);
