@@ -61,7 +61,7 @@ const DeleteTierConfirmModal = ({
       titleIcon={<ConfirmModalIcon />}
       isLoading={false}
       onConfirm={() => deleteTier()}
-      onClose={() => closeModalAndRefresh(true)}
+      onClose={() => closeModalAndRefresh(false)}
       confirmationContent={
         <React.Fragment>
           Are you sure you want to delete the tier <strong>{tierName}</strong>?
