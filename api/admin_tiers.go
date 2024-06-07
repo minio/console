@@ -62,6 +62,14 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 		}
 		return tieringApi.NewEditTierCredentialsOK()
 	})
+	// remove an empty tier
+	api.TieringRemoveTierHandler = tieringApi.RemoveTierHandlerFunc(func(params tieringApi.RemoveTierParams, session *models.Principal) middleware.Responder {
+		err := getRemoveTierResponse(session, params)
+		if err != nil {
+			return tieringApi.NewRemoveTierDefault(err.Code).WithPayload(err.APIError)
+		}
+		return tieringApi.NewRemoveTierNoContent()
+	})
 }
 
 // getNotificationEndpoints invokes admin info and returns a list of notification endpoints
@@ -404,6 +412,28 @@ func getEditTierCredentialsResponse(session *models.Principal, params tieringApi
 	adminClient := AdminClient{Client: mAdmin}
 	// serialize output
 	err = editTierCredentials(ctx, adminClient, &params)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	return nil
+}
+
+func removeTier(ctx context.Context, client MinioAdmin, params *tieringApi.RemoveTierParams) error {
+	return client.removeTier(ctx, params.Name)
+}
+
+func getRemoveTierResponse(session *models.Principal, params tieringApi.RemoveTierParams) *CodedAPIError {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
+	if err != nil {
+		return ErrorWithContext(ctx, err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+	// serialize output
+	err = removeTier(ctx, adminClient, &params)
 	if err != nil {
 		return ErrorWithContext(ctx, err)
 	}

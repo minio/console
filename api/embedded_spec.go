@@ -545,6 +545,34 @@ func init() {
         }
       }
     },
+    "/admin/tiers/{name}/remove": {
+      "delete": {
+        "tags": [
+          "Tiering"
+        ],
+        "summary": "Remove Tier",
+        "operationId": "RemoveTier",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
     "/admin/tiers/{type}/{name}": {
       "get": {
         "tags": [
@@ -9718,6 +9746,34 @@ func init() {
         ],
         "responses": {
           "201": {
+            "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tiers/{name}/remove": {
+      "delete": {
+        "tags": [
+          "Tiering"
+        ],
+        "summary": "Remove Tier",
+        "operationId": "RemoveTier",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
             "description": "A successful response."
           },
           "default": {

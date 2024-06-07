@@ -66,10 +66,11 @@ var (
 	deleteSiteReplicationInfoMock func(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
 	getSiteReplicationStatus      func(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
 
-	minioListTiersMock func(ctx context.Context) ([]*madmin.TierConfig, error)
-	minioTierStatsMock func(ctx context.Context) ([]madmin.TierInfo, error)
-	minioAddTiersMock  func(ctx context.Context, tier *madmin.TierConfig) error
-	minioEditTiersMock func(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	minioListTiersMock  func(ctx context.Context) ([]*madmin.TierConfig, error)
+	minioTierStatsMock  func(ctx context.Context) ([]madmin.TierInfo, error)
+	minioAddTiersMock   func(ctx context.Context, tier *madmin.TierConfig) error
+	minioRemoveTierMock func(ctx context.Context, tierName string) error
+	minioEditTiersMock  func(ctx context.Context, tierName string, creds madmin.TierCreds) error
 
 	minioServiceTraceMock func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
 
@@ -343,6 +344,10 @@ func (ac AdminClientMock) tierStats(ctx context.Context) ([]madmin.TierInfo, err
 
 func (ac AdminClientMock) addTier(ctx context.Context, tier *madmin.TierConfig) error {
 	return minioAddTiersMock(ctx, tier)
+}
+
+func (ac AdminClientMock) removeTier(ctx context.Context, tierName string) error {
+	return minioRemoveTierMock(ctx, tierName)
 }
 
 func (ac AdminClientMock) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
