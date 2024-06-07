@@ -2,6 +2,24 @@
 
 # Changelog
 
+## Release v1.5.0
+
+Features:
+
+- Added remove Tier functionality
+
+Bug Fix:
+
+- Fixed ILM rule tags not being shown
+- Fixed race condition Object Browser websocket
+- Fixed Encryption page crashing on empty response
+- Fixed Replication Delete Marker comparisons
+
+Additional Changes:
+
+- Use automatic URI encoding for APIs
+- Vulnerability updates
+
 ## Release v1.4.0
 
 Features:
