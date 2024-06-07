@@ -17,8 +17,7 @@
 import React from "react";
 import { ConfirmModalIcon } from "mds";
 import { api } from "api";
-import { errorToHandler } from "api/errors";
-import { setModalErrorSnackMessage } from "../../../../systemSlice";
+import { setErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import ConfirmDialog from "screens/Console/Common/ModalWrapper/ConfirmDialog";
 
@@ -43,10 +42,18 @@ const DeleteTierConfirmModal = ({
           closeModalAndRefresh(true);
         })
         .catch((err) => {
-          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
+          err.json().then((body: any) => {
+            dispatch(
+              setErrorSnackMessage({
+                errorMessage: body.message,
+                detailedError: body.detailedMessage,
+              }),
+            );
+          });
+          closeModalAndRefresh(false);
         });
     } else {
-      setModalErrorSnackMessage({
+      setErrorSnackMessage({
         errorMessage: "There was an error deleting the tier",
         detailedError: "",
       });
