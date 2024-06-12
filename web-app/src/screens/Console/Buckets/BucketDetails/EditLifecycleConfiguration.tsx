@@ -30,10 +30,13 @@ import {
   Switch,
 } from "mds";
 import { api } from "api";
-import { ApiError, Tier } from "api/consoleApi";
+import { ApiError } from "api/consoleApi";
 import { modalStyleUtils } from "../../Common/FormComponents/common/styleLibrary";
 import { ITiersDropDown, LifeCycleItem } from "../types";
-import { setErrorSnackMessage } from "../../../../systemSlice";
+import {
+  setErrorSnackMessage,
+  setModalErrorSnackMessage,
+} from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import ModalWrapper from "../../Common/ModalWrapper/ModalWrapper";
 import QueryMultiSelector from "../../Common/FormComponents/QueryMultiSelector/QueryMultiSelector";
@@ -81,16 +84,13 @@ const EditLifecycleConfiguration = ({
   useEffect(() => {
     if (loadingTiers) {
       api.admin
-        .tiersList()
+        .tiersListNames()
         .then((res) => {
-          const tiersList: Tier[] | null = get(res.data, "items", []);
+          const tiersList: string[] | null = get(res.data, "items", []);
 
           if (tiersList !== null && tiersList.length >= 1) {
-            const objList = tiersList.map((tier: Tier) => {
-              const tierType = tier.type;
-              const value = get(tier, `${tierType}.name`, "");
-
-              return { label: value, value: value };
+            const objList = tiersList.map((tierName: string) => {
+              return { label: tierName, value: tierName };
             });
             setTiersList(objList);
             if (objList.length > 0) {
@@ -99,11 +99,12 @@ const EditLifecycleConfiguration = ({
           }
           setLoadingTiers(false);
         })
-        .catch(() => {
+        .catch((err) => {
           setLoadingTiers(false);
+          dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     }
-  }, [loadingTiers, lifecycleRule.transition?.storage_class]);
+  }, [dispatch, loadingTiers, lifecycleRule.transition?.storage_class]);
 
   useEffect(() => {
     let valid = true;

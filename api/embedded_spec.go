@@ -545,6 +545,29 @@ func init() {
         }
       }
     },
+    "/admin/tiers/names": {
+      "get": {
+        "tags": [
+          "Tiering"
+        ],
+        "summary": "Returns a list of tiers' names for ilm",
+        "operationId": "TiersListNames",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tiersNameListResponse"
+            }
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
     "/admin/tiers/{name}/remove": {
       "delete": {
         "tags": [
@@ -8888,6 +8911,17 @@ func init() {
         }
       }
     },
+    "tiersNameListResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "transitionResponse": {
       "type": "object",
       "properties": {
@@ -9747,6 +9781,29 @@ func init() {
         "responses": {
           "201": {
             "description": "A successful response."
+          },
+          "default": {
+            "description": "Generic error response.",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/admin/tiers/names": {
+      "get": {
+        "tags": [
+          "Tiering"
+        ],
+        "summary": "Returns a list of tiers' names for ilm",
+        "operationId": "TiersListNames",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/tiersNameListResponse"
+            }
           },
           "default": {
             "description": "Generic error response.",
@@ -18305,6 +18362,17 @@ func init() {
         },
         "versions": {
           "type": "string"
+        }
+      }
+    },
+    "tiersNameListResponse": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

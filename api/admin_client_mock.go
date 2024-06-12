@@ -66,11 +66,12 @@ var (
 	deleteSiteReplicationInfoMock func(ctx context.Context, removeReq madmin.SRRemoveReq) (*madmin.ReplicateRemoveStatus, error)
 	getSiteReplicationStatus      func(ctx context.Context, params madmin.SRStatusOptions) (*madmin.SRStatusInfo, error)
 
-	minioListTiersMock  func(ctx context.Context) ([]*madmin.TierConfig, error)
-	minioTierStatsMock  func(ctx context.Context) ([]madmin.TierInfo, error)
-	minioAddTiersMock   func(ctx context.Context, tier *madmin.TierConfig) error
-	minioRemoveTierMock func(ctx context.Context, tierName string) error
-	minioEditTiersMock  func(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	minioListTiersMock        func(ctx context.Context) ([]*madmin.TierConfig, error)
+	minioTierStatsMock        func(ctx context.Context) ([]madmin.TierInfo, error)
+	minioAddTiersMock         func(ctx context.Context, tier *madmin.TierConfig) error
+	minioRemoveTierMock       func(ctx context.Context, tierName string) error
+	minioEditTiersMock        func(ctx context.Context, tierName string, creds madmin.TierCreds) error
+	minioVerifyTierStatusMock func(ctx context.Context, tierName string) error
 
 	minioServiceTraceMock func(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
 
@@ -121,8 +122,8 @@ func (ac AdminClientMock) speedtest(_ context.Context, _ madmin.SpeedtestOpts) (
 	return nil, nil
 }
 
-func (ac AdminClientMock) verifyTierStatus(_ context.Context, _ string) error {
-	return nil
+func (ac AdminClientMock) verifyTierStatus(ctx context.Context, tier string) error {
+	return minioVerifyTierStatusMock(ctx, tier)
 }
 
 // mock function helpConfigKV()

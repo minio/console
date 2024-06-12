@@ -24,6 +24,7 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"
+	"github.com/minio/console/api/operations/tiering"
 	tieringApi "github.com/minio/console/api/operations/tiering"
 	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
@@ -37,6 +38,13 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 			return tieringApi.NewTiersListDefault(err.Code).WithPayload(err.APIError)
 		}
 		return tieringApi.NewTiersListOK().WithPayload(tierList)
+	})
+	api.TieringTiersListNamesHandler = tiering.TiersListNamesHandlerFunc(func(params tiering.TiersListNamesParams, session *models.Principal) middleware.Responder {
+		tierList, err := getTiersNameResponse(session, params)
+		if err != nil {
+			return tieringApi.NewTiersListDefault(err.Code).WithPayload(err.APIError)
+		}
+		return tieringApi.NewTiersListNamesOK().WithPayload(tierList)
 	})
 	// add a new tiers
 	api.TieringAddTierHandler = tieringApi.AddTierHandlerFunc(func(params tieringApi.AddTierParams, session *models.Principal) middleware.Responder {
@@ -72,33 +80,36 @@ func registerAdminTiersHandlers(api *operations.ConsoleAPI) {
 	})
 }
 
-// getNotificationEndpoints invokes admin info and returns a list of notification endpoints
+// getTiers returns a list of tiers with their stats
 func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse, error) {
 	tiers, err := client.listTiers(ctx)
 	if err != nil {
 		return nil, err
 	}
-	tiersInfo, err := client.tierStats(ctx)
+
+	tierStatsInfo, err := client.tierStats(ctx)
 	if err != nil {
 		return nil, err
 	}
+	tiersStatsMap := make(map[string]madmin.TierStats, len(tierStatsInfo))
+	for _, stat := range tierStatsInfo {
+		tiersStatsMap[stat.Name] = stat.Stats
+	}
+
 	var tiersList []*models.Tier
 	for _, tierData := range tiers {
-
 		// Default Tier Stats
-		stats := madmin.TierStats{
+		tierStats := madmin.TierStats{
 			NumObjects:  0,
 			NumVersions: 0,
 			TotalSize:   0,
 		}
-
-		// We look for the correct tier stats & set the values.
-		for _, stat := range tiersInfo {
-			if stat.Name == tierData.Name {
-				stats = stat.Stats
-				break
-			}
+		if stats, ok := tiersStatsMap[tierData.Name]; ok {
+			tierStats = stats
 		}
+
+		status := client.verifyTierStatus(ctx, tierData.Name) == nil
+
 		switch tierData.Type {
 		case madmin.S3:
 			tiersList = append(tiersList, &models.Tier{
@@ -112,11 +123,11 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Region:       tierData.S3.Region,
 					Secretkey:    tierData.S3.SecretKey,
 					Storageclass: tierData.S3.StorageClass,
-					Usage:        humanize.IBytes(stats.TotalSize),
-					Objects:      strconv.Itoa(stats.NumObjects),
-					Versions:     strconv.Itoa(stats.NumVersions),
+					Usage:        humanize.IBytes(tierStats.TotalSize),
+					Objects:      strconv.Itoa(tierStats.NumObjects),
+					Versions:     strconv.Itoa(tierStats.NumVersions),
 				},
-				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
+				Status: status,
 			})
 		case madmin.MinIO:
 			tiersList = append(tiersList, &models.Tier{
@@ -129,11 +140,11 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Prefix:    tierData.MinIO.Prefix,
 					Region:    tierData.MinIO.Region,
 					Secretkey: tierData.MinIO.SecretKey,
-					Usage:     humanize.IBytes(stats.TotalSize),
-					Objects:   strconv.Itoa(stats.NumObjects),
-					Versions:  strconv.Itoa(stats.NumVersions),
+					Usage:     humanize.IBytes(tierStats.TotalSize),
+					Objects:   strconv.Itoa(tierStats.NumObjects),
+					Versions:  strconv.Itoa(tierStats.NumVersions),
 				},
-				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
+				Status: status,
 			})
 		case madmin.GCS:
 			tiersList = append(tiersList, &models.Tier{
@@ -145,11 +156,11 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Name:     tierData.Name,
 					Prefix:   tierData.GCS.Prefix,
 					Region:   tierData.GCS.Region,
-					Usage:    humanize.IBytes(stats.TotalSize),
-					Objects:  strconv.Itoa(stats.NumObjects),
-					Versions: strconv.Itoa(stats.NumVersions),
+					Usage:    humanize.IBytes(tierStats.TotalSize),
+					Objects:  strconv.Itoa(tierStats.NumObjects),
+					Versions: strconv.Itoa(tierStats.NumVersions),
 				},
-				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
+				Status: status,
 			})
 		case madmin.Azure:
 			tiersList = append(tiersList, &models.Tier{
@@ -162,16 +173,16 @@ func getTiers(ctx context.Context, client MinioAdmin) (*models.TierListResponse,
 					Name:        tierData.Name,
 					Prefix:      tierData.Azure.Prefix,
 					Region:      tierData.Azure.Region,
-					Usage:       humanize.IBytes(stats.TotalSize),
-					Objects:     strconv.Itoa(stats.NumObjects),
-					Versions:    strconv.Itoa(stats.NumVersions),
+					Usage:       humanize.IBytes(tierStats.TotalSize),
+					Objects:     strconv.Itoa(tierStats.NumObjects),
+					Versions:    strconv.Itoa(tierStats.NumVersions),
 				},
-				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
+				Status: status,
 			})
 		case madmin.Unsupported:
 			tiersList = append(tiersList, &models.Tier{
 				Type:   models.TierTypeUnsupported,
-				Status: client.verifyTierStatus(ctx, tierData.Name) == nil,
+				Status: status,
 			})
 		}
 	}
@@ -198,6 +209,42 @@ func getTiersResponse(session *models.Principal, params tieringApi.TiersListPara
 		return nil, ErrorWithContext(ctx, err)
 	}
 	return tiersResp, nil
+}
+
+// getTiersNameResponse returns a response with a list of tiers' names
+func getTiersNameResponse(session *models.Principal, params tieringApi.TiersListNamesParams) (*models.TiersNameListResponse, *CodedAPIError) {
+	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
+	defer cancel()
+	mAdmin, err := NewMinioAdminClient(params.HTTPRequest.Context(), session)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	// create a minioClient interface implementation
+	// defining the client to be used
+	adminClient := AdminClient{Client: mAdmin}
+	// serialize output
+	tiersResp, err := getTiersName(ctx, adminClient)
+	if err != nil {
+		return nil, ErrorWithContext(ctx, err)
+	}
+	return tiersResp, nil
+}
+
+// getTiersName fetches listTiers and returns a list of the tiers' names
+func getTiersName(ctx context.Context, client MinioAdmin) (*models.TiersNameListResponse, error) {
+	tiers, err := client.listTiers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	tiersNameList := make([]string, len(tiers))
+	for i, tierData := range tiers {
+		tiersNameList[i] = tierData.Name
+	}
+
+	return &models.TiersNameListResponse{
+		Items: tiersNameList,
+	}, nil
 }
 
 func addTier(ctx context.Context, client MinioAdmin, params *tieringApi.AddTierParams) error {

@@ -1195,6 +1195,10 @@ export interface TierListResponse {
   items?: Tier[];
 }
 
+export interface TiersNameListResponse {
+  items?: string[];
+}
+
 export interface TierCredentialsRequest {
   access_key?: string;
   secret_key?: string;
@@ -4493,6 +4497,24 @@ export class Api<
         body: body,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Tiering
+     * @name TiersListNames
+     * @summary Returns a list of tiers' names for ilm
+     * @request GET:/admin/tiers/names
+     * @secure
+     */
+    tiersListNames: (params: RequestParams = {}) =>
+      this.request<TiersNameListResponse, ApiError>({
+        path: `/admin/tiers/names`,
+        method: "GET",
+        secure: true,
+        format: "json",
         ...params,
       }),
 
