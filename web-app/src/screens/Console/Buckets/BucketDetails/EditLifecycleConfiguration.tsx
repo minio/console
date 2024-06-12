@@ -92,11 +92,11 @@ const EditLifecycleConfiguration = ({
 
               return { label: value, value: value };
             });
-
             setTiersList(objList);
             if (objList.length > 0) {
               setStorageClass(lifecycleRule.transition?.storage_class || "");
             }
+            //  handleTierList(tiersList);
           }
           setLoadingTiers(false);
         })
@@ -104,7 +104,7 @@ const EditLifecycleConfiguration = ({
           setLoadingTiers(false);
         });
     }
-  }, [loadingTiers]);
+  }, [loadingTiers, lifecycleRule.transition?.storage_class]);
 
   useEffect(() => {
     let valid = true;
@@ -118,7 +118,14 @@ const EditLifecycleConfiguration = ({
       }
     }
     setIsFormValid(valid);
-  }, [ilmType, expiryDays, transitionDays, storageClass]);
+  }, [
+    ilmType,
+    expiryDays,
+    transitionDays,
+    storageClass,
+    NCTransitionDays,
+    NCTransitionSC,
+  ]);
 
   useEffect(() => {
     if (lifecycleRule.status === "Enabled") {
