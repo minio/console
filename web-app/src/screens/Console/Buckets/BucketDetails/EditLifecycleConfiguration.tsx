@@ -96,7 +96,6 @@ const EditLifecycleConfiguration = ({
             if (objList.length > 0) {
               setStorageClass(lifecycleRule.transition?.storage_class || "");
             }
-            //  handleTierList(tiersList);
           }
           setLoadingTiers(false);
         })
