@@ -95,7 +95,7 @@ const EditLifecycleConfiguration = ({
 
             setTiersList(objList);
             if (objList.length > 0) {
-              setStorageClass(objList[0].value);
+              setStorageClass(lifecycleRule.transition?.storage_class || "");
             }
           }
           setLoadingTiers(false);
@@ -110,7 +110,10 @@ const EditLifecycleConfiguration = ({
     let valid = true;
 
     if (ilmType !== "expiry") {
-      if (storageClass === "") {
+      if (
+        (transitionDays !== "0" && storageClass === "") ||
+        (NCTransitionDays !== "0" && NCTransitionSC === "")
+      ) {
         valid = false;
       }
     }
@@ -439,15 +442,15 @@ const EditLifecycleConfiguration = ({
                     value={NCTransitionDays}
                     min="0"
                   />
-                  <InputBox
+                  <Select
+                    label="Non-current Version Transition Storage Class"
                     id="noncurrentversion_t_SC"
                     name="noncurrentversion_t_SC"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                      setNCTransitionSC(e.target.value);
-                    }}
-                    placeholder="Set Non-current Version Transition Storage Class"
-                    label="Non-current Version Transition Storage Class"
                     value={NCTransitionSC}
+                    onChange={(value) => {
+                      setNCTransitionSC(value);
+                    }}
+                    options={tiersList}
                   />
                 </Fragment>
               )}
