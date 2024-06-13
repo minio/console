@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../../common/api";
 import { baseUrl } from "../../history";
 import { Box, Button, LoginWrapper, WarnIcon } from "mds";
-import { getLogoVar } from "../../config";
+import { getLogoApplicationVariant, getLogoVar } from "../../config";
 import get from "lodash/get";
 
 const CallBackContainer = styled.div(({ theme }) => ({
@@ -107,7 +107,10 @@ const LoginCallback = () => {
   return error !== "" || errorDescription !== "" ? (
     <Fragment>
       <LoginWrapper
-        logoProps={{ applicationName: "console", subVariant: getLogoVar() }}
+        logoProps={{
+          applicationName: getLogoApplicationVariant(),
+          subVariant: getLogoVar(),
+        }}
         form={
           <CallBackContainer>
             <div className={"errorTitle"}>

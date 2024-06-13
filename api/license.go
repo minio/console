@@ -30,6 +30,8 @@ const (
 	PlanAGPL SubnetPlan = iota
 	PlanStandard
 	PlanEnterprise
+	PlanEnterpriseLite
+	PlanEnterprisePlus
 )
 
 func (sp SubnetPlan) String() string {
@@ -38,6 +40,10 @@ func (sp SubnetPlan) String() string {
 		return "standard"
 	case PlanEnterprise:
 		return "enterprise"
+	case PlanEnterpriseLite:
+		return "enterprise-lite"
+	case PlanEnterprisePlus:
+		return "enterprise-plus"
 	default:
 		return "agpl"
 	}
@@ -65,6 +71,10 @@ func fetchLicensePlan() {
 		InstanceLicensePlan = PlanStandard
 	case "ENTERPRISE":
 		InstanceLicensePlan = PlanEnterprise
+	case "ENTERPRISE-LITE":
+		InstanceLicensePlan = PlanEnterpriseLite
+	case "ENTERPRISE-PLUS":
+		InstanceLicensePlan = PlanEnterprisePlus
 	default:
 		InstanceLicensePlan = PlanAGPL
 	}

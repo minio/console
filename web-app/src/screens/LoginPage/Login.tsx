@@ -24,7 +24,7 @@ import { useSelector } from "react-redux";
 import { getFetchConfigurationAsync } from "./loginThunks";
 import { resetForm } from "./loginSlice";
 import StrategyForm from "./StrategyForm";
-import { getLogoVar } from "../../config";
+import { getLogoApplicationVariant, getLogoVar } from "../../config";
 import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
 import { setHelpName } from "../../systemSlice";
@@ -149,7 +149,10 @@ const Login = () => {
     <Fragment>
       <MainError />
       <LoginWrapper
-        logoProps={{ applicationName: "console", subVariant: getLogoVar() }}
+        logoProps={{
+          applicationName: getLogoApplicationVariant(),
+          subVariant: getLogoVar(),
+        }}
         form={loginComponent}
         formFooter={
           <Box
