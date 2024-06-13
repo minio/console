@@ -942,7 +942,7 @@ func Test_shareObject(t *testing.T) {
 			},
 
 			wantError: nil,
-			expected:  "http://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw",
 		},
 		{
 			test: "return https scheme if url uses TLS",
@@ -959,7 +959,7 @@ func Test_shareObject(t *testing.T) {
 			},
 
 			wantError: nil,
-			expected:  "https://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
+			expected:  "https://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw",
 		},
 		{
 			test: "returns invalid expire duration if expiration is invalid",
@@ -990,7 +990,7 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://localhost:9090/api/v1/download-shared-object/http:%2F%2Fsomeurl",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw",
 		},
 		{
 			test: "return error if sharefunc returns error",
@@ -1022,7 +1022,7 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://localhost:9090/api/v1/download-shared-object/https:%2F%2F127.0.0.1:9000%2Fcestest%2FAudio%2520icon.svg%3FX-Amz-Algorithm=AWS4-HMAC-SHA256",
+			expected:  "http://localhost:9090/api/v1/download-shared-object/aHR0cHM6Ly8xMjcuMC4wLjE6OTAwMC9jZXN0ZXN0L0F1ZGlvJTIwaWNvbi5zdmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTY",
 		},
 		{
 			test: "returns redirect url with share link if redirect url env variable set",
@@ -1041,7 +1041,7 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/http:%2F%2Fsomeurl",
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw",
 		},
 		{
 			test: "returns redirect url with share link if redirect url env variable set with trailing slash",
@@ -1060,7 +1060,7 @@ func Test_shareObject(t *testing.T) {
 				},
 			},
 			wantError: nil,
-			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/http:%2F%2Fsomeurl",
+			expected:  "http://proxy-url.com:9012/console/subpath/api/v1/download-shared-object/aHR0cDovL3NvbWV1cmw",
 		},
 	}
 
