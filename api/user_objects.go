@@ -18,6 +18,7 @@ package api
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -1022,9 +1023,9 @@ func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, ve
 	}
 
 	requestURL := getRequestURLWithScheme(r)
-	escapedURL := url.QueryEscape(minioURL) // Use "QueryEscape" instead of "PathEscape", because MUX has issues dealing with colons
+	encodedURL := base64.RawURLEncoding.EncodeToString([]byte(minioURL))
 
-	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, escapedURL)
+	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, url.PathEscape(encodedURL))
 	return &objURL, nil
 }
 
