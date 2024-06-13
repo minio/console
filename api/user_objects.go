@@ -1022,7 +1022,9 @@ func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, ve
 	}
 
 	requestURL := getRequestURLWithScheme(r)
-	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, url.PathEscape(minioURL))
+	escapedURL := url.QueryEscape(minioURL) // Use "QueryEscape" instead of "PathEscape", because MUX has issues dealing with colons
+
+	objURL := fmt.Sprintf("%s/api/v1/download-shared-object/%s", requestURL, escapedURL)
 	return &objURL, nil
 }
 
