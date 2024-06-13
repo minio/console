@@ -24,6 +24,8 @@ export const LICENSE_PLANS = {
   COMMUNITY: "community",
   STANDARD: "standard",
   ENTERPRISE: "enterprise",
+  ENTERPRISE_LITE: "enterprise-lite",
+  ENTERPRISE_PLUS: "enterprise-plus",
 };
 
 type FeatureItem = {
@@ -439,7 +441,12 @@ export const ENTERPRISE_PLAN_FEATURES = [
   },
 ];
 
-export const PAID_PLANS = [LICENSE_PLANS.STANDARD, LICENSE_PLANS.ENTERPRISE];
+export const PAID_PLANS = [
+  LICENSE_PLANS.STANDARD,
+  LICENSE_PLANS.ENTERPRISE,
+  LICENSE_PLANS.ENTERPRISE_LITE,
+  LICENSE_PLANS.ENTERPRISE_PLUS,
+];
 
 export const getRenderValue = (val: any) => {
   return typeof val === "function" ? val() : val;

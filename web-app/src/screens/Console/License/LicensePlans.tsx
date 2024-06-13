@@ -385,7 +385,11 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
 
   const isCommunityPlan = currentPlan === LICENSE_PLANS.COMMUNITY;
   const isStandardPlan = currentPlan === LICENSE_PLANS.STANDARD;
-  const isEnterprisePlan = currentPlan === LICENSE_PLANS.ENTERPRISE;
+  const isEnterprisePlan = [
+    LICENSE_PLANS.ENTERPRISE,
+    LICENSE_PLANS.ENTERPRISE_LITE,
+    LICENSE_PLANS.ENTERPRISE_PLUS,
+  ].includes(currentPlan);
 
   const isPaidPlan = PAID_PLANS.includes(currentPlan);
 
@@ -393,7 +397,11 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
   const [xsPlanView, setXsPlanView] = useState("");
   let isXsViewCommunity = xsPlanView === LICENSE_PLANS.COMMUNITY;
   let isXsViewStandard = xsPlanView === LICENSE_PLANS.STANDARD;
-  let isXsViewEnterprise = xsPlanView === LICENSE_PLANS.ENTERPRISE;
+  let isXsViewEnterprise = [
+    LICENSE_PLANS.ENTERPRISE,
+    LICENSE_PLANS.ENTERPRISE_LITE,
+    LICENSE_PLANS.ENTERPRISE_PLUS,
+  ].includes(xsPlanView);
 
   const getCommunityPlanHeader = () => {
     return (
