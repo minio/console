@@ -542,6 +542,9 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		TieringTiersListHandler: tiering.TiersListHandlerFunc(func(params tiering.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.TiersList has not yet been implemented")
 		}),
+		TieringTiersListNamesHandler: tiering.TiersListNamesHandlerFunc(func(params tiering.TiersListNamesParams, principal *models.Principal) middleware.Responder {
+			return middleware.NotImplemented("operation tiering.TiersListNames has not yet been implemented")
+		}),
 		BucketUpdateBucketLifecycleHandler: bucket.UpdateBucketLifecycleHandlerFunc(func(params bucket.UpdateBucketLifecycleParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.UpdateBucketLifecycle has not yet been implemented")
 		}),
@@ -931,6 +934,8 @@ type ConsoleAPI struct {
 	SubnetSubnetRegisterHandler subnet.SubnetRegisterHandler
 	// TieringTiersListHandler sets the operation handler for the tiers list operation
 	TieringTiersListHandler tiering.TiersListHandler
+	// TieringTiersListNamesHandler sets the operation handler for the tiers list names operation
+	TieringTiersListNamesHandler tiering.TiersListNamesHandler
 	// BucketUpdateBucketLifecycleHandler sets the operation handler for the update bucket lifecycle operation
 	BucketUpdateBucketLifecycleHandler bucket.UpdateBucketLifecycleHandler
 	// IdpUpdateConfigurationHandler sets the operation handler for the update configuration operation
@@ -1490,6 +1495,9 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.TieringTiersListHandler == nil {
 		unregistered = append(unregistered, "tiering.TiersListHandler")
+	}
+	if o.TieringTiersListNamesHandler == nil {
+		unregistered = append(unregistered, "tiering.TiersListNamesHandler")
 	}
 	if o.BucketUpdateBucketLifecycleHandler == nil {
 		unregistered = append(unregistered, "bucket.UpdateBucketLifecycleHandler")
@@ -2226,6 +2234,10 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/admin/tiers"] = tiering.NewTiersList(o.context, o.TieringTiersListHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/admin/tiers/names"] = tiering.NewTiersListNames(o.context, o.TieringTiersListNamesHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

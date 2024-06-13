@@ -2705,6 +2705,22 @@ paths:
       tags:
         - Tiering
 
+  /admin/tiers/names:
+    get:
+      summary: Returns a list of tiers' names for ilm
+      operationId: TiersListNames
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/tiersNameListResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Tiering
+
   /admin/tiers/{type}/{name}:
     get:
       summary: Get Tier
@@ -2769,7 +2785,7 @@ paths:
         - Tiering
   /admin/tiers/{name}/remove:
     delete:
-      summary: Remove Tier 
+      summary: Remove Tier
       operationId: RemoveTier
       parameters:
         - name: name
@@ -2784,7 +2800,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       tags:
-        - Tiering      
+        - Tiering
 
   /nodes:
     get:
@@ -5597,6 +5613,14 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/tier"
+
+  tiersNameListResponse:
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          type: string
 
   tierCredentialsRequest:
     type: object
