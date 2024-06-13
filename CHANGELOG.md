@@ -2,6 +2,19 @@
 
 # Changelog
 
+## Release v1.6.0
+
+Bug Fix:
+
+- Fixed share link encoding
+- Fixed Edit Lifecycle Storage Class
+- Added Tiers Improvements for Bucket Lifecycle management
+
+Additional Changes:
+
+- Vulnerability updates
+- Update Logo logic
+
 ## Release v1.5.0
 
 Features:
