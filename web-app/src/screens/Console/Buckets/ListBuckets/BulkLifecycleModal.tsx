@@ -36,7 +36,7 @@ import { ITiersDropDown } from "../types";
 import { setModalErrorSnackMessage } from "../../../../systemSlice";
 import { useAppDispatch } from "../../../../store";
 import { api } from "api";
-import { MultiLifecycleResult, Tier } from "api/consoleApi";
+import { MultiLifecycleResult } from "api/consoleApi";
 import { errorToHandler } from "api/errors";
 
 interface IBulkReplicationModal {
@@ -72,16 +72,13 @@ const AddBulkReplicationModal = ({
   useEffect(() => {
     if (loadingTiers) {
       api.admin
-        .tiersList()
+        .tiersListNames()
         .then((res) => {
-          const tiersList: Tier[] | null = get(res.data, "items", []);
+          const tiersList: string[] | null = get(res.data, "items", []);
 
           if (tiersList !== null && tiersList.length >= 1) {
-            const objList = tiersList.map((tier: Tier) => {
-              const tierType = tier.type;
-              const value = get(tier, `${tierType}.name`, "");
-
-              return { label: value, value: value };
+            const objList = tiersList.map((tierName: string) => {
+              return { label: tierName, value: tierName };
             });
 
             setTiersList(objList);
@@ -96,7 +93,7 @@ const AddBulkReplicationModal = ({
           dispatch(setModalErrorSnackMessage(errorToHandler(err.error)));
         });
     }
-  }, [loadingTiers, dispatch]);
+  }, [dispatch, loadingTiers]);
 
   useEffect(() => {
     let valid = true;

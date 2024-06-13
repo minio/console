@@ -36,12 +36,12 @@ func TestGetTiers(t *testing.T) {
 	function := "getTiers()"
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	// Test-1 : getBucketLifecycle() get list of tiers
+	// Test-1 : getTiers() get list of tiers
 	// mock lifecycle response from MinIO
 	returnListMock := []*madmin.TierConfig{
 		{
 			Version: "V1",
-			Type:    madmin.TierType(0),
+			Type:    madmin.S3,
 			Name:    "S3 Tier",
 			S3: &madmin.TierS3{
 				Endpoint:     "https://s3tier.test.com/",
@@ -53,6 +53,19 @@ func TestGetTiers(t *testing.T) {
 				StorageClass: "TT1",
 			},
 		},
+		{
+			Version: "V1",
+			Type:    madmin.MinIO,
+			Name:    "MinIO Tier",
+			MinIO: &madmin.TierMinIO{
+				Endpoint:  "https://minio-endpoint.test.com/",
+				AccessKey: "access",
+				SecretKey: "secret",
+				Bucket:    "somebucket",
+				Prefix:    "p1",
+				Region:    "us-east-2",
+			},
+		},
 	}
 
 	returnStatsMock := []madmin.TierInfo{
@@ -60,6 +73,11 @@ func TestGetTiers(t *testing.T) {
 			Name:  "STANDARD",
 			Type:  "internal",
 			Stats: madmin.TierStats{NumObjects: 2, NumVersions: 2, TotalSize: 228915},
+		},
+		{
+			Name:  "MinIO Tier",
+			Type:  "internal",
+			Stats: madmin.TierStats{NumObjects: 10, NumVersions: 3, TotalSize: 132788},
 		},
 		{
 			Name:  "S3 Tier",
@@ -71,7 +89,7 @@ func TestGetTiers(t *testing.T) {
 	expectedOutput := &models.TierListResponse{
 		Items: []*models.Tier{
 			{
-				Type: "S3",
+				Type: models.TierTypeS3,
 				S3: &models.TierS3{
 					Accesskey:    "Access Key",
 					Secretkey:    "Secret Key",
@@ -85,6 +103,23 @@ func TestGetTiers(t *testing.T) {
 					Objects:      "0",
 					Versions:     "0",
 				},
+				Status: false,
+			},
+			{
+				Type: models.TierTypeMinio,
+				Minio: &models.TierMinio{
+					Accesskey: "access",
+					Secretkey: "secret",
+					Bucket:    "somebucket",
+					Endpoint:  "https://minio-endpoint.test.com/",
+					Name:      "MinIO Tier",
+					Prefix:    "p1",
+					Region:    "us-east-2",
+					Usage:     "130 KiB",
+					Objects:   "10",
+					Versions:  "3",
+				},
+				Status: false,
 			},
 		},
 	}
@@ -97,47 +132,20 @@ func TestGetTiers(t *testing.T) {
 		return returnStatsMock, nil
 	}
 
+	minioVerifyTierStatusMock = func(_ context.Context, _ string) error {
+		return fmt.Errorf("someerror")
+	}
+
 	tiersList, err := getTiers(ctx, adminClient)
 	if err != nil {
 		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
 	}
 	// verify length of tiers list is correct
 	assert.Equal(len(tiersList.Items), len(returnListMock), fmt.Sprintf("Failed on %s: length of lists is not the same", function))
-	for i, conf := range returnListMock {
-		switch conf.Type {
-		case madmin.TierType(0):
-			// S3
-			assert.Equal(expectedOutput.Items[i].S3.Name, conf.Name)
-			assert.Equal(expectedOutput.Items[i].S3.Bucket, conf.S3.Bucket)
-			assert.Equal(expectedOutput.Items[i].S3.Prefix, conf.S3.Prefix)
-			assert.Equal(expectedOutput.Items[i].S3.Accesskey, conf.S3.AccessKey)
-			assert.Equal(expectedOutput.Items[i].S3.Secretkey, conf.S3.SecretKey)
-			assert.Equal(expectedOutput.Items[i].S3.Endpoint, conf.S3.Endpoint)
-			assert.Equal(expectedOutput.Items[i].S3.Region, conf.S3.Region)
-			assert.Equal(expectedOutput.Items[i].S3.Storageclass, conf.S3.StorageClass)
-		case madmin.TierType(1):
-			// Azure
-			assert.Equal(expectedOutput.Items[i].Azure.Name, conf.Name)
-			assert.Equal(expectedOutput.Items[i].Azure.Bucket, conf.Azure.Bucket)
-			assert.Equal(expectedOutput.Items[i].Azure.Prefix, conf.Azure.Prefix)
-			assert.Equal(expectedOutput.Items[i].Azure.Accountkey, conf.Azure.AccountKey)
-			assert.Equal(expectedOutput.Items[i].Azure.Accountname, conf.Azure.AccountName)
-			assert.Equal(expectedOutput.Items[i].Azure.Endpoint, conf.Azure.Endpoint)
-			assert.Equal(expectedOutput.Items[i].Azure.Region, conf.Azure.Region)
-		case madmin.TierType(2):
-			// GCS
-			assert.Equal(expectedOutput.Items[i].Gcs.Name, conf.Name)
-			assert.Equal(expectedOutput.Items[i].Gcs.Bucket, conf.GCS.Bucket)
-			assert.Equal(expectedOutput.Items[i].Gcs.Prefix, conf.GCS.Prefix)
-			assert.Equal(expectedOutput.Items[i].Gcs.Creds, conf.GCS.Creds)
-			assert.Equal(expectedOutput.Items[i].Gcs.Endpoint, conf.GCS.Endpoint)
-			assert.Equal(expectedOutput.Items[i].Gcs.Region, conf.GCS.Region)
-		}
-	}
+	assert.Equal(expectedOutput, tiersList)
 
-	// Test-2 : getBucketLifecycle() list is empty
+	// Test-2 : getTiers() list is empty
 	returnListMockT2 := []*madmin.TierConfig{}
-
 	minioListTiersMock = func(_ context.Context) ([]*madmin.TierConfig, error) {
 		return returnListMockT2, nil
 	}
@@ -148,6 +156,78 @@ func TestGetTiers(t *testing.T) {
 	}
 
 	if len(tiersListT2.Items) != 0 {
+		t.Errorf("Failed on %s:, returned list was not empty", function)
+	}
+}
+
+func TestGetTiersName(t *testing.T) {
+	assert := assert.New(t)
+	// mock minIO client
+	adminClient := AdminClientMock{}
+
+	function := "getTiersName()"
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	// Test-1 : getTiersName() get list tiers' names
+	// mock lifecycle response from MinIO
+	returnListMock := []*madmin.TierConfig{
+		{
+			Version: "V1",
+			Type:    madmin.S3,
+			Name:    "S3 Tier",
+			S3: &madmin.TierS3{
+				Endpoint:     "https://s3tier.test.com/",
+				AccessKey:    "Access Key",
+				SecretKey:    "Secret Key",
+				Bucket:       "buckets3",
+				Prefix:       "pref1",
+				Region:       "us-west-1",
+				StorageClass: "TT1",
+			},
+		},
+		{
+			Version: "V1",
+			Type:    madmin.MinIO,
+			Name:    "MinIO Tier",
+			MinIO: &madmin.TierMinIO{
+				Endpoint:  "https://minio-endpoint.test.com/",
+				AccessKey: "access",
+				SecretKey: "secret",
+				Bucket:    "somebucket",
+				Prefix:    "p1",
+				Region:    "us-east-2",
+			},
+		},
+	}
+
+	expectedOutput := &models.TiersNameListResponse{
+		Items: []string{"S3 Tier", "MinIO Tier"},
+	}
+
+	minioListTiersMock = func(_ context.Context) ([]*madmin.TierConfig, error) {
+		return returnListMock, nil
+	}
+
+	tiersList, err := getTiersName(ctx, adminClient)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+	// verify length of tiers list is correct
+	assert.Equal(len(tiersList.Items), len(returnListMock), fmt.Sprintf("Failed on %s: length of lists is not the same", function))
+	assert.Equal(expectedOutput, tiersList)
+
+	// Test-2 : getTiersName() list is empty
+	returnListMockT2 := []*madmin.TierConfig{}
+	minioListTiersMock = func(_ context.Context) ([]*madmin.TierConfig, error) {
+		return returnListMockT2, nil
+	}
+
+	emptyTierList, err := getTiersName(ctx, adminClient)
+	if err != nil {
+		t.Errorf("Failed on %s:, error occurred: %s", function, err.Error())
+	}
+
+	if len(emptyTierList.Items) != 0 {
 		t.Errorf("Failed on %s:, returned list was not empty", function)
 	}
 }
