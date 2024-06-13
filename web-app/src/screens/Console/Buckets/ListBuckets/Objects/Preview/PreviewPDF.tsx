@@ -18,7 +18,7 @@ import React, { Fragment, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Box, Button, InformativeMessage } from "mds";
 
-pdfjs.GlobalWorkerOptions.workerSrc = "./scripts/pdf.worker.min.js";
+pdfjs.GlobalWorkerOptions.workerSrc = "./scripts/pdf.worker.min.mjs";
 
 interface IPreviewPDFProps {
   path: string;
