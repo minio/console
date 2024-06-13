@@ -57,4 +57,4 @@ jobs:
           # - https://github.com/wojtekmaj/react-pdf/issues/1789
           # - https://github.com/wojtekmaj/react-pdf/discussions/1786
           # - https://www.npmjs.com/advisories/1097244    
-          yarn npm audit --recursive --environment production --no-deprecations --ignore 1097244
+          yarn npm audit --recursive --environment production --no-deprecations
