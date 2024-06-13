@@ -21,7 +21,7 @@ import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { resetSession } from "../Console/consoleSlice";
 import { useAppDispatch } from "../../store";
 import { resetSystem } from "../../systemSlice";
-import { getLogoVar } from "../../config";
+import { getLogoApplicationVariant, getLogoVar } from "../../config";
 import ObjectBrowser from "../Console/ObjectBrowser/ObjectBrowser";
 import LoadingComponent from "../../common/LoadingComponent";
 import ObjectManager from "../Console/Common/ObjectManager/ObjectManager";
@@ -46,7 +46,7 @@ const AnonymousAccess = () => {
       >
         <div style={{ width: 200, flexShrink: 1 }}>
           <ApplicationLogo
-            applicationName={"console"}
+            applicationName={getLogoApplicationVariant()}
             subVariant={getLogoVar()}
             inverse={true}
           />

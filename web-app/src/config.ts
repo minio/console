@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { ApplicationLogoProps } from "mds";
+
 export const MinIOPlan =
   (
     document.head.querySelector(
@@ -21,11 +23,25 @@ export const MinIOPlan =
     ) as HTMLMetaElement
   )?.content || "AGPL";
 
-type LogoVar = "simple" | "AGPL" | "standard" | "enterprise";
+type LogoVar =
+  | "AGPL"
+  | "simple"
+  | "standard"
+  | "enterprise"
+  | "new"
+  | "enterpriseos"
+  | "enterpriseosvertical"
+  | undefined;
 
 export const getLogoVar = (): LogoVar => {
   let logoVar: LogoVar = "AGPL";
   switch (MinIOPlan.toLowerCase()) {
+    case "enterprise-lite":
+      logoVar = "enterpriseos";
+      break;
+    case "enterprise-plus":
+      logoVar = "enterpriseos";
+      break;
     case "enterprise":
       logoVar = "enterprise";
       break;
@@ -39,7 +55,26 @@ export const getLogoVar = (): LogoVar => {
   return logoVar;
 };
 
+export const getLogoApplicationVariant =
+  (): ApplicationLogoProps["applicationName"] => {
+    switch (MinIOPlan.toLowerCase()) {
+      case "enterprise-lite":
+      case "enterprise-plus":
+        return "minio";
+      default:
+        return "console";
+    }
+  };
+
 export const registeredCluster = (): boolean => {
   const plan = getLogoVar();
-  return plan === "standard" || plan === "enterprise";
+  return [
+    "AGPL",
+    "simple",
+    "standard",
+    "enterprise",
+    "new",
+    "enterpriseos",
+    "enterpriseosvertical",
+  ].includes(plan || "AGPL");
 };

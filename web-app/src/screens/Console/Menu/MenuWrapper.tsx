@@ -21,7 +21,11 @@ import { AppState, useAppDispatch } from "../../../store";
 import { validRoutes } from "../valid-routes";
 import { menuOpen } from "../../../systemSlice";
 import { selFeatures } from "../consoleSlice";
-import { getLogoVar, registeredCluster } from "../../../config";
+import {
+  getLogoApplicationVariant,
+  getLogoVar,
+  registeredCluster,
+} from "../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getLicenseConsent } from "../License/utils";
 
@@ -55,7 +59,10 @@ const MenuWrapper = () => {
       isOpen={sidebarOpen}
       displayGroupTitles
       options={allowedMenuItems}
-      applicationLogo={{ applicationName: "console", subVariant: getLogoVar() }}
+      applicationLogo={{
+        applicationName: getLogoApplicationVariant(),
+        subVariant: getLogoVar(),
+      }}
       callPathAction={(path) => {
         navigate(path);
       }}

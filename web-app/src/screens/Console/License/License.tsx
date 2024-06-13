@@ -89,7 +89,11 @@ const License = () => {
         if (res) {
           if (res.plan === "STANDARD") {
             setCurrentPlanID(1);
-          } else if (res.plan === "ENTERPRISE") {
+          } else if (
+            ["ENTERPRISE", "ENTERPRISE-LITE", "ENTERPRISE-PLUS"].includes(
+              res.plan,
+            )
+          ) {
             setCurrentPlanID(2);
           } else {
             setCurrentPlanID(1);
