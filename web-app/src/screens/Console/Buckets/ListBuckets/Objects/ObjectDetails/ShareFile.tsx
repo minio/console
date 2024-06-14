@@ -56,15 +56,13 @@ const ShareFile = ({
 }: IShareFileProps) => {
   const dispatch = useAppDispatch();
   const distributedSetup = useSelector(selDistSet);
-  const maxshareLinkExpTimeVal = useSelector(maxShareLinkExpTime);
+  const maxShareLinkExpTimeVal = useSelector(maxShareLinkExpTime);
   const [shareURL, setShareURL] = useState<string>("");
   const [isLoadingVersion, setIsLoadingVersion] = useState<boolean>(true);
   const [isLoadingFile, setIsLoadingFile] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [dateValid, setDateValid] = useState<boolean>(true);
   const [versionID, setVersionID] = useState<string>("null");
-
-  const initialDate = new Date();
 
   const dateChanged = (newDate: string, isValid: boolean) => {
     setDateValid(isValid);
@@ -205,7 +203,7 @@ const ShareFile = ({
                   The following URL lets you share this object without requiring
                   a login. <br />
                   The URL expires automatically at the earlier of your
-                  configured time ({niceTimeFromSeconds(maxshareLinkExpTimeVal)}
+                  configured time ({niceTimeFromSeconds(maxShareLinkExpTimeVal)}
                   ) or the expiration of your current web session.
                 </span>
               </Tooltip>
@@ -213,10 +211,9 @@ const ShareFile = ({
             <br />
             <Grid item xs={12}>
               <DaysSelector
-                initialDate={initialDate}
                 id="date"
                 label="Active for"
-                maxSeconds={maxshareLinkExpTimeVal}
+                maxSeconds={maxShareLinkExpTimeVal}
                 onChange={dateChanged}
                 entity="Link"
               />

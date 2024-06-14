@@ -24,28 +24,23 @@ const HOUR_MINUTES = 60;
 
 interface IDaysSelector {
   id: string;
-  initialDate: Date;
   maxSeconds: number;
   label: string;
   entity: string;
   onChange: (newDate: string, isValid: boolean) => void;
 }
 
-const calculateNewTime = (
-  initialDate: Date,
-  days: number,
-  hours: number,
-  minutes: number,
-) => {
-  return DateTime.fromJSDate(initialDate).plus({
-    hours: hours + days * 24,
-    minutes,
-  }); // Lump days into hours to avoid daylight savings causing issues
+const calculateNewTime = (days: number, hours: number, minutes: number) => {
+  return DateTime.now()
+    .plus({
+      hours: hours + days * 24,
+      minutes,
+    })
+    .toISO(); // Lump days into hours to avoid daylight savings causing issues
 };
 
 const DaysSelector = ({
   id,
-  initialDate,
   label,
   maxSeconds,
   entity,
@@ -59,7 +54,7 @@ const DaysSelector = ({
   const [selectedHours, setSelectedHours] = useState<number>(0);
   const [selectedMinutes, setSelectedMinutes] = useState<number>(0);
   const [validDate, setValidDate] = useState<boolean>(true);
-  const [dateSelected, setDateSelected] = useState<DateTime>(DateTime.now());
+  const [dateSelected, setDateSelected] = useState<string | null>(null);
 
   // Set initial values
   useEffect(() => {
@@ -75,19 +70,16 @@ const DaysSelector = ({
       !isNaN(selectedMinutes)
     ) {
       setDateSelected(
-        calculateNewTime(
-          initialDate,
-          selectedDays,
-          selectedHours,
-          selectedMinutes,
-        ),
+        calculateNewTime(selectedDays, selectedHours, selectedMinutes),
       );
     }
-  }, [initialDate, selectedDays, selectedHours, selectedMinutes]);
+  }, [selectedDays, selectedHours, selectedMinutes]);
 
   useEffect(() => {
-    if (validDate) {
-      const formattedDate = dateSelected.toFormat("yyyy-MM-dd HH:mm:ss");
+    if (validDate && dateSelected) {
+      const formattedDate = DateTime.fromISO(dateSelected).toFormat(
+        "yyyy-MM-dd HH:mm:ss",
+      );
       onChange(formattedDate.split(" ").join("T"), true);
     } else {
       onChange("0000-00-00", false);
@@ -270,12 +262,14 @@ const DaysSelector = ({
           },
         }}
       >
-        {validDate ? (
+        {validDate && dateSelected ? (
           <div className={"validityText"}>
             <LinkIcon />
             <div>{entity} will be available until:</div>{" "}
             <div className={"validTill"}>
-              {dateSelected.toFormat("MM/dd/yyyy HH:mm:ss ZZZZ")}
+              {DateTime.fromISO(dateSelected).toFormat(
+                "MM/dd/yyyy HH:mm:ss ZZZZ",
+              )}
             </div>
           </div>
         ) : (

@@ -50,11 +50,4 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          # Ignore "pdfjs-dist" advisory, because it's a dependency
-          # of "react-pdf" that cannot be upgraded. Because the
-          # "isEvalSupported" value is always set to "false", it
-          # isn't a security problem. See also
-          # - https://github.com/wojtekmaj/react-pdf/issues/1789
-          # - https://github.com/wojtekmaj/react-pdf/discussions/1786
-          # - https://www.npmjs.com/advisories/1097244    
           yarn npm audit --recursive --environment production --no-deprecations
