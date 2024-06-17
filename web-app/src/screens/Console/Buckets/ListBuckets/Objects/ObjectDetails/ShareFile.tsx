@@ -40,6 +40,7 @@ import { api } from "api";
 import { errorToHandler } from "api/errors";
 import { getMaxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserThunks";
 import { maxShareLinkExpTime } from "screens/Console/ObjectBrowser/objectBrowserSlice";
+import debounce from "lodash/debounce";
 
 interface IShareFileProps {
   open: boolean;
@@ -64,7 +65,7 @@ const ShareFile = ({
   const [dateValid, setDateValid] = useState<boolean>(true);
   const [versionID, setVersionID] = useState<string>("null");
 
-  const dateChanged = (newDate: string, isValid: boolean) => {
+  const debouncedDateChange = debounce((newDate: string, isValid: boolean) => {
     setDateValid(isValid);
     if (isValid) {
       setSelectedDate(newDate);
@@ -72,7 +73,7 @@ const ShareFile = ({
     }
     setSelectedDate("");
     setShareURL("");
-  };
+  }, 300);
 
   useEffect(() => {
     dispatch(getMaxShareLinkExpTime());
@@ -214,7 +215,7 @@ const ShareFile = ({
                 id="date"
                 label="Active for"
                 maxSeconds={maxShareLinkExpTimeVal}
-                onChange={dateChanged}
+                onChange={debouncedDateChange}
                 entity="Link"
               />
             </Grid>
