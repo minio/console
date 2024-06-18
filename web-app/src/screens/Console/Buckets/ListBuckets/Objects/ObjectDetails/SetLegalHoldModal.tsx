@@ -99,7 +99,7 @@ const SetLegalHoldModal = ({
       >
         <FormLayout withBorders={false} containerPadding={false}>
           <Box className={"inputItem"}>
-            <strong>Object</strong>: {bucketName}
+            <strong>Object</strong>: {bucketName + "/" + objectName}
           </Box>
           <Switch
             value="legalhold"
