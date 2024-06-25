@@ -2,6 +2,18 @@
 
 # Changelog
 
+## Release v1.6.1
+
+Bug Fix:
+
+- Fixed objectManager issues under certain conditions
+- Fixed Security vulnerability in dependencies
+
+Additional Changes:
+
+- Improved Share Link behavior
+
+
 ## Release v1.6.0
 
 Bug Fix:
