@@ -14,9 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React from "react";
+import { useMemo } from "react";
 import get from "lodash/get";
-import styled from "styled-components";
+import { useTheme } from "styled-components";
 import { niceBytes } from "../../../../common/utils";
 import { Box, breakPoints, CircleIcon, SizeChart } from "mds";
 import { ServerDrives } from "api/consoleApi";
@@ -26,159 +26,200 @@ interface ICardProps {
   drive: ServerDrives;
 }
 
-const driveStatusColor = (health_status: string) => {
-  switch (health_status) {
-    case "offline":
-      return STATUS_COLORS.RED;
-    case "ok":
-      return STATUS_COLORS.GREEN;
-    default:
-      return STATUS_COLORS.YELLOW;
-  }
-};
-
-const DataContainerMain = styled.div(({ theme }) => ({
-  flex: 1,
-  display: "flex",
-  alignItems: "center",
-  paddingLeft: "20px",
-  marginTop: "10px",
-  flexFlow: "row",
-  "& .info-label": {
-    color: get(theme, "mutedText", "#87888d"),
-    fontSize: "12px",
-    textAlign: "center",
-  },
-  "& .info-value": {
-    fontSize: "18px",
-    color: get(theme, "signalColors.main", "#07193E"),
-    display: "flex",
-    fontWeight: 500,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  },
-  [`@media (max-width: ${breakPoints.sm}px)`]: {
-    flexFlow: "column",
-  },
-}));
-
 const DriveInfoItem = ({ drive }: ICardProps) => {
-  const totalSpace = drive.totalSpace || 0;
-  const usedSpace = drive.usedSpace || 0;
+  const theme = useTheme();
+
+  const totalSpace = drive.totalSpace ?? 0;
+  const usedSpace = drive.usedSpace ?? 0;
+  const usedPercentage =
+    totalSpace !== 0 ? Math.max((usedSpace / totalSpace) * 100, 0) : 0;
+  const availableSpace = drive.availableSpace ?? 0;
+  const availablePercentage =
+    totalSpace !== 0 ? Math.max((availableSpace / totalSpace) * 100, 0) : 0;
+
+  const driveStatusColor = useMemo(() => {
+    switch (drive.state) {
+      case "offline":
+        return STATUS_COLORS.RED;
+      case "ok":
+        return STATUS_COLORS.GREEN;
+      default:
+        return STATUS_COLORS.YELLOW;
+    }
+  }, [drive.state]);
+
+  const driveStatusText = useMemo(() => {
+    switch (drive.state) {
+      case "offline":
+        return "Offline Drive";
+      case "ok":
+        return "Online Drive";
+      default:
+        return "Unknown";
+    }
+  }, [drive.state]);
 
   return (
     <Box
       withBorders
       sx={{
         display: "flex",
-        flex: 1,
+        flexFlow: "row",
+        padding: 12,
+        gap: 24,
         alignItems: "center",
-        paddingBottom: "10px",
-        padding: "20px",
+        [`@media (max-width: ${breakPoints.xs}px)`]: {
+          flexFlow: "column",
+          alignItems: "start",
+        },
+        "& .info-label": {
+          color: get(theme, "mutedText", "#87888d"),
+          fontSize: 12,
+        },
+        "& .info-value": {
+          fontSize: 18,
+          color: get(theme, "signalColors.main", "#07193E"),
+          display: "flex",
+          fontWeight: 500,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        },
+        "& .drive-endpoint": {
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "normal",
+          wordBreak: "break-all",
+          fontWeight: 600,
+          fontSize: 16,
+          [`@media (max-width: ${breakPoints.sm}px)`]: {
+            fontSize: 10,
+          },
+        },
+        "& .percentage-row": {
+          display: "flex",
+          gap: 4,
+          alignItems: "center",
+          fontSize: 12,
+          "& .percentage-value": {
+            fontWeight: 700,
+          },
+        },
       }}
     >
+      <SizeChart
+        chartLabel="Used Capacity"
+        label={true}
+        usedBytes={usedSpace}
+        totalBytes={totalSpace}
+        width={"153"}
+        height={"153"}
+      />
       <Box
         sx={{
           display: "flex",
           flexFlow: "column",
-          marginLeft: "10px",
+          gap: 12,
           flex: 1,
         }}
       >
         <Box
           sx={{
-            fontSize: "14px",
-            fontWeight: 400,
             display: "flex",
-            alignItems: "center",
-
-            "& .min-icon": {
-              marginRight: "10px",
-              height: "10px",
-              width: "10px",
-              fill: driveStatusColor(drive.state || ""),
-              flexShrink: 0,
-            },
-
-            "& .drive-endpoint": {
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "normal",
-              wordBreak: "break-all",
-              marginRight: "8px",
-              fontWeight: 600,
-              fontSize: 16,
-              [`@media (max-width: ${breakPoints.sm}px)`]: {
-                fontSize: 10,
-              },
+            flexFlow: "row",
+            gap: 8,
+            [`@media (max-width: ${breakPoints.xs}px)`]: {
+              flexFlow: "column",
             },
           }}
         >
-          <div className="drive-endpoint">{drive.endpoint || ""}</div>
-          {drive.state && <CircleIcon />}
-        </Box>
-
-        <DataContainerMain>
-          <Box sx={{ flex: 1 }}>
-            <SizeChart
-              label={true}
-              usedBytes={usedSpace}
-              totalBytes={totalSpace}
-              width={"120"}
-              height={"120"}
-            />
+          <Box
+            sx={{
+              flex: "1 1 60%",
+              [`@media (max-width: ${breakPoints.xs}px)`]: {
+                flex: "1 1 100%",
+              },
+            }}
+          >
+            <label className="info-label">Drive Name</label>
+            <Box className="drive-endpoint">{drive.endpoint ?? ""}</Box>
           </Box>
-
+          <Box
+            sx={{
+              flex: "1 1 20%",
+              [`@media (max-width: ${breakPoints.xs}px)`]: {
+                flex: "1 1 100%",
+              },
+            }}
+          >
+            <label className="info-label">Drive Status</label>
+            <Box
+              sx={{
+                display: "flex",
+                flexFlow: "row",
+                alignItems: "center",
+                fontSize: 12,
+                fontWeight: 600,
+                gap: 4,
+                color: driveStatusColor,
+                "& .min-icon": {
+                  height: 8,
+                  width: 8,
+                  flexShrink: 0,
+                },
+              }}
+            >
+              <CircleIcon />
+              {driveStatusText}
+            </Box>
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexFlow: "row",
+            gap: 36,
+          }}
+        >
           <Box
             sx={{
               display: "flex",
-              gap: "5%",
-              alignItems: "center",
-              flex: 2,
-              flexGrow: 1,
+              flexFlow: "column",
             }}
           >
-            <Box
-              sx={{
-                display: "flex",
-                flexFlow: "column",
-              }}
-            >
-              <div className="info-value">
-                {niceBytes(
-                  drive.totalSpace ? drive.totalSpace.toString() : "0",
-                )}
-              </div>
-              <label className="info-label">Capacity</label>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexFlow: "column",
-              }}
-            >
-              <div className="info-value">
-                {niceBytes(drive.usedSpace ? drive.usedSpace.toString() : "0")}
-              </div>
-              <label className="info-label">Used</label>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexFlow: "column",
-              }}
-            >
-              <div className="info-value">
-                {niceBytes(
-                  drive.availableSpace ? drive.availableSpace.toString() : "0",
-                )}
-              </div>
-              <label className="info-label">Available</label>
+            <label className="info-label">Used Capacity</label>
+            <Box className="info-value">{niceBytes(usedSpace.toString())}</Box>
+            <Box className="percentage-row">
+              <Box className="percentage-value">
+                {usedPercentage.toFixed(2)}%
+              </Box>
+              <Box>of {niceBytes(totalSpace.toString())}</Box>
             </Box>
           </Box>
-        </DataContainerMain>
+          <Box
+            sx={{
+              width: 1,
+              backgroundColor: get(theme, "borderColor", "#BBBBBB"),
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexFlow: "column",
+            }}
+          >
+            <label className="info-label">Available Capacity</label>
+            <Box className="info-value">
+              {niceBytes(availableSpace.toString())}
+            </Box>
+            <Box className="percentage-row">
+              <Box className="percentage-value">
+                {availablePercentage.toFixed(2)}%
+              </Box>
+              <Box>of {niceBytes(totalSpace.toString())}</Box>
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
