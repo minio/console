@@ -31,9 +31,11 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
 
   const totalSpace = drive.totalSpace ?? 0;
   const usedSpace = drive.usedSpace ?? 0;
-  const usedPercentage = (usedSpace / totalSpace) * 100;
+  const usedPercentage =
+    totalSpace !== 0 ? Math.max((usedSpace / totalSpace) * 100, 0) : 0;
   const availableSpace = drive.availableSpace ?? 0;
-  const availablePercentage = (availableSpace / totalSpace) * 100;
+  const availablePercentage =
+    totalSpace !== 0 ? Math.max((availableSpace / totalSpace) * 100, 0) : 0;
 
   const driveStatusColor = useMemo(() => {
     switch (drive.state) {
