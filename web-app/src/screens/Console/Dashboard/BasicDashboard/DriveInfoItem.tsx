@@ -68,9 +68,6 @@ const DriveInfoItem = ({ drive }: ICardProps) => {
         padding: 12,
         gap: 24,
         alignItems: "center",
-        [`@media (max-width: ${breakPoints.sm}px)`]: {
-          padding: 24,
-        },
         [`@media (max-width: ${breakPoints.xs}px)`]: {
           flexFlow: "column",
           alignItems: "start",
