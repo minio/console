@@ -26,13 +26,12 @@ jobs:
         os: [ubuntu-latest]
     steps:
       - name: Check out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -75,12 +74,12 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
           cache: "yarn"
           cache-dependency-path: web-app/yarn.lock
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: assets-cache
         name: Assets Cache
         with:
@@ -133,7 +132,7 @@ jobs:
             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
           fi
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
         id: go-minio
@@ -158,18 +157,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
             ./console
           key: ${{ runner.os }}-binary-${{ github.run_id }}
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: assets-cache
         name: Assets Cache
         with:
@@ -201,7 +199,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -210,7 +208,7 @@ jobs:
         run: |
           yarn add minio
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -255,7 +253,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -264,7 +262,7 @@ jobs:
         run: |
           yarn add minio
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -308,7 +306,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -316,7 +314,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -360,7 +358,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -368,7 +366,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -412,7 +410,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -420,7 +418,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -460,7 +458,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -468,7 +466,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -508,7 +506,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -516,7 +514,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -556,7 +554,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -564,7 +562,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -603,7 +601,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -611,7 +609,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -651,7 +649,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -659,7 +657,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -702,7 +700,7 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
       - name: Install MinIO JS
@@ -710,7 +708,7 @@ jobs:
         continue-on-error: false
         run: |
           yarn add minio
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache
         with:
           path: |
@@ -752,10 +750,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -765,7 +762,7 @@ jobs:
         run: |
           make test-pkg
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-pkg
         name: Coverage Cache Pkg
         with:
@@ -788,10 +785,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -801,7 +797,7 @@ jobs:
         run: |
           make test
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-api
         name: Coverage Cache API
         with:
@@ -841,7 +837,7 @@ jobs:
             git remote add alt $ALTREPO
             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
           fi
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: minio-latest-cache
         name: MinIO Latest Cache
         with:
@@ -849,10 +845,9 @@ jobs:
             ./minio
           key: ${{ runner.os }}-minio-latest-${{ hashFiles('./minio_repository/go.sum') }}
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -881,7 +876,7 @@ jobs:
           echo "Create the folder to put the all.out file"
           make test-integration MINIO_VERSION=$MINIO_VERSION;
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache
         name: Coverage Cache
         with:
@@ -923,10 +918,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Clone github.com/minio/minio
@@ -946,7 +940,7 @@ jobs:
             git remote add alt $ALTREPO
             (git fetch alt && git checkout "alt/$GH_BRANCH") || echo "$ALTREPO ($GH_BRANCH) not available, so keeping default repository/branch"
           fi
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: minio-latest-cache
         name: MinIO Latest Cache
         with:
@@ -973,7 +967,7 @@ jobs:
           echo $MINIO_VERSION;
 
           make test-replication MINIO_VERSION=$MINIO_VERSION;
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-replication
         name: Coverage Cache Replication
         with:
@@ -1006,10 +1000,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Clone github.com/minio/minio
@@ -1035,7 +1028,7 @@ jobs:
 
           git checkout "${{ github.head_ref || github.ref_name }}" || echo "Okay, we'll stay on the master branch"
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: minio-latest-cache
         name: MinIO Latest Cache
         with:
@@ -1050,7 +1043,7 @@ jobs:
           echo "replace github.com/minio/console => ../" >> go.mod
 
           echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.21
+          go mod tidy -compat=1.22
 
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
@@ -1067,7 +1060,7 @@ jobs:
           echo $MINIO_VERSION;
 
           make test-sso-integration MINIO_VERSION=$MINIO_VERSION;
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-sso
         name: Coverage Cache SSO
         with:
@@ -1091,10 +1084,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
       - name: Check out gocovmerge as a nested repository
         uses: actions/checkout@v3
@@ -1102,7 +1094,7 @@ jobs:
           repository: wadey/gocovmerge
           path: gocovmerge
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache
         name: Coverage Cache
         with:
@@ -1110,7 +1102,7 @@ jobs:
             ./integration/coverage/
           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-sso
         name: Coverage Cache SSO
         with:
@@ -1118,7 +1110,7 @@ jobs:
             ./sso-integration/coverage/
           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-replication
         name: Coverage Cache Replication
         with:
@@ -1126,7 +1118,7 @@ jobs:
             ./replication/coverage/
           key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-api
         name: Coverage Cache API
         with:
@@ -1134,7 +1126,7 @@ jobs:
             ./api/coverage/
           key: ${{ runner.os }}-coverage-api-2-${{ github.run_id }}
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: coverage-cache-pkg
         name: Coverage Cache Pkg
         with:
@@ -1155,7 +1147,7 @@ jobs:
           echo "download golang x tools"
           go mod download golang.org/x/tools
           echo "go mod tidy compat mode"
-          go mod tidy -compat=1.21
+          go mod tidy -compat=1.22
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
@@ -1241,12 +1233,12 @@ jobs:
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
           cache: "yarn"
           cache-dependency-path: web-app/yarn.lock
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
         with:
@@ -1280,18 +1272,17 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache Istanbul Coverage
         with:
           path: |
             ./console
           key: ${{ runner.os }}-binary-istanbul-coverage-${{ github.run_id }}
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
         with:
@@ -1321,10 +1312,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -1349,10 +1339,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -1378,10 +1367,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -1407,10 +1395,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -1436,10 +1423,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Go ${{ matrix.go-version }} on ${{ matrix.os }}
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
         id: go
 
       - name: Build on ${{ matrix.os }}
@@ -1458,7 +1444,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Enable Corepack
         run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: 18
 
@@ -1474,7 +1460,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         name: Console Binary Cache Istanbul Coverage
         with:
           path: |
