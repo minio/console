@@ -115,7 +115,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 
 		// All calls from console are signature v4.
 		condition.S3SignatureVersion.Name(): {"AWS4-HMAC-SHA256"},
-		// All calls from console are signature v4.
+		// All calls from console use header-based authentication
 		condition.S3AuthType.Name(): {"REST-HEADER"},
 		// This is usually empty, may be set some times (rare).
 		condition.S3LocationConstraint.Name(): {GetMinIORegion()},
