@@ -237,15 +237,6 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		resourcePermissions[key] = resourceActions
 
 	}
-	serializedPolicy, err := json.Marshal(policy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
-	}
-	var sessionPolicy *models.IamPolicy
-	err = json.Unmarshal(serializedPolicy, &sessionPolicy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
 
 	// environment constants
 	var envConstants models.EnvironmentConstants
