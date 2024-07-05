@@ -55,12 +55,7 @@ func registerSessionHandlers(api *operations.ConsoleAPI) {
 }
 
 func getClaimsFromToken(sessionToken string) (map[string]interface{}, error) {
-	jp := new(jwtgo.Parser)
-	// nolint:staticcheck // ignore SA1019
-	jp.ValidMethods = []string{
-		"RS256", "RS384", "RS512", "ES256", "ES384", "ES512",
-		"RS3256", "RS3384", "RS3512", "ES3256", "ES3384", "ES3512",
-	}
+	jp := jwtgo.NewParser()
 	var claims jwtgo.MapClaims
 	_, _, err := jp.ParseUnverified(sessionToken, &claims)
 	if err != nil {
@@ -115,7 +110,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 
 		// All calls from console are signature v4.
 		condition.S3SignatureVersion.Name(): {"AWS4-HMAC-SHA256"},
-		// All calls from console are signature v4.
+		// All calls from console use header-based authentication
 		condition.S3AuthType.Name(): {"REST-HEADER"},
 		// This is usually empty, may be set some times (rare).
 		condition.S3LocationConstraint.Name(): {GetMinIORegion()},
@@ -236,15 +231,6 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		}
 		resourcePermissions[key] = resourceActions
 
-	}
-	serializedPolicy, err := json.Marshal(policy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
-	}
-	var sessionPolicy *models.IamPolicy
-	err = json.Unmarshal(serializedPolicy, &sessionPolicy)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
 	}
 
 	// environment constants
