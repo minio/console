@@ -67,7 +67,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 			mType, message, err := wsc.conn.readMessage()
 			if err != nil {
-				LogInfo("Error while reading objectManager message", err)
+				LogInfo("Error while reading objectManager message: %s", err)
 				return
 			}
 
@@ -76,7 +76,7 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 				var messageRequest ObjectsRequest
 
 				if err := json.Unmarshal(message, &messageRequest); err != nil {
-					LogInfo("Error on message request unmarshal", err)
+					LogInfo("Error on message request unmarshal: %s", err)
 					continue
 				}
 
@@ -267,13 +267,13 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 	for writeM := range writeChannel {
 		jsonData, err := json.Marshal(writeM)
 		if err != nil {
-			LogInfo("Error while marshaling the response", err)
+			LogInfo("Error while marshaling the response: %s", err)
 			return
 		}
 
 		err = wsc.conn.writeMessage(websocket.TextMessage, jsonData)
 		if err != nil {
-			LogInfo("Error while writing the message", err)
+			LogInfo("Error while writing the message: %s", err)
 			return
 		}
 	}
