@@ -177,9 +177,19 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	clientIP := getSourceIPFromHeaders(req)
+	if clientIP == "" {
+		if ip, _, err := net.SplitHostPort(conn.RemoteAddr().String()); err == nil {
+			clientIP = ip
+		} else {
+			// In case there's an error, return an empty string
+			LogError("Invalid ws.RemoteAddr() = %v\n", err)
+		}
+	}
+
 	switch {
 	case strings.HasPrefix(wsPath, `/trace`):
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -216,7 +226,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		go wsAdminClient.trace(ctx, traceRequestItem)
 	case strings.HasPrefix(wsPath, `/console`):
 
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -237,7 +247,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -251,7 +261,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName, "")
+		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName, "", clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -265,7 +275,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -279,7 +289,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			closeWsConn(conn)
 			return
 		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session)
+		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -288,7 +298,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		go wsAdminClient.profile(ctx, pOptions)
 
 	case strings.HasPrefix(wsPath, `/objectManager`):
-		wsMinioClient, err := newWebSocketMinioClient(conn, session)
+		wsMinioClient, err := newWebSocketMinioClient(conn, session, clientIP)
 		if err != nil {
 			ErrorWithContext(ctx, err)
 			closeWsConn(conn)
@@ -303,12 +313,11 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 }
 
 // newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
-func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) (*wsAdminClient, error) {
+func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal, clientIP string) (*wsAdminClient, error) {
 	// create a websocket connection interface implementation
 	// defining the connection to be used
 	wsConnection := wsConn{conn: conn}
 
-	clientIP := wsConnection.remoteAddress()
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
 	mAdmin, err := newAdminFromClaims(autClaims, clientIP)
@@ -326,15 +335,9 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal) 
 }
 
 // newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix string) (*wsS3Client, error) {
+func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix, clientIP string) (*wsS3Client, error) {
 	// Only start Websocket Interaction after user has been
 	// authenticated with MinIO
-	clientIP, _, err := net.SplitHostPort(conn.RemoteAddr().String())
-	if err != nil {
-		// In case there's an error, return an empty string
-		log.Printf("Invalid ws.clientIP = %s\n", err)
-	}
-
 	s3Client, err := newS3BucketClient(claims, bucketName, prefix, clientIP)
 	if err != nil {
 		LogError("error creating S3Client:", err)
@@ -351,14 +354,7 @@ func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucket
 	return wsS3Client, nil
 }
 
-func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal) (*wsMinioClient, error) {
-	// Only start Websocket Interaction after user has been
-	// authenticated with MinIO
-	clientIP, _, err := net.SplitHostPort(conn.RemoteAddr().String())
-	if err != nil {
-		// In case there's an error, return an empty string
-		log.Printf("Invalid ws.clientIP = %s\n", err)
-	}
+func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal, clientIP string) (*wsMinioClient, error) {
 	mClient, err := newMinioClient(claims, clientIP)
 	if err != nil {
 		LogError("error creating MinioClient:", err)
