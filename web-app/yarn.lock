@@ -2484,14 +2484,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.44.1":
-  version: 1.44.1
-  resolution: "@playwright/test@npm:1.44.1"
+"@playwright/test@npm:^1.45.1":
+  version: 1.45.1
+  resolution: "@playwright/test@npm:1.45.1"
   dependencies:
-    playwright: "npm:1.44.1"
+    playwright: "npm:1.45.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/f72669db3dfa83dc12d43ddbce8fbb27a69a80347b515fa00d8467ca640f8c7b7f5f5ff6d6cdfc5a1bce2c7d4b6ee62b988d682ef265f567302998de4f2a64ab
+  checksum: 10c0/ba214addee06e846041b819b8bcc2b04dae1beb36d05cd0942bb0fc7f9742002c881e2058b75aba37a8baef9a3aaff66e818b20b8013e9020d2cc28ff0c655d7
   languageName: node
   linkType: hard
 
@@ -2630,10 +2630,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.16.1":
-  version: 1.16.1
-  resolution: "@remix-run/router@npm:1.16.1"
-  checksum: 10c0/5f1b0aef4924830eeab9c86dcaa5af8157066e5de65b449e7fdf406532b2384828a46a447c31b0735fd713a06938dd88bfd4e566d9989be70c770457dda16c92
+"@remix-run/router@npm:1.17.1":
+  version: 1.17.1
+  resolution: "@remix-run/router@npm:1.17.1"
+  checksum: 10c0/bee1631feb03975b64e1c7b574da432a05095dda2ff0f164c737e4952841a58d7b9861de87bd13a977fd970c74dcf8c558fc2d26c6ec01a9ae9041b1b4430869
   languageName: node
   linkType: hard
 
@@ -3443,10 +3443,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.17.5":
-  version: 4.17.5
-  resolution: "@types/lodash@npm:4.17.5"
-  checksum: 10c0/55924803ed853e72261512bd3eaf2c5b16558c3817feb0a3125ef757afe46e54b86f33d1960e40b7606c0ddab91a96f47966bf5e6006b7abfd8994c13b04b19b
+"@types/lodash@npm:^4.17.6":
+  version: 4.17.6
+  resolution: "@types/lodash@npm:4.17.6"
+  checksum: 10c0/3b197ac47af9443fee8c4719c5ffde527d7febc018b827d44a6bc2523c728c7adfdd25196fdcfe3eed827993e0c41a917d0da6e78938b18b2be94164789f1117
   languageName: node
   linkType: hard
 
@@ -3514,19 +3514,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.14.2":
-  version: 20.14.2
-  resolution: "@types/node@npm:20.14.2"
+"@types/node@npm:20.14.10, @types/node@npm:^20.14.5":
+  version: 20.14.10
+  resolution: "@types/node@npm:20.14.10"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 10c0/2d86e5f2227aaa42212e82ea0affe72799111b888ff900916376450b02b09b963ca888b20d9c332d8d2b833ed4781987867a38eaa2e4863fa8439071468b0a6f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^12.20.10":
-  version: 12.20.55
-  resolution: "@types/node@npm:12.20.55"
-  checksum: 10c0/3b190bb0410047d489c49bbaab592d2e6630de6a50f00ba3d7d513d59401d279972a8f5a598b5bb8ddc1702f8a2f4ec57a65d93852f9c329639738e7053637d1
+  checksum: 10c0/0b06cff14365c2d0085dc16cc8cbea5c40ec09cfc1fea966be9eeecf35562760bfde8f88e86de6edfaf394501236e229d9c1084fad04fb4dec472ae245d8ae69
   languageName: node
   linkType: hard
 
@@ -4307,6 +4300,13 @@ __metadata:
   version: 1.2.2
   resolution: "address@npm:1.2.2"
   checksum: 10c0/1c8056b77fb124456997b78ed682ecc19d2fd7ea8bd5850a2aa8c3e3134c913847c57bcae418622efd32ba858fa1e242a40a251ac31da0515664fc0ac03a047d
+  languageName: node
+  linkType: hard
+
+"address@npm:^2.0.2":
+  version: 2.0.3
+  resolution: "address@npm:2.0.3"
+  checksum: 10c0/e95c8d989812a9b1cef5e167328a1dd6fd2c41b02005793b7b4631d32dbf7de30bd17685d2f17fbfb94b67f3c422f9a0399caee3c1fbfa18c8e20dc0c8c77d3b
   languageName: node
   linkType: hard
 
@@ -7255,16 +7255,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"endpoint-utils@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "endpoint-utils@npm:1.0.2"
-  dependencies:
-    ip: "npm:^1.1.3"
-    pinkie-promise: "npm:^1.0.0"
-  checksum: 10c0/97754047c08b4e6cb1100b11a7747d542aca446ba5cabb7eb21a40dfe1dba22c9a47bc9f3338b2c8ba66bf2567b28ae7ac8099d6030aff031c3f7252bf7321e7
-  languageName: node
-  linkType: hard
-
 "enhanced-resolve@npm:^5.16.0":
   version: 5.16.1
   resolution: "enhanced-resolve@npm:5.16.1"
@@ -9692,13 +9682,6 @@ __metadata:
     jsbn: "npm:1.1.0"
     sprintf-js: "npm:^1.1.3"
   checksum: 10c0/331cd07fafcb3b24100613e4b53e1a2b4feab11e671e655d46dc09ee233da5011284d09ca40c4ecbdfe1d0004f462958675c224a804259f2f78d2465a87824bc
-  languageName: node
-  linkType: hard
-
-"ip@npm:^1.1.3":
-  version: 1.1.9
-  resolution: "ip@npm:1.1.9"
-  checksum: 10c0/5af58bfe2110c9978acfd77a2ffcdf9d33a6ce1c72f49edbaf16958f7a8eb979b5163e43bb18938caf3aaa55cdacde4e470874c58ca3b4b112ea7a30461a0c27
   languageName: node
   linkType: hard
 
@@ -12234,9 +12217,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minio@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "minio@npm:8.0.0"
+"minio@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "minio@npm:8.0.1"
   dependencies:
     async: "npm:^3.2.4"
     block-stream2: "npm:^2.1.0"
@@ -12252,7 +12235,7 @@ __metadata:
     through2: "npm:^4.0.2"
     web-encoding: "npm:^1.1.5"
     xml2js: "npm:^0.5.0"
-  checksum: 10c0/bc2ce03319bb4018356768f53e8f59d0e0f8945e7825bd9029636f5ca1b0cbe63874499788b454732d7ae8b752d774a351a86753b98a6298fcaa1dbe786ea8d1
+  checksum: 10c0/93e2501cfad143d4c3f08bc47a2d600d268cb023377da2ebb244201e6d611fb5e6aa6405191eead5383bbb7feabcb8fe55f5bf9d60e6cd7f5bdd8b0f0b212f85
   languageName: node
   linkType: hard
 
@@ -13196,9 +13179,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:4.3.136":
-  version: 4.3.136
-  resolution: "pdfjs-dist@npm:4.3.136"
+"pdfjs-dist@npm:4.4.168":
+  version: 4.4.168
+  resolution: "pdfjs-dist@npm:4.4.168"
   dependencies:
     canvas: "npm:^2.11.2"
     path2d: "npm:^0.2.0"
@@ -13207,7 +13190,7 @@ __metadata:
       optional: true
     path2d:
       optional: true
-  checksum: 10c0/4cb88d737f56100d45d2c9c0c6e8dc2f3dfd856362a55e47801ae32c52b2f12b3e74819c3cafb995a1e84c43eb580598a69c6710a78b1a11cdb52ef24bf8a633
+  checksum: 10c0/61bad19fe0aae8261631d425bd96368cf0b8803c3a4446615456dddd867ef3e5ba15c11a1caabb8033bce9538e3ad8262c24a56fa68b150c6ee0eb9e26a9f3a7
   languageName: node
   linkType: hard
 
@@ -13303,27 +13286,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.44.1":
-  version: 1.44.1
-  resolution: "playwright-core@npm:1.44.1"
+"playwright-core@npm:1.45.1":
+  version: 1.45.1
+  resolution: "playwright-core@npm:1.45.1"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/6ffa3a04822b3df86d7f47a97e4f20318c0c50868ba4311820e6626ecadaab1424fbd0a3d01f0b4228adc0c781115e44b801742a4970b88739f804d82f142d68
+  checksum: 10c0/607ad31ce1e85e2042107954eeed2cb7de5f387b42d9c8c19baa5c1ea4c2ea621bf233094ed86be45de625eeece33b280847ff641ff1bb9acaddee040e17bea1
   languageName: node
   linkType: hard
 
-"playwright@npm:1.44.1":
-  version: 1.44.1
-  resolution: "playwright@npm:1.44.1"
+"playwright@npm:1.45.1":
+  version: 1.45.1
+  resolution: "playwright@npm:1.45.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.44.1"
+    playwright-core: "npm:1.45.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/de827d17746b18ae2ec67d510a640d8ceebf8ee8e3d8399bccffa83b76a967498ca377777e4e6a1daaef4b3c86cb2c44c7468de53d2d915acc61b3b89c032738
+  checksum: 10c0/549e8621b120258ff53e93fcf3b2994a835aa084097ea533a9f4b53ff993308f3617cf00943c6975f88b66068890a6bf9d61b4ffdd73b7d8f45a5d284b6f284b
   languageName: node
   linkType: hard
 
@@ -14672,16 +14655,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-pdf@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "react-pdf@npm:9.0.0"
+"react-pdf@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "react-pdf@npm:9.1.0"
   dependencies:
     clsx: "npm:^2.0.0"
     dequal: "npm:^2.0.3"
     make-cancellable-promise: "npm:^1.3.1"
     make-event-props: "npm:^1.6.0"
     merge-refs: "npm:^1.3.0"
-    pdfjs-dist: "npm:4.3.136"
+    pdfjs-dist: "npm:4.4.168"
     tiny-invariant: "npm:^1.0.0"
     warning: "npm:^4.0.0"
   peerDependencies:
@@ -14691,7 +14674,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/c9e5606ee5a36acab0746914f2efa84459bf969e0f4d5e3a945da6d14f9882c57c45ea66f181ed16112b933321b963241e5c7f6b1cb0890322a24b4c8925a48b
+  checksum: 10c0/24b30cc092ac49531f874e4698406495de6b9046fd73c51747642f312c8bfdcb5e11415e261d8405c1e8f02522464a80157ef90469d33f9b48bbec1983fd8f50
   languageName: node
   linkType: hard
 
@@ -14734,27 +14717,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:6.23.1":
-  version: 6.23.1
-  resolution: "react-router-dom@npm:6.23.1"
+"react-router-dom@npm:6.24.1":
+  version: 6.24.1
+  resolution: "react-router-dom@npm:6.24.1"
   dependencies:
-    "@remix-run/router": "npm:1.16.1"
-    react-router: "npm:6.23.1"
+    "@remix-run/router": "npm:1.17.1"
+    react-router: "npm:6.24.1"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 10c0/01b954d7d0ff4c53bb2edbc816458f3fad1ce9ee49a4dfdc5c866065c23026c9cce429b46b754cbaebb83b22cfe5f605bbf441acf515e3c377cbdf021b0bec4c
+  checksum: 10c0/458c6c539304984c47b0ad8d5d5b1f8859cc0845e47591d530cb4fcb13498f70a89b42bc4daeea55d57cfa08408b453bcf601cabb2c987f554cdcac13805caa8
   languageName: node
   linkType: hard
 
-"react-router@npm:6.23.1":
-  version: 6.23.1
-  resolution: "react-router@npm:6.23.1"
+"react-router@npm:6.24.1":
+  version: 6.24.1
+  resolution: "react-router@npm:6.24.1"
   dependencies:
-    "@remix-run/router": "npm:1.16.1"
+    "@remix-run/router": "npm:1.17.1"
   peerDependencies:
     react: ">=16.8"
-  checksum: 10c0/091949805745136350ab049b2a96281bf38742c9d3651019fb48ea79c5eafbfb0379f1d3e636602dd56b0ef278389e8fd25be983dc2c0ffd1103d06dfa8019f3
+  checksum: 10c0/f50c78ca52c5154ab933c17708125e8bf71ccf2072993a80302526a0a23db9ceac6e36d5c891d62ccd16f13e60cd1b6533a2036523d1b09e0148ac49e34b2e83
   languageName: node
   linkType: hard
 
@@ -16890,9 +16873,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"testcafe@npm:3.6.1":
-  version: 3.6.1
-  resolution: "testcafe@npm:3.6.1"
+"testcafe@npm:3.6.2":
+  version: 3.6.2
+  resolution: "testcafe@npm:3.6.2"
   dependencies:
     "@babel/core": "npm:^7.23.2"
     "@babel/plugin-proposal-async-generator-functions": "npm:^7.20.7"
@@ -16912,7 +16895,8 @@ __metadata:
     "@babel/runtime": "npm:^7.23.2"
     "@devexpress/bin-v8-flags-filter": "npm:^1.3.0"
     "@devexpress/callsite-record": "npm:^4.1.6"
-    "@types/node": "npm:^12.20.10"
+    "@types/node": "npm:^20.14.5"
+    address: "npm:^2.0.2"
     async-exit-hook: "npm:^1.1.2"
     babel-plugin-module-resolver: "npm:5.0.0"
     babel-plugin-syntax-trailing-function-commas: "npm:^6.22.0"
@@ -16931,7 +16915,6 @@ __metadata:
     elegant-spinner: "npm:^1.0.1"
     email-validator: "npm:^2.0.4"
     emittery: "npm:^0.4.1"
-    endpoint-utils: "npm:^1.0.2"
     error-stack-parser: "npm:^2.1.4"
     execa: "npm:^4.0.3"
     get-os-info: "npm:^1.0.2"
@@ -16992,7 +16975,7 @@ __metadata:
     url-to-options: "npm:^2.0.0"
   bin:
     testcafe: bin/testcafe-with-v8-flag-filter.js
-  checksum: 10c0/f581ccc3496559a6758a2ee85c17721cdc7317dd132a40c3b2058ff57715899498b71f3ead5b76e9b97ced17a9b3282d2eeab11c71fb8d8793a728dd2845dac1
+  checksum: 10c0/f979d76283e466a0a78fb32f4abec2573b133f1084d930ea0245847b7111b22ae52fa2f891faac86553eb3ad41fe6e2fcad556130215c1b12f1e92d64b81f03a
   languageName: node
   linkType: hard
 
@@ -17449,13 +17432,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.9.5":
-  version: 4.9.5
-  resolution: "typescript@npm:4.9.5"
+"typescript@npm:^5.5.3":
+  version: 5.5.3
+  resolution: "typescript@npm:5.5.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/5f6cad2e728a8a063521328e612d7876e12f0d8a8390d3b3aaa452a6a65e24e9ac8ea22beb72a924fd96ea0a49ea63bb4e251fb922b12eedfb7f7a26475e5c56
+  checksum: 10c0/f52c71ccbc7080b034b9d3b72051d563601a4815bf3e39ded188e6ce60813f75dbedf11ad15dd4d32a12996a9ed8c7155b46c93a9b9c9bad1049766fe614bbdd
   languageName: node
   linkType: hard
 
@@ -17469,13 +17452,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^4.9.5#optional!builtin<compat/typescript>":
-  version: 4.9.5
-  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
+"typescript@patch:typescript@npm%3A^5.5.3#optional!builtin<compat/typescript>":
+  version: 5.5.3
+  resolution: "typescript@patch:typescript@npm%3A5.5.3#optional!builtin<compat/typescript>::version=5.5.3&hash=b45daf"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/e3333f887c6829dfe0ab6c1dbe0dd1e3e2aeb56c66460cb85c5440c566f900c833d370ca34eb47558c0c69e78ced4bfe09b8f4f98b6de7afed9b84b8d1dd06a1
+  checksum: 10c0/5a437c416251334deeaf29897157032311f3f126547cfdc4b133768b606cb0e62bcee733bb97cf74c42fe7268801aea1392d8e40988cdef112e9546eba4c03c5
   languageName: node
   linkType: hard
 
@@ -18039,11 +18022,11 @@ __metadata:
   resolution: "web-app@workspace:."
   dependencies:
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
-    "@playwright/test": "npm:^1.44.1"
+    "@playwright/test": "npm:^1.45.1"
     "@reduxjs/toolkit": "npm:^1.9.7"
-    "@types/lodash": "npm:^4.17.5"
+    "@types/lodash": "npm:^4.17.6"
     "@types/luxon": "npm:^3.4.2"
-    "@types/node": "npm:20.14.2"
+    "@types/node": "npm:20.14.10"
     "@types/react": "npm:18.3.3"
     "@types/react-copy-to-clipboard": "npm:^5.0.7"
     "@types/react-dom": "npm:18.3.0"
@@ -18061,7 +18044,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     luxon: "npm:^3.4.4"
     mds: "https://github.com/minio/mds.git#v1.0.2"
-    minio: "npm:^8.0.0"
+    minio: "npm:^8.0.1"
     nyc: "npm:^15.1.0"
     prettier: "npm:3.3.2"
     react: "npm:^18.3.1"
@@ -18072,9 +18055,9 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.2.3"
     react-markdown: "npm:8.0.7"
-    react-pdf: "npm:^9.0.0"
+    react-pdf: "npm:^9.1.0"
     react-redux: "npm:^8.1.3"
-    react-router-dom: "npm:6.23.1"
+    react-router-dom: "npm:6.24.1"
     react-scripts: "npm:5.0.1"
     react-use-websocket: "npm:^4.8.1"
     react-virtualized: "npm:^9.22.5"
@@ -18083,10 +18066,10 @@ __metadata:
     recharts: "npm:^2.12.7"
     styled-components: "npm:5.3.11"
     superagent: "npm:^9.0.2"
-    testcafe: "npm:3.6.1"
+    testcafe: "npm:3.6.2"
     tinycolor2: "npm:^1.6.0"
     ts-prune: "npm:^0.10.3"
-    typescript: "npm:^4.9.5"
+    typescript: "npm:^5.5.3"
   languageName: unknown
   linkType: soft
 
