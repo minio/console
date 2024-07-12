@@ -2,6 +2,12 @@
 
 # Changelog
 
+## Release v1.6.3
+
+Additional Changes:
+
+- Updated go.mod version
+
 ## Release v1.6.2
 
 Bug Fix:
