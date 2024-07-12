@@ -2,6 +2,19 @@
 
 # Changelog
 
+## Release v1.6.2
+
+Bug Fix:
+
+- Fixed minor user session issues
+- Updated project dependencies
+
+Additional Changes:
+
+- Improved Drives List visualization
+- Improved WS request logic
+- Updated License page with current MinIO plans.
+
 ## Release v1.6.1
 
 Bug Fix:
