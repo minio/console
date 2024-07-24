@@ -23,7 +23,6 @@ import NotFoundPage from "../../NotFoundPage";
 const Status = withSuspense(React.lazy(() => import("./Status")));
 const ListKeys = withSuspense(React.lazy(() => import("./ListKeys")));
 const AddKey = withSuspense(React.lazy(() => import("./AddKey")));
-const ImportKey = withSuspense(React.lazy(() => import("./ImportKey")));
 
 const KMSRoutes = () => {
   return (
@@ -31,7 +30,6 @@ const KMSRoutes = () => {
       <Route path={"status"} element={<Status />} />
       <Route path={"keys"} element={<ListKeys />} />
       <Route path={"add-key"} element={<AddKey />} />
-      <Route path={"import-key"} element={<ImportKey />} />
       <Route path={"*"} element={<NotFoundPage />} />
     </Routes>
   );

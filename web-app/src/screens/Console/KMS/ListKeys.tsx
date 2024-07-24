@@ -15,15 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { useEffect, useState } from "react";
-import {
-  AddIcon,
-  Button,
-  DataTable,
-  Grid,
-  PageLayout,
-  RefreshIcon,
-  UploadIcon,
-} from "mds";
+import { AddIcon, Button, DataTable, Grid, PageLayout, RefreshIcon } from "mds";
 import { useNavigate } from "react-router-dom";
 import api from "../../../common/api";
 import {
@@ -38,35 +30,21 @@ import {
 import { ErrorResponseHandler } from "../../../common/types";
 import { useAppDispatch } from "../../../store";
 import { setErrorSnackMessage, setHelpName } from "../../../systemSlice";
-import withSuspense from "../Common/Components/withSuspense";
 import SearchBox from "../Common/SearchBox";
 import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import HelpMenu from "../HelpMenu";
-
-const DeleteKMSModal = withSuspense(
-  React.lazy(() => import("./DeleteKMSModal")),
-);
 
 const ListKeys = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [filter, setFilter] = useState<string>("");
-  const [deleteOpen, setDeleteOpen] = useState<boolean>(false);
-  const [selectedKey, setSelectedKey] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [records, setRecords] = useState<[]>([]);
 
-  const deleteKey = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.KMS_DELETE_KEY,
-  ]);
   const createKey = hasPermission(CONSOLE_UI_RESOURCE, [
     IAM_SCOPES.KMS_CREATE_KEY,
-  ]);
-
-  const importKey = hasPermission(CONSOLE_UI_RESOURCE, [
-    IAM_SCOPES.KMS_IMPORT_KEY,
   ]);
 
   const displayKeys = hasPermission(CONSOLE_UI_RESOURCE, [
@@ -105,42 +83,12 @@ const ListKeys = () => {
     setLoading(true);
   };
 
-  const confirmDeleteKey = (key: string) => {
-    setDeleteOpen(true);
-    setSelectedKey(key);
-  };
-
-  const closeDeleteModalAndRefresh = (refresh: boolean) => {
-    setDeleteOpen(false);
-
-    if (refresh) {
-      fetchRecords();
-    }
-  };
-
-  const tableActions: any[] = [];
-  if (deleteKey) {
-    tableActions.push({
-      type: "delete",
-      onClick: confirmDeleteKey,
-      sendOnlyId: true,
-      disableButtonFunction: () => !deleteKey,
-    });
-  }
-
   useEffect(() => {
     dispatch(setHelpName("list_keys"));
   }, [dispatch]);
 
   return (
     <React.Fragment>
-      {deleteOpen && (
-        <DeleteKMSModal
-          deleteOpen={deleteOpen}
-          selectedItem={selectedKey}
-          closeDeleteModalAndRefresh={closeDeleteModalAndRefresh}
-        />
-      )}
       <PageHeaderWrapper
         label="Key Management Service Keys"
         actions={<HelpMenu />}
@@ -186,24 +134,6 @@ const ListKeys = () => {
                 />
               </TooltipWrapper>
             </SecureComponent>
-            {importKey ? (
-              <SecureComponent
-                scopes={[IAM_SCOPES.KMS_IMPORT_KEY]}
-                resource={CONSOLE_UI_RESOURCE}
-                errorProps={{ disabled: true }}
-              >
-                <TooltipWrapper tooltip={"Import Key"}>
-                  <Button
-                    id={"import-key"}
-                    variant={"regular"}
-                    icon={<UploadIcon />}
-                    onClick={() => {
-                      navigate(IAM_PAGES.KMS_KEYS_IMPORT);
-                    }}
-                  />
-                </TooltipWrapper>
-              </SecureComponent>
-            ) : null}
             {createKey ? (
               <SecureComponent
                 scopes={[IAM_SCOPES.KMS_CREATE_KEY]}
@@ -229,7 +159,6 @@ const ListKeys = () => {
               errorProps={{ disabled: true }}
             >
               <DataTable
-                itemActions={tableActions}
                 columns={[
                   { label: "Name", elementKey: "name" },
                   { label: "Created By", elementKey: "createdBy" },

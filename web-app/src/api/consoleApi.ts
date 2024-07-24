@@ -1305,78 +1305,12 @@ export interface KmsCreateKeyRequest {
   key: string;
 }
 
-export interface KmsImportKeyRequest {
-  bytes: string;
-}
-
-export type KmDeleteKeyRequest = object;
-
 export interface KmsListKeysResponse {
   results?: KmsKeyInfo[];
 }
 
 export interface KmsKeyInfo {
   name?: string;
-  createdAt?: string;
-  createdBy?: string;
-}
-
-export interface KmsGetPolicyResponse {
-  allow?: string[];
-  deny?: string[];
-}
-
-export interface KmsSetPolicyRequest {
-  policy: string;
-  allow?: string[];
-  deny?: string[];
-}
-
-export interface KmsDescribePolicyResponse {
-  createdAt?: string;
-  createdBy?: string;
-  name?: string;
-}
-
-export interface KmsAssignPolicyRequest {
-  identity?: string;
-}
-
-export interface KmsListPoliciesResponse {
-  results?: KmsPolicyInfo[];
-}
-
-export interface KmsPolicyInfo {
-  name?: string;
-  createdAt?: string;
-  createdBy?: string;
-}
-
-export interface KmsDescribeIdentityResponse {
-  policy?: string;
-  identity?: string;
-  admin?: boolean;
-  createdAt?: string;
-  createdBy?: string;
-}
-
-export interface KmsDescribeSelfIdentityResponse {
-  identity?: string;
-  policyName?: string;
-  admin?: boolean;
-  createdAt?: string;
-  createdBy?: string;
-  policy?: KmsGetPolicyResponse;
-}
-
-export interface KmsListIdentitiesResponse {
-  results?: KmsIdentityInfo[];
-}
-
-export interface KmsIdentityInfo {
-  identity?: string;
-  policy?: string;
-  error?: string;
   createdAt?: string;
   createdBy?: string;
 }
@@ -1991,7 +1925,7 @@ export class Api<
      */
     bucketInfo: (name: string, params: RequestParams = {}) =>
       this.request<Bucket, ApiError>({
-        path: `/buckets/${name}`,
+        path: `/buckets/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2009,7 +1943,7 @@ export class Api<
      */
     deleteBucket: (name: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/buckets/${name}`,
+        path: `/buckets/${encodeURIComponent(name)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -2029,7 +1963,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<GetBucketRetentionConfig, ApiError>({
-        path: `/buckets/${bucketName}/retention`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/retention`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2051,7 +1985,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/retention`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/retention`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2084,7 +2018,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ListObjectsResponse, ApiError>({
-        path: `/buckets/${bucketName}/objects`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects`,
         method: "GET",
         query: query,
         secure: true,
@@ -2114,7 +2048,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects`,
         method: "DELETE",
         query: query,
         secure: true,
@@ -2140,7 +2074,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/delete-objects`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/delete-objects`,
         method: "POST",
         query: query,
         body: files,
@@ -2167,7 +2101,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/upload`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/upload`,
         method: "POST",
         query: query,
         body: data,
@@ -2191,7 +2125,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<File, ApiError>({
-        path: `/buckets/${bucketName}/objects/download-multiple`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/download-multiple`,
         method: "POST",
         body: objectList,
         secure: true,
@@ -2221,7 +2155,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<File, ApiError>({
-        path: `/buckets/${bucketName}/objects/download`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/download`,
         method: "GET",
         query: query,
         secure: true,
@@ -2247,7 +2181,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<IamEntity, ApiError>({
-        path: `/buckets/${bucketName}/objects/share`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/share`,
         method: "GET",
         query: query,
         secure: true,
@@ -2274,7 +2208,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/legalhold`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/legalhold`,
         method: "PUT",
         query: query,
         body: body,
@@ -2302,7 +2236,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/retention`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/retention`,
         method: "PUT",
         query: query,
         body: body,
@@ -2329,7 +2263,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/retention`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/retention`,
         method: "DELETE",
         query: query,
         secure: true,
@@ -2355,7 +2289,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/tags`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/tags`,
         method: "PUT",
         query: query,
         body: body,
@@ -2382,7 +2316,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/objects/restore`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/restore`,
         method: "PUT",
         query: query,
         secure: true,
@@ -2407,7 +2341,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<Metadata, ApiError>({
-        path: `/buckets/${bucketName}/objects/metadata`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/objects/metadata`,
         method: "GET",
         query: query,
         secure: true,
@@ -2430,7 +2364,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/tags`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/tags`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2453,7 +2387,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<Bucket, ApiError>({
-        path: `/buckets/${name}/set-policy`,
+        path: `/buckets/${encodeURIComponent(name)}/set-policy`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2473,7 +2407,7 @@ export class Api<
      */
     getBucketQuota: (name: string, params: RequestParams = {}) =>
       this.request<BucketQuota, ApiError>({
-        path: `/buckets/${name}/quota`,
+        path: `/buckets/${encodeURIComponent(name)}/quota`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2495,7 +2429,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<Bucket, ApiError>({
-        path: `/buckets/${name}/quota`,
+        path: `/buckets/${encodeURIComponent(name)}/quota`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2530,7 +2464,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ListBucketEventsResponse, ApiError>({
-        path: `/buckets/${bucketName}/events`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/events`,
         method: "GET",
         query: query,
         secure: true,
@@ -2553,7 +2487,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/events`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/events`,
         method: "POST",
         body: body,
         secure: true,
@@ -2577,7 +2511,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/events/${arn}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/events/${encodeURIComponent(arn)}`,
         method: "DELETE",
         body: body,
         secure: true,
@@ -2596,7 +2530,7 @@ export class Api<
      */
     getBucketReplication: (bucketName: string, params: RequestParams = {}) =>
       this.request<BucketReplicationResponse, ApiError>({
-        path: `/buckets/${bucketName}/replication`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/replication`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2618,7 +2552,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<BucketReplicationRule, ApiError>({
-        path: `/buckets/${bucketName}/replication/${ruleId}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/replication/${encodeURIComponent(ruleId)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2641,7 +2575,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/replication/${ruleId}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/replication/${encodeURIComponent(ruleId)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2664,7 +2598,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/replication/${ruleId}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/replication/${encodeURIComponent(ruleId)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -2684,7 +2618,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/delete-all-replication-rules`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/delete-all-replication-rules`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -2705,7 +2639,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/delete-selected-replication-rules`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/delete-selected-replication-rules`,
         method: "DELETE",
         body: rules,
         secure: true,
@@ -2724,7 +2658,7 @@ export class Api<
      */
     getBucketVersioning: (bucketName: string, params: RequestParams = {}) =>
       this.request<BucketVersioningResponse, ApiError>({
-        path: `/buckets/${bucketName}/versioning`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/versioning`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2746,7 +2680,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/versioning`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/versioning`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2768,7 +2702,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<BucketObLockingResponse, ApiError>({
-        path: `/buckets/${bucketName}/object-locking`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/object-locking`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2790,7 +2724,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/encryption/enable`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/encryption/enable`,
         method: "POST",
         body: body,
         secure: true,
@@ -2809,7 +2743,7 @@ export class Api<
      */
     disableBucketEncryption: (bucketName: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/encryption/disable`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/encryption/disable`,
         method: "POST",
         secure: true,
         ...params,
@@ -2826,7 +2760,7 @@ export class Api<
      */
     getBucketEncryptionInfo: (bucketName: string, params: RequestParams = {}) =>
       this.request<BucketEncryptionInfo, ApiError>({
-        path: `/buckets/${bucketName}/encryption/info`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/encryption/info`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2844,7 +2778,7 @@ export class Api<
      */
     getBucketLifecycle: (bucketName: string, params: RequestParams = {}) =>
       this.request<BucketLifecycleResponse, ApiError>({
-        path: `/buckets/${bucketName}/lifecycle`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/lifecycle`,
         method: "GET",
         secure: true,
         format: "json",
@@ -2866,7 +2800,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/lifecycle`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/lifecycle`,
         method: "POST",
         body: body,
         secure: true,
@@ -2913,7 +2847,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/lifecycle/${encodeURIComponent(lifecycleId)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -2936,7 +2870,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/buckets/${bucketName}/lifecycle/${lifecycleId}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/lifecycle/${encodeURIComponent(lifecycleId)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -2960,7 +2894,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<RewindResponse, ApiError>({
-        path: `/buckets/${bucketName}/rewind/${date}`,
+        path: `/buckets/${encodeURIComponent(bucketName)}/rewind/${encodeURIComponent(date)}`,
         method: "GET",
         query: query,
         secure: true,
@@ -3123,7 +3057,7 @@ export class Api<
      */
     getServiceAccount: (accessKey: string, params: RequestParams = {}) =>
       this.request<ServiceAccount, ApiError>({
-        path: `/service-accounts/${accessKey}`,
+        path: `/service-accounts/${encodeURIComponent(accessKey)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3145,7 +3079,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/service-accounts/${accessKey}`,
+        path: `/service-accounts/${encodeURIComponent(accessKey)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -3164,7 +3098,7 @@ export class Api<
      */
     deleteServiceAccount: (accessKey: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/service-accounts/${accessKey}`,
+        path: `/service-accounts/${encodeURIComponent(accessKey)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -3282,7 +3216,7 @@ export class Api<
      */
     getUserInfo: (name: string, params: RequestParams = {}) =>
       this.request<User, ApiError>({
-        path: `/user/${name}`,
+        path: `/user/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3304,7 +3238,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<User, ApiError>({
-        path: `/user/${name}`,
+        path: `/user/${encodeURIComponent(name)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -3324,7 +3258,7 @@ export class Api<
      */
     removeUser: (name: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/user/${name}`,
+        path: `/user/${encodeURIComponent(name)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -3345,7 +3279,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<User, ApiError>({
-        path: `/user/${name}/groups`,
+        path: `/user/${encodeURIComponent(name)}/groups`,
         method: "PUT",
         body: body,
         secure: true,
@@ -3383,7 +3317,7 @@ export class Api<
      */
     getSaUserPolicy: (name: string, params: RequestParams = {}) =>
       this.request<AUserPolicyResponse, ApiError>({
-        path: `/user/${name}/policies`,
+        path: `/user/${encodeURIComponent(name)}/policies`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3401,7 +3335,7 @@ export class Api<
      */
     listAUserServiceAccounts: (name: string, params: RequestParams = {}) =>
       this.request<ServiceAccounts, ApiError>({
-        path: `/user/${name}/service-accounts`,
+        path: `/user/${encodeURIComponent(name)}/service-accounts`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3423,7 +3357,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, ApiError>({
-        path: `/user/${name}/service-accounts`,
+        path: `/user/${encodeURIComponent(name)}/service-accounts`,
         method: "POST",
         body: body,
         secure: true,
@@ -3446,7 +3380,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ServiceAccountCreds, ApiError>({
-        path: `/user/${name}/service-account-credentials`,
+        path: `/user/${encodeURIComponent(name)}/service-account-credentials`,
         method: "POST",
         body: body,
         secure: true,
@@ -3539,7 +3473,7 @@ export class Api<
      */
     groupInfo: (name: string, params: RequestParams = {}) =>
       this.request<Group, ApiError>({
-        path: `/group/${name}`,
+        path: `/group/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3557,7 +3491,7 @@ export class Api<
      */
     removeGroup: (name: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/group/${name}`,
+        path: `/group/${encodeURIComponent(name)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -3578,7 +3512,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<Group, ApiError>({
-        path: `/group/${name}`,
+        path: `/group/${encodeURIComponent(name)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -3652,7 +3586,7 @@ export class Api<
      */
     listUsersForPolicy: (policy: string, params: RequestParams = {}) =>
       this.request<SelectedUsers, ApiError>({
-        path: `/policies/${policy}/users`,
+        path: `/policies/${encodeURIComponent(policy)}/users`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3670,7 +3604,7 @@ export class Api<
      */
     listGroupsForPolicy: (policy: string, params: RequestParams = {}) =>
       this.request<SelectedUsers, ApiError>({
-        path: `/policies/${policy}/groups`,
+        path: `/policies/${encodeURIComponent(policy)}/groups`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3704,7 +3638,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ListPoliciesResponse, ApiError>({
-        path: `/bucket-policy/${bucket}`,
+        path: `/bucket-policy/${encodeURIComponent(bucket)}`,
         method: "GET",
         query: query,
         secure: true,
@@ -3728,7 +3662,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<boolean, ApiError>({
-        path: `/bucket/${bucket}/access-rules`,
+        path: `/bucket/${encodeURIComponent(bucket)}/access-rules`,
         method: "PUT",
         body: prefixaccess,
         secure: true,
@@ -3763,7 +3697,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<ListAccessRulesResponse, ApiError>({
-        path: `/bucket/${bucket}/access-rules`,
+        path: `/bucket/${encodeURIComponent(bucket)}/access-rules`,
         method: "GET",
         query: query,
         secure: true,
@@ -3786,7 +3720,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<boolean, ApiError>({
-        path: `/bucket/${bucket}/access-rules`,
+        path: `/bucket/${encodeURIComponent(bucket)}/access-rules`,
         method: "DELETE",
         body: prefix,
         secure: true,
@@ -3822,7 +3756,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<SelectedUsers, ApiError>({
-        path: `/bucket-users/${bucket}`,
+        path: `/bucket-users/${encodeURIComponent(bucket)}`,
         method: "GET",
         query: query,
         secure: true,
@@ -3842,7 +3776,7 @@ export class Api<
      */
     policyInfo: (name: string, params: RequestParams = {}) =>
       this.request<Policy, ApiError>({
-        path: `/policy/${name}`,
+        path: `/policy/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3860,7 +3794,7 @@ export class Api<
      */
     removePolicy: (name: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/policy/${name}`,
+        path: `/policy/${encodeURIComponent(name)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -3911,7 +3845,7 @@ export class Api<
      */
     configInfo: (name: string, params: RequestParams = {}) =>
       this.request<Configuration[], ApiError>({
-        path: `/configs/${name}`,
+        path: `/configs/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -3933,7 +3867,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<SetConfigResponse, ApiError>({
-        path: `/configs/${name}`,
+        path: `/configs/${encodeURIComponent(name)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -3953,7 +3887,7 @@ export class Api<
      */
     resetConfig: (name: string, params: RequestParams = {}) =>
       this.request<SetConfigResponse, ApiError>({
-        path: `/configs/${name}/reset`,
+        path: `/configs/${encodeURIComponent(name)}/reset`,
         method: "POST",
         secure: true,
         format: "json",
@@ -4268,7 +4202,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<WidgetDetails, ApiError>({
-        path: `/admin/info/widgets/${widgetId}`,
+        path: `/admin/info/widgets/${encodeURIComponent(widgetId)}`,
         method: "GET",
         query: query,
         secure: true,
@@ -4533,7 +4467,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<Tier, ApiError>({
-        path: `/admin/tiers/${type}/${name}`,
+        path: `/admin/tiers/${encodeURIComponent(type)}/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -4556,7 +4490,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/admin/tiers/${type}/${name}/credentials`,
+        path: `/admin/tiers/${encodeURIComponent(type)}/${encodeURIComponent(name)}/credentials`,
         method: "PUT",
         body: body,
         secure: true,
@@ -4575,7 +4509,7 @@ export class Api<
      */
     removeTier: (name: string, params: RequestParams = {}) =>
       this.request<void, ApiError>({
-        path: `/admin/tiers/${name}/remove`,
+        path: `/admin/tiers/${encodeURIComponent(name)}/remove`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -4674,7 +4608,7 @@ export class Api<
      */
     remoteBucketDetails: (name: string, params: RequestParams = {}) =>
       this.request<RemoteBucket, ApiError>({
-        path: `/remote-buckets/${name}`,
+        path: `/remote-buckets/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -4696,7 +4630,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<void, ApiError>({
-        path: `/remote-buckets/${sourceBucketName}/${arn}`,
+        path: `/remote-buckets/${encodeURIComponent(sourceBucketName)}/${encodeURIComponent(arn)}`,
         method: "DELETE",
         secure: true,
         ...params,
@@ -4870,246 +4804,8 @@ export class Api<
      */
     kmsKeyStatus: (name: string, params: RequestParams = {}) =>
       this.request<KmsKeyStatusResponse, ApiError>({
-        path: `/kms/keys/${name}`,
+        path: `/kms/keys/${encodeURIComponent(name)}`,
         method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDeleteKey
-     * @summary KMS delete key
-     * @request DELETE:/kms/keys/{name}
-     * @secure
-     */
-    kmsDeleteKey: (name: string, params: RequestParams = {}) =>
-      this.request<void, ApiError>({
-        path: `/kms/keys/${name}`,
-        method: "DELETE",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsImportKey
-     * @summary KMS import key
-     * @request POST:/kms/keys/{name}/import
-     * @secure
-     */
-    kmsImportKey: (
-      name: string,
-      body: KmsImportKeyRequest,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, ApiError>({
-        path: `/kms/keys/${name}/import`,
-        method: "POST",
-        body: body,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsSetPolicy
-     * @summary KMS set policy
-     * @request POST:/kms/policies
-     * @secure
-     */
-    kmsSetPolicy: (body: KmsSetPolicyRequest, params: RequestParams = {}) =>
-      this.request<void, ApiError>({
-        path: `/kms/policies`,
-        method: "POST",
-        body: body,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsListPolicies
-     * @summary KMS list policies
-     * @request GET:/kms/policies
-     * @secure
-     */
-    kmsListPolicies: (
-      query?: {
-        /** pattern to retrieve policies */
-        pattern?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<KmsListPoliciesResponse, ApiError>({
-        path: `/kms/policies`,
-        method: "GET",
-        query: query,
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsGetPolicy
-     * @summary KMS get policy
-     * @request GET:/kms/policies/{name}
-     * @secure
-     */
-    kmsGetPolicy: (name: string, params: RequestParams = {}) =>
-      this.request<KmsGetPolicyResponse, ApiError>({
-        path: `/kms/policies/${name}`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDeletePolicy
-     * @summary KMS delete policy
-     * @request DELETE:/kms/policies/{name}
-     * @secure
-     */
-    kmsDeletePolicy: (name: string, params: RequestParams = {}) =>
-      this.request<void, ApiError>({
-        path: `/kms/policies/${name}`,
-        method: "DELETE",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsAssignPolicy
-     * @summary KMS assign policy
-     * @request POST:/kms/policies/{name}/assign
-     * @secure
-     */
-    kmsAssignPolicy: (
-      name: string,
-      body: KmsAssignPolicyRequest,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, ApiError>({
-        path: `/kms/policies/${name}/assign`,
-        method: "POST",
-        body: body,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDescribePolicy
-     * @summary KMS describe policy
-     * @request GET:/kms/policies/{name}/describe
-     * @secure
-     */
-    kmsDescribePolicy: (name: string, params: RequestParams = {}) =>
-      this.request<KmsDescribePolicyResponse, ApiError>({
-        path: `/kms/policies/${name}/describe`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDeleteIdentity
-     * @summary KMS delete identity
-     * @request DELETE:/kms/identities/{name}
-     * @secure
-     */
-    kmsDeleteIdentity: (name: string, params: RequestParams = {}) =>
-      this.request<void, ApiError>({
-        path: `/kms/identities/${name}`,
-        method: "DELETE",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDescribeIdentity
-     * @summary KMS describe identity
-     * @request GET:/kms/identities/{name}/describe
-     * @secure
-     */
-    kmsDescribeIdentity: (name: string, params: RequestParams = {}) =>
-      this.request<KmsDescribeIdentityResponse, ApiError>({
-        path: `/kms/identities/${name}/describe`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsDescribeSelfIdentity
-     * @summary KMS describe self identity
-     * @request GET:/kms/describe-self/identity
-     * @secure
-     */
-    kmsDescribeSelfIdentity: (params: RequestParams = {}) =>
-      this.request<KmsDescribeSelfIdentityResponse, ApiError>({
-        path: `/kms/describe-self/identity`,
-        method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags KMS
-     * @name KmsListIdentities
-     * @summary KMS list identities
-     * @request GET:/kms/identities
-     * @secure
-     */
-    kmsListIdentities: (
-      query?: {
-        /** pattern to retrieve identities */
-        pattern?: string;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<KmsListIdentitiesResponse, ApiError>({
-        path: `/kms/identities`,
-        method: "GET",
-        query: query,
         secure: true,
         format: "json",
         ...params,
@@ -5131,7 +4827,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, ApiError>({
-        path: `/idp/${type}`,
+        path: `/idp/${encodeURIComponent(type)}`,
         method: "POST",
         body: body,
         secure: true,
@@ -5151,7 +4847,7 @@ export class Api<
      */
     listConfigurations: (type: string, params: RequestParams = {}) =>
       this.request<IdpListConfigurationsResponse, ApiError>({
-        path: `/idp/${type}`,
+        path: `/idp/${encodeURIComponent(type)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -5173,7 +4869,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<IdpServerConfiguration, ApiError>({
-        path: `/idp/${type}/${name}`,
+        path: `/idp/${encodeURIComponent(type)}/${encodeURIComponent(name)}`,
         method: "GET",
         secure: true,
         format: "json",
@@ -5195,7 +4891,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, ApiError>({
-        path: `/idp/${type}/${name}`,
+        path: `/idp/${encodeURIComponent(type)}/${encodeURIComponent(name)}`,
         method: "DELETE",
         secure: true,
         format: "json",
@@ -5218,7 +4914,7 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<SetIDPResponse, ApiError>({
-        path: `/idp/${type}/${name}`,
+        path: `/idp/${encodeURIComponent(type)}/${encodeURIComponent(name)}`,
         method: "PUT",
         body: body,
         secure: true,
@@ -5329,7 +5025,7 @@ export class Api<
      */
     downloadSharedObject: (url: string, params: RequestParams = {}) =>
       this.request<File, ApiError>({
-        path: `/download-shared-object/${url}`,
+        path: `/download-shared-object/${encodeURIComponent(url)}`,
         method: "GET",
         ...params,
       }),

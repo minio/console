@@ -115,20 +115,8 @@ type MinioAdmin interface {
 	kmsAPIs(ctx context.Context) ([]madmin.KMSAPI, error)
 	kmsVersion(ctx context.Context) (*madmin.KMSVersion, error)
 	createKey(ctx context.Context, key string) error
-	importKey(ctx context.Context, key string, content []byte) error
 	listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error)
 	keyStatus(ctx context.Context, key string) (*madmin.KMSKeyStatus, error)
-	deleteKey(ctx context.Context, key string) error
-	setKMSPolicy(ctx context.Context, policy string, content []byte) error
-	assignPolicy(ctx context.Context, policy string, content []byte) error
-	describePolicy(ctx context.Context, policy string) (*madmin.KMSDescribePolicy, error)
-	getKMSPolicy(ctx context.Context, policy string) (*madmin.KMSPolicy, error)
-	listKMSPolicies(ctx context.Context, pattern string) ([]madmin.KMSPolicyInfo, error)
-	deletePolicy(ctx context.Context, policy string) error
-	describeIdentity(ctx context.Context, identity string) (*madmin.KMSDescribeIdentity, error)
-	describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error)
-	deleteIdentity(ctx context.Context, identity string) error
-	listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error)
 
 	// IDP
 	addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error)
@@ -675,60 +663,12 @@ func (ac AdminClient) createKey(ctx context.Context, key string) error {
 	return ac.Client.CreateKey(ctx, key)
 }
 
-func (ac AdminClient) importKey(ctx context.Context, key string, content []byte) error {
-	return ac.Client.ImportKey(ctx, key, content)
-}
-
 func (ac AdminClient) listKeys(ctx context.Context, pattern string) ([]madmin.KMSKeyInfo, error) {
 	return ac.Client.ListKeys(ctx, pattern)
 }
 
 func (ac AdminClient) keyStatus(ctx context.Context, key string) (*madmin.KMSKeyStatus, error) {
 	return ac.Client.GetKeyStatus(ctx, key)
-}
-
-func (ac AdminClient) deleteKey(ctx context.Context, key string) error {
-	return ac.Client.DeleteKey(ctx, key)
-}
-
-func (ac AdminClient) setKMSPolicy(ctx context.Context, policy string, content []byte) error {
-	return ac.Client.SetKMSPolicy(ctx, policy, content)
-}
-
-func (ac AdminClient) assignPolicy(ctx context.Context, policy string, content []byte) error {
-	return ac.Client.AssignPolicy(ctx, policy, content)
-}
-
-func (ac AdminClient) describePolicy(ctx context.Context, policy string) (*madmin.KMSDescribePolicy, error) {
-	return ac.Client.DescribePolicy(ctx, policy)
-}
-
-func (ac AdminClient) getKMSPolicy(ctx context.Context, policy string) (*madmin.KMSPolicy, error) {
-	return ac.Client.GetPolicy(ctx, policy)
-}
-
-func (ac AdminClient) listKMSPolicies(ctx context.Context, pattern string) ([]madmin.KMSPolicyInfo, error) {
-	return ac.Client.ListPolicies(ctx, pattern)
-}
-
-func (ac AdminClient) deletePolicy(ctx context.Context, policy string) error {
-	return ac.Client.DeletePolicy(ctx, policy)
-}
-
-func (ac AdminClient) describeIdentity(ctx context.Context, identity string) (*madmin.KMSDescribeIdentity, error) {
-	return ac.Client.DescribeIdentity(ctx, identity)
-}
-
-func (ac AdminClient) describeSelfIdentity(ctx context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
-	return ac.Client.DescribeSelfIdentity(ctx)
-}
-
-func (ac AdminClient) deleteIdentity(ctx context.Context, identity string) error {
-	return ac.Client.DeleteIdentity(ctx, identity)
-}
-
-func (ac AdminClient) listIdentities(ctx context.Context, pattern string) ([]madmin.KMSIdentityInfo, error) {
-	return ac.Client.ListIdentities(ctx, pattern)
 }
 
 func (ac AdminClient) addOrUpdateIDPConfig(ctx context.Context, idpType, cfgName, cfgData string, update bool) (restart bool, err error) {
