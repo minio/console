@@ -216,10 +216,6 @@ func (ac AdminClientMock) createKey(_ context.Context, _ string) error {
 	return nil
 }
 
-func (ac AdminClientMock) importKey(_ context.Context, _ string, _ []byte) error {
-	return nil
-}
-
 func (ac AdminClientMock) listKeys(_ context.Context, _ string) ([]madmin.KMSKeyInfo, error) {
 	return []madmin.KMSKeyInfo{{
 		Name:      "name",
@@ -229,55 +225,6 @@ func (ac AdminClientMock) listKeys(_ context.Context, _ string) ([]madmin.KMSKey
 
 func (ac AdminClientMock) keyStatus(_ context.Context, _ string) (*madmin.KMSKeyStatus, error) {
 	return &madmin.KMSKeyStatus{KeyID: "key"}, nil
-}
-
-func (ac AdminClientMock) deleteKey(_ context.Context, _ string) error {
-	return nil
-}
-
-func (ac AdminClientMock) setKMSPolicy(_ context.Context, _ string, _ []byte) error {
-	return nil
-}
-
-func (ac AdminClientMock) assignPolicy(_ context.Context, _ string, _ []byte) error {
-	return nil
-}
-
-func (ac AdminClientMock) describePolicy(_ context.Context, _ string) (*madmin.KMSDescribePolicy, error) {
-	return &madmin.KMSDescribePolicy{Name: "name"}, nil
-}
-
-func (ac AdminClientMock) getKMSPolicy(_ context.Context, _ string) (*madmin.KMSPolicy, error) {
-	return &madmin.KMSPolicy{Allow: []string{""}, Deny: []string{""}}, nil
-}
-
-func (ac AdminClientMock) listKMSPolicies(_ context.Context, _ string) ([]madmin.KMSPolicyInfo, error) {
-	return []madmin.KMSPolicyInfo{{
-		Name:      "name",
-		CreatedBy: "by",
-	}}, nil
-}
-
-func (ac AdminClientMock) deletePolicy(_ context.Context, _ string) error {
-	return nil
-}
-
-func (ac AdminClientMock) describeIdentity(_ context.Context, _ string) (*madmin.KMSDescribeIdentity, error) {
-	return &madmin.KMSDescribeIdentity{}, nil
-}
-
-func (ac AdminClientMock) describeSelfIdentity(_ context.Context) (*madmin.KMSDescribeSelfIdentity, error) {
-	return &madmin.KMSDescribeSelfIdentity{
-		Policy: &madmin.KMSPolicy{Allow: []string{}, Deny: []string{}},
-	}, nil
-}
-
-func (ac AdminClientMock) deleteIdentity(_ context.Context, _ string) error {
-	return nil
-}
-
-func (ac AdminClientMock) listIdentities(_ context.Context, _ string) ([]madmin.KMSIdentityInfo, error) {
-	return []madmin.KMSIdentityInfo{{Identity: "identity"}}, nil
 }
 
 func (ac AdminClientMock) listPolicies(_ context.Context) (map[string]*iampolicy.Policy, error) {

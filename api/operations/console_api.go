@@ -296,53 +296,17 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		KmsKMSAPIsHandler: k_m_s.KMSAPIsHandlerFunc(func(params k_m_s.KMSAPIsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSAPIs has not yet been implemented")
 		}),
-		KmsKMSAssignPolicyHandler: k_m_s.KMSAssignPolicyHandlerFunc(func(params k_m_s.KMSAssignPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSAssignPolicy has not yet been implemented")
-		}),
 		KmsKMSCreateKeyHandler: k_m_s.KMSCreateKeyHandlerFunc(func(params k_m_s.KMSCreateKeyParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSCreateKey has not yet been implemented")
-		}),
-		KmsKMSDeleteIdentityHandler: k_m_s.KMSDeleteIdentityHandlerFunc(func(params k_m_s.KMSDeleteIdentityParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDeleteIdentity has not yet been implemented")
-		}),
-		KmsKMSDeleteKeyHandler: k_m_s.KMSDeleteKeyHandlerFunc(func(params k_m_s.KMSDeleteKeyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDeleteKey has not yet been implemented")
-		}),
-		KmsKMSDeletePolicyHandler: k_m_s.KMSDeletePolicyHandlerFunc(func(params k_m_s.KMSDeletePolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDeletePolicy has not yet been implemented")
-		}),
-		KmsKMSDescribeIdentityHandler: k_m_s.KMSDescribeIdentityHandlerFunc(func(params k_m_s.KMSDescribeIdentityParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDescribeIdentity has not yet been implemented")
-		}),
-		KmsKMSDescribePolicyHandler: k_m_s.KMSDescribePolicyHandlerFunc(func(params k_m_s.KMSDescribePolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDescribePolicy has not yet been implemented")
-		}),
-		KmsKMSDescribeSelfIdentityHandler: k_m_s.KMSDescribeSelfIdentityHandlerFunc(func(params k_m_s.KMSDescribeSelfIdentityParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSDescribeSelfIdentity has not yet been implemented")
-		}),
-		KmsKMSGetPolicyHandler: k_m_s.KMSGetPolicyHandlerFunc(func(params k_m_s.KMSGetPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSGetPolicy has not yet been implemented")
-		}),
-		KmsKMSImportKeyHandler: k_m_s.KMSImportKeyHandlerFunc(func(params k_m_s.KMSImportKeyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSImportKey has not yet been implemented")
 		}),
 		KmsKMSKeyStatusHandler: k_m_s.KMSKeyStatusHandlerFunc(func(params k_m_s.KMSKeyStatusParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSKeyStatus has not yet been implemented")
 		}),
-		KmsKMSListIdentitiesHandler: k_m_s.KMSListIdentitiesHandlerFunc(func(params k_m_s.KMSListIdentitiesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSListIdentities has not yet been implemented")
-		}),
 		KmsKMSListKeysHandler: k_m_s.KMSListKeysHandlerFunc(func(params k_m_s.KMSListKeysParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSListKeys has not yet been implemented")
 		}),
-		KmsKMSListPoliciesHandler: k_m_s.KMSListPoliciesHandlerFunc(func(params k_m_s.KMSListPoliciesParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSListPolicies has not yet been implemented")
-		}),
 		KmsKMSMetricsHandler: k_m_s.KMSMetricsHandlerFunc(func(params k_m_s.KMSMetricsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSMetrics has not yet been implemented")
-		}),
-		KmsKMSSetPolicyHandler: k_m_s.KMSSetPolicyHandlerFunc(func(params k_m_s.KMSSetPolicyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation k_m_s.KMSSetPolicy has not yet been implemented")
 		}),
 		KmsKMSStatusHandler: k_m_s.KMSStatusHandlerFunc(func(params k_m_s.KMSStatusParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation k_m_s.KMSStatus has not yet been implemented")
@@ -770,38 +734,14 @@ type ConsoleAPI struct {
 	InspectInspectHandler inspect.InspectHandler
 	// KmsKMSAPIsHandler sets the operation handler for the k m s a p is operation
 	KmsKMSAPIsHandler k_m_s.KMSAPIsHandler
-	// KmsKMSAssignPolicyHandler sets the operation handler for the k m s assign policy operation
-	KmsKMSAssignPolicyHandler k_m_s.KMSAssignPolicyHandler
 	// KmsKMSCreateKeyHandler sets the operation handler for the k m s create key operation
 	KmsKMSCreateKeyHandler k_m_s.KMSCreateKeyHandler
-	// KmsKMSDeleteIdentityHandler sets the operation handler for the k m s delete identity operation
-	KmsKMSDeleteIdentityHandler k_m_s.KMSDeleteIdentityHandler
-	// KmsKMSDeleteKeyHandler sets the operation handler for the k m s delete key operation
-	KmsKMSDeleteKeyHandler k_m_s.KMSDeleteKeyHandler
-	// KmsKMSDeletePolicyHandler sets the operation handler for the k m s delete policy operation
-	KmsKMSDeletePolicyHandler k_m_s.KMSDeletePolicyHandler
-	// KmsKMSDescribeIdentityHandler sets the operation handler for the k m s describe identity operation
-	KmsKMSDescribeIdentityHandler k_m_s.KMSDescribeIdentityHandler
-	// KmsKMSDescribePolicyHandler sets the operation handler for the k m s describe policy operation
-	KmsKMSDescribePolicyHandler k_m_s.KMSDescribePolicyHandler
-	// KmsKMSDescribeSelfIdentityHandler sets the operation handler for the k m s describe self identity operation
-	KmsKMSDescribeSelfIdentityHandler k_m_s.KMSDescribeSelfIdentityHandler
-	// KmsKMSGetPolicyHandler sets the operation handler for the k m s get policy operation
-	KmsKMSGetPolicyHandler k_m_s.KMSGetPolicyHandler
-	// KmsKMSImportKeyHandler sets the operation handler for the k m s import key operation
-	KmsKMSImportKeyHandler k_m_s.KMSImportKeyHandler
 	// KmsKMSKeyStatusHandler sets the operation handler for the k m s key status operation
 	KmsKMSKeyStatusHandler k_m_s.KMSKeyStatusHandler
-	// KmsKMSListIdentitiesHandler sets the operation handler for the k m s list identities operation
-	KmsKMSListIdentitiesHandler k_m_s.KMSListIdentitiesHandler
 	// KmsKMSListKeysHandler sets the operation handler for the k m s list keys operation
 	KmsKMSListKeysHandler k_m_s.KMSListKeysHandler
-	// KmsKMSListPoliciesHandler sets the operation handler for the k m s list policies operation
-	KmsKMSListPoliciesHandler k_m_s.KMSListPoliciesHandler
 	// KmsKMSMetricsHandler sets the operation handler for the k m s metrics operation
 	KmsKMSMetricsHandler k_m_s.KMSMetricsHandler
-	// KmsKMSSetPolicyHandler sets the operation handler for the k m s set policy operation
-	KmsKMSSetPolicyHandler k_m_s.KMSSetPolicyHandler
 	// KmsKMSStatusHandler sets the operation handler for the k m s status operation
 	KmsKMSStatusHandler k_m_s.KMSStatusHandler
 	// KmsKMSVersionHandler sets the operation handler for the k m s version operation
@@ -1250,53 +1190,17 @@ func (o *ConsoleAPI) Validate() error {
 	if o.KmsKMSAPIsHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSAPIsHandler")
 	}
-	if o.KmsKMSAssignPolicyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSAssignPolicyHandler")
-	}
 	if o.KmsKMSCreateKeyHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSCreateKeyHandler")
-	}
-	if o.KmsKMSDeleteIdentityHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDeleteIdentityHandler")
-	}
-	if o.KmsKMSDeleteKeyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDeleteKeyHandler")
-	}
-	if o.KmsKMSDeletePolicyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDeletePolicyHandler")
-	}
-	if o.KmsKMSDescribeIdentityHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDescribeIdentityHandler")
-	}
-	if o.KmsKMSDescribePolicyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDescribePolicyHandler")
-	}
-	if o.KmsKMSDescribeSelfIdentityHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSDescribeSelfIdentityHandler")
-	}
-	if o.KmsKMSGetPolicyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSGetPolicyHandler")
-	}
-	if o.KmsKMSImportKeyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSImportKeyHandler")
 	}
 	if o.KmsKMSKeyStatusHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSKeyStatusHandler")
 	}
-	if o.KmsKMSListIdentitiesHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSListIdentitiesHandler")
-	}
 	if o.KmsKMSListKeysHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSListKeysHandler")
 	}
-	if o.KmsKMSListPoliciesHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSListPoliciesHandler")
-	}
 	if o.KmsKMSMetricsHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSMetricsHandler")
-	}
-	if o.KmsKMSSetPolicyHandler == nil {
-		unregistered = append(unregistered, "k_m_s.KMSSetPolicyHandler")
 	}
 	if o.KmsKMSStatusHandler == nil {
 		unregistered = append(unregistered, "k_m_s.KMSStatusHandler")
@@ -1909,43 +1813,7 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
-	o.handlers["POST"]["/kms/policies/{name}/assign"] = k_m_s.NewKMSAssignPolicy(o.context, o.KmsKMSAssignPolicyHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
 	o.handlers["POST"]["/kms/keys"] = k_m_s.NewKMSCreateKey(o.context, o.KmsKMSCreateKeyHandler)
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
-	}
-	o.handlers["DELETE"]["/kms/identities/{name}"] = k_m_s.NewKMSDeleteIdentity(o.context, o.KmsKMSDeleteIdentityHandler)
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
-	}
-	o.handlers["DELETE"]["/kms/keys/{name}"] = k_m_s.NewKMSDeleteKey(o.context, o.KmsKMSDeleteKeyHandler)
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
-	}
-	o.handlers["DELETE"]["/kms/policies/{name}"] = k_m_s.NewKMSDeletePolicy(o.context, o.KmsKMSDeletePolicyHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/kms/identities/{name}/describe"] = k_m_s.NewKMSDescribeIdentity(o.context, o.KmsKMSDescribeIdentityHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/kms/policies/{name}/describe"] = k_m_s.NewKMSDescribePolicy(o.context, o.KmsKMSDescribePolicyHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/kms/describe-self/identity"] = k_m_s.NewKMSDescribeSelfIdentity(o.context, o.KmsKMSDescribeSelfIdentityHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/kms/policies/{name}"] = k_m_s.NewKMSGetPolicy(o.context, o.KmsKMSGetPolicyHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/kms/keys/{name}/import"] = k_m_s.NewKMSImportKey(o.context, o.KmsKMSImportKeyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -1953,23 +1821,11 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/identities"] = k_m_s.NewKMSListIdentities(o.context, o.KmsKMSListIdentitiesHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/kms/keys"] = k_m_s.NewKMSListKeys(o.context, o.KmsKMSListKeysHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/kms/policies"] = k_m_s.NewKMSListPolicies(o.context, o.KmsKMSListPoliciesHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/kms/metrics"] = k_m_s.NewKMSMetrics(o.context, o.KmsKMSMetricsHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/kms/policies"] = k_m_s.NewKMSSetPolicy(o.context, o.KmsKMSSetPolicyHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
