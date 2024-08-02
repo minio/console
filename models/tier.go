@@ -53,7 +53,7 @@ type Tier struct {
 	Status bool `json:"status,omitempty"`
 
 	// type
-	// Enum: [s3 gcs azure minio unsupported]
+	// Enum: ["s3","gcs","azure","minio","unsupported"]
 	Type string `json:"type,omitempty"`
 }
 

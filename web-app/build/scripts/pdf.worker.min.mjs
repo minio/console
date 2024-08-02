@@ -56796,7 +56796,7 @@ class WorkerMessageHandler {
             infoRef: Q.trailer.getRaw("Info") || null,
             info: e,
             fileIds: Q.trailer.get("ID") || null,
-            startXRef: E ? h : Q.lastXRefStreamPos ?? h,
+            startXRef: E ? h : (Q.lastXRefStreamPos ?? h),
             filename: s,
           };
         }

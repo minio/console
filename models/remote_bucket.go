@@ -57,7 +57,7 @@ type RemoteBucket struct {
 	SecretKey string `json:"secretKey,omitempty"`
 
 	// service
-	// Enum: [replication]
+	// Enum: ["replication"]
 	Service string `json:"service,omitempty"`
 
 	// source bucket

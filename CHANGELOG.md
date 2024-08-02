@@ -2,6 +2,17 @@
 
 # Changelog
 
+## Release v1.7.0
+
+Bug Fix:
+
+- Fixed directory listing
+- Fix MinIO videos link
+
+Additional Changes:
+
+- Removed deprecated KES functionality
+
 ## Release v1.6.3
 
 Additional Changes:
@@ -31,7 +42,6 @@ Bug Fix:
 Additional Changes:
 
 - Improved Share Link behavior
-
 
 ## Release v1.6.0
 
