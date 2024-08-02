@@ -139,15 +139,23 @@ func (wsc *wsMinioClient) objectManager(session *models.Principal) {
 
 							continue
 						}
-						objItem := ObjectResponse{
-							Name:         lsObj.Key,
-							Size:         lsObj.Size,
-							LastModified: lsObj.LastModified.Format(time.RFC3339),
-							VersionID:    lsObj.VersionID,
-							IsLatest:     lsObj.IsLatest,
-							DeleteMarker: lsObj.IsDeleteMarker,
+						// if the key is same as requested prefix it would be nested directory object, so skip
+						// and show only objects under the prefix
+						// E.g:
+						// bucket/prefix1/prefix2/ -- this should be skipped from list item.
+						// bucket/prefix1/prefix2/an-object
+						// bucket/prefix1/prefix2/another-object
+						if messageRequest.Prefix != lsObj.Key {
+							objItem := ObjectResponse{
+								Name:         lsObj.Key,
+								Size:         lsObj.Size,
+								LastModified: lsObj.LastModified.Format(time.RFC3339),
+								VersionID:    lsObj.VersionID,
+								IsLatest:     lsObj.IsLatest,
+								DeleteMarker: lsObj.IsDeleteMarker,
+							}
+							buffer = append(buffer, objItem)
 						}
-						buffer = append(buffer, objItem)
 
 						if len(buffer) >= itemsPerBatch {
 							sendWSResponse(WSResponse{

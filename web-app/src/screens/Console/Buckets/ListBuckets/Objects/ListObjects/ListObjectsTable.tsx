@@ -84,20 +84,14 @@ const ListObjectsTable = () => {
     IAM_SCOPES.S3_ALL_LIST_BUCKET,
   ]);
 
-  const filteredRecords = records.filter((b: BucketObjectItem) => {
+  const plSelect = records.filter((b: BucketObjectItem) => {
     if (searchObjects === "") {
       return true;
     } else {
       const objectName = b.name.toLowerCase();
-      if (objectName.indexOf(searchObjects.toLowerCase()) >= 0) {
-        return true;
-      } else {
-        return false;
-      }
+      return objectName.indexOf(searchObjects.toLowerCase()) >= 0;
     }
   });
-
-  const plSelect = filteredRecords;
   const sortASC = plSelect.sort(sortListObjects(currentSortField));
 
   let payload: BucketObjectItem[] = [];
