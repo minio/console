@@ -222,7 +222,7 @@ const HelpMenu = () => {
         <MoreLink
           LeadingIcon={MinIOTierIcon}
           text={"Visit MinIO Videos"}
-          link={"https://min.io/videos?ref=con"}
+          link={"https://resources.min.io/l/library?contentType=video"}
           color={"#C5293F"}
         />
       </div>
