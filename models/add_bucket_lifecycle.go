@@ -74,7 +74,7 @@ type AddBucketLifecycle struct {
 	TransitionDays int32 `json:"transition_days,omitempty"`
 
 	// ILM Rule type (Expiry or transition)
-	// Enum: [expiry transition]
+	// Enum: ["expiry","transition"]
 	Type string `json:"type,omitempty"`
 }
 

@@ -72,7 +72,7 @@ type UpdateBucketLifecycle struct {
 
 	// ILM Rule type (Expiry or transition)
 	// Required: true
-	// Enum: [expiry transition]
+	// Enum: ["expiry","transition"]
 	Type *string `json:"type"`
 }
 

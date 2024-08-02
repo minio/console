@@ -41,7 +41,7 @@ type BucketQuota struct {
 	Quota int64 `json:"quota,omitempty"`
 
 	// type
-	// Enum: [hard]
+	// Enum: ["hard"]
 	Type string `json:"type,omitempty"`
 }
 

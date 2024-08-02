@@ -83,7 +83,7 @@ type MultiBucketReplication struct {
 	StorageClass string `json:"storageClass,omitempty"`
 
 	// sync mode
-	// Enum: [async sync]
+	// Enum: ["async","sync"]
 	SyncMode *string `json:"syncMode,omitempty"`
 
 	// tags
