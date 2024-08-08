@@ -93,5 +93,5 @@
     "semver": "^7.5.2"
   },
   "main": "index.js",
-  "packageManager": "yarn@4.3.0"
+  "packageManager": "yarn@4.4.0"
 }
