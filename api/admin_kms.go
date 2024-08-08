@@ -20,6 +20,7 @@ package api
 import (
 	"context"
 	"sort"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/minio/console/api/operations"
@@ -260,7 +261,7 @@ func listKeys(ctx context.Context, pattern string, minioClient MinioAdmin) (*mod
 func parseKeys(results []madmin.KMSKeyInfo) (data []*models.KmsKeyInfo) {
 	for _, key := range results {
 		data = append(data, &models.KmsKeyInfo{
-			CreatedAt: key.CreatedAt,
+			CreatedAt: key.CreatedAt.Format(time.RFC3339),
 			CreatedBy: key.CreatedBy,
 			Name:      key.Name,
 		})
