@@ -11,7 +11,7 @@ die() {
 try() { "$@" &> yarn.log || die "cannot $*"; }
 
 rm -f yarn.log
-try make build-static
+try yarn build
 
 if cat yarn.log | grep "Compiled with warnings"; then
   echo "There are warnings in the code"
