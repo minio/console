@@ -313,6 +313,12 @@ func AuthenticationMiddleware(next http.Handler) http.Handler {
 
 // FileServerMiddleware serves files from the static folder
 func FileServerMiddleware(next http.Handler) http.Handler {
+	buildFs, err := fs.Sub(portal_ui.GetStaticAssets(), "build")
+	if err != nil {
+		panic(err)
+	}
+	spaFileHandler := wrapHandlerSinglePageApplication(requestBounce(http.FileServer(http.FS(buildFs))))
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Server", globalAppName) // do not add version information
 		switch {
@@ -321,11 +327,7 @@ func FileServerMiddleware(next http.Handler) http.Handler {
 		case strings.HasPrefix(r.URL.Path, "/api"):
 			next.ServeHTTP(w, r)
 		default:
-			buildFs, err := fs.Sub(portal_ui.GetStaticAssets(), "build")
-			if err != nil {
-				panic(err)
-			}
-			wrapHandlerSinglePageApplication(requestBounce(http.FileServer(http.FS(buildFs)))).ServeHTTP(w, r)
+			spaFileHandler.ServeHTTP(w, r)
 		}
 	})
 }
@@ -424,13 +426,10 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 	}
 	indexPageBytes = replaceLicense(indexPageBytes)
 
-	mimeType := mimedb.TypeByExtension(filepath.Ext(r.URL.Path))
-
-	if mimeType == "application/octet-stream" {
-		mimeType = "text/html"
-	}
-
-	w.Header().Set("Content-Type", mimeType)
+	// it's important to force "Content-Type: text/html", because a previous
+	// handler may have already set the content-type to a different value.
+	// (i.e. the FileServer when it detected that it couldn't find the file)
+	w.Header().Set("Content-Type", "text/html")
 	http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(indexPageBytes))
 }
 
