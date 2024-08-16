@@ -257,10 +257,15 @@ func listKeys(ctx context.Context, pattern string, minioClient MinioAdmin) (*mod
 	return &models.KmsListKeysResponse{Results: parseKeys(results)}, nil
 }
 
+// printDate - human friendly formatted date.
+const (
+	printDate = "2006-01-02 15:04:05 MST"
+)
+
 func parseKeys(results []madmin.KMSKeyInfo) (data []*models.KmsKeyInfo) {
 	for _, key := range results {
 		data = append(data, &models.KmsKeyInfo{
-			CreatedAt: key.CreatedAt,
+			CreatedAt: key.CreatedAt.Format(printDate),
 			CreatedBy: key.CreatedBy,
 			Name:      key.Name,
 		})
