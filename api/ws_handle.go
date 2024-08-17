@@ -156,7 +156,7 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	session, err := auth.GetClaimsFromTokenInRequest(req)
 	if err != nil && (errors.Is(err, auth.ErrReadingToken) && !strings.HasPrefix(wsPath, `/objectManager`)) {
 		ErrorWithContext(ctx, err)
-		errorsApi.ServeError(w, req, errorsApi.New(http.StatusUnauthorized, err.Error()))
+		errorsApi.ServeError(w, req, errorsApi.New(http.StatusUnauthorized, "%v", err))
 		return
 	}
 
