@@ -36,7 +36,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start",
-    "find-deadcode": "ts-prune -s consoleApi.ts | sh -c '(! grep -v \"used in module\")'"
+    "find-deadcode": "ts-prune -s consoleApi.ts | sh -c '(! grep -v \"used in module\")'",
+    "format": "prettier . --write --log-level warn"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -75,6 +76,7 @@
     "@types/webpack-env": "^1.18.5",
     "babel-plugin-istanbul": "^6.1.1",
     "customize-cra": "^1.0.0",
+    "knip": "^5.27.2",
     "minio": "^8.0.1",
     "nyc": "^15.1.0",
     "prettier": "3.3.3",
