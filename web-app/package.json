@@ -6,6 +6,8 @@
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
+    "clsx": "^2.1.1",
+    "http-status-codes": "^2.3.0",
     "kbar": "^0.1.0-beta.45",
     "local-storage-fallback": "^4.1.2",
     "lodash": "^4.17.21",
@@ -61,6 +63,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@playwright/test": "^1.45.2",
+    "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.7",
     "@types/luxon": "^3.4.2",
     "@types/node": "20.14.11",
