@@ -17,7 +17,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { EventInfo } from "./types";
 
-export interface WatchState {
+interface WatchState {
   messages: EventInfo[];
 }
 
@@ -25,7 +25,7 @@ const initialState: WatchState = {
   messages: [],
 };
 
-export const watchSlice = createSlice({
+const watchSlice = createSlice({
   name: "trace",
   initialState,
   reducers: {

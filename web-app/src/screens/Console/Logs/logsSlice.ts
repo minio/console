@@ -18,7 +18,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LogMessage } from "./types";
 import { DateTime } from "luxon";
 
-export interface LogState {
+interface LogState {
   logMessages: LogMessage[];
   logsStarted: boolean;
 }
@@ -28,7 +28,7 @@ const initialState: LogState = {
   logsStarted: false,
 };
 
-export const logsSlice = createSlice({
+const logsSlice = createSlice({
   name: "logs",
   initialState,
   reducers: {

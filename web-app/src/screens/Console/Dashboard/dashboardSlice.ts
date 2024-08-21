@@ -20,7 +20,7 @@ import { IDashboardPanel } from "./Prometheus/types";
 import { getUsageAsync } from "./dashboardThunks";
 import { AdminInfoResponse } from "api/consoleApi";
 
-export interface DashboardState {
+interface DashboardState {
   zoom: zoomState;
   usage: AdminInfoResponse | null;
   status: "idle" | "loading" | "failed";
@@ -36,7 +36,7 @@ const initialState: DashboardState = {
   usage: null,
   widgetLoadVersion: 0,
 };
-export const dashboardSlice = createSlice({
+const dashboardSlice = createSlice({
   name: "dashboard",
   initialState,
   reducers: {

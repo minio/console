@@ -21,7 +21,7 @@ import { Box } from "mds";
 import { Link } from "react-router-dom";
 import { widgetCommon } from "../Common/FormComponents/common/styleLibrary";
 
-export interface ISubInterface {
+interface ISubInterface {
   message: string;
   fontWeight?: "normal" | "bold";
 }

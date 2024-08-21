@@ -20,14 +20,14 @@ import { TransformedEndpointItem } from "./types";
 
 export const notifyPostgres = "notify_postgres";
 export const notifyMysql = "notify_mysql";
-export const notifyKafka = "notify_kafka";
-export const notifyAmqp = "notify_amqp";
-export const notifyMqtt = "notify_mqtt";
-export const notifyRedis = "notify_redis";
-export const notifyNats = "notify_nats";
-export const notifyElasticsearch = "notify_elasticsearch";
-export const notifyWebhooks = "notify_webhook";
-export const notifyNsq = "notify_nsq";
+const notifyKafka = "notify_kafka";
+const notifyAmqp = "notify_amqp";
+const notifyMqtt = "notify_mqtt";
+const notifyRedis = "notify_redis";
+const notifyNats = "notify_nats";
+const notifyElasticsearch = "notify_elasticsearch";
+const notifyWebhooks = "notify_webhook";
+const notifyNsq = "notify_nsq";
 export const notificationTransform = (
   notificationElements: NotificationEndpointItem[],
 ) => {

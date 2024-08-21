@@ -20,7 +20,7 @@ import {
   GetBucketRetentionConfig,
 } from "api/consoleApi";
 
-export interface RewindItem {
+interface RewindItem {
   rewindEnabled: boolean;
   bucketToRewind: string;
   dateToRewind: string | null;
@@ -60,7 +60,7 @@ export interface ObjectBrowserState {
   maxShareLinkExpTime: number;
 }
 
-export interface ObjectManager {
+interface ObjectManager {
   objectsToManage: IFileItem[];
   managerOpen: boolean;
   newItems: boolean;

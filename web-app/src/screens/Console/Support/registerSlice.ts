@@ -17,7 +17,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SubnetInfo, SubnetOrganization } from "../License/types";
 
-export interface RegisterState {
+interface RegisterState {
   license: string;
   subnetPassword: string;
   subnetEmail: string;
@@ -51,7 +51,7 @@ const initialState: RegisterState = {
   curTab: "simple-tab-0",
 };
 
-export const registerSlice = createSlice({
+const registerSlice = createSlice({
   name: "register",
   initialState,
   reducers: {
@@ -106,7 +106,6 @@ export const registerSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-  setLicense,
   setSubnetPassword,
   setSubnetEmail,
   setSubnetMFAToken,

@@ -17,7 +17,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { createUserAsync, resetFormAsync } from "./thunk/AddUsersThunk";
 
-export interface ICreateUser {
+interface ICreateUser {
   userName: string;
   secretKey: string;
   selectedGroups: string[];
@@ -39,7 +39,7 @@ const initialState: ICreateUser = {
   secretKeylength: 0,
 };
 
-export const createUserSlice = createSlice({
+const createUserSlice = createSlice({
   name: "createUser",
   initialState,
   reducers: {
@@ -93,7 +93,6 @@ export const {
   setSelectedPolicies,
   setAddLoading,
   setSendEnabled,
-  setApinoerror,
 } = createUserSlice.actions;
 
 export default createUserSlice.reducer;

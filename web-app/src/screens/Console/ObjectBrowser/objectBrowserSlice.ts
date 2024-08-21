@@ -80,7 +80,7 @@ const initialState: ObjectBrowserState = {
   maxShareLinkExpTime: 0,
 };
 
-export const objectBrowserSlice = createSlice({
+const objectBrowserSlice = createSlice({
   name: "objectBrowser",
   initialState,
   reducers: {
@@ -398,7 +398,6 @@ export const {
   cleanList,
   toggleList,
   openList,
-  closeList,
   setSearchObjects,
   setRequestInProgress,
   cancelObjectInList,

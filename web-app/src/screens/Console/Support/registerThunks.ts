@@ -91,7 +91,7 @@ export const fetchLicenseInfo = createAsyncThunk(
   },
 );
 
-export interface ClassRegisterArgs {
+interface ClassRegisterArgs {
   token: string;
   account_id: string;
 }

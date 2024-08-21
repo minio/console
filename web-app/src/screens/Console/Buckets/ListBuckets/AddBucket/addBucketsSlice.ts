@@ -18,7 +18,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addBucketAsync } from "./addBucketThunks";
 import { ObjectRetentionMode } from "api/consoleApi";
 
-export interface AddBucketState {
+interface AddBucketState {
   loading: boolean;
   isDirty: boolean;
   invalidFields: string[];
@@ -58,7 +58,7 @@ const initialState: AddBucketState = {
   excludedPrefixes: "",
 };
 
-export const addBucketsSlice = createSlice({
+const addBucketsSlice = createSlice({
   name: "addBuckets",
   initialState,
   reducers: {

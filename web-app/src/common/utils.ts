@@ -32,8 +32,8 @@ export const units = [
   "ZiB",
   "YiB",
 ];
-export const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
-export const k8sCalcUnits = ["B", ...k8sUnits];
+const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
+const k8sCalcUnits = ["B", ...k8sUnits];
 
 export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   let n = parseInt(x, 10) || 0;
@@ -97,7 +97,7 @@ export const getBytes = (
 };
 
 //getBytesNumber, converts from a value and a unit from units array to bytes
-export const getBytesNumber = (
+const getBytesNumber = (
   value: string,
   unit: string,
   fromk8s: boolean = false,

@@ -18,7 +18,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppState } from "../../../../store";
 import { Bucket } from "api/consoleApi";
 
-export interface BucketDetailsState {
+interface BucketDetailsState {
   selectedTab: string;
   loadingBucket: boolean;
   bucketInfo: Bucket | null;
@@ -30,7 +30,7 @@ const initialState: BucketDetailsState = {
   bucketInfo: null,
 };
 
-export const bucketDetailsSlice = createSlice({
+const bucketDetailsSlice = createSlice({
   name: "bucketDetails",
   initialState,
   reducers: {
@@ -46,7 +46,7 @@ export const bucketDetailsSlice = createSlice({
   },
 });
 
-export const { setBucketDetailsTab, setBucketInfo, setBucketDetailsLoad } =
+export const { setBucketInfo, setBucketDetailsLoad } =
   bucketDetailsSlice.actions;
 
 export const selBucketDetailsLoading = (state: AppState) =>

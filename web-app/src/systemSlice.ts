@@ -25,7 +25,7 @@ const initSideBarOpen = localStorage.getItem("sidebarOpen")
   ? JSON.parse(localStorage.getItem("sidebarOpen")!)["open"]
   : true;
 
-export interface SystemState {
+interface SystemState {
   value: number;
   loggedIn: boolean;
   showMarketplace: boolean;
@@ -81,7 +81,7 @@ const initialState: SystemState = {
   darkMode: isDarkModeOn(),
 };
 
-export const systemSlice = createSlice({
+const systemSlice = createSlice({
   name: "system",
   initialState,
   reducers: {
@@ -189,11 +189,9 @@ export const systemSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   userLogged,
-  showMarketplace,
   menuOpen,
   setServerNeedsRestart,
   serverIsLoading,
-  setLoadingProgress,
   setSnackBarMessage,
   setErrorSnackMessage,
   setModalErrorSnackMessage,
@@ -201,7 +199,6 @@ export const {
   setServerDiagStat,
   globalSetDistributedSetup,
   setSiteReplicationInfo,
-  setSystemLicenseInfo,
   setOverrideStyles,
   setAnonymousMode,
   resetSystem,

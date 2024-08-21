@@ -64,7 +64,7 @@ import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
 import HelpMenu from "../HelpMenu";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 
-export const formatPolicy = (policy: string = ""): string[] => {
+const formatPolicy = (policy: string = ""): string[] => {
   if (policy.length <= 0) return [];
   return policy.split(",");
 };

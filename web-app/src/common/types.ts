@@ -41,7 +41,7 @@ export interface IBytesCalc {
   unit: string;
 }
 
-export interface IEmbeddedCustomButton {
+interface IEmbeddedCustomButton {
   backgroundColor: string;
   textColor: string;
   hoverColor: string;
@@ -52,7 +52,7 @@ export interface IEmbeddedCustomButton {
   disabledText: string;
 }
 
-export interface IEmbeddedCustomTable {
+interface IEmbeddedCustomTable {
   border: string;
   disabledBorder: string;
   disabledBG: string;
@@ -61,14 +61,14 @@ export interface IEmbeddedCustomTable {
   hoverColor: string;
 }
 
-export interface IEmbeddedInputBox {
+interface IEmbeddedInputBox {
   border: string;
   hoverBorder: string;
   textColor: string;
   backgroundColor: string;
 }
 
-export interface IEmbeddedSwitch {
+interface IEmbeddedSwitch {
   switchBackground: string;
   bulletBorderColor: string;
   bulletBGColor: string;

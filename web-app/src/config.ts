@@ -16,7 +16,7 @@
 
 import { ApplicationLogoProps } from "mds";
 
-export const MinIOPlan =
+const MinIOPlan =
   (
     document.head.querySelector(
       "[name~=minio-license][content]",

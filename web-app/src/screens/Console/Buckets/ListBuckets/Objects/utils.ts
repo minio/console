@@ -16,7 +16,7 @@
 
 import { BucketObjectItem } from "./ListObjects/types";
 import { removeTrace } from "../../../ObjectBrowser/transferManager";
-import store from "../../../../../store";
+import { store } from "../../../../../store";
 import { ContentType, PermissionResource } from "api/consoleApi";
 import { api } from "../../../../../api";
 import { setErrorSnackMessage } from "../../../../../systemSlice";
@@ -199,7 +199,7 @@ class BrowserDownload {
 }
 
 export type AllowedPreviews = "image" | "pdf" | "audio" | "video" | "none";
-export const contentTypePreview = (contentType: string): AllowedPreviews => {
+const contentTypePreview = (contentType: string): AllowedPreviews => {
   if (contentType) {
     const mimeObjectType = (contentType || "").toLowerCase();
 
@@ -221,7 +221,7 @@ export const contentTypePreview = (contentType: string): AllowedPreviews => {
 };
 
 // Review file extension by name & returns the type of preview browser that can be used
-export const extensionPreview = (fileName: string): AllowedPreviews => {
+const extensionPreview = (fileName: string): AllowedPreviews => {
   const imageExtensions = [
     "jif",
     "jfif",

@@ -32,28 +32,28 @@ export interface ReportMessage {
   subnetResponse: string;
 }
 
-export interface perfInfo {
+interface perfInfo {
   drives: serverDrivesInfo[];
   net: serverNetHealthInfo[];
   net_parallel: serverNetHealthInfo;
   error: string;
 }
 
-export interface serverDrivesInfo {
+interface serverDrivesInfo {
   addr: string;
   serial: drivePerfInfo[];
   parallel: drivePerfInfo[];
   error: string;
 }
 
-export interface drivePerfInfo {
+interface drivePerfInfo {
   endpoint: string;
   latency: diskLatency;
   throughput: diskThroughput;
   error: string;
 }
 
-export interface diskLatency {
+interface diskLatency {
   avg_secs: number;
   percentile50_secs: number;
   percentile90_secs: number;
@@ -62,7 +62,7 @@ export interface diskLatency {
   max_secs: number;
 }
 
-export interface diskThroughput {
+interface diskThroughput {
   avg_bytes_per_sec: number;
   percentile50_bytes_per_sec: number;
   percentile90_bytes_per_sec: number;
@@ -71,20 +71,20 @@ export interface diskThroughput {
   max_bytes_per_sec: number;
 }
 
-export interface serverNetHealthInfo {
+interface serverNetHealthInfo {
   addr: string;
   net: netPerfInfo[];
   error: string;
 }
 
-export interface netPerfInfo {
+interface netPerfInfo {
   remote: string;
   latency: netLatency;
   throughput: netThroughput;
   error: string;
 }
 
-export interface netLatency {
+interface netLatency {
   avg_secs: number;
   percentile50_secs: number;
   percentile90_secs: number;
@@ -93,7 +93,7 @@ export interface netLatency {
   max_secs: number;
 }
 
-export interface netThroughput {
+interface netThroughput {
   avg_bytes_per_sec: number;
   percentile50_bytes_per_sec: number;
   percentile90_bytes_per_sec: number;
@@ -102,13 +102,13 @@ export interface netThroughput {
   max_bytes_per_sec: number;
 }
 
-export interface minioHealthInfo {
+interface minioHealthInfo {
   info: infoMessage;
   config: any;
   error: string;
 }
 
-export interface infoMessage {
+interface infoMessage {
   mode: string;
   domain: string[];
   region: string;
@@ -122,19 +122,19 @@ export interface infoMessage {
   servers: serverProperties[];
 }
 
-export interface buckets {
+interface buckets {
   count: number;
 }
 
-export interface objects {
+interface objects {
   count: number;
 }
 
-export interface usage {
+interface usage {
   size: number;
 }
 
-export interface services {
+interface services {
   vault: vault;
   ldap: ldap;
   logger: Map<string, status[]>[];
@@ -142,21 +142,21 @@ export interface services {
   notifications: Map<string, Map<string, status[]>[]>;
 }
 
-export interface vault {
+interface vault {
   status: string;
   encrypt: string;
   decrypt: string;
 }
 
-export interface ldap {
+interface ldap {
   status: string;
 }
 
-export interface status {
+interface status {
   status: string;
 }
 
-export interface serverProperties {
+interface serverProperties {
   state: string;
   endpoint: string;
   uptime: number;
@@ -166,7 +166,7 @@ export interface serverProperties {
   drives: disk[];
 }
 
-export interface disk {
+interface disk {
   endpoint: string;
   rootDisk: boolean;
   path: string;
@@ -184,7 +184,7 @@ export interface disk {
   utilization: number;
 }
 
-export interface sysHealthInfo {
+interface sysHealthInfo {
   cpus: serverCpuInfo[];
   drives: serverDiskHwInfo[];
   osinfos: serverOsInfo[];
@@ -193,14 +193,14 @@ export interface sysHealthInfo {
   error: string;
 }
 
-export interface serverCpuInfo {
+interface serverCpuInfo {
   addr: string;
   cpu: cpuInfoStat[];
   time: cpuTimeStat[];
   error: string;
 }
 
-export interface cpuInfoStat {
+interface cpuInfoStat {
   cpu: number;
   vendorId: string;
   family: string;
@@ -216,7 +216,7 @@ export interface cpuInfoStat {
   microcode: string;
 }
 
-export interface cpuTimeStat {
+interface cpuTimeStat {
   cpu: string;
   user: number;
   system: number;
@@ -230,7 +230,7 @@ export interface cpuTimeStat {
   guestNice: number;
 }
 
-export interface serverDiskHwInfo {
+interface serverDiskHwInfo {
   addr: string;
   usages: diskUsageStat[];
   partitions: partitionStat[];
@@ -238,7 +238,7 @@ export interface serverDiskHwInfo {
   error: string;
 }
 
-export interface diskUsageStat {
+interface diskUsageStat {
   path: string;
   fstype: string;
   total: number;
@@ -251,7 +251,7 @@ export interface diskUsageStat {
   inodesUsedPercent: number;
 }
 
-export interface partitionStat {
+interface partitionStat {
   device: string;
   mountpoint: string;
   fstype: string;
@@ -259,7 +259,7 @@ export interface partitionStat {
   smartInfo: smartInfo;
 }
 
-export interface smartInfo {
+interface smartInfo {
   device: string;
   scsi: scsiInfo;
   nvme: nvmeInfo;
@@ -267,7 +267,7 @@ export interface smartInfo {
   error: string;
 }
 
-export interface scsiInfo {
+interface scsiInfo {
   scsiCapacityBytes: number;
   scsiModeSenseBuf: string;
   scsirespLen: number;
@@ -276,7 +276,7 @@ export interface scsiInfo {
   sciRpm: number;
 }
 
-export interface nvmeInfo {
+interface nvmeInfo {
   serialNum: string;
   vendorId: string;
   firmwareVersion: string;
@@ -297,7 +297,7 @@ export interface nvmeInfo {
   hostWriteCommands: number;
 }
 
-export interface ataInfo {
+interface ataInfo {
   scsiLuWWNDeviceID: string;
   serialNum: string;
   modelNum: string;
@@ -311,7 +311,7 @@ export interface ataInfo {
   transport: string;
 }
 
-export interface diskIOCountersStat {
+interface diskIOCountersStat {
   readCount: number;
   mergedReadCount: number;
   DriteCount: number;
@@ -328,7 +328,7 @@ export interface diskIOCountersStat {
   label: string;
 }
 
-export interface serverOsInfo {
+interface serverOsInfo {
   addr: string;
   info: infoStat;
   sensors: temperatureStat[];
@@ -336,7 +336,7 @@ export interface serverOsInfo {
   error: string;
 }
 
-export interface infoStat {
+interface infoStat {
   hostname: string;
   uptime: number;
   bootTime: number;
@@ -352,26 +352,26 @@ export interface infoStat {
   hostid: string;
 }
 
-export interface temperatureStat {
+interface temperatureStat {
   sensorKey: string;
   sensorTemperature: number;
 }
 
-export interface userStat {
+interface userStat {
   user: string;
   terminal: string;
   host: string;
   started: number;
 }
 
-export interface serverMemInfo {
+interface serverMemInfo {
   addr: string;
   swap: swapMemoryStat;
   virtualmem: virtualMemoryStat;
   error: string;
 }
 
-export interface swapMemoryStat {
+interface swapMemoryStat {
   total: number;
   used: number;
   free: number;
@@ -384,7 +384,7 @@ export interface swapMemoryStat {
   pgmajfault: number;
 }
 
-export interface virtualMemoryStat {
+interface virtualMemoryStat {
   total: number;
   available: number;
   used: number;
@@ -422,13 +422,13 @@ export interface virtualMemoryStat {
   hugepagesize: number;
 }
 
-export interface serverProcInfo {
+interface serverProcInfo {
   addr: string;
   processes: sysProcess[];
   error: string;
 }
 
-export interface sysProcess {
+interface sysProcess {
   pid: number;
   background: boolean;
   cpupercent: number;
@@ -461,7 +461,7 @@ export interface sysProcess {
   username: string;
 }
 
-export interface nethwConnectionStat {
+interface nethwConnectionStat {
   fd: number;
   family: number;
   type: number;
@@ -472,19 +472,19 @@ export interface nethwConnectionStat {
   pid: number;
 }
 
-export interface netAddr {
+interface netAddr {
   ip: string;
   port: number;
 }
 
-export interface processIOCountersStat {
+interface processIOCountersStat {
   readCount: number;
   writeCount: number;
   readBytes: number;
   writeBytes: number;
 }
 
-export interface memoryInfoStat {
+interface memoryInfoStat {
   rss: number;
   vms: number;
   hwm: number;
@@ -494,7 +494,7 @@ export interface memoryInfoStat {
   swap: number;
 }
 
-export interface nethwIOCounterStat {
+interface nethwIOCounterStat {
   name: string;
   bytesSent: number;
   bytesRecv: number;
@@ -508,19 +508,19 @@ export interface nethwIOCounterStat {
   fifoout: number;
 }
 
-export interface processNmCtxSwitchesStat {
+interface processNmCtxSwitchesStat {
   voluntary: number;
   involuntary: number;
 }
 
-export interface processPageFaultsStat {
+interface processPageFaultsStat {
   minorFaults: number;
   majorFaults: number;
   childMinorFaults: number;
   childMajorFaults: number;
 }
 
-export interface processRLimitStat {
+interface processRLimitStat {
   resource: number;
   soft: number;
   hard: number;

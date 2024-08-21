@@ -17,7 +17,7 @@
 import React from "react";
 import { ApplicationLogo } from "mds";
 
-export interface LicensePlanOption {
+interface LicensePlanOption {
   planId: string;
   planName: string;
   planType: "commercial" | "open-source";
@@ -25,7 +25,7 @@ export interface LicensePlanOption {
   planDescription: React.ReactNode;
 }
 
-export interface FeatureElementObject {
+interface FeatureElementObject {
   [name: string]: FeatureItem;
 }
 
@@ -34,7 +34,7 @@ export interface FeatureItem {
   isCheck?: boolean;
 }
 
-export interface PlansFeatures {
+interface PlansFeatures {
   featureLabel: string;
   featurePlans: FeatureElementObject;
 }
@@ -225,7 +225,7 @@ export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
   },
 ];
 
-export const LICENSE_CONSENT_STORE_KEY = "agpl_minio_license_consent";
+const LICENSE_CONSENT_STORE_KEY = "agpl_minio_license_consent";
 export const setLicenseConsent = () => {
   localStorage.setItem(LICENSE_CONSENT_STORE_KEY, "true");
 };

@@ -18,7 +18,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LoginDetails } from "api/consoleApi";
 import { doLoginAsync, getFetchConfigurationAsync } from "./loginThunks";
 
-export interface LoginState {
+interface LoginState {
   accessKey: string;
   secretKey: string;
   sts: string;
@@ -49,7 +49,7 @@ const initialState: LoginState = {
   ssoEmbeddedIDPDisplay: false,
 };
 
-export const loginSlice = createSlice({
+const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
