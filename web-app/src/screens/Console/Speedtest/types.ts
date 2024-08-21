@@ -24,7 +24,7 @@ export interface SpeedTestResponse {
   GETStats?: STStats;
 }
 
-export interface STStats {
+interface STStats {
   throughputPerSec: number;
   objectsPerSec: number;
   servers: STServer[] | null;

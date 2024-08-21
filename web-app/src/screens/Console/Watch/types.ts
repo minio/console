@@ -31,7 +31,7 @@ export interface Bucket {
   name: string;
 }
 
-export interface Details {
+interface Details {
   tags: object;
 }
 

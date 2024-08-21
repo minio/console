@@ -45,12 +45,12 @@ export interface WebsocketResponse {
   bucketName?: string;
 }
 
-export interface WebsocketErrorResponse {
+interface WebsocketErrorResponse {
   Code: number;
   APIError: ApiError;
 }
 
-export interface ObjectResponse {
+interface ObjectResponse {
   name: string;
   last_modified: string;
   size: number;

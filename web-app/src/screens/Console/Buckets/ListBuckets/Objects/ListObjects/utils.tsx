@@ -42,7 +42,7 @@ interface IExtToIcon {
   extensions: string[];
 }
 
-export const extensionToIcon: IExtToIcon[] = [
+const extensionToIcon: IExtToIcon[] = [
   {
     icon: <FileVideoIcon />,
     extensions: ["mp4", "mov", "avi", "mpeg", "mpg"],

@@ -108,7 +108,7 @@ const StatusCountBase = styled.div(({ theme }) => ({
   },
 }));
 
-export const StatusCountCard = ({
+const StatusCountCard = ({
   onlineCount = 0,
   offlineCount = 0,
   icon = null,

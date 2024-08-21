@@ -20,7 +20,7 @@ import { AppState } from "../../store";
 import { fetchSession } from "../../screens/LoginPage/sessionThunk";
 import { SessionCallStates } from "./consoleSlice.types";
 
-export interface ConsoleState {
+interface ConsoleState {
   session: SessionResponse;
   sessionLoadingState: SessionCallStates;
 }
@@ -30,7 +30,7 @@ const initialState: ConsoleState = {
   sessionLoadingState: SessionCallStates.Initial,
 };
 
-export const consoleSlice = createSlice({
+const consoleSlice = createSlice({
   name: "console",
   initialState,
   reducers: {

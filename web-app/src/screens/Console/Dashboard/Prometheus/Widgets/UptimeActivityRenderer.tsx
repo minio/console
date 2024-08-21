@@ -18,7 +18,7 @@ import React from "react";
 import { Box } from "mds";
 import TimeStatItem from "../../TimeStatItem";
 
-export type SimpleWidgetRenderProps = {
+type SimpleWidgetRenderProps = {
   valueToRender?: any;
   loading?: boolean;
   title?: any;

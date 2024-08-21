@@ -17,7 +17,7 @@
 import { SelectorTypes } from "../../../common/types";
 import { EnvOverride } from "../../../api/consoleApi";
 
-export type KVFieldType =
+type KVFieldType =
   | "string"
   | "password"
   | "number"

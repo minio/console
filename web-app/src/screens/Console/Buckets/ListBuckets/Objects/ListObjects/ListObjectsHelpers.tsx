@@ -21,7 +21,7 @@ import { displayFileIconName } from "./utils";
 
 // Functions
 
-export const displayParsedDate = (object: BucketObjectItem) => {
+const displayParsedDate = (object: BucketObjectItem) => {
   if (object.name.endsWith("/")) {
     return "";
   }
@@ -41,14 +41,14 @@ export const displayParsedDate = (object: BucketObjectItem) => {
   return objectTime.toFormat("ccc, LLL dd yyyy HH:mm (ZZZZ)");
 };
 
-export const displayNiceBytes = (object: BucketObjectItem) => {
+const displayNiceBytes = (object: BucketObjectItem) => {
   if (object.name.endsWith("/") || !object.size) {
     return "-";
   }
   return niceBytes(String(object.size));
 };
 
-export const displayDeleteFlag = (state: boolean) => {
+const displayDeleteFlag = (state: boolean) => {
   return state ? "Yes" : "No";
 };
 

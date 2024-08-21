@@ -37,7 +37,7 @@ interface IConfGenericProps {
 
 // Function to get defined values,
 //we make this because the backed sometimes don't return all the keys when there is an initial configuration
-export const valueDef = (
+const valueDef = (
   key: string,
   type: string,
   defaults: IElementValue[],

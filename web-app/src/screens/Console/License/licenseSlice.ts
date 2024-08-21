@@ -16,7 +16,7 @@
 
 import { createSlice } from "@reduxjs/toolkit";
 
-export interface IAddPool {
+interface IAddPool {
   faqModalOpen: boolean;
 }
 
@@ -24,7 +24,7 @@ const initialState: IAddPool = {
   faqModalOpen: false,
 };
 
-export const licenseSlice = createSlice({
+const licenseSlice = createSlice({
   name: "license",
   initialState,
   reducers: {
@@ -36,7 +36,5 @@ export const licenseSlice = createSlice({
     },
   },
 });
-
-export const { openFAQModal, closeFAQModal } = licenseSlice.actions;
 
 export default licenseSlice.reducer;

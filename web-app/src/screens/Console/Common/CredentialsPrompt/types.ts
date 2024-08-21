@@ -22,7 +22,7 @@ export interface NewServiceAccount {
   url?: string;
 }
 
-export interface ConsoleSA {
+interface ConsoleSA {
   accessKey: string;
   secretKey: string;
   url: string;

@@ -63,12 +63,12 @@ export interface LifeCycleItem {
   status?: string;
 }
 
-export interface MultiBucketResult {
+interface MultiBucketResult {
   bucketName: string;
   error?: string;
 }
 
-export interface MultiBucketResult {
+interface MultiBucketResult {
   results: MultiBucketResult[];
 }
 

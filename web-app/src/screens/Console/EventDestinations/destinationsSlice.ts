@@ -16,7 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface DestinationState {
+interface DestinationState {
   loading: boolean;
 }
 
@@ -24,7 +24,7 @@ const initialState: DestinationState = {
   loading: true,
 };
 
-export const destinationSlice = createSlice({
+const destinationSlice = createSlice({
   name: "destination",
   initialState,
   reducers: {

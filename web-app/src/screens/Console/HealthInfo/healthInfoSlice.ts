@@ -16,7 +16,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HealthInfoMessage } from "./types";
 
-export interface HealthInfoState {
+interface HealthInfoState {
   message: HealthInfoMessage;
 }
 
@@ -24,7 +24,7 @@ const initialState: HealthInfoState = {
   message: {} as HealthInfoMessage,
 };
 
-export const healthInfoSlice = createSlice({
+const healthInfoSlice = createSlice({
   name: "trace",
   initialState,
   reducers: {

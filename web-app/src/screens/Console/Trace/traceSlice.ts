@@ -17,7 +17,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { TraceMessage } from "./types";
 
-export interface TraceState {
+interface TraceState {
   messages: TraceMessage[];
   traceStarted: boolean;
 }
@@ -27,7 +27,7 @@ const initialState: TraceState = {
   traceStarted: false,
 };
 
-export const traceSlice = createSlice({
+const traceSlice = createSlice({
   name: "trace",
   initialState,
   reducers: {

@@ -36,7 +36,7 @@ export interface IPieChartConfiguration {
   strokeWidth?: number;
 }
 
-export interface ISinglePieConfiguration {
+interface ISinglePieConfiguration {
   colorList: string[];
   startAngle?: number;
   endAngle?: number;
