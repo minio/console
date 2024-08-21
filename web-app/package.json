@@ -38,7 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "playwright": "PORT=5005 USE_BABEL_PLUGIN_ISTANBUL=1 react-app-rewired start",
-    "find-deadcode": "ts-prune -s consoleApi.ts | sh -c '(! grep -v \"used in module\")'",
+    "find-deadcode": "knip",
     "format": "prettier . --write --log-level warn"
   },
   "eslintConfig": {
@@ -87,7 +87,6 @@
     "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.1",
     "testcafe": "3.6.2",
-    "ts-prune": "^0.10.3",
     "typescript": "^5.5.3"
   },
   "resolutions": {
