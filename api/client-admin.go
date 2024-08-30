@@ -97,7 +97,7 @@ type MinioAdmin interface {
 	// verify Tier status
 	verifyTierStatus(ctx context.Context, tierName string) error
 	// remove empty Tier
-	removeTier(ctx context.Context, tierName string) error
+	removeTier(ctx context.Context, tierName string, force bool) error
 	// Speedtest
 	speedtest(ctx context.Context, opts madmin.SpeedtestOpts) (chan madmin.SpeedTestResult, error)
 	// Site Relication
@@ -439,8 +439,8 @@ func (ac AdminClient) verifyTierStatus(ctx context.Context, tierName string) err
 }
 
 // implements madmin.RemoveTier()
-func (ac AdminClient) removeTier(ctx context.Context, tierName string) error {
-	return ac.Client.RemoveTier(ctx, tierName)
+func (ac AdminClient) removeTier(ctx context.Context, tierName string, force bool) error {
+	return ac.Client.RemoveTier(ctx, tierName, force)
 }
 
 func NewMinioAdminClient(ctx context.Context, sessionClaims *models.Principal) (*madmin.AdminClient, error) {

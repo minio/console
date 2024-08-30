@@ -466,7 +466,7 @@ func getEditTierCredentialsResponse(session *models.Principal, params tieringApi
 }
 
 func removeTier(ctx context.Context, client MinioAdmin, params *tieringApi.RemoveTierParams) error {
-	return client.removeTier(ctx, params.Name)
+	return client.removeTier(ctx, params.Name, false)
 }
 
 func getRemoveTierResponse(session *models.Principal, params tieringApi.RemoveTierParams) *CodedAPIError {
