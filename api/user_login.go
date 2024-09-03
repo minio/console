@@ -20,8 +20,11 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/go-openapi/errors"
@@ -142,7 +145,6 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *Coded
 		if credsVerificate.SessionToken == "" || credsVerificate.SecretAccessKey == "" || credsVerificate.AccessKeyID == "" {
 			return nil, ErrorWithContext(ctx, errors.New(401, "Invalid STS Params"))
 		}
-
 	} else {
 		clientIP := getClientIP(params.HTTPRequest)
 		// prepare console credentials
@@ -158,6 +160,12 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *Coded
 	}
 	sessionID, err := login(consoleCreds, sf)
 	if err != nil {
+		var urlErr *url.Error
+		if stderrors.As(err, &urlErr) {
+			if _, isNetErr := urlErr.Err.(net.Error); isNetErr {
+				return nil, ErrorWithContext(ctx, ErrNetworkError)
+			}
+		}
 		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 	}
 	// serialize output
