@@ -31,6 +31,8 @@ import (
 	"path"
 	"path/filepath"
 	"regexp"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -216,6 +218,97 @@ func AuditLogMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func DebugLogMiddleware(next http.Handler) http.Handler {
+	debugLogLevel, _ := env.GetInt("CONSOLE_DEBUG_LOGLEVEL", 0)
+	if debugLogLevel == 0 {
+		return next
+	}
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rw := logger.NewResponseWriter(w)
+		next.ServeHTTP(rw, r)
+		debugLog(debugLogLevel, r, rw)
+	})
+}
+
+func debugLog(debugLogLevel int, r *http.Request, rw *logger.ResponseWriter) {
+	switch debugLogLevel {
+	case 1:
+		// Log server errors only (summary)
+		if rw.StatusCode >= 500 {
+			debugLogSummary(r, rw)
+		}
+	case 2:
+		// Log server and client errors (summary)
+		if rw.StatusCode >= 400 {
+			debugLogSummary(r, rw)
+		}
+	case 3:
+		// Log all requests (summary)
+		debugLogSummary(r, rw)
+	case 4:
+		// Log server errors only (including headers)
+		if rw.StatusCode >= 500 {
+			debugLogDetails(r, rw)
+		}
+	case 5:
+		// Log server and client errors (including headers)
+		if rw.StatusCode >= 400 {
+			debugLogDetails(r, rw)
+		}
+	case 6:
+		// Log all requests (including headers)
+		debugLogDetails(r, rw)
+	}
+}
+
+func debugLogSummary(r *http.Request, rw *logger.ResponseWriter) {
+	statusCode := strconv.Itoa(rw.StatusCode)
+	if rw.Hijacked {
+		statusCode = "hijacked"
+	}
+	logger.Info(fmt.Sprintf("%s %s %s %s %dms", r.RemoteAddr, r.Method, r.URL, statusCode, time.Since(rw.StartTime).Milliseconds()))
+}
+
+func debugLogDetails(r *http.Request, rw *logger.ResponseWriter) {
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("- Method/URL:       %s %s\n", r.Method, r.URL))
+	sb.WriteString(fmt.Sprintf("  Remote endpoint:  %s\n", r.RemoteAddr))
+	if rw.Hijacked {
+		sb.WriteString("  Status code:      <hijacked, probably a websocket>\n")
+	} else {
+		sb.WriteString(fmt.Sprintf("  Status code:      %d\n", rw.StatusCode))
+	}
+	sb.WriteString(fmt.Sprintf("  Duration (ms):    %d\n", time.Since(rw.StartTime).Milliseconds()))
+	sb.WriteString("  Request headers:  ")
+	debugLogHeaders(&sb, r.Header)
+	sb.WriteString("  Response headers: ")
+	debugLogHeaders(&sb, rw.Header())
+	logger.Info(sb.String())
+}
+
+func debugLogHeaders(sb *strings.Builder, h http.Header) {
+	keys := make([]string, 0, len(h))
+	for key := range h {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	first := true
+	for _, key := range keys {
+		values := h[key]
+		for _, value := range values {
+			if !first {
+				sb.WriteString("                    ")
+			} else {
+				first = false
+			}
+			sb.WriteString(fmt.Sprintf("%s: %s\n", key, value))
+		}
+	}
+	if first {
+		sb.WriteRune('\n')
+	}
+}
+
 // The middleware configuration happens before anything, this middleware also applies to serving the swagger.json document.
 // So this is a good place to plug in a panic handling middleware, logger and metrics
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
@@ -228,6 +321,8 @@ func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	next = ContextMiddleware(next)
 	// handle cookie or authorization header for session
 	next = AuthenticationMiddleware(next)
+	// handle debug logging
+	next = DebugLogMiddleware(next)
 
 	sslHostFn := secure.SSLHostFunc(func(host string) string {
 		xhost, err := xnet.ParseHost(host)
