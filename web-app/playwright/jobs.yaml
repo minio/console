@@ -213,13 +213,13 @@ jobs:
           npx nyc report # To see report printed in logs as text
           echo "npx nyc report --reporter=html"
           npx nyc report --reporter=html # to see report in ./coverage/index.html
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage
