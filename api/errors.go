@@ -29,7 +29,7 @@ import (
 
 var (
 	ErrDefault                          = errors.New("an error occurred, please try again")
-	ErrInvalidLogin                     = errors.New("invalid Login")
+	ErrInvalidLogin                     = errors.New("invalid login")
 	ErrForbidden                        = errors.New("403 Forbidden")
 	ErrBadRequest                       = errors.New("400 Bad Request")
 	ErrFileTooLarge                     = errors.New("413 File too Large")
@@ -73,6 +73,7 @@ var (
 	ErrPolicyNotFound                   = errors.New("policy does not exist")
 	ErrLoginNotAllowed                  = errors.New("login not allowed")
 	ErrHealthReportFail                 = errors.New("failure to generate Health report")
+	ErrNetworkError                     = errors.New("unable to login due to network error")
 )
 
 type CodedAPIError struct {
@@ -110,6 +111,11 @@ func ErrorWithContext(ctx context.Context, err ...interface{}) *CodedAPIError {
 				detailedMessage = ""
 				errorCode = 401
 				errorMessage = ErrInvalidLogin.Error()
+			}
+			if errors.Is(err1, ErrNetworkError) {
+				detailedMessage = ""
+				errorCode = 503
+				errorMessage = ErrNetworkError.Error()
 			}
 			if strings.Contains(strings.ToLower(err1.Error()), ErrAccessDenied.Error()) {
 				errorCode = 403
