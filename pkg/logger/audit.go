@@ -17,10 +17,13 @@
 package logger
 
 import (
+	"bufio"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"strconv"
 	"sync/atomic"
@@ -35,6 +38,7 @@ import (
 type ResponseWriter struct {
 	http.ResponseWriter
 	StatusCode int
+	Hijacked   bool
 	// Log body of 4xx or 5xx responses
 	LogErrBody bool
 	// Log body of all responses
@@ -59,6 +63,15 @@ func NewResponseWriter(w http.ResponseWriter) *ResponseWriter {
 		StatusCode:     http.StatusOK,
 		StartTime:      time.Now().UTC(),
 	}
+}
+
+func (lrw *ResponseWriter) Hijack() (conn net.Conn, rw *bufio.ReadWriter, err error) {
+	hijack, ok := lrw.ResponseWriter.(http.Hijacker)
+	if !ok {
+		return nil, nil, errors.New("base response writer doesn't implement hijacker")
+	}
+	lrw.Hijacked = true
+	return hijack.Hijack()
 }
 
 func (lrw *ResponseWriter) Write(p []byte) (int, error) {
