@@ -1135,7 +1135,7 @@ jobs:
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
 
       # Get the replication.out file from the artifact since this is working for self host runner.
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
           name: replication-artifact
           path: replication/coverage
