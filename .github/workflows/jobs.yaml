@@ -977,7 +977,7 @@ jobs:
 
       # To save our replication.out file into an artifact.
       # By default, GitHub stores build logs and artifacts for 90 days.
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: replication-artifact
           path: ./replication/coverage/replication.out
@@ -1135,7 +1135,7 @@ jobs:
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
 
       # Get the replication.out file from the artifact since this is working for self host runner.
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: replication-artifact
           path: replication/coverage
@@ -1483,13 +1483,13 @@ jobs:
           npx nyc report # To see report printed in logs as text
           echo "npx nyc report --reporter=html"
           npx nyc report --reporter=html # to see report in ./coverage/index.html
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage

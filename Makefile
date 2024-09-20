@@ -243,7 +243,7 @@ test-start-docker-minio-w-redirect-url: initialize-docker-network
     -e MINIO_SERVER_URL='http://localhost:9000' \
     -v /data1 -v /data2 -v /data3 -v /data4 \
     -d --network host --name minio --rm\
-    quay.io/minio/minio:latest server /data{1...4}) 
+    quay.io/minio/minio:latest server /data{1...4})
 
 test-start-docker-nginx-w-subpath:
 	@(docker run \
