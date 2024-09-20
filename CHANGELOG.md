@@ -2,6 +2,17 @@
 
 # Changelog
 
+## Release v1.7.1
+
+Bug Fix:
+
+- Fixed issue that could cause a failure when attempting to view deleted files in the object browser
+- Return network error when logging in and the network connection fails
+
+Additional Changes:
+
+- Added debug logging for console HTTP request (see [PR #3440](https://github.com/minio/console/pull/3440) for more detailed information)
+
 ## Release v1.7.0
 
 Bug Fix:
