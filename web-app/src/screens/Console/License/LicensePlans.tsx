@@ -32,13 +32,14 @@ interface IRegisterStatus {
 
 const LicensesInformation = styled.div(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "repeat(4, minmax(350px, 400px));",
-  justifyContent: "flex-start",
+  gridTemplateColumns: "repeat(1, minmax(350px, 400px));",
+  alignItems: "center",
+  justifyContent: "center",
   marginTop: 30,
   marginLeft: 30,
   "& > div": {
     borderBottom: `${get(theme, "borderColor", "#EAEAEA")} 1px solid`,
-    padding: "25px 40px",
+    padding: "13px 20px",
     justifyContent: "center",
     "&.openSource": {
       borderRight: `#002562 2px solid`,
@@ -152,76 +153,94 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
   };
 
   return (
-    <Fragment>
-      <LicensesInformation>
-        {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
-          return (
-            <Box className={`${index === 1 ? "openSource first" : ""}`}>
-              {element !== null && (
-                <Box>
-                  <Box className={"planName"}>{element.planName}</Box>
-                  <Box
-                    className={`planIcon ${
-                      element.planType === "commercial" ? "commercial" : ""
-                    }`}
-                  >
-                    {element?.planIcon}
-                  </Box>
-                  <Box className={"planDescription"}>
-                    {element?.planDescription}
-                  </Box>
+    <LicensesInformation>
+      {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
+        return (
+          <Box
+            key={`${element?.planType}-${index}`}
+            className={`${index === 1 ? "openSource first" : ""}`}
+          >
+            {element !== null && (
+              <Box>
+                <Box className={"planName"}>{element.planName}</Box>
+                <Box
+                  className={`planIcon ${
+                    element.planType === "commercial" ? "commercial" : ""
+                  }`}
+                >
+                  {element?.planIcon}
                 </Box>
-              )}
-            </Box>
-          );
-        })}
-        {FEATURE_ITEMS.map((feature, index) => {
-          const lastItem =
-            index === FEATURE_ITEMS.length - 1 ? "noBorderBottom" : "";
-
-          return (
-            <Fragment>
-              <Box className={`feature-label ${lastItem}`}>
-                {feature.featureLabel}
+                <Box className={"planDescription"}>
+                  {element?.planDescription}
+                </Box>
               </Box>
-              <Box className={`feature-information  openSource ${lastItem}`}>
-                {renderFeatureInformation(
-                  feature.featurePlans.openSource || null,
-                )}
-              </Box>
-              <Box className={`feature-information ${lastItem}`}>
-                {renderFeatureInformation(feature.featurePlans.eosLite || null)}
-              </Box>
-              <Box className={`feature-information ${lastItem}`}>
-                {renderFeatureInformation(feature.featurePlans.eosPlus || null)}
-              </Box>
-            </Fragment>
-          );
-        })}
-        {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
-          return (
-            <Box
-              className={`${
-                index === 1 ? "openSource last" : ""
-              } noBorderBottom`}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
-              {element &&
-                getButton(
-                  `https://min.io/signup`,
-                  element.planType === "commercial"
-                    ? "Subscribe"
-                    : "Join Slack",
-                  element.planType === "commercial" ? "callAction" : "regular",
-                )}
-            </Box>
-          );
-        })}
-      </LicensesInformation>
-    </Fragment>
+            )}
+          </Box>
+        );
+      })}
+      {FEATURE_ITEMS.map((feature, index) => {
+        return (
+          <Box
+            key={`${feature.featureLabel}-${index}`}
+            className={`feature-information`}
+            sx={{
+              display: "flex",
+              borderLeft: `#002562 2px solid`,
+              borderRight: `#002562 2px solid`,
+              flexDirection: "column",
+              gap: "10px",
+              alignItems: "center",
+            }}
+          >
+            <Box className={`feature-label `}>{feature.featureLabel}</Box>
+            {renderFeatureInformation(feature.featurePlans.eosPlus || null)}
+          </Box>
+        );
+      })}
+      {[...LICENSE_PLANS_INFORMATION].map((element) => {
+        return element && currentPlan === "community" ? (
+          <div
+            key="plan-subscribe-btn"
+            style={{
+              borderLeft: `#002562 2px solid`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRight: `#002562 2px solid`,
+              borderBottom: `#002562 2px solid`,
+              borderBottomLeftRadius: "10px",
+              borderBottomRightRadius: "10px",
+            }}
+          >
+            {getButton(
+              `https://min.io/signup`,
+              element.planType === "commercial" ? "Subscribe" : "Join Slack",
+              element.planType === "commercial" ? "callAction" : "regular",
+            )}
+          </div>
+        ) : (
+          <div
+            key="plan-subscribe-btn-1"
+            style={{
+              borderLeft: `#002562 2px solid`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRight: `#002562 2px solid`,
+              borderBottom: `#002562 2px solid`,
+              borderBottomLeftRadius: "10px",
+              borderBottomRightRadius: "10px",
+            }}
+          >
+            {getButton(
+              `https://subnet.min.io/`,
+              "Log in to SUBNET",
+              "callAction",
+            )}
+          </div>
+        );
+      })}
+    </LicensesInformation>
   );
 };
 
