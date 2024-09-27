@@ -383,22 +383,17 @@ func (ac AdminClient) serverHealthInfo(ctx context.Context, deadline time.Durati
 	info := madmin.HealthInfo{}
 	var healthInfo interface{}
 	var version string
-	var tryCount int
-	for info.Version == "" && tryCount < 10 {
-		var resp *http.Response
-		var err error
-		resp, version, err = ac.Client.ServerHealthInfo(ctx, madmin.HealthDataTypesList, deadline, "")
-		if err != nil {
-			return nil, version, err
+	var resp *http.Response
+	var err error
+	resp, version, err = ac.Client.ServerHealthInfo(ctx, madmin.HealthDataTypesList, deadline, "")
+	if err != nil {
+		return nil, version, err
+	}
+	decoder := json.NewDecoder(resp.Body)
+	for {
+		if err = decoder.Decode(&info); err != nil {
+			break
 		}
-		decoder := json.NewDecoder(resp.Body)
-		for {
-			if err = decoder.Decode(&info); err != nil {
-				break
-			}
-		}
-		tryCount++
-		time.Sleep(2 * time.Second)
 	}
 	if info.Version == "" {
 		return nil, "", ErrHealthReportFail
