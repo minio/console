@@ -127,7 +127,7 @@ const License = () => {
   return (
     <Fragment>
       <PageHeaderWrapper
-        label="MinIO License and Support plans"
+        label="MinIO License and Support Plan"
         actions={
           <Fragment>
             {!isRegistered && (

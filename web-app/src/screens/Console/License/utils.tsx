@@ -41,28 +41,16 @@ interface PlansFeatures {
 
 export const FEATURE_ITEMS: PlansFeatures[] = [
   {
-    featureLabel: "License",
+    featureLabel: "",
     featurePlans: {
-      openSource: {
-        content: "Requires AGPLv3 License Compliance",
-      },
-      eosLite: {
-        content: "Commercial License",
-      },
       eosPlus: {
         content: "Commercial License",
       },
     },
   },
   {
-    featureLabel: "Release",
+    featureLabel: "",
     featurePlans: {
-      openSource: {
-        content: "Upstream Community Release",
-      },
-      eosLite: {
-        content: "Enterprise Stable Release",
-      },
       eosPlus: {
         content: "Enterprise Stable Release",
       },
@@ -71,13 +59,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "Additional Features",
     featurePlans: {
-      openSource: {
-        content: "None",
-      },
-      eosLite: {
-        content:
-          "Global Console, Observability, Cache, Data Firewall, Key Management Server Catalog",
-      },
       eosPlus: {
         content:
           "Global Console, Observability, Cache, Data Firewall, Key Management Server Catalog",
@@ -87,12 +68,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "Long Term Release Support",
     featurePlans: {
-      openSource: {
-        content: "None",
-      },
-      eosLite: {
-        content: "1 year LTS",
-      },
       eosPlus: {
         content: "5 years LTS",
       },
@@ -101,26 +76,14 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "Support SLA",
     featurePlans: {
-      openSource: {
-        content: "No SLA",
-      },
-      eosLite: {
-        content: "Next Business Day SLA",
-      },
       eosPlus: {
-        content: "Less than 4 Hour SLA",
+        content: "Less than 4 Hours",
       },
     },
   },
   {
     featureLabel: "Panic button",
     featurePlans: {
-      openSource: {
-        content: "None",
-      },
-      eosLite: {
-        content: "1 Panic Button Per Year",
-      },
       eosPlus: {
         content: "Unlimited Panic Buttons Per Year",
       },
@@ -130,13 +93,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
     featureLabel:
       "Call Home Diagnostics, Health Check, Performance Benchmark, Security and Critical Vulnerabilities Notifications",
     featurePlans: {
-      openSource: {
-        content: "",
-      },
-      eosLite: {
-        content: "",
-        isCheck: true,
-      },
       eosPlus: {
         content: "",
         isCheck: true,
@@ -146,12 +102,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "Indemnification",
     featurePlans: {
-      openSource: {
-        content: "",
-      },
-      eosLite: {
-        content: "",
-      },
       eosPlus: {
         content: "",
         isCheck: true,
@@ -161,12 +111,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "Annual Review of Architecture, Performance and Security",
     featurePlans: {
-      openSource: {
-        content: "",
-      },
-      eosLite: {
-        content: "",
-      },
       eosPlus: {
         content: "",
         isCheck: true,
@@ -177,39 +121,8 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
 
 export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
   {
-    planId: "openSource",
-    planName: "Open Source",
-    planType: "open-source",
-    planIcon: (
-      <ApplicationLogo applicationName={"console"} subVariant={"AGPL"} />
-    ),
-    planDescription: (
-      <span>
-        Designed for developers who are building open source applications in
-        compliance with the GNU AGPL v3 license which requires developers to
-        distribute their code under the same AGPL v3 license when they
-        distribute, host or modify MinIO.
-      </span>
-    ),
-  },
-  {
-    planId: "eosLite",
-    planName: "Enterprise Lite",
-    planType: "commercial",
-    planIcon: (
-      <ApplicationLogo applicationName={"minio"} subVariant={"enterpriseos"} />
-    ),
-    planDescription: (
-      <span>
-        Designed for customers who require a commercial license and can mostly
-        self-support but want the peace of mind that comes with an
-        engineer-backend SLA, additional features and operational capabilities.
-      </span>
-    ),
-  },
-  {
     planId: "eosPlus",
-    planName: "Enterprise Plus",
+    planName: "Enterprise",
     planType: "commercial",
     planIcon: (
       <ApplicationLogo applicationName={"minio"} subVariant={"enterpriseos"} />
@@ -217,9 +130,9 @@ export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
     planDescription: (
       <span>
         Designed for customers where a commercial license and the
-        strictest,engineer-backed SLA are required. The Plus tiers offers
-        additional features and operational capabilities, more interaction
-        options and more enterprise deliverables.
+        strictest,engineer-backed SLA are required. It offers additional
+        features and operational capabilities, more interaction options and more
+        enterprise deliverables.
       </span>
     ),
   },
