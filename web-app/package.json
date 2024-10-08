@@ -93,8 +93,11 @@
     "nth-check": "^2.0.1",
     "yaml": "^2.4.2",
     "postcss": "^8.4.38",
-    "fast-xml-parser": "^4.3.6",
-    "semver": "^7.5.2"
+    "fast-xml-parser": "^4.5.0",
+    "semver": "^7.5.2",
+    "ws": "^8.17.1",
+    "rollup": "^4.24.0",
+    "cookie": "^0.7.2"
   },
   "main": "index.js",
   "packageManager": "yarn@4.4.0"
