@@ -135,7 +135,6 @@ const Trace = () => {
 
   useEffect(() => {
     if (lastJsonMessage) {
-      console.info("Received message", lastJsonMessage);
       lastJsonMessage.ptime = DateTime.fromISO(lastJsonMessage.time).toJSDate();
       lastJsonMessage.key = Math.random();
       dispatch(traceMessageReceived(lastJsonMessage));
