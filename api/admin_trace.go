@@ -146,8 +146,7 @@ func shortTrace(info *madmin.ServiceTraceInfo) shortTraceMsg {
 		if host, ok := t.HTTP.ReqInfo.Headers["Host"]; ok {
 			s.Host = strings.Join(host, "")
 		}
-		cSlice := strings.Split(t.HTTP.ReqInfo.Client, ":")
-		s.Client = cSlice[0]
+		s.Client = t.HTTP.ReqInfo.Client
 	}
 
 	return s
