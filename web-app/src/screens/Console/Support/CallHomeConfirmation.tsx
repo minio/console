@@ -28,14 +28,12 @@ interface ICallHomeConfirmation {
   onClose: (refresh: boolean) => any;
   open: boolean;
   diagStatus: boolean;
-  logsStatus: boolean;
   disable?: boolean;
 }
 
 const CallHomeConfirmation = ({
   onClose,
   diagStatus,
-  logsStatus,
   open,
   disable = false,
 }: ICallHomeConfirmation) => {
@@ -48,7 +46,7 @@ const CallHomeConfirmation = ({
     api
       .invoke("PUT", `/api/v1/support/callhome`, {
         diagState: disable ? false : diagStatus,
-        logsState: disable ? false : logsStatus,
+        logsState: false,
       })
       .then((res: ICallHomeResponse) => {
         dispatch(setSnackBarMessage("Configuration saved successfully"));
@@ -138,15 +136,6 @@ const CallHomeConfirmation = ({
               <span>
                 <strong>{diagStatus ? "Enable" : "Disable"}</strong> - Send
                 Diagnostics Information to SUBNET
-              </span>
-            </Grid>
-            <Grid item sx={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <CircleIcon
-                style={{ fill: logsStatus ? "#4CCB92" : "#C83B51", width: 20 }}
-              />
-              <span>
-                <strong>{logsStatus ? "Enable" : "Disable"}</strong> - Send Logs
-                Information to SUBNET
               </span>
             </Grid>
           </Grid>
