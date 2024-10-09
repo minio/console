@@ -45,8 +45,6 @@ const CallHome = () => {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
   const [diagEnabled, setDiagEnabled] = useState<boolean>(false);
   const [oDiagEnabled, setODiagEnabled] = useState<boolean>(false);
-  const [oLogsEnabled, setOLogsEnabled] = useState<boolean>(false);
-  const [logsEnabled, setLogsEnabled] = useState<boolean>(false);
   const [disableMode, setDisableMode] = useState<boolean>(false);
 
   const clusterRegistered = registeredCluster();
@@ -59,10 +57,8 @@ const CallHome = () => {
           setLoading(false);
 
           setDiagEnabled(!!res.diagnosticsStatus);
-          setLogsEnabled(!!res.logsStatus);
 
           setODiagEnabled(!!res.diagnosticsStatus);
-          setOLogsEnabled(!!res.logsStatus);
         })
         .catch((err: ErrorResponseHandler) => {
           setLoading(false);
@@ -94,10 +90,7 @@ const CallHome = () => {
 
   let mainVariant: "regular" | "callAction" = "regular";
 
-  if (
-    clusterRegistered &&
-    (diagEnabled !== oDiagEnabled || logsEnabled !== oLogsEnabled)
-  ) {
+  if (clusterRegistered && diagEnabled !== oDiagEnabled) {
     mainVariant = "callAction";
   }
 
@@ -112,7 +105,6 @@ const CallHome = () => {
         <CallHomeConfirmation
           onClose={callHomeClose}
           open={showConfirmation}
-          logsStatus={logsEnabled}
           diagStatus={diagEnabled}
           disable={disableMode}
         />
@@ -178,20 +170,6 @@ const CallHome = () => {
                   "Daily Health Report enables you to proactively identify potential issues in your deployment before they escalate."
                 }
               />
-              <Switch
-                value="enableLogs"
-                id="enableLogs"
-                name="enableLogs"
-                checked={logsEnabled}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setLogsEnabled(event.target.checked);
-                }}
-                label={"Live Error Logs"}
-                disabled={!clusterRegistered}
-                description={
-                  "Live Error Logs will enable MinIO's support team and automatic diagnostics system to catch failures early."
-                }
-              />
               <Box
                 sx={{
                   display: "flex",
@@ -201,7 +179,7 @@ const CallHome = () => {
                   gap: "0px 10px",
                 }}
               >
-                {(oDiagEnabled || oLogsEnabled) && (
+                {oDiagEnabled && (
                   <Button
                     id={"callhome-action"}
                     variant={"secondary"}
