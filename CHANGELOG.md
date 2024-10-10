@@ -1,6 +1,17 @@
-<!-- @format -->
-
 # Changelog
+
+## Release v1.7.2
+
+Bug Fix:
+
+- Fixed issue in Server Health Info
+- Fixed Security vulnerability in dependencies
+- Fixed client string in trace message
+
+Additional Changes:
+
+- Remove live logs in Call Home Page
+- Update License page
 
 ## Release v1.7.1
 
