@@ -321,6 +321,15 @@ func (client *Provider) VerifyIdentity(ctx context.Context, code, state, roleARN
 				return nil, errors.New("missing access_token")
 			}
 			token.AccessToken = accessToken.(string)
+			refreshToken := oauth2Token.Extra("refresh_token")
+			if refreshToken != nil {
+				token.RefreshToken = refreshToken.(string)
+			} else { //nolint:revive,staticcheck
+				// TODO in Nov 2026 : add an error when the refresh token is not found.
+				// This is not done yet because users may not have access_offline scope
+				// and this may break their deployments
+			}
+
 		}
 		return token, nil
 	}
