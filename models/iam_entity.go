@@ -25,9 +25,7 @@ package models
 import (
 	"context"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/validate"
 )
 
 // IamEntity iam entity
@@ -37,15 +35,6 @@ type IamEntity string
 
 // Validate validates this iam entity
 func (m IamEntity) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := validate.Pattern("", "body", string(m), `^[\w+=,.@-]{1,64}$`); err != nil {
-		return err
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 
