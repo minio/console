@@ -208,7 +208,6 @@ export interface SetPolicyMultipleNameRequest {
   groups?: IamEntity[];
 }
 
-/** @pattern ^[\w+=,.@-]{1,64}$ */
 export type IamEntity = string;
 
 export interface AddPolicyRequest {
