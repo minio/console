@@ -16,7 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addBucketAsync } from "./addBucketThunks";
-import { ObjectRetentionMode } from "api/consoleApi";
+import { ApiError, ObjectRetentionMode } from "api/consoleApi";
 
 interface AddBucketState {
   loading: boolean;
@@ -36,7 +36,7 @@ interface AddBucketState {
   navigateTo: string;
   excludeFolders: boolean;
   excludedPrefixes: string;
-  error: any;
+  error: ApiError | null;
 }
 
 const initialState: AddBucketState = {
@@ -186,7 +186,7 @@ const addBucketsSlice = createSlice({
       })
       .addCase(addBucketAsync.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload as ApiError;
       })
       .addCase(addBucketAsync.fulfilled, (state, action) => {
         state.loading = false;
