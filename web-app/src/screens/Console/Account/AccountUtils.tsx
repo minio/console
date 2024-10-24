@@ -30,7 +30,7 @@ export const ACCOUNT_TABLE_COLUMNS = [
 
         return <span title={fmtDate}>{fmtDate}</span>;
       } else {
-        return <span>never</span>;
+        return <span>no-expiry</span>;
       }
     },
   },
