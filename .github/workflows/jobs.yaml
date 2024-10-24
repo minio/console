@@ -225,11 +225,11 @@ jobs:
           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
 
       - name: Install TestCafe
-        run: npm install testcafe@3.5.0
+        run: npm install -g testcafe
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --no-sandbox" web-app/tests/subpath-nginx/ --skip-js-errors --selector-timeout 10000 --assertion-timeout 10000 -c 3 --debug-on-fail
+          npx testcafe "chrome:headless" web-app/tests/subpath-nginx/ --skip-js-errors --selector-timeout 10000 --assertion-timeout 10000 -c 3 --debug-on-fail
       - name: Clean up docker
         if: always()
         run: |
