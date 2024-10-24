@@ -213,7 +213,9 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
             }}
           >
             {getButton(
-              element.planType === "commercial" ? `https://min.io/signup` : `https://slack.min.io`,
+              element.planType === "commercial"
+                ? `https://min.io/signup`
+                : `https://slack.min.io`,
               element.planType === "commercial" ? "Subscribe" : "Join Slack",
               element.planType === "commercial" ? "callAction" : "regular",
             )}
