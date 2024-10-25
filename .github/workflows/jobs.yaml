@@ -223,9 +223,13 @@ jobs:
       - name: Start Console, MinIO and Nginx
         run: |
           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+            chrome-version: 127
 
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
@@ -278,8 +282,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
@@ -331,8 +340,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
@@ -383,8 +397,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
@@ -436,8 +455,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
@@ -484,8 +508,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -532,8 +561,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -579,8 +613,14 @@ jobs:
       - name: Start Console, front-end app and initialize users/policies
         run: |
           (./console server) & (make initialize-permissions)
+
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -627,8 +667,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
@@ -676,12 +721,17 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-A/  --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-A/ --skip-js-errors -c 3 --debug-on-fail
       - name: Clean up users & policies
         run: |
           make cleanup-permissions
@@ -727,12 +777,17 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
+      - uses: browser-actions/setup-chrome@v1
+        name: Use Chrome Version
+        with:
+          chrome-version: 127
+
       - name: Install TestCafe
-        run: npm install -g testcafe@3.7.0-rc.1
+        run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-B/  --skip-js-errors-c 3 --debug-on-fail
+          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-B/ --skip-js-errors -c 3 --debug-on-fail
 
       - name: Clean up users & policies
         run: |
