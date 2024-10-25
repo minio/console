@@ -223,17 +223,13 @@ jobs:
       - name: Start Console, MinIO and Nginx
         run: |
           (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-            chrome-version: 127
 
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/subpath-nginx/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/subpath-nginx/ --skip-js-errors  --debug-on-fail
       - name: Clean up docker
         if: always()
         run: |
@@ -282,17 +278,12 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-1/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-1/ --skip-js-errors  --debug-on-fail
 
       - name: Clean up users & policies
         run: |
@@ -340,17 +331,12 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-2/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-2/ --skip-js-errors  --debug-on-fail
       - name: Clean up users & policies
         run: |
           make cleanup-permissions
@@ -397,17 +383,12 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-         npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-3/ --skip-js-errors -c 3 --debug-on-fail
+         npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-3/ --skip-js-errors  --debug-on-fail
 
       - name: Clean up users & policies
         run: |
@@ -455,18 +436,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 10
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-4/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-4/ --skip-js-errors  --debug-on-fail
   all-permissions-5:
     name: Permissions Tests Part 5
     needs:
@@ -508,18 +484,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-5/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-5/ --skip-js-errors  --debug-on-fail
   all-permissions-6:
     name: Permissions Tests Part 6
     needs:
@@ -561,18 +532,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-6/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-6/ --skip-js-errors  --debug-on-fail
   all-permissions-7:
     name: Permissions Tests Part 7
     needs:
@@ -614,18 +580,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-7/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-7/ --skip-js-errors  --debug-on-fail
   all-permissions-8:
     name: Permissions Tests Part 8
     needs:
@@ -667,18 +628,13 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         timeout-minutes: 5
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-8/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-8/ --skip-js-errors  --debug-on-fail
 
   all-permissions-A:
     name: Permissions Tests Part A
@@ -721,17 +677,12 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-A/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-A/ --skip-js-errors  --debug-on-fail
       - name: Clean up users & policies
         run: |
           make cleanup-permissions
@@ -777,17 +728,12 @@ jobs:
         run: |
           (./console server) & (make initialize-permissions)
 
-      - uses: browser-actions/setup-chrome@v1
-        name: Use Chrome Version
-        with:
-          chrome-version: 127
-
       - name: Install TestCafe
         run: npm install -g testcafe@3.5.0
 
       - name: Run TestCafe Tests
         run: |
-          npx testcafe "chrome:headless --disable-search-engine-choice-screen" web-app/tests/permissions-B/ --skip-js-errors -c 3 --debug-on-fail
+          npx testcafe "firefox:headless --disable-search-engine-choice-screen" web-app/tests/permissions-B/ --skip-js-errors  --debug-on-fail
 
       - name: Clean up users & policies
         run: |
