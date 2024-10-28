@@ -20,17 +20,20 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import MainRouter from "./MainRouter";
 import StyleHandler from "./StyleHandler";
+import { i18nInit } from "utils/i18n";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 
-root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <StyleHandler>
-        <MainRouter />
-      </StyleHandler>
-    </Provider>
-  </React.StrictMode>,
-);
+i18nInit().then(() => {
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <StyleHandler>
+          <MainRouter />
+        </StyleHandler>
+      </Provider>
+    </React.StrictMode>,
+  );
+});

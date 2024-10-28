@@ -55,6 +55,7 @@ import {
 import { hasPermission } from "../../common/SecureComponent";
 import EncryptionIcon from "../../icons/SidebarMenus/EncryptionIcon";
 import EncryptionStatusIcon from "../../icons/SidebarMenus/EncryptionStatusIcon";
+import { t } from "i18next";
 
 const permissionsValidation = (item: IMenuItem) => {
   return (
@@ -105,7 +106,7 @@ export const validRoutes = (
   let consoleMenus: IMenuItem[] = [
     {
       group: "User",
-      name: "Object Browser",
+      name: t("Object Browser"),
       id: "object-browser",
       path: IAM_PAGES.OBJECT_BROWSER_VIEW,
       icon: <ObjectBrowserIcon />,
@@ -115,20 +116,20 @@ export const validRoutes = (
       group: "User",
       id: "nav-accesskeys",
       path: IAM_PAGES.ACCOUNT,
-      name: "Access Keys",
+      name: t("Access Keys"),
       icon: <AccountsMenuIcon />,
       forceDisplay: true,
     },
     {
       group: "User",
       path: "https://min.io/docs/minio/linux/index.html?ref=con",
-      name: "Documentation",
+      name: t("Documentation"),
       icon: <DocumentationIcon />,
       forceDisplay: true,
     },
     {
       group: "Administrator",
-      name: "Buckets",
+      name: t("Buckets"),
       id: "buckets",
       path: IAM_PAGES.BUCKETS,
       icon: <BucketsMenuIcon />,
@@ -136,14 +137,14 @@ export const validRoutes = (
     },
     {
       group: "Administrator",
-      name: "Policies",
+      name: t("Policies"),
       id: "policies",
       path: IAM_PAGES.POLICIES,
       icon: <AccessMenuIcon />,
     },
     {
       group: "Administrator",
-      name: "Identity",
+      name: t("Identity"),
       id: "identity",
       icon: <IdentityMenuIcon />,
       children: [
@@ -154,25 +155,25 @@ export const validRoutes = (
             hasPermission(CONSOLE_UI_RESOURCE, adminUserPermissions) ||
             hasPermission(S3_ALL_RESOURCES, adminUserPermissions) ||
             hasPermission(CONSOLE_UI_RESOURCE, [IAM_SCOPES.ADMIN_ALL_ACTIONS]),
-          name: "Users",
+          name: t("Users"),
           icon: <UsersMenuIcon />,
           fsHidden: ldapIsEnabled,
         },
         {
           id: "groups",
           path: IAM_PAGES.GROUPS,
-          name: "Groups",
+          name: t("Groups"),
           icon: <GroupsMenuIcon />,
           fsHidden: ldapIsEnabled,
         },
         {
-          name: "OpenID",
+          name: t("OpenID"),
           id: "openID",
           path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS,
           icon: <LockOpenIcon />,
         },
         {
-          name: "LDAP",
+          name: t("LDAP"),
           id: "ldap",
           path: IAM_PAGES.IDP_LDAP_CONFIGURATIONS,
           icon: <LoginIcon />,
@@ -181,42 +182,42 @@ export const validRoutes = (
     },
     {
       group: "Administrator",
-      name: "Monitoring",
+      name: t("Monitoring"),
       id: "tools",
       icon: <MonitoringMenuIcon />,
       children: [
         {
-          name: "Metrics",
+          name: t("Metrics"),
           id: "monitorMetrics",
           path: IAM_PAGES.DASHBOARD,
           icon: <MetricsMenuIcon />,
         },
         {
-          name: "Logs ",
+          name: t("Logs "),
           id: "monitorLogs",
           path: IAM_PAGES.TOOLS_LOGS,
           icon: <LogsMenuIcon />,
         },
         {
-          name: "Audit",
+          name: t("Audit"),
           id: "monitorAudit",
           path: IAM_PAGES.TOOLS_AUDITLOGS,
           icon: <AuditLogsMenuIcon />,
         },
         {
-          name: "Trace",
+          name: t("Trace"),
           id: "monitorTrace",
           path: IAM_PAGES.TOOLS_TRACE,
           icon: <TraceMenuIcon />,
         },
         {
-          name: "Watch",
+          name: t("Watch"),
           id: "monitorWatch",
           icon: <WatchIcon />,
           path: IAM_PAGES.TOOLS_WATCH,
         },
         {
-          name: "Encryption",
+          name: t("Encryption"),
           id: "monitorEncryption",
           path: IAM_PAGES.KMS_STATUS,
           icon: <EncryptionStatusIcon />,
@@ -227,28 +228,28 @@ export const validRoutes = (
     {
       group: "Administrator",
       path: IAM_PAGES.EVENT_DESTINATIONS,
-      name: "Events",
+      name: t("Events"),
       icon: <LambdaIcon />,
       id: "lambda",
     },
     {
       group: "Administrator",
       path: IAM_PAGES.TIERS,
-      name: "Tiering",
+      name: t("Tiering"),
       icon: <TiersIcon />,
       id: "tiers",
     },
     {
       group: "Administrator",
       path: IAM_PAGES.SITE_REPLICATION,
-      name: "Site Replication",
+      name: t("Site Replication"),
       icon: <RecoverIcon />,
       id: "sitereplication",
     },
     {
       group: "Administrator",
       path: IAM_PAGES.KMS_KEYS,
-      name: "Encryption",
+      name: t("Encryption"),
       icon: <EncryptionIcon />,
       id: "encryption",
       fsHidden: !kmsIsEnabled,
@@ -256,14 +257,14 @@ export const validRoutes = (
     {
       group: "Administrator",
       path: IAM_PAGES.SETTINGS,
-      name: "Configuration",
+      name: t("Configuration"),
       id: "configurations",
       icon: <SettingsIcon />,
     },
     {
       group: "Subnet",
       path: IAM_PAGES.LICENSE,
-      name: "License",
+      name: t("License"),
       id: "license",
       icon: <LicenseIcon />,
       badge: licenseNotification,
@@ -271,35 +272,35 @@ export const validRoutes = (
     },
     {
       group: "Subnet",
-      name: "Health",
+      name: t("Health"),
       id: "diagnostics",
       icon: <HealthMenuIcon />,
       path: IAM_PAGES.TOOLS_DIAGNOSTICS,
     },
     {
       group: "Subnet",
-      name: "Performance",
+      name: t("Performance"),
       id: "performance",
       icon: <PerformanceMenuIcon />,
       path: IAM_PAGES.TOOLS_SPEEDTEST,
     },
     {
       group: "Subnet",
-      name: "Profile",
+      name: t("Profile"),
       id: "profile",
       icon: <ProfileMenuIcon />,
       path: IAM_PAGES.PROFILE,
     },
     {
       group: "Subnet",
-      name: "Inspect",
+      name: t("Inspect"),
       id: "inspectObjects",
       path: IAM_PAGES.SUPPORT_INSPECT,
       icon: <InspectMenuIcon />,
     },
     {
       group: "Subnet",
-      name: "Call Home",
+      name: t("Call Home"),
       id: "callhome",
       icon: <CallHomeMenuIcon />,
       path: IAM_PAGES.CALL_HOME,
