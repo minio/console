@@ -3706,7 +3706,6 @@ definitions:
 
   iamEntity:
     type: string
-    pattern: '^[\w+=,.@-]{1,64}$'
 
   addPolicyRequest:
     type: object

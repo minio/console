@@ -5965,8 +5965,7 @@ func init() {
       }
     },
     "iamEntity": {
-      "type": "string",
-      "pattern": "^[\\w+=,.@-]{1,64}$"
+      "type": "string"
     },
     "iamPolicy": {
       "type": "object",
@@ -14895,8 +14894,7 @@ func init() {
       }
     },
     "iamEntity": {
-      "type": "string",
-      "pattern": "^[\\w+=,.@-]{1,64}$"
+      "type": "string"
     },
     "iamPolicy": {
       "type": "object",
