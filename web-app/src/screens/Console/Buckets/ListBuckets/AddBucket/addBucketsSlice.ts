@@ -16,7 +16,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addBucketAsync } from "./addBucketThunks";
-import { ObjectRetentionMode } from "api/consoleApi";
+import { ApiError, ObjectRetentionMode } from "api/consoleApi";
 
 interface AddBucketState {
   loading: boolean;
@@ -36,6 +36,7 @@ interface AddBucketState {
   navigateTo: string;
   excludeFolders: boolean;
   excludedPrefixes: string;
+  error: ApiError | null;
 }
 
 const initialState: AddBucketState = {
@@ -56,6 +57,7 @@ const initialState: AddBucketState = {
   navigateTo: "",
   excludeFolders: false,
   excludedPrefixes: "",
+  error: null,
 };
 
 const addBucketsSlice = createSlice({
@@ -180,15 +182,20 @@ const addBucketsSlice = createSlice({
     builder
       .addCase(addBucketAsync.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-      .addCase(addBucketAsync.rejected, (state) => {
+      .addCase(addBucketAsync.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload as ApiError;
       })
       .addCase(addBucketAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.navigateTo = action.payload.data.bucketName
-          ? "/buckets"
-          : `/buckets/${action.payload.data.bucketName}/admin`;
+        state.error = null;
+        if (action.payload) {
+          state.navigateTo = action.payload.data.bucketName
+            ? "/buckets"
+            : `/buckets/${action.payload.data.bucketName}/admin`;
+        }
       });
   },
 });

@@ -23,14 +23,15 @@ export const ACCOUNT_TABLE_COLUMNS = [
     label: "Expiry",
     elementKey: "expiration",
     renderFunction: (expTime: string) => {
-      if (expTime) {
+      if (expTime !== "1970-01-01T00:00:00Z") {
         const fmtDate = DateTime.fromISO(expTime)
           .toUTC()
           .toFormat("y/M/d hh:mm:ss z");
 
         return <span title={fmtDate}>{fmtDate}</span>;
+      } else {
+        return <span>no-expiry</span>;
       }
-      return "";
     },
   },
   {
