@@ -128,6 +128,7 @@ const AddBucket = () => {
     (state: AppState) => state.addBucket.retentionValidity,
   );
   const addLoading = useSelector((state: AppState) => state.addBucket.loading);
+  const addError = useSelector((state: AppState) => state.addBucket.error);
   const invalidFields = useSelector(
     (state: AppState) => state.addBucket.invalidFields,
   );
@@ -154,6 +155,12 @@ const AddBucket = () => {
     IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
     IAM_SCOPES.S3_PUT_ACTIONS,
   ]);
+
+  useEffect(() => {
+    if (addError) {
+      dispatch(setErrorSnackMessage(errorToHandler(addError)));
+    }
+  }, [addError, dispatch]);
 
   useEffect(() => {
     const bucketNameErrors = [
