@@ -1,5 +1,14 @@
 # Changelog
 
+## Release v1.7.3
+
+Bug Fix:
+
+- Use a fixed public license verification key
+- Show non-expiring access keys as `no-expiry` instead of Jan 1, 1970
+- Use "join Slack" button for non-commercial edition instead of "Signup"
+- Fix setting policies on groups that have spaces
+
 ## Release v1.7.2
 
 Bug Fix:
