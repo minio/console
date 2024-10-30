@@ -6106,6 +6106,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-fetch@npm:4.0.0":
+  version: 4.0.0
+  resolution: "cross-fetch@npm:4.0.0"
+  dependencies:
+    node-fetch: "npm:^2.6.12"
+  checksum: 10c0/386727dc4c6b044746086aced959ff21101abb85c43df5e1d151547ccb6f338f86dec3f28b9dbddfa8ff5b9ec8662ed2263ad4607a93b2dc354fb7fe3bbb898a
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
@@ -9516,6 +9525,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"i18next-http-backend@npm:^2.6.2":
+  version: 2.6.2
+  resolution: "i18next-http-backend@npm:2.6.2"
+  dependencies:
+    cross-fetch: "npm:4.0.0"
+  checksum: 10c0/8ae0c57293f0ebf5e67d629e526b98cd2d396fd48b8be56cdcb9565c2e5b1a8e46b323055682f5c9425e27fd5012c59dac380ccec053353facb23e69f5271938
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^23.16.4":
+  version: 23.16.4
+  resolution: "i18next@npm:23.16.4"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10c0/b016d98bb8a11fa16e2598897b0ea388b664e28e38acbd7e6580ce8ff300a9b4c66eb849883b1c36dbee9800abb830887293adbb1e598b679ea29006a3bc6af9
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
@@ -12584,7 +12611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -18173,6 +18200,8 @@ __metadata:
     clsx: "npm:^2.1.1"
     customize-cra: "npm:^1.0.0"
     http-status-codes: "npm:^2.3.0"
+    i18next: "npm:^23.16.4"
+    i18next-http-backend: "npm:^2.6.2"
     kbar: "npm:^0.1.0-beta.45"
     knip: "npm:^5.27.2"
     local-storage-fallback: "npm:^4.1.2"
