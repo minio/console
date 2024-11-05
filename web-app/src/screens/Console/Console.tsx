@@ -49,10 +49,6 @@ import MenuWrapper from "./Menu/MenuWrapper";
 import LoadingComponent from "../../common/LoadingComponent";
 import ComponentsScreen from "./Common/ComponentsScreen";
 
-const Trace = React.lazy(() => import("./Trace/Trace"));
-const Watch = React.lazy(() => import("./Watch/Watch"));
-const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
-
 const EventDestinations = React.lazy(
   () => import("./EventDestinations/EventDestinations"),
 );
@@ -79,10 +75,7 @@ const LogsSearchMain = React.lazy(
 );
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
-const Tools = React.lazy(() => import("./Tools/Tools"));
 const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
-
-const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
 const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager"),
@@ -278,15 +271,6 @@ const Console = () => {
         );
       },
     },
-
-    {
-      component: Watch,
-      path: IAM_PAGES.TOOLS_WATCH,
-    },
-    {
-      component: Speedtest,
-      path: IAM_PAGES.TOOLS_SPEEDTEST,
-    },
     {
       component: Users,
       path: IAM_PAGES.USERS,
@@ -337,24 +321,12 @@ const Console = () => {
       path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_VIEW,
     },
     {
-      component: Trace,
-      path: IAM_PAGES.TOOLS_TRACE,
-    },
-    {
-      component: HealthInfo,
-      path: IAM_PAGES.TOOLS_DIAGNOSTICS,
-    },
-    {
       component: ErrorLogs,
       path: IAM_PAGES.TOOLS_LOGS,
     },
     {
       component: LogsSearchMain,
       path: IAM_PAGES.TOOLS_AUDITLOGS,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.TOOLS,
     },
     {
       component: ConfigurationOptions,
