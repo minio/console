@@ -17,7 +17,6 @@
 import React, { useEffect, useState } from "react";
 import get from "lodash/get";
 import { AddIcon, Box, Loader, Tag } from "mds";
-import { Bucket } from "../../../Watch/types";
 import { ErrorResponseHandler } from "../../../../../common/types";
 import { IAM_SCOPES } from "../../../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../../../common/SecureComponent";
@@ -36,6 +35,15 @@ const DeleteBucketTagModal = withSuspense(
 type BucketTagProps = {
   bucketName: string;
 };
+
+interface Details {
+  tags: object;
+}
+
+interface Bucket {
+  details: Details;
+  name: string;
+}
 
 const BucketTags = ({ bucketName }: BucketTagProps) => {
   const dispatch = useAppDispatch();

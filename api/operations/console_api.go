@@ -24,7 +24,6 @@ package operations
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"strings"
 
@@ -48,14 +47,11 @@ import (
 	"github.com/minio/console/api/operations/logging"
 	"github.com/minio/console/api/operations/object"
 	"github.com/minio/console/api/operations/policy"
-	"github.com/minio/console/api/operations/profile"
 	"github.com/minio/console/api/operations/public"
 	"github.com/minio/console/api/operations/release"
 	"github.com/minio/console/api/operations/service"
 	"github.com/minio/console/api/operations/service_account"
 	"github.com/minio/console/api/operations/site_replication"
-	"github.com/minio/console/api/operations/subnet"
-	"github.com/minio/console/api/operations/support"
 	"github.com/minio/console/api/operations/system"
 	"github.com/minio/console/api/operations/tiering"
 	"github.com/minio/console/api/operations/user"
@@ -83,9 +79,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		JSONConsumer:          runtime.JSONConsumer(),
 		MultipartformConsumer: runtime.DiscardConsumer,
 
-		ApplicationZipProducer: runtime.ProducerFunc(func(w io.Writer, data interface{}) error {
-			return errors.NotImplemented("applicationZip producer has not yet been implemented")
-		}),
 		BinProducer:  runtime.ByteStreamProducer(),
 		JSONProducer: runtime.JSONProducer(),
 
@@ -251,9 +244,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketGetBucketVersioningHandler: bucket.GetBucketVersioningHandlerFunc(func(params bucket.GetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.GetBucketVersioning has not yet been implemented")
 		}),
-		SupportGetCallHomeOptionValueHandler: support.GetCallHomeOptionValueHandlerFunc(func(params support.GetCallHomeOptionValueParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation support.GetCallHomeOptionValue has not yet been implemented")
-		}),
 		IdpGetConfigurationHandler: idp.GetConfigurationHandlerFunc(func(params idp.GetConfigurationParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation idp.GetConfiguration has not yet been implemented")
 		}),
@@ -401,12 +391,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		ConfigurationPostConfigsImportHandler: configuration.PostConfigsImportHandlerFunc(func(params configuration.PostConfigsImportParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.PostConfigsImport has not yet been implemented")
 		}),
-		ProfileProfilingStartHandler: profile.ProfilingStartHandlerFunc(func(params profile.ProfilingStartParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation profile.ProfilingStart has not yet been implemented")
-		}),
-		ProfileProfilingStopHandler: profile.ProfilingStopHandlerFunc(func(params profile.ProfilingStopParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation profile.ProfilingStop has not yet been implemented")
-		}),
 		BucketPutBucketTagsHandler: bucket.PutBucketTagsHandlerFunc(func(params bucket.PutBucketTagsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.PutBucketTags has not yet been implemented")
 		}),
@@ -458,9 +442,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		BucketSetBucketVersioningHandler: bucket.SetBucketVersioningHandlerFunc(func(params bucket.SetBucketVersioningParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation bucket.SetBucketVersioning has not yet been implemented")
 		}),
-		SupportSetCallHomeStatusHandler: support.SetCallHomeStatusHandlerFunc(func(params support.SetCallHomeStatusParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation support.SetCallHomeStatus has not yet been implemented")
-		}),
 		ConfigurationSetConfigHandler: configuration.SetConfigHandlerFunc(func(params configuration.SetConfigParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation configuration.SetConfig has not yet been implemented")
 		}),
@@ -484,24 +465,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		SiteReplicationSiteReplicationRemoveHandler: site_replication.SiteReplicationRemoveHandlerFunc(func(params site_replication.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation site_replication.SiteReplicationRemove has not yet been implemented")
-		}),
-		SubnetSubnetAPIKeyHandler: subnet.SubnetAPIKeyHandlerFunc(func(params subnet.SubnetAPIKeyParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetAPIKey has not yet been implemented")
-		}),
-		SubnetSubnetInfoHandler: subnet.SubnetInfoHandlerFunc(func(params subnet.SubnetInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetInfo has not yet been implemented")
-		}),
-		SubnetSubnetLoginHandler: subnet.SubnetLoginHandlerFunc(func(params subnet.SubnetLoginParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetLogin has not yet been implemented")
-		}),
-		SubnetSubnetLoginMFAHandler: subnet.SubnetLoginMFAHandlerFunc(func(params subnet.SubnetLoginMFAParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetLoginMFA has not yet been implemented")
-		}),
-		SubnetSubnetRegTokenHandler: subnet.SubnetRegTokenHandlerFunc(func(params subnet.SubnetRegTokenParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetRegToken has not yet been implemented")
-		}),
-		SubnetSubnetRegisterHandler: subnet.SubnetRegisterHandlerFunc(func(params subnet.SubnetRegisterParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation subnet.SubnetRegister has not yet been implemented")
 		}),
 		TieringTiersListHandler: tiering.TiersListHandlerFunc(func(params tiering.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.TiersList has not yet been implemented")
@@ -575,9 +538,6 @@ type ConsoleAPI struct {
 	//   - multipart/form-data
 	MultipartformConsumer runtime.Consumer
 
-	// ApplicationZipProducer registers a producer for the following mime types:
-	//   - application/zip
-	ApplicationZipProducer runtime.Producer
 	// BinProducer registers a producer for the following mime types:
 	//   - application/octet-stream
 	BinProducer runtime.Producer
@@ -704,8 +664,6 @@ type ConsoleAPI struct {
 	BucketGetBucketRewindHandler bucket.GetBucketRewindHandler
 	// BucketGetBucketVersioningHandler sets the operation handler for the get bucket versioning operation
 	BucketGetBucketVersioningHandler bucket.GetBucketVersioningHandler
-	// SupportGetCallHomeOptionValueHandler sets the operation handler for the get call home option value operation
-	SupportGetCallHomeOptionValueHandler support.GetCallHomeOptionValueHandler
 	// IdpGetConfigurationHandler sets the operation handler for the get configuration operation
 	IdpGetConfigurationHandler idp.GetConfigurationHandler
 	// IdpGetLDAPEntitiesHandler sets the operation handler for the get l d a p entities operation
@@ -804,10 +762,6 @@ type ConsoleAPI struct {
 	ObjectPostBucketsBucketNameObjectsUploadHandler object.PostBucketsBucketNameObjectsUploadHandler
 	// ConfigurationPostConfigsImportHandler sets the operation handler for the post configs import operation
 	ConfigurationPostConfigsImportHandler configuration.PostConfigsImportHandler
-	// ProfileProfilingStartHandler sets the operation handler for the profiling start operation
-	ProfileProfilingStartHandler profile.ProfilingStartHandler
-	// ProfileProfilingStopHandler sets the operation handler for the profiling stop operation
-	ProfileProfilingStopHandler profile.ProfilingStopHandler
 	// BucketPutBucketTagsHandler sets the operation handler for the put bucket tags operation
 	BucketPutBucketTagsHandler bucket.PutBucketTagsHandler
 	// ObjectPutObjectLegalHoldHandler sets the operation handler for the put object legal hold operation
@@ -842,8 +796,6 @@ type ConsoleAPI struct {
 	BucketSetBucketRetentionConfigHandler bucket.SetBucketRetentionConfigHandler
 	// BucketSetBucketVersioningHandler sets the operation handler for the set bucket versioning operation
 	BucketSetBucketVersioningHandler bucket.SetBucketVersioningHandler
-	// SupportSetCallHomeStatusHandler sets the operation handler for the set call home status operation
-	SupportSetCallHomeStatusHandler support.SetCallHomeStatusHandler
 	// ConfigurationSetConfigHandler sets the operation handler for the set config operation
 	ConfigurationSetConfigHandler configuration.SetConfigHandler
 	// BucketSetMultiBucketReplicationHandler sets the operation handler for the set multi bucket replication operation
@@ -860,18 +812,6 @@ type ConsoleAPI struct {
 	SiteReplicationSiteReplicationInfoAddHandler site_replication.SiteReplicationInfoAddHandler
 	// SiteReplicationSiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
 	SiteReplicationSiteReplicationRemoveHandler site_replication.SiteReplicationRemoveHandler
-	// SubnetSubnetAPIKeyHandler sets the operation handler for the subnet Api key operation
-	SubnetSubnetAPIKeyHandler subnet.SubnetAPIKeyHandler
-	// SubnetSubnetInfoHandler sets the operation handler for the subnet info operation
-	SubnetSubnetInfoHandler subnet.SubnetInfoHandler
-	// SubnetSubnetLoginHandler sets the operation handler for the subnet login operation
-	SubnetSubnetLoginHandler subnet.SubnetLoginHandler
-	// SubnetSubnetLoginMFAHandler sets the operation handler for the subnet login m f a operation
-	SubnetSubnetLoginMFAHandler subnet.SubnetLoginMFAHandler
-	// SubnetSubnetRegTokenHandler sets the operation handler for the subnet reg token operation
-	SubnetSubnetRegTokenHandler subnet.SubnetRegTokenHandler
-	// SubnetSubnetRegisterHandler sets the operation handler for the subnet register operation
-	SubnetSubnetRegisterHandler subnet.SubnetRegisterHandler
 	// TieringTiersListHandler sets the operation handler for the tiers list operation
 	TieringTiersListHandler tiering.TiersListHandler
 	// TieringTiersListNamesHandler sets the operation handler for the tiers list names operation
@@ -966,9 +906,6 @@ func (o *ConsoleAPI) Validate() error {
 		unregistered = append(unregistered, "MultipartformConsumer")
 	}
 
-	if o.ApplicationZipProducer == nil {
-		unregistered = append(unregistered, "ApplicationZipProducer")
-	}
 	if o.BinProducer == nil {
 		unregistered = append(unregistered, "BinProducer")
 	}
@@ -1145,9 +1082,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketGetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.GetBucketVersioningHandler")
 	}
-	if o.SupportGetCallHomeOptionValueHandler == nil {
-		unregistered = append(unregistered, "support.GetCallHomeOptionValueHandler")
-	}
 	if o.IdpGetConfigurationHandler == nil {
 		unregistered = append(unregistered, "idp.GetConfigurationHandler")
 	}
@@ -1295,12 +1229,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.ConfigurationPostConfigsImportHandler == nil {
 		unregistered = append(unregistered, "configuration.PostConfigsImportHandler")
 	}
-	if o.ProfileProfilingStartHandler == nil {
-		unregistered = append(unregistered, "profile.ProfilingStartHandler")
-	}
-	if o.ProfileProfilingStopHandler == nil {
-		unregistered = append(unregistered, "profile.ProfilingStopHandler")
-	}
 	if o.BucketPutBucketTagsHandler == nil {
 		unregistered = append(unregistered, "bucket.PutBucketTagsHandler")
 	}
@@ -1352,9 +1280,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.BucketSetBucketVersioningHandler == nil {
 		unregistered = append(unregistered, "bucket.SetBucketVersioningHandler")
 	}
-	if o.SupportSetCallHomeStatusHandler == nil {
-		unregistered = append(unregistered, "support.SetCallHomeStatusHandler")
-	}
 	if o.ConfigurationSetConfigHandler == nil {
 		unregistered = append(unregistered, "configuration.SetConfigHandler")
 	}
@@ -1378,24 +1303,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.SiteReplicationSiteReplicationRemoveHandler == nil {
 		unregistered = append(unregistered, "site_replication.SiteReplicationRemoveHandler")
-	}
-	if o.SubnetSubnetAPIKeyHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetAPIKeyHandler")
-	}
-	if o.SubnetSubnetInfoHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetInfoHandler")
-	}
-	if o.SubnetSubnetLoginHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetLoginHandler")
-	}
-	if o.SubnetSubnetLoginMFAHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetLoginMFAHandler")
-	}
-	if o.SubnetSubnetRegTokenHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetRegTokenHandler")
-	}
-	if o.SubnetSubnetRegisterHandler == nil {
-		unregistered = append(unregistered, "subnet.SubnetRegisterHandler")
 	}
 	if o.TieringTiersListHandler == nil {
 		unregistered = append(unregistered, "tiering.TiersListHandler")
@@ -1488,8 +1395,6 @@ func (o *ConsoleAPI) ProducersFor(mediaTypes []string) map[string]runtime.Produc
 	result := make(map[string]runtime.Producer, len(mediaTypes))
 	for _, mt := range mediaTypes {
 		switch mt {
-		case "application/zip":
-			result["application/zip"] = o.ApplicationZipProducer
 		case "application/octet-stream":
 			result["application/octet-stream"] = o.BinProducer
 		case "application/json":
@@ -1753,10 +1658,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/support/callhome"] = support.NewGetCallHomeOptionValue(o.context, o.SupportGetCallHomeOptionValueHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/idp/{type}/{name}"] = idp.NewGetConfiguration(o.context, o.IdpGetConfigurationHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -1950,14 +1851,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/configs/import"] = configuration.NewPostConfigsImport(o.context, o.ConfigurationPostConfigsImportHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/profiling/start"] = profile.NewProfilingStart(o.context, o.ProfileProfilingStartHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/profiling/stop"] = profile.NewProfilingStop(o.context, o.ProfileProfilingStopHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
@@ -2029,10 +1922,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}
-	o.handlers["PUT"]["/support/callhome"] = support.NewSetCallHomeStatus(o.context, o.SupportSetCallHomeStatusHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
 	o.handlers["PUT"]["/configs/{name}"] = configuration.NewSetConfig(o.context, o.ConfigurationSetConfigHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -2062,30 +1951,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
 	o.handlers["DELETE"]["/admin/site-replication"] = site_replication.NewSiteReplicationRemove(o.context, o.SiteReplicationSiteReplicationRemoveHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/subnet/apikey"] = subnet.NewSubnetAPIKey(o.context, o.SubnetSubnetAPIKeyHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/subnet/info"] = subnet.NewSubnetInfo(o.context, o.SubnetSubnetInfoHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/subnet/login"] = subnet.NewSubnetLogin(o.context, o.SubnetSubnetLoginHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/subnet/login/mfa"] = subnet.NewSubnetLoginMFA(o.context, o.SubnetSubnetLoginMFAHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/subnet/registration-token"] = subnet.NewSubnetRegToken(o.context, o.SubnetSubnetRegTokenHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/subnet/register"] = subnet.NewSubnetRegister(o.context, o.SubnetSubnetRegisterHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

@@ -183,15 +183,6 @@ export const IAM_PAGES = {
   KMS_KEYS_ADD: "/kms/add-key/",
   KMS_KEYS_IMPORT: "/kms/import-key/",
 
-  /* Support */
-  TOOLS: "/support",
-  REGISTER_SUPPORT: "/support/register",
-  TOOLS_DIAGNOSTICS: "/support/diagnostics",
-  TOOLS_SPEEDTEST: "/support/speedtest",
-  CALL_HOME: "/support/call-home",
-  PROFILE: "/support/profile",
-  SUPPORT_INSPECT: "/support/inspect",
-
   /** License **/
   LICENSE: "/license",
   /* Settings **/
@@ -389,15 +380,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
     IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
   ],
-  [IAM_PAGES.TOOLS]: [
-    IAM_SCOPES.S3_LISTEN_NOTIFICATIONS, // displays watch notifications
-    IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS, // display watch notifications
-    IAM_SCOPES.ADMIN_GET_CONSOLE_LOG, // display minio console logs
-    IAM_SCOPES.ADMIN_SERVER_TRACE, // display minio trace
-    IAM_SCOPES.ADMIN_HEAL, // display heal
-    IAM_SCOPES.ADMIN_HEALTH_INFO, // display diagnostics / display speedtest / display audit log
-    IAM_SCOPES.ADMIN_SERVER_INFO, // display diagnostics
-  ],
   [IAM_PAGES.TOOLS_LOGS]: [IAM_SCOPES.ADMIN_GET_CONSOLE_LOG],
   [IAM_PAGES.TOOLS_AUDITLOGS]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.TOOLS_WATCH]: [
@@ -405,18 +387,6 @@ export const IAM_PAGES_PERMISSIONS = {
     IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS, // display watch notifications
   ],
   [IAM_PAGES.TOOLS_TRACE]: [IAM_SCOPES.ADMIN_SERVER_TRACE],
-  [IAM_PAGES.TOOLS_DIAGNOSTICS]: [
-    IAM_SCOPES.ADMIN_HEALTH_INFO,
-    IAM_SCOPES.ADMIN_SERVER_INFO,
-  ],
-  [IAM_PAGES.TOOLS_SPEEDTEST]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.REGISTER_SUPPORT]: [
-    IAM_SCOPES.ADMIN_SERVER_INFO,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.CALL_HOME]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.PROFILE]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
-  [IAM_PAGES.SUPPORT_INSPECT]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
   [IAM_PAGES.LICENSE]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,

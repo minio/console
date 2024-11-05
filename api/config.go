@@ -98,10 +98,6 @@ func getMinIOServer() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIOServer, "http://localhost:9000"))
 }
 
-func getSubnetProxy() string {
-	return strings.TrimSpace(env.Get(ConsoleSubnetProxy, ""))
-}
-
 func GetMinIORegion() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIORegion, ""))
 }

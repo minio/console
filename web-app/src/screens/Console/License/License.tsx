@@ -15,17 +15,13 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useCallback, useEffect, useState } from "react";
-import { ArrowIcon, Button, PageLayout, ProgressBar, Grid } from "mds";
+import { PageLayout, ProgressBar, Grid } from "mds";
 import { SubnetInfo } from "./types";
 import api from "../../../common/api";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LicensePlans from "./LicensePlans";
-import { useNavigate } from "react-router-dom";
-import RegistrationStatusBanner from "../Support/RegistrationStatusBanner";
 import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
-import HelpMenu from "../HelpMenu";
 import { setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
 
@@ -34,7 +30,6 @@ const LicenseConsentModal = withSuspense(
 );
 
 const License = () => {
-  const navigate = useNavigate();
   const [activateProductModal, setActivateProductModal] =
     useState<boolean>(false);
 
@@ -126,38 +121,9 @@ const License = () => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper
-        label="MinIO License and Support Plan"
-        actions={
-          <Fragment>
-            {!isRegistered && (
-              <Button
-                id={"login-with-subnet"}
-                onClick={() => navigate(IAM_PAGES.REGISTER_SUPPORT)}
-                style={{
-                  fontSize: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  textDecoration: "none",
-                }}
-                icon={<ArrowIcon />}
-                variant={"callAction"}
-              >
-                Register your cluster
-              </Button>
-            )}
-            <HelpMenu />
-          </Fragment>
-        }
-      />
+      <PageHeaderWrapper label="MinIO License and Support Plan" />
 
       <PageLayout>
-        <Grid item xs={12}>
-          {isRegistered && (
-            <RegistrationStatusBanner email={licenseInfo?.email} />
-          )}
-        </Grid>
-
         <LicensePlans
           activateProductModal={activateProductModal}
           closeModalAndFetchLicenseInfo={closeModalAndFetchLicenseInfo}
