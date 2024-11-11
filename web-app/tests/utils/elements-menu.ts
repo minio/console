@@ -33,28 +33,6 @@ export const getSubmenuBlock = (item) => {
 //----------------------------------------------------
 export const logoutItem = getMenuElement("sign-out");
 
-//----------------------------------------------------
-// Specific sidebar elements
-//----------------------------------------------------
-export const monitoringElement = getMenuElement("tools");
-export const monitoringChildren = getSubmenuBlock("tools");
-
-export const dashboardElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorMetrics");
-export const logsElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorLogs");
-export const traceElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorTrace");
-export const drivesElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorDrives");
-export const watchElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorWatch");
-
 export const bucketsElement = getMenuElement("buckets");
 
 export const serviceAcctsElement = getMenuElement("nav-accesskeys");
@@ -78,3 +56,25 @@ export const notificationEndpointsElement = getMenuElement("lambda");
 export const inspectElement = getMenuElement("inspectObjects");
 
 export const licenseElement = getMenuElement("license");
+
+//----------------------------------------------------
+// Specific sidebar elements
+//----------------------------------------------------
+export const monitoringElement = getMenuElement("tools");
+export const monitoringChildren = getSubmenuBlock("tools");
+
+export const dashboardElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorMetrics");
+export const logsElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorLogs");
+export const traceElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorTrace");
+export const drivesElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorDrives");
+export const watchElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorWatch");

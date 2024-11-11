@@ -24,7 +24,7 @@ import {
   testBucketBrowseButtonFor,
 } from "../utils/functions";
 import { Selector } from "testcafe";
-import { deniedError, file } from "../permissions-6/resourceTesting";
+import { deniedError, file } from "../permissions-4/resourceTesting";
 
 fixture("Rewind Testing").page("http://localhost:9090");
 
