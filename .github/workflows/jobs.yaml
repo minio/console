@@ -900,6 +900,7 @@ jobs:
       - name: Run tests
         working-directory: ./web-app
         run: yarn test
+
   sso-integration:
     name: SSO Integration Test
     needs:
@@ -992,7 +993,6 @@ jobs:
       - test-api-on-go
       - test-pkg-on-go
       - sso-integration
-      - replication
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -1029,14 +1029,6 @@ jobs:
           key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v4
-        id: coverage-cache-replication
-        name: Coverage Cache Replication
-        with:
-          path: |
-            ./replication/coverage/
-          key: ${{ runner.os }}-replication-coverage-2-${{ github.run_id }}
-
-      - uses: actions/cache@v4
         id: coverage-cache-api
         name: Coverage Cache API
         with:
@@ -1052,12 +1044,6 @@ jobs:
             ./pkg/coverage/
           key: ${{ runner.os }}-coverage-pkg-2-${{ github.run_id }}
 
-      # Get the replication.out file from the artifact since this is working for self host runner.
-      - uses: actions/download-artifact@v4
-        with:
-          name: replication-artifact
-          path: replication/coverage
-
       - name: Get coverage
         run: |
           echo "change directory to gocovmerge"
@@ -1069,12 +1055,12 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../replication/coverage/replication.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
-          echo "Only run our test if play is up and running since we require it for replication tests here."
+          echo "Only run our test if play is up and running"
           PLAY_IS_ON=`wget --spider --server-response https://play.min.io:9443/login 2>&1 | grep '200\ OK' | wc -l`
           if [ $PLAY_IS_ON == 1 ]
           then
@@ -1098,11 +1084,6 @@ jobs:
             ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../replication/coverage/replication.out -o replication.html
-            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp replication.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../replication/coverage/replication.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             go tool cover -html=../sso-integration/coverage/sso-system.out -o sso-system.html
             ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
