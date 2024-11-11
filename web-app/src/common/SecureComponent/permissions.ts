@@ -197,9 +197,6 @@ export const IAM_PAGES = {
   TIERS: "/settings/tiers",
   TIERS_ADD: "/settings/tiers/add",
   TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
-  SITE_REPLICATION: "/settings/site-replication",
-  SITE_REPLICATION_STATUS: "/settings/site-replication/status",
-  SITE_REPLICATION_ADD: "/settings/site-replication/add",
 };
 
 // roles
@@ -388,18 +385,6 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
   [IAM_PAGES.TOOLS_TRACE]: [IAM_SCOPES.ADMIN_SERVER_TRACE],
   [IAM_PAGES.LICENSE]: [
-    IAM_SCOPES.ADMIN_SERVER_INFO,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.SITE_REPLICATION]: [
-    IAM_SCOPES.ADMIN_SERVER_INFO,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.SITE_REPLICATION_STATUS]: [
-    IAM_SCOPES.ADMIN_SERVER_INFO,
-    IAM_SCOPES.ADMIN_CONFIG_UPDATE,
-  ],
-  [IAM_PAGES.SITE_REPLICATION_ADD]: [
     IAM_SCOPES.ADMIN_SERVER_INFO,
     IAM_SCOPES.ADMIN_CONFIG_UPDATE,
   ],

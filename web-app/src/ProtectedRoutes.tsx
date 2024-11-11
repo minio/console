@@ -16,15 +16,11 @@
 
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import useApi from "./screens/Console/Common/Hooks/useApi";
-import { ErrorResponseHandler } from "./common/types";
-import { ReplicationSite } from "./screens/Console/Configurations/SiteReplication/SiteReplication";
 import { useSelector } from "react-redux";
-import { SRInfoStateType } from "./types";
 import { AppState, useAppDispatch } from "./store";
 import LoadingComponent from "./common/LoadingComponent";
 import { fetchSession } from "./screens/LoginPage/sessionThunk";
-import { setSiteReplicationInfo, setLocationPath } from "./systemSlice";
+import { setLocationPath } from "./systemSlice";
 import { SessionCallStates } from "./screens/Console/consoleSlice.types";
 
 interface ProtectedRouteProps {
@@ -38,9 +34,6 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
   const [componentLoading, setComponentLoading] = useState<boolean>(true);
   const sessionLoadingState = useSelector(
     (state: AppState) => state.console.sessionLoadingState,
-  );
-  const anonymousMode = useSelector(
-    (state: AppState) => state.system.anonymousMode,
   );
   const { pathname = "" } = useLocation();
 
@@ -62,40 +55,6 @@ const ProtectedRoute = ({ Component }: ProtectedRouteProps) => {
       setComponentLoading(false);
     }
   }, [dispatch, sessionLoadingState]);
-
-  const [, invokeSRInfoApi] = useApi(
-    (res: any) => {
-      const { name: curSiteName, enabled = false } = res || {};
-
-      let siteList = res.site;
-      if (!siteList) {
-        siteList = [];
-      }
-      const isSiteNameInList = siteList.find((si: ReplicationSite) => {
-        return si.name === curSiteName;
-      });
-
-      const isCurSite = enabled && isSiteNameInList;
-      const siteReplicationDetail: SRInfoStateType = {
-        enabled: enabled,
-        curSite: isCurSite,
-        siteName: isCurSite ? curSiteName : "",
-      };
-
-      dispatch(setSiteReplicationInfo(siteReplicationDetail));
-    },
-    (err: ErrorResponseHandler) => {
-      // we will fail this call silently, but show it on the console
-      console.error(`Error loading site replication status`, err);
-    },
-  );
-
-  useEffect(() => {
-    if (userLoggedIn && !componentLoading && !anonymousMode) {
-      invokeSRInfoApi("GET", `api/v1/admin/site-replication`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userLoggedIn, componentLoading]);
 
   // if we're still trying to retrieve user session render nothing
   if (componentLoading) {
