@@ -14947,16 +14947,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-use-websocket@npm:^4.8.1":
-  version: 4.8.1
-  resolution: "react-use-websocket@npm:4.8.1"
-  peerDependencies:
-    react: ">= 18.0.0"
-    react-dom: ">= 18.0.0"
-  checksum: 10c0/9106947334badc06d8af635328f1420068098130eac8f6da90e7d13cf37037cf1cf0bd528103ca3689a38097a70e10d3b577f143078254e9dd3b9aa429395116
-  languageName: node
-  linkType: hard
-
 "react-virtual@npm:^2.8.2":
   version: 2.10.4
   resolution: "react-virtual@npm:2.10.4"
@@ -18194,7 +18184,6 @@ __metadata:
     react-redux: "npm:^8.1.3"
     react-router-dom: "npm:6.25.1"
     react-scripts: "npm:5.0.1"
-    react-use-websocket: "npm:^4.8.1"
     react-virtualized: "npm:^9.22.5"
     react-window: "npm:^1.8.10"
     react-window-infinite-loader: "npm:^1.0.9"

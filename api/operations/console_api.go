@@ -51,7 +51,6 @@ import (
 	"github.com/minio/console/api/operations/release"
 	"github.com/minio/console/api/operations/service"
 	"github.com/minio/console/api/operations/service_account"
-	"github.com/minio/console/api/operations/site_replication"
 	"github.com/minio/console/api/operations/system"
 	"github.com/minio/console/api/operations/tiering"
 	"github.com/minio/console/api/operations/user"
@@ -262,12 +261,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		ServiceAccountGetServiceAccountHandler: service_account.GetServiceAccountHandlerFunc(func(params service_account.GetServiceAccountParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation service_account.GetServiceAccount has not yet been implemented")
 		}),
-		SiteReplicationGetSiteReplicationInfoHandler: site_replication.GetSiteReplicationInfoHandlerFunc(func(params site_replication.GetSiteReplicationInfoParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation site_replication.GetSiteReplicationInfo has not yet been implemented")
-		}),
-		SiteReplicationGetSiteReplicationStatusHandler: site_replication.GetSiteReplicationStatusHandlerFunc(func(params site_replication.GetSiteReplicationStatusParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation site_replication.GetSiteReplicationStatus has not yet been implemented")
-		}),
 		TieringGetTierHandler: tiering.GetTierHandlerFunc(func(params tiering.GetTierParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.GetTier has not yet been implemented")
 		}),
@@ -456,15 +449,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectShareObjectHandler: object.ShareObjectHandlerFunc(func(params object.ShareObjectParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.ShareObject has not yet been implemented")
-		}),
-		SiteReplicationSiteReplicationEditHandler: site_replication.SiteReplicationEditHandlerFunc(func(params site_replication.SiteReplicationEditParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation site_replication.SiteReplicationEdit has not yet been implemented")
-		}),
-		SiteReplicationSiteReplicationInfoAddHandler: site_replication.SiteReplicationInfoAddHandlerFunc(func(params site_replication.SiteReplicationInfoAddParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation site_replication.SiteReplicationInfoAdd has not yet been implemented")
-		}),
-		SiteReplicationSiteReplicationRemoveHandler: site_replication.SiteReplicationRemoveHandlerFunc(func(params site_replication.SiteReplicationRemoveParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation site_replication.SiteReplicationRemove has not yet been implemented")
 		}),
 		TieringTiersListHandler: tiering.TiersListHandlerFunc(func(params tiering.TiersListParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation tiering.TiersList has not yet been implemented")
@@ -676,10 +660,6 @@ type ConsoleAPI struct {
 	PolicyGetSAUserPolicyHandler policy.GetSAUserPolicyHandler
 	// ServiceAccountGetServiceAccountHandler sets the operation handler for the get service account operation
 	ServiceAccountGetServiceAccountHandler service_account.GetServiceAccountHandler
-	// SiteReplicationGetSiteReplicationInfoHandler sets the operation handler for the get site replication info operation
-	SiteReplicationGetSiteReplicationInfoHandler site_replication.GetSiteReplicationInfoHandler
-	// SiteReplicationGetSiteReplicationStatusHandler sets the operation handler for the get site replication status operation
-	SiteReplicationGetSiteReplicationStatusHandler site_replication.GetSiteReplicationStatusHandler
 	// TieringGetTierHandler sets the operation handler for the get tier operation
 	TieringGetTierHandler tiering.GetTierHandler
 	// UserGetUserInfoHandler sets the operation handler for the get user info operation
@@ -806,12 +786,6 @@ type ConsoleAPI struct {
 	PolicySetPolicyMultipleHandler policy.SetPolicyMultipleHandler
 	// ObjectShareObjectHandler sets the operation handler for the share object operation
 	ObjectShareObjectHandler object.ShareObjectHandler
-	// SiteReplicationSiteReplicationEditHandler sets the operation handler for the site replication edit operation
-	SiteReplicationSiteReplicationEditHandler site_replication.SiteReplicationEditHandler
-	// SiteReplicationSiteReplicationInfoAddHandler sets the operation handler for the site replication info add operation
-	SiteReplicationSiteReplicationInfoAddHandler site_replication.SiteReplicationInfoAddHandler
-	// SiteReplicationSiteReplicationRemoveHandler sets the operation handler for the site replication remove operation
-	SiteReplicationSiteReplicationRemoveHandler site_replication.SiteReplicationRemoveHandler
 	// TieringTiersListHandler sets the operation handler for the tiers list operation
 	TieringTiersListHandler tiering.TiersListHandler
 	// TieringTiersListNamesHandler sets the operation handler for the tiers list names operation
@@ -1100,12 +1074,6 @@ func (o *ConsoleAPI) Validate() error {
 	if o.ServiceAccountGetServiceAccountHandler == nil {
 		unregistered = append(unregistered, "service_account.GetServiceAccountHandler")
 	}
-	if o.SiteReplicationGetSiteReplicationInfoHandler == nil {
-		unregistered = append(unregistered, "site_replication.GetSiteReplicationInfoHandler")
-	}
-	if o.SiteReplicationGetSiteReplicationStatusHandler == nil {
-		unregistered = append(unregistered, "site_replication.GetSiteReplicationStatusHandler")
-	}
 	if o.TieringGetTierHandler == nil {
 		unregistered = append(unregistered, "tiering.GetTierHandler")
 	}
@@ -1294,15 +1262,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectShareObjectHandler == nil {
 		unregistered = append(unregistered, "object.ShareObjectHandler")
-	}
-	if o.SiteReplicationSiteReplicationEditHandler == nil {
-		unregistered = append(unregistered, "site_replication.SiteReplicationEditHandler")
-	}
-	if o.SiteReplicationSiteReplicationInfoAddHandler == nil {
-		unregistered = append(unregistered, "site_replication.SiteReplicationInfoAddHandler")
-	}
-	if o.SiteReplicationSiteReplicationRemoveHandler == nil {
-		unregistered = append(unregistered, "site_replication.SiteReplicationRemoveHandler")
 	}
 	if o.TieringTiersListHandler == nil {
 		unregistered = append(unregistered, "tiering.TiersListHandler")
@@ -1682,14 +1641,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
-	o.handlers["GET"]["/admin/site-replication"] = site_replication.NewGetSiteReplicationInfo(o.context, o.SiteReplicationGetSiteReplicationInfoHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/admin/site-replication/status"] = site_replication.NewGetSiteReplicationStatus(o.context, o.SiteReplicationGetSiteReplicationStatusHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
 	o.handlers["GET"]["/admin/tiers/{type}/{name}"] = tiering.NewGetTier(o.context, o.TieringGetTierHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
@@ -1939,18 +1890,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects/share"] = object.NewShareObject(o.context, o.ObjectShareObjectHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
-	o.handlers["PUT"]["/admin/site-replication"] = site_replication.NewSiteReplicationEdit(o.context, o.SiteReplicationSiteReplicationEditHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/admin/site-replication"] = site_replication.NewSiteReplicationInfoAdd(o.context, o.SiteReplicationSiteReplicationInfoAddHandler)
-	if o.handlers["DELETE"] == nil {
-		o.handlers["DELETE"] = make(map[string]http.Handler)
-	}
-	o.handlers["DELETE"]["/admin/site-replication"] = site_replication.NewSiteReplicationRemove(o.context, o.SiteReplicationSiteReplicationRemoveHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
