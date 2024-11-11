@@ -40,7 +40,6 @@ import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import {
   menuOpen,
-  selDistSet,
   serverIsLoading,
   setServerNeedsRestart,
   setSnackBarMessage,
@@ -58,17 +57,6 @@ const AddEventDestination = React.lazy(
 const EventTypeSelector = React.lazy(
   () => import("./EventDestinations/EventTypeSelector"),
 );
-
-const ListTiersConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/ListTiersConfiguration"),
-);
-const TierTypeSelector = React.lazy(
-  () => import("./Configurations/TiersConfiguration/TierTypeSelector"),
-);
-const AddTierConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/AddTierConfiguration"),
-);
-
 const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
 const LogsSearchMain = React.lazy(
   () => import("./Logs/LogSearch/LogsSearchMain"),
@@ -132,7 +120,6 @@ const Console = () => {
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
   const session = useSelector(selSession);
   const features = useSelector(selFeatures);
-  const distributedSetup = useSelector(selDistSet);
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar,
   );
@@ -333,20 +320,6 @@ const Console = () => {
     {
       component: EventDestinations,
       path: IAM_PAGES.EVENT_DESTINATIONS,
-    },
-    {
-      component: AddTierConfiguration,
-      path: IAM_PAGES.TIERS_ADD_SERVICE,
-      fsHidden: !distributedSetup,
-    },
-    {
-      component: TierTypeSelector,
-      path: IAM_PAGES.TIERS_ADD,
-      fsHidden: !distributedSetup,
-    },
-    {
-      component: ListTiersConfiguration,
-      path: IAM_PAGES.TIERS,
     },
     {
       component: Account,

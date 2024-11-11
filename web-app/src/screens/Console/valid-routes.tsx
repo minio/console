@@ -41,7 +41,6 @@ import {
   MonitoringMenuIcon,
   ObjectBrowserIcon,
   SettingsIcon,
-  TiersIcon,
   UsersMenuIcon,
 } from "mds";
 import { hasPermission } from "../../common/SecureComponent";
@@ -210,13 +209,6 @@ export const validRoutes = (
       name: "Events",
       icon: <LambdaIcon />,
       id: "lambda",
-    },
-    {
-      group: "Administrator",
-      path: IAM_PAGES.TIERS,
-      name: "Tiering",
-      icon: <TiersIcon />,
-      id: "tiers",
     },
     {
       group: "Administrator",
