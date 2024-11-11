@@ -38,7 +38,6 @@ import (
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/lifecycle"
 	"github.com/minio/minio-go/v7/pkg/notification"
 	"github.com/minio/minio-go/v7/pkg/tags"
 )
@@ -74,8 +73,6 @@ type MinioClient interface {
 	setObjectLockConfig(ctx context.Context, bucketName string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit) error
 	getBucketObjectLockConfig(ctx context.Context, bucketName string) (mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
 	getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error)
-	getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error)
-	setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error
 	copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error)
 	GetBucketTagging(ctx context.Context, bucketName string) (*tags.Tags, error)
 	SetBucketTagging(ctx context.Context, bucketName string, tags *tags.Tags) error
@@ -207,14 +204,6 @@ func (c minioClient) getBucketObjectLockConfig(ctx context.Context, bucketName s
 
 func (c minioClient) getObjectLockConfig(ctx context.Context, bucketName string) (lock string, mode *minio.RetentionMode, validity *uint, unit *minio.ValidityUnit, err error) {
 	return c.client.GetObjectLockConfig(ctx, bucketName)
-}
-
-func (c minioClient) getLifecycleRules(ctx context.Context, bucketName string) (lifecycle *lifecycle.Configuration, err error) {
-	return c.client.GetBucketLifecycle(ctx, bucketName)
-}
-
-func (c minioClient) setBucketLifecycle(ctx context.Context, bucketName string, config *lifecycle.Configuration) error {
-	return c.client.SetBucketLifecycle(ctx, bucketName, config)
 }
 
 func (c minioClient) copyObject(ctx context.Context, dst minio.CopyDestOptions, src minio.CopySrcOptions) (minio.UploadInfo, error) {

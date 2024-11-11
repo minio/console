@@ -661,12 +661,6 @@ const IconsScreen = () => {
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>
-          <cicons.LifecycleConfigIcon />
-          <br />
-          LifecycleConfigIcon
-        </Grid>
-
-        <Grid item xs={3} sm={2} md={1}>
           <cicons.LinkIcon />
           <br />
           LinkIcon
@@ -1000,18 +994,6 @@ const IconsScreen = () => {
           <cicons.TenantsOutlineIcon />
           <br />
           TenantsOutlineIcon
-        </Grid>
-
-        <Grid item xs={3} sm={2} md={1}>
-          <cicons.TiersIcon />
-          <br />
-          TiersIcon
-        </Grid>
-
-        <Grid item xs={3} sm={2} md={1}>
-          <cicons.TiersNotAvailableIcon />
-          <br />
-          TiersNotAvailableIcon
         </Grid>
 
         <Grid item xs={3} sm={2} md={1}>

@@ -18,7 +18,6 @@ export const IAM_ROLES = {
   BUCKET_OWNER: "BUCKET_OWNER", // upload/delete objects from the bucket
   BUCKET_VIEWER: "BUCKET_VIEWER", // only view objects on the bucket
   BUCKET_ADMIN: "BUCKET_ADMIN", // administrate the bucket
-  BUCKET_LIFECYCLE: "BUCKET_LIFECYCLE", // can manage bucket lifecycle
 };
 
 export const IAM_SCOPES = {
@@ -51,8 +50,6 @@ export const IAM_SCOPES = {
   S3_PUT_BUCKET_NOTIFICATIONS: "s3:PutBucketNotification",
   S3_GET_REPLICATION_CONFIGURATION: "s3:GetReplicationConfiguration",
   S3_PUT_REPLICATION_CONFIGURATION: "s3:PutReplicationConfiguration",
-  S3_GET_LIFECYCLE_CONFIGURATION: "s3:GetLifecycleConfiguration",
-  S3_PUT_LIFECYCLE_CONFIGURATION: "s3:PutLifecycleConfiguration",
   S3_GET_BUCKET_OBJECT_LOCK_CONFIGURATION:
     "s3:GetBucketObjectLockConfiguration",
   S3_PUT_BUCKET_OBJECT_LOCK_CONFIGURATION:
@@ -68,8 +65,6 @@ export const IAM_SCOPES = {
   ADMIN_SERVER_INFO: "admin:ServerInfo",
   ADMIN_GET_BUCKET_QUOTA: "admin:GetBucketQuota",
   ADMIN_SET_BUCKET_QUOTA: "admin:SetBucketQuota",
-  ADMIN_LIST_TIERS: "admin:ListTier",
-  ADMIN_SET_TIER: "admin:SetTier",
   ADMIN_LIST_GROUPS: "admin:ListGroups",
   S3_GET_OBJECT_VERSION_FOR_REPLICATION: "s3:GetObjectVersionForReplication",
   S3_REPLICATE_TAGS: "s3:ReplicateTags",
@@ -194,9 +189,6 @@ export const IAM_PAGES = {
   EVENT_DESTINATIONS: "/settings/event-destinations",
   EVENT_DESTINATIONS_ADD: "/settings/event-destinations/add",
   EVENT_DESTINATIONS_ADD_SERVICE: "/settings/event-destinations/add/:service",
-  TIERS: "/settings/tiers",
-  TIERS_ADD: "/settings/tiers/add",
-  TIERS_ADD_SERVICE: "/settings/tiers/add/:service",
 };
 
 // roles
@@ -242,8 +234,6 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.S3_BYPASS_GOVERNANCE_RETENTION,
     IAM_SCOPES.S3_PUT_BUCKET_POLICY,
     IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
-    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
     IAM_SCOPES.S3_LIST_MULTIPART_UPLOAD_PARTS,
     IAM_SCOPES.S3_LISTEN_BUCKET_NOTIFICATIONS,
     IAM_SCOPES.S3_LISTEN_NOTIFICATIONS,
@@ -266,14 +256,6 @@ export const IAM_PERMISSIONS = {
     IAM_SCOPES.ADMIN_HEAL,
     IAM_SCOPES.S3_GET_ACTIONS,
     IAM_SCOPES.S3_PUT_ACTIONS,
-  ],
-  [IAM_ROLES.BUCKET_LIFECYCLE]: [
-    IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
-    IAM_SCOPES.S3_GET_ACTIONS,
-    IAM_SCOPES.S3_PUT_ACTIONS,
-    IAM_SCOPES.ADMIN_LIST_TIERS,
-    IAM_SCOPES.ADMIN_SET_TIER,
   ],
 };
 
@@ -365,17 +347,6 @@ export const IAM_PAGES_PERMISSIONS = {
   [IAM_PAGES.EVENT_DESTINATIONS]: [
     IAM_SCOPES.ADMIN_SERVER_INFO, // displays notifications endpoints
     IAM_SCOPES.ADMIN_CONFIG_UPDATE, // displays create notification button
-  ],
-  [IAM_PAGES.TIERS]: [
-    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
-  ],
-  [IAM_PAGES.TIERS_ADD]: [
-    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
-    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
-  ],
-  [IAM_PAGES.TIERS_ADD_SERVICE]: [
-    IAM_SCOPES.ADMIN_SET_TIER, // display "add tier" button / shows add service tier page
-    IAM_SCOPES.ADMIN_LIST_TIERS, // display tiers list
   ],
   [IAM_PAGES.TOOLS_LOGS]: [IAM_SCOPES.ADMIN_GET_CONSOLE_LOG],
   [IAM_PAGES.TOOLS_AUDITLOGS]: [IAM_SCOPES.ADMIN_HEALTH_INFO],
