@@ -12,7 +12,7 @@
     "local-storage-fallback": "^4.1.2",
     "lodash": "^4.17.21",
     "luxon": "^3.4.4",
-    "mds": "https://github.com/minio/mds.git#v1.0.3",
+    "mds": "https://github.com/minio/mds.git#v1.0.4",
     "react": "^18.3.1",
     "react-component-export-image": "^1.0.6",
     "react-copy-to-clipboard": "^5.1.0",
