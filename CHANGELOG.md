@@ -1,5 +1,17 @@
 # Changelog
 
+## Release v1.7.4
+
+Deprecations:
+
+- Deprecated support tools User Interface in favor of mc admin commands. Please refer to the [MinIO SUBNET Registration page](https://min.io/docs/minio/linux/administration/console/subnet-registration.html#subnet) for more information.
+- Deprecated Site replication User Interface in favor of mc admin commands. Please refer to the [MinIO Site Replication page](https://min.io/docs/minio/linux/operations/install-deploy-manage/multi-site-replication.html) for more information.
+- Deprecated Lifecycle & Tiers User Interface in favor of mc admin commands. Please refer to the [MinIO Tiers page](https://min.io/docs/minio/linux/reference/minio-mc/mc-ilm-tier.html) for more information.
+
+Bug Fix:
+
+- Avoid loading unpkg.com call when login animation is off
+
 ## Release v1.7.3
 
 Bug Fix:
