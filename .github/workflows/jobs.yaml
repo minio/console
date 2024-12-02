@@ -22,7 +22,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -112,7 +112,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
     steps:
       # To build minio image, we need to clone the repository first
       - name: Clone github.com/minio/minio
@@ -150,7 +150,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -189,7 +189,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -243,7 +243,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -296,7 +296,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -348,7 +348,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -400,7 +400,7 @@ jobs:
     timeout-minutes: 15
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -448,7 +448,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -496,7 +496,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -544,7 +544,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -595,7 +595,7 @@ jobs:
     runs-on: [ubuntu-latest]
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -648,7 +648,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -683,7 +683,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -720,7 +720,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
 
     steps:
       - name: Check out code
@@ -817,7 +817,7 @@ jobs:
 
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
 
     steps:
       - name: Check out code
@@ -867,7 +867,7 @@ jobs:
           echo "replace github.com/minio/console => ../" >> go.mod
 
           echo "updates to go.mod needed; to update it: go mod tidy"
-          go mod tidy -compat=1.22
+          go mod tidy -compat=1.23
 
           echo "Get git version to build MinIO Image";
           VERSION=`git rev-parse HEAD`;
@@ -901,7 +901,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -956,7 +956,7 @@ jobs:
           echo "download golang x tools"
           go mod download golang.org/x/tools
           echo "go mod tidy compat mode"
-          go mod tidy -compat=1.22
+          go mod tidy -compat=1.23
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
@@ -1027,7 +1027,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1069,7 +1069,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1109,7 +1109,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1137,7 +1137,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1164,7 +1164,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1192,7 +1192,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code
@@ -1220,7 +1220,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        go-version: [1.22.x]
+        go-version: [1.23.x]
         os: [ubuntu-latest]
     steps:
       - name: Check out code

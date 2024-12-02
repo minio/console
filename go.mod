@@ -1,6 +1,6 @@
 module github.com/minio/console
 
-go 1.22
+go 1.23
 
 require (
 	github.com/blang/semver/v4 v4.0.0
@@ -24,6 +24,7 @@ require (
 	github.com/minio/madmin-go/v3 v3.0.68
 	github.com/minio/mc v0.0.0-20240815155011-479171e7be9c
 	github.com/minio/minio-go/v7 v7.0.81-0.20241125171916-a563333c01ef
+	github.com/minio/pkg/v3 v3.0.22
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -35,13 +36,12 @@ require (
 	golang.org/x/crypto v0.28.0
 	golang.org/x/net v0.30.0
 	golang.org/x/oauth2 v0.22.0
+
 	// Added to include security fix for
 	// https://github.com/golang/go/issues/56152
 	golang.org/x/text v0.19.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-require github.com/minio/pkg/v3 v3.0.22
 
 require (
 	aead.dev/mem v0.2.0 // indirect
