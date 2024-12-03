@@ -550,10 +550,13 @@ func getDownloadFolderResponse(session *models.Principal, params objectApi.Downl
 				Modified: modified,
 			})
 			if err != nil {
+				object.Close()
 				// Ignore errors, move to next
 				continue
 			}
+
 			_, err = io.Copy(f, object)
+			object.Close()
 			if err != nil {
 				// We have a partial object, report error.
 				pw.CloseWithError(err)
@@ -650,14 +653,17 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 						// Ignore errors, move to next
 						continue
 					}
-					modified, _ := time.Parse(time.RFC3339, obj.LastModified)
 
+					modified, _ := time.Parse(time.RFC3339, obj.LastModified)
 					f, err := addToZip(name, modified)
 					if err != nil {
+						object.Close()
 						// Ignore errors, move to next
 						continue
 					}
+
 					_, err = io.Copy(f, object)
+					object.Close()
 					if err != nil {
 						// We have a partial object, report error.
 						pw.CloseWithError(err)
@@ -666,13 +672,14 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 				}
 
 			} else {
-				// add selected individual object
-				objectData, err := mClient.StatObject(ctx, params.BucketName, dObj, minio.StatObjectOptions{})
+				object, err := mClient.GetObject(ctx, params.BucketName, dObj, minio.GetObjectOptions{})
 				if err != nil {
 					// Ignore errors, move to next
 					continue
 				}
-				object, err := mClient.GetObject(ctx, params.BucketName, dObj, minio.GetObjectOptions{})
+
+				// add selected individual object
+				objectData, err := object.Stat()
 				if err != nil {
 					// Ignore errors, move to next
 					continue
@@ -683,10 +690,13 @@ func getMultipleFilesDownloadResponse(session *models.Principal, params objectAp
 				objectName := prefixes[len(prefixes)-1]
 				f, err := addToZip(objectName, objectData.LastModified)
 				if err != nil {
+					object.Close()
 					// Ignore errors, move to next
 					continue
 				}
+
 				_, err = io.Copy(f, object)
+				object.Close()
 				if err != nil {
 					// We have a partial object, report error.
 					pw.CloseWithError(err)
