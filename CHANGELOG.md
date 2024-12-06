@@ -5,7 +5,7 @@
 Bug Fix:
 
 - Fixed leaks during ZIP multiobject downloads
-- Allow spaced in Policy names
+- Allow spaces in Policy names
 
 ## Release v1.7.4
 
