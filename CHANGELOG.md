@@ -1,5 +1,12 @@
 # Changelog
 
+## Release v1.7.5
+
+Bug Fix:
+
+- Fixed leaks during ZIP multiobject downloads
+- Allow spaced in Policy names
+
 ## Release v1.7.4
 
 Deprecations:
