@@ -33,6 +33,30 @@ export const getSubmenuBlock = (item) => {
 //----------------------------------------------------
 export const logoutItem = getMenuElement("sign-out");
 
+export const bucketsElement = getMenuElement("buckets");
+
+export const serviceAcctsElement = getMenuElement("nav-accesskeys");
+
+export const identityElement = getMenuElement("identity");
+export const identityChildren = getSubmenuBlock("identity");
+
+export const usersElement = identityChildren
+  .find("button")
+  .withAttribute("id", "users");
+export const groupsElement = identityChildren
+  .find("button")
+  .withAttribute("id", "groups");
+
+export const iamPoliciesElement = getMenuElement("policies");
+
+export const configurationsElement = getMenuElement("configurations");
+
+export const notificationEndpointsElement = getMenuElement("lambda");
+
+export const inspectElement = getMenuElement("inspectObjects");
+
+export const licenseElement = getMenuElement("license");
+
 //----------------------------------------------------
 // Specific sidebar elements
 //----------------------------------------------------
@@ -54,31 +78,3 @@ export const drivesElement = monitoringChildren
 export const watchElement = monitoringChildren
   .find("button")
   .withAttribute("id", "monitorWatch");
-
-export const bucketsElement = getMenuElement("buckets");
-
-export const serviceAcctsElement = getMenuElement("nav-accesskeys");
-
-export const identityElement = getMenuElement("identity");
-export const identityChildren = getSubmenuBlock("identity");
-
-export const usersElement = identityChildren
-  .find("button")
-  .withAttribute("id", "users");
-export const groupsElement = identityChildren
-  .find("button")
-  .withAttribute("id", "groups");
-
-export const iamPoliciesElement = getMenuElement("policies");
-
-export const configurationsElement = getMenuElement("configurations");
-
-export const notificationEndpointsElement = getMenuElement("lambda");
-
-export const tiersElement = getMenuElement("tiers");
-
-export const diagnosticsElement = getMenuElement("diagnostics");
-export const performanceElement = getMenuElement("performance");
-export const inspectElement = getMenuElement("inspectObjects");
-
-export const licenseElement = getMenuElement("license");

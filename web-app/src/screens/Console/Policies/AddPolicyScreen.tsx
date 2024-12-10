@@ -52,7 +52,7 @@ const AddPolicyScreen = () => {
     setAddLoading(true);
     api.policies
       .addPolicy({
-        name: policyName,
+        name: policyName.trim(),
         policy: policyDefinition,
       })
       .then((res) => {
@@ -79,15 +79,12 @@ const AddPolicyScreen = () => {
   };
 
   const validatePolicyname = (policyName: string) => {
-    if (policyName.indexOf(" ") !== -1) {
-      return "Policy name cannot contain spaces";
+    if (policyName.trim() === "") {
+      return "Policy name cannot be empty";
     } else return "";
   };
 
-  const validSave =
-    policyName.trim() !== "" &&
-    policyName.indexOf(" ") === -1 &&
-    policyDefinition.trim() !== "";
+  const validSave = policyName.trim() !== "" && policyDefinition.trim() !== "";
 
   useEffect(() => {
     dispatch(setHelpName("add_policy"));

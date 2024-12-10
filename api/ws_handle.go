@@ -23,17 +23,12 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"strconv"
 	"strings"
-	"time"
-
-	"github.com/minio/madmin-go/v3"
-
-	"github.com/minio/console/pkg/utils"
 
 	errorsApi "github.com/go-openapi/errors"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth"
+	"github.com/minio/console/pkg/utils"
 	"github.com/minio/websocket"
 )
 
@@ -63,13 +58,6 @@ type wsAdminClient struct {
 // ConsoleWebsocket interface of a Websocket Client
 type ConsoleWebsocket interface {
 	watch(options watchOptions)
-}
-
-type wsS3Client struct {
-	// websocket connection.
-	conn wsConn
-	// mcClient
-	client MCClient
 }
 
 // ConsoleWebSocketMClient interface of a Websocket Client
@@ -188,42 +176,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	switch {
-	case strings.HasPrefix(wsPath, `/trace`):
-		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-
-		calls := req.URL.Query().Get("calls")
-		threshold, _ := strconv.ParseInt(req.URL.Query().Get("threshold"), 10, 64)
-		onlyErrors := req.URL.Query().Get("onlyErrors")
-		stCode, errorStCode := strconv.ParseInt(req.URL.Query().Get("statusCode"), 10, 64)
-		method := req.URL.Query().Get("method")
-		funcName := req.URL.Query().Get("funcname")
-		path := req.URL.Query().Get("path")
-
-		statusCode := int64(0)
-
-		if errorStCode == nil {
-			statusCode = stCode
-		}
-
-		traceRequestItem := TraceRequest{
-			s3:         strings.Contains(calls, "s3") || strings.Contains(calls, "all"),
-			internal:   strings.Contains(calls, "internal") || strings.Contains(calls, "all"),
-			storage:    strings.Contains(calls, "storage") || strings.Contains(calls, "all"),
-			os:         strings.Contains(calls, "os") || strings.Contains(calls, "all"),
-			onlyErrors: onlyErrors == "yes",
-			threshold:  threshold,
-			statusCode: statusCode,
-			method:     method,
-			funcName:   funcName,
-			path:       path,
-		}
-
-		go wsAdminClient.trace(ctx, traceRequestItem)
 	case strings.HasPrefix(wsPath, `/console`):
 
 		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
@@ -240,63 +192,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 			logType: logType,
 		}
 		go wsAdminClient.console(ctx, logRequestItem)
-	case strings.HasPrefix(wsPath, `/health-info`):
-		deadline, err := getHealthInfoOptionsFromReq(req)
-		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("error getting health info options: %v", err))
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		go wsAdminClient.healthInfo(ctx, deadline)
-	case strings.HasPrefix(wsPath, `/watch`):
-		wOptions, err := getWatchOptionsFromReq(req)
-		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("error getting watch options: %v", err))
-			closeWsConn(conn)
-			return
-		}
-		wsS3Client, err := newWebSocketS3Client(conn, session, wOptions.BucketName, "", clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		go wsS3Client.watch(ctx, wOptions)
-	case strings.HasPrefix(wsPath, `/speedtest`):
-		speedtestOpts, err := getSpeedtestOptionsFromReq(req)
-		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("error getting speedtest options: %v", err))
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		go wsAdminClient.speedtest(ctx, speedtestOpts)
-	case strings.HasPrefix(wsPath, `/profile`):
-		pOptions, err := getProfileOptionsFromReq(req)
-		if err != nil {
-			ErrorWithContext(ctx, fmt.Errorf("error getting profile options: %v", err))
-			closeWsConn(conn)
-			return
-		}
-		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		go wsAdminClient.profile(ctx, pOptions)
-
 	case strings.HasPrefix(wsPath, `/objectManager`):
 		wsMinioClient, err := newWebSocketMinioClient(conn, session, clientIP)
 		if err != nil {
@@ -332,26 +227,6 @@ func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal, 
 	// create websocket client and handle request
 	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
 	return wsAdminClient, nil
-}
-
-// newWebSocketS3Client returns a wsAdminClient authenticated as Console admin
-func newWebSocketS3Client(conn *websocket.Conn, claims *models.Principal, bucketName, prefix, clientIP string) (*wsS3Client, error) {
-	// Only start Websocket Interaction after user has been
-	// authenticated with MinIO
-	s3Client, err := newS3BucketClient(claims, bucketName, prefix, clientIP)
-	if err != nil {
-		LogError("error creating S3Client:", err)
-		return nil, err
-	}
-	// create a websocket connection interface implementation
-	// defining the connection to be used
-	wsConnection := wsConn{conn: conn}
-	// create a s3Client interface implementation
-	// defining the client to be used
-	mcS3C := mcClient{client: s3Client}
-	// create websocket client and handle request
-	wsS3Client := &wsS3Client{conn: wsConnection, client: mcS3C}
-	return wsS3Client, nil
 }
 
 func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal, clientIP string) (*wsMinioClient, error) {
@@ -438,23 +313,6 @@ func closeWsConn(conn *websocket.Conn) {
 	conn.Close()
 }
 
-// trace serves madmin.ServiceTraceInfo
-// on a Websocket connection.
-func (wsc *wsAdminClient) trace(ctx context.Context, traceRequestItem TraceRequest) {
-	defer func() {
-		LogInfo("trace stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("trace started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startTraceInfo(ctx, wsc.conn, wsc.client, traceRequestItem)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
 // console serves madmin.GetLogs
 // on a Websocket connection.
 func (wsc *wsAdminClient) console(ctx context.Context, logRequestItem LogRequest) {
@@ -468,65 +326,6 @@ func (wsc *wsAdminClient) console(ctx context.Context, logRequestItem LogRequest
 	ctx = wsReadClientCtx(ctx, wsc.conn)
 
 	err := startConsoleLog(ctx, wsc.conn, wsc.client, logRequestItem)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsS3Client) watch(ctx context.Context, params *watchOptions) {
-	defer func() {
-		LogInfo("watch stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("watch started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startWatch(ctx, wsc.conn, wsc.client, params)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsAdminClient) healthInfo(ctx context.Context, deadline *time.Duration) {
-	defer func() {
-		LogInfo("health info stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("health info started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-	err := startHealthInfo(ctx, wsc.conn, wsc.client, deadline)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsAdminClient) speedtest(ctx context.Context, opts *madmin.SpeedtestOpts) {
-	defer func() {
-		LogInfo("speedtest stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("speedtest started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startSpeedtest(ctx, wsc.conn, wsc.client, opts)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-func (wsc *wsAdminClient) profile(ctx context.Context, opts *profileOptions) {
-	defer func() {
-		LogInfo("profile stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("profile started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startProfiling(ctx, wsc.conn, wsc.client, opts)
 
 	sendWsCloseMessage(wsc.conn, err)
 }

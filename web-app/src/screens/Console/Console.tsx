@@ -40,7 +40,6 @@ import { hasPermission } from "../../common/SecureComponent";
 import { IRouteRule } from "./Menu/types";
 import {
   menuOpen,
-  selDistSet,
   serverIsLoading,
   setServerNeedsRestart,
   setSnackBarMessage,
@@ -48,10 +47,6 @@ import {
 import MenuWrapper from "./Menu/MenuWrapper";
 import LoadingComponent from "../../common/LoadingComponent";
 import ComponentsScreen from "./Common/ComponentsScreen";
-
-const Trace = React.lazy(() => import("./Trace/Trace"));
-const Watch = React.lazy(() => import("./Watch/Watch"));
-const HealthInfo = React.lazy(() => import("./HealthInfo/HealthInfo"));
 
 const EventDestinations = React.lazy(
   () => import("./EventDestinations/EventDestinations"),
@@ -62,27 +57,13 @@ const AddEventDestination = React.lazy(
 const EventTypeSelector = React.lazy(
   () => import("./EventDestinations/EventTypeSelector"),
 );
-
-const ListTiersConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/ListTiersConfiguration"),
-);
-const TierTypeSelector = React.lazy(
-  () => import("./Configurations/TiersConfiguration/TierTypeSelector"),
-);
-const AddTierConfiguration = React.lazy(
-  () => import("./Configurations/TiersConfiguration/AddTierConfiguration"),
-);
-
 const ErrorLogs = React.lazy(() => import("./Logs/ErrorLogs/ErrorLogs"));
 const LogsSearchMain = React.lazy(
   () => import("./Logs/LogSearch/LogsSearchMain"),
 );
 const GroupsDetails = React.lazy(() => import("./Groups/GroupsDetails"));
 
-const Tools = React.lazy(() => import("./Tools/Tools"));
 const IconsScreen = React.lazy(() => import("./Common/IconsScreen"));
-
-const Speedtest = React.lazy(() => import("./Speedtest/Speedtest"));
 
 const ObjectManager = React.lazy(
   () => import("./Common/ObjectManager/ObjectManager"),
@@ -130,16 +111,6 @@ const ConfigurationOptions = React.lazy(
 );
 
 const AddGroupScreen = React.lazy(() => import("./Groups/AddGroupScreen"));
-const SiteReplication = React.lazy(
-  () => import("./Configurations/SiteReplication/SiteReplication"),
-);
-const SiteReplicationStatus = React.lazy(
-  () => import("./Configurations/SiteReplication/SiteReplicationStatus"),
-);
-
-const AddReplicationSites = React.lazy(
-  () => import("./Configurations/SiteReplication/AddReplicationSites"),
-);
 
 const KMSRoutes = React.lazy(() => import("./KMS/KMSRoutes"));
 
@@ -149,7 +120,6 @@ const Console = () => {
   const open = useSelector((state: AppState) => state.system.sidebarOpen);
   const session = useSelector(selSession);
   const features = useSelector(selFeatures);
-  const distributedSetup = useSelector(selDistSet);
   const snackBarMessage = useSelector(
     (state: AppState) => state.system.snackBar,
   );
@@ -278,15 +248,6 @@ const Console = () => {
         );
       },
     },
-
-    {
-      component: Watch,
-      path: IAM_PAGES.TOOLS_WATCH,
-    },
-    {
-      component: Speedtest,
-      path: IAM_PAGES.TOOLS_SPEEDTEST,
-    },
     {
       component: Users,
       path: IAM_PAGES.USERS,
@@ -337,24 +298,12 @@ const Console = () => {
       path: IAM_PAGES.IDP_OPENID_CONFIGURATIONS_VIEW,
     },
     {
-      component: Trace,
-      path: IAM_PAGES.TOOLS_TRACE,
-    },
-    {
-      component: HealthInfo,
-      path: IAM_PAGES.TOOLS_DIAGNOSTICS,
-    },
-    {
       component: ErrorLogs,
       path: IAM_PAGES.TOOLS_LOGS,
     },
     {
       component: LogsSearchMain,
       path: IAM_PAGES.TOOLS_AUDITLOGS,
-    },
-    {
-      component: Tools,
-      path: IAM_PAGES.TOOLS,
     },
     {
       component: ConfigurationOptions,
@@ -371,32 +320,6 @@ const Console = () => {
     {
       component: EventDestinations,
       path: IAM_PAGES.EVENT_DESTINATIONS,
-    },
-    {
-      component: AddTierConfiguration,
-      path: IAM_PAGES.TIERS_ADD_SERVICE,
-      fsHidden: !distributedSetup,
-    },
-    {
-      component: TierTypeSelector,
-      path: IAM_PAGES.TIERS_ADD,
-      fsHidden: !distributedSetup,
-    },
-    {
-      component: ListTiersConfiguration,
-      path: IAM_PAGES.TIERS,
-    },
-    {
-      component: SiteReplication,
-      path: IAM_PAGES.SITE_REPLICATION,
-    },
-    {
-      component: SiteReplicationStatus,
-      path: IAM_PAGES.SITE_REPLICATION_STATUS,
-    },
-    {
-      component: AddReplicationSites,
-      path: IAM_PAGES.SITE_REPLICATION_ADD,
     },
     {
       component: Account,

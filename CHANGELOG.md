@@ -1,5 +1,33 @@
 # Changelog
 
+## Release v1.7.5
+
+Bug Fix:
+
+- Fixed leaks during ZIP multiobject downloads
+- Allow spaces in Policy names
+
+## Release v1.7.4
+
+Deprecations:
+
+- Deprecated support tools User Interface in favor of mc admin commands. Please refer to the [MinIO SUBNET Registration page](https://min.io/docs/minio/linux/administration/console/subnet-registration.html#subnet) for more information.
+- Deprecated Site replication User Interface in favor of mc admin commands. Please refer to the [MinIO Site Replication page](https://min.io/docs/minio/linux/operations/install-deploy-manage/multi-site-replication.html) for more information.
+- Deprecated Lifecycle & Tiers User Interface in favor of mc admin commands. Please refer to the [MinIO Tiers page](https://min.io/docs/minio/linux/reference/minio-mc/mc-ilm-tier.html) for more information.
+
+Bug Fix:
+
+- Avoid loading unpkg.com call when login animation is off
+
+## Release v1.7.3
+
+Bug Fix:
+
+- Use a fixed public license verification key
+- Show non-expiring access keys as `no-expiry` instead of Jan 1, 1970
+- Use "join Slack" button for non-commercial edition instead of "Signup"
+- Fix setting policies on groups that have spaces
+
 ## Release v1.7.2
 
 Bug Fix:

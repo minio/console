@@ -88,9 +88,6 @@ const BucketEventsPanel = withSuspense(
 const BucketReplicationPanel = withSuspense(
   React.lazy(() => import("./BucketReplicationPanel")),
 );
-const BucketLifecyclePanel = withSuspense(
-  React.lazy(() => import("./BucketLifecyclePanel")),
-);
 
 const BucketDetails = () => {
   const dispatch = useAppDispatch();
@@ -143,7 +140,6 @@ const BucketDetails = () => {
   const manageBucketRoutes: Record<string, any> = {
     events: "/admin/events",
     replication: "/admin/replication",
-    lifecycle: "/admin/lifecycle",
     access: "/admin/access",
     prefix: "/admin/prefix",
   };
@@ -332,21 +328,6 @@ const BucketDetails = () => {
               },
               {
                 tabConfig: {
-                  label: "Lifecycle",
-                  id: "lifecycle",
-                  disabled:
-                    !distributedSetup ||
-                    !hasPermission(bucketName, [
-                      IAM_SCOPES.S3_GET_LIFECYCLE_CONFIGURATION,
-                      IAM_SCOPES.S3_PUT_LIFECYCLE_CONFIGURATION,
-                      IAM_SCOPES.S3_GET_ACTIONS,
-                      IAM_SCOPES.S3_PUT_ACTIONS,
-                    ]),
-                  to: getRoutePath("lifecycle"),
-                },
-              },
-              {
-                tabConfig: {
                   label: "Access",
                   id: "access",
                   disabled: !hasPermission(bucketName, [
@@ -379,10 +360,6 @@ const BucketDetails = () => {
                     element={<BucketReplicationPanel />}
                   />
                 )}
-                {distributedSetup && (
-                  <Route path="lifecycle" element={<BucketLifecyclePanel />} />
-                )}
-
                 <Route path="access" element={<AccessDetailsPanel />} />
                 <Route path="prefix" element={<AccessRulePanel />} />
                 <Route

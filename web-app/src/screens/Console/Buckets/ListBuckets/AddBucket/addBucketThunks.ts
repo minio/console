@@ -81,7 +81,10 @@ export const addBucketAsync = createAsyncThunk(
         };
       }
     }
-
-    return api.buckets.makeBucket(request);
+    try {
+      return await api.buckets.makeBucket(request);
+    } catch (err: any) {
+      return rejectWithValue(err.error);
+    }
   },
 );

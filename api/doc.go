@@ -30,7 +30,6 @@
 //	  - multipart/form-data
 //
 //	Produces:
-//	  - application/zip
 //	  - application/octet-stream
 //	  - application/json
 //

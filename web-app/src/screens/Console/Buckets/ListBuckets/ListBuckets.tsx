@@ -21,7 +21,6 @@ import {
   BucketsIcon,
   Button,
   HelpBox,
-  LifecycleConfigIcon,
   MultipleBucketsIcon,
   PageLayout,
   RefreshIcon,
@@ -38,8 +37,6 @@ import { SecureComponent } from "../../../../common/SecureComponent";
 import {
   CONSOLE_UI_RESOURCE,
   IAM_PAGES,
-  IAM_PERMISSIONS,
-  IAM_ROLES,
   IAM_SCOPES,
   permissionTooltipHelper,
 } from "../../../../common/SecureComponent/permissions";
@@ -56,7 +53,6 @@ import AutoColorIcon from "../../Common/Components/AutoColorIcon";
 import TooltipWrapper from "../../Common/TooltipWrapper/TooltipWrapper";
 import SearchBox from "../../Common/SearchBox";
 import VirtualizedList from "../../Common/VirtualizedList/VirtualizedList";
-import BulkLifecycleModal from "./BulkLifecycleModal";
 import hasPermission from "../../../../common/SecureComponent/accessControl";
 import BucketListItem from "./BucketListItem";
 import BulkReplicationModal from "./BulkReplicationModal";
@@ -71,8 +67,6 @@ const ListBuckets = () => {
   const [selectedBuckets, setSelectedBuckets] = useState<string[]>([]);
   const [replicationModalOpen, setReplicationModalOpen] =
     useState<boolean>(false);
-  const [lifecycleModalOpen, setLifecycleModalOpen] = useState<boolean>(false);
-  const [canPutLifecycle, setCanPutLifecycle] = useState<boolean>(false);
   const [bulkSelect, setBulkSelect] = useState<boolean>(false);
 
   const features = useSelector(selFeatures);
@@ -137,24 +131,6 @@ const ListBuckets = () => {
     }
   };
 
-  const closeBulkLifecycleModal = (unselectAll: boolean) => {
-    setLifecycleModalOpen(false);
-
-    if (unselectAll) {
-      setSelectedBuckets([]);
-    }
-  };
-
-  useEffect(() => {
-    var failLifecycle = false;
-    selectedBuckets.forEach((bucket: string) => {
-      hasPermission(bucket, IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE], true)
-        ? setCanPutLifecycle(true)
-        : (failLifecycle = true);
-    });
-    failLifecycle ? setCanPutLifecycle(false) : setCanPutLifecycle(true);
-  }, [selectedBuckets]);
-
   const renderItemLine = (index: number) => {
     const bucket = filteredRecords[index] || null;
     if (bucket) {
@@ -196,13 +172,6 @@ const ListBuckets = () => {
           open={replicationModalOpen}
           buckets={selectedBuckets}
           closeModalAndRefresh={closeBulkReplicationModal}
-        />
-      )}
-      {lifecycleModalOpen && (
-        <BulkLifecycleModal
-          buckets={selectedBuckets}
-          closeModalAndRefresh={closeBulkLifecycleModal}
-          open={lifecycleModalOpen}
         />
       )}
       {!obOnly && (
@@ -281,33 +250,6 @@ const ListBuckets = () => {
                     />
                   </TooltipWrapper>
                 )}
-
-                <TooltipWrapper
-                  tooltip={
-                    !hasBuckets
-                      ? ""
-                      : !canPutLifecycle
-                        ? permissionTooltipHelper(
-                            IAM_PERMISSIONS[IAM_ROLES.BUCKET_LIFECYCLE],
-                            "configure lifecycle for the selected buckets",
-                          )
-                        : selectedBuckets.length === 0
-                          ? bulkSelect
-                            ? "Please select at least one bucket on which to configure Lifecycle"
-                            : "Use the Select Multiple Buckets button to choose buckets on which to configure Lifecycle"
-                          : "Set Lifecycle"
-                  }
-                >
-                  <Button
-                    id={"set-lifecycle"}
-                    onClick={() => {
-                      setLifecycleModalOpen(true);
-                    }}
-                    icon={<LifecycleConfigIcon />}
-                    variant={"regular"}
-                    disabled={selectedBuckets.length === 0 || !canPutLifecycle}
-                  />
-                </TooltipWrapper>
 
                 <TooltipWrapper
                   tooltip={

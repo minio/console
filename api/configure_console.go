@@ -125,8 +125,6 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerConfigHandlers(api)
 	// Register bucket events handlers
 	registerBucketEventsHandlers(api)
-	// Register bucket lifecycle handlers
-	registerBucketsLifecycleHandlers(api)
 	// Register service handlers
 	registerServiceHandlers(api)
 	// Register session handlers
@@ -143,23 +141,14 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerAdminBucketRemoteHandlers(api)
 	// Register admin log search
 	registerLogSearchHandlers(api)
-	// Register admin subnet handlers
-	registerSubnetHandlers(api)
 	// Register admin KMS handlers
 	registerKMSHandlers(api)
 	// Register admin IDP handlers
 	registerIDPHandlers(api)
-	// Register Account handlers
-	registerAdminTiersHandlers(api)
 	// Register Inspect Handler
 	registerInspectHandler(api)
 	// Register nodes handlers
 	registerNodesHandler(api)
-
-	registerSiteReplicationHandler(api)
-	registerSiteReplicationStatusHandler(api)
-	// Register Support Handler
-	registerSupportHandlers(api)
 
 	// Operator Console
 
@@ -177,9 +166,6 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	api.PreServerShutdown = func() {}
 
 	api.ServerShutdown = func() {}
-
-	// do an initial subnet plan caching
-	fetchLicensePlan()
 
 	return setupGlobalMiddleware(api.Serve(setupMiddlewares))
 }
@@ -601,8 +587,6 @@ func replaceBaseInIndex(indexPageBytes []byte, basePath string) []byte {
 
 func replaceLicense(indexPageBytes []byte) []byte {
 	indexPageStr := string(indexPageBytes)
-	newPlan := fmt.Sprintf("<meta name=\"minio-license\" content=\"%s\" />", InstanceLicensePlan.String())
-	indexPageStr = strings.Replace(indexPageStr, "<meta name=\"minio-license\" content=\"agpl\"/>", newPlan, 1)
 	indexPageBytes = []byte(indexPageStr)
 	return indexPageBytes
 }

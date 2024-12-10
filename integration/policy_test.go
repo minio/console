@@ -176,7 +176,7 @@ func Test_AddPolicyAPI(t *testing.T) {
   ]
 }`),
 			},
-			expectedStatus: 400,
+			expectedStatus: 201, // Changed the expected status from 400 to 201, as spaces are now allowed in policy names.
 			expectedError:  nil,
 		},
 		{
