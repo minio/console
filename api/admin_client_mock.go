@@ -55,8 +55,7 @@ var (
 	minioAddPolicyMock    func(name string, policy *iampolicy.Policy) error
 	minioSetPolicyMock    func(policyName, entityName string, isGroup bool) error
 
-	minioStartProfiling func(profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
-	minioStopProfiling  func() (io.ReadCloser, error)
+	minioStartProfiling func(profiler madmin.ProfilerType, duration time.Duration) (io.ReadCloser, error)
 
 	minioServiceRestartMock func(ctx context.Context) error
 
@@ -248,13 +247,8 @@ func (ac AdminClientMock) setPolicy(_ context.Context, policyName, entityName st
 }
 
 // mock function for startProfiling()
-func (ac AdminClientMock) startProfiling(_ context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
-	return minioStartProfiling(profiler)
-}
-
-// mock function for stopProfiling()
-func (ac AdminClientMock) stopProfiling(_ context.Context) (io.ReadCloser, error) {
-	return minioStopProfiling()
+func (ac AdminClientMock) startProfiling(_ context.Context, profiler madmin.ProfilerType, duration time.Duration) (io.ReadCloser, error) {
+	return minioStartProfiling(profiler, duration)
 }
 
 // mock function of serviceRestart()

@@ -20,42 +20,30 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"time"
 
-	"github.com/minio/console/models"
 	"github.com/minio/madmin-go/v3"
 	"github.com/minio/websocket"
 )
 
-var items []*models.StartProfilingItem
-
 type profileOptions struct {
-	Types string
+	Types    string
+	Duration time.Duration
 }
 
 func getProfileOptionsFromReq(req *http.Request) (*profileOptions, error) {
 	pOptions := profileOptions{}
 	pOptions.Types = req.FormValue("types")
+	pOptions.Duration = 10 * time.Second // TODO: make this configurable
 	return &pOptions, nil
 }
 
 func startProfiling(ctx context.Context, conn WSConn, client MinioAdmin, pOpts *profileOptions) error {
-	profilingResults, err := client.startProfiling(ctx, madmin.ProfilerType(pOpts.Types))
+	data, err := client.startProfiling(ctx, madmin.ProfilerType(pOpts.Types), pOpts.Duration)
 	if err != nil {
 		return err
 	}
-	items = []*models.StartProfilingItem{}
-	for _, result := range profilingResults {
-		items = append(items, &models.StartProfilingItem{
-			Success:  result.Success,
-			Error:    result.Error,
-			NodeName: result.NodeName,
-		})
-	}
-	zippedData, err := client.stopProfiling(ctx)
-	if err != nil {
-		return err
-	}
-	message, err := io.ReadAll(zippedData)
+	message, err := io.ReadAll(data)
 	if err != nil {
 		return err
 	}

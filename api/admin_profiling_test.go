@@ -24,6 +24,7 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 
 	"github.com/minio/madmin-go/v3"
 	"github.com/stretchr/testify/assert"
@@ -52,22 +53,7 @@ func TestStartProfiling(t *testing.T) {
 
 	// Test-1 : startProfiling() Get response from MinIO server with one profiling object without errors
 	// mock function response from startProfiling()
-	minioStartProfiling = func(_ madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
-		return []madmin.StartProfilingResult{
-			{
-				NodeName: "http://127.0.0.1:9000/",
-				Success:  true,
-				Error:    "",
-			},
-			{
-				NodeName: "http://127.0.0.1:9001/",
-				Success:  true,
-				Error:    "",
-			},
-		}, nil
-	}
-	// mock function response from stopProfiling()
-	minioStopProfiling = func() (io.ReadCloser, error) {
+	minioStartProfiling = func(_ madmin.ProfilerType, _ time.Duration) (io.ReadCloser, error) {
 		return &ClosingBuffer{bytes.NewBufferString("In memory string eaeae")}, nil
 	}
 	// mock function response from mockConn.writeMessage()
@@ -82,7 +68,7 @@ func TestStartProfiling(t *testing.T) {
 
 	// Test-2 : startProfiling() Correctly handles errors returned by MinIO
 	// mock function response from startProfiling()
-	minioStartProfiling = func(_ madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
+	minioStartProfiling = func(_ madmin.ProfilerType, _ time.Duration) (io.ReadCloser, error) {
 		return nil, errors.New("error")
 	}
 	err = startProfiling(ctx, mockWSConn, adminClient, testOptions)

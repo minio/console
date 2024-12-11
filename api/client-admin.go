@@ -65,8 +65,7 @@ type MinioAdmin interface {
 	delConfigKV(ctx context.Context, kv string) (err error)
 	serviceRestart(ctx context.Context) error
 	serverInfo(ctx context.Context) (madmin.InfoMessage, error)
-	startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error)
-	stopProfiling(ctx context.Context) (io.ReadCloser, error)
+	startProfiling(ctx context.Context, profiler madmin.ProfilerType, duration time.Duration) (io.ReadCloser, error)
 	serviceTrace(ctx context.Context, threshold int64, s3, internal, storage, os, errTrace bool) <-chan madmin.ServiceTraceInfo
 	getLogs(ctx context.Context, node string, lineCnt int, logKind string) <-chan madmin.LogInfo
 	AccountInfo(ctx context.Context) (madmin.AccountInfo, error)
@@ -259,7 +258,7 @@ func (ac AdminClient) delConfigKV(ctx context.Context, kv string) (err error) {
 
 // implements madmin.ServiceRestart()
 func (ac AdminClient) serviceRestart(ctx context.Context) (err error) {
-	return ac.Client.ServiceRestart(ctx)
+	return ac.Client.ServiceRestartV2(ctx)
 }
 
 // implements madmin.ServerInfo()
@@ -268,13 +267,8 @@ func (ac AdminClient) serverInfo(ctx context.Context) (madmin.InfoMessage, error
 }
 
 // implements madmin.StartProfiling()
-func (ac AdminClient) startProfiling(ctx context.Context, profiler madmin.ProfilerType) ([]madmin.StartProfilingResult, error) {
-	return ac.Client.StartProfiling(ctx, profiler)
-}
-
-// implements madmin.DownloadProfilingData()
-func (ac AdminClient) stopProfiling(ctx context.Context) (io.ReadCloser, error) {
-	return ac.Client.DownloadProfilingData(ctx)
+func (ac AdminClient) startProfiling(ctx context.Context, profiler madmin.ProfilerType, duration time.Duration) (io.ReadCloser, error) {
+	return ac.Client.Profile(ctx, profiler, duration)
 }
 
 // implements madmin.ServiceTrace()
