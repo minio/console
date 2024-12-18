@@ -42,8 +42,5 @@ issues:
     - should have comment
     - use leading k in Go names
     - comment on exported const
-run:
-  skip-dirs:
-    - pkg/clientgen
-    - pkg/apis/networking.gke.io
+  exclude-dirs:
     - api/operations
