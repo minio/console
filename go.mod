@@ -21,9 +21,9 @@ require (
 	github.com/minio/cli v1.24.2
 	github.com/minio/highwayhash v1.0.3
 	github.com/minio/kes v0.23.0
-	github.com/minio/madmin-go/v3 v3.0.81
+	github.com/minio/madmin-go/v3 v3.0.85
 	github.com/minio/mc v0.0.0-20241215225040-f4dd5e4a07ff
-	github.com/minio/minio-go/v7 v7.0.82
+	github.com/minio/minio-go/v7 v7.0.83-0.20241230094935-5757f2c8544a
 	github.com/minio/selfupdate v0.6.0
 	github.com/minio/websocket v1.6.0
 	github.com/mitchellh/go-homedir v1.1.0
@@ -33,7 +33,7 @@ require (
 	github.com/tidwall/gjson v1.17.3 // indirect
 	github.com/unrolled/secure v1.15.0
 	golang.org/x/crypto v0.31.0
-	golang.org/x/net v0.32.0
+	golang.org/x/net v0.33.0
 	golang.org/x/oauth2 v0.24.0
 	// Added to include security fix for
 	// https://github.com/golang/go/issues/56152
@@ -41,7 +41,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-require github.com/minio/pkg/v3 v3.0.24
+require github.com/minio/pkg/v3 v3.0.25
 
 require (
 	aead.dev/mem v0.2.0 // indirect

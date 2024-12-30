@@ -20,14 +20,9 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	stderrors "errors"
 	"fmt"
-	"net"
 	"net/http"
-	"net/url"
 	"strings"
-
-	"github.com/go-openapi/errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -39,6 +34,7 @@ import (
 	"github.com/minio/madmin-go/v3"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/pkg/v3/env"
+	xnet "github.com/minio/pkg/v3/net"
 )
 
 func registerLoginHandlers(api *operations.ConsoleAPI) {
@@ -114,14 +110,17 @@ func getAccountInfo(ctx context.Context, client MinioAdmin) (*madmin.AccountInfo
 }
 
 // getConsoleCredentials will return ConsoleCredentials interface
-func getConsoleCredentials(accessKey, secretKey, clientIP string) (*ConsoleCredentials, error) {
-	creds, err := NewConsoleCredentials(accessKey, secretKey, GetMinIORegion(), clientIP)
+func getConsoleCredentials(accessKey, secretKey string, client *http.Client) (*ConsoleCredentials, error) {
+	creds, err := NewConsoleCredentials(accessKey, secretKey, GetMinIORegion(), client)
 	if err != nil {
 		return nil, err
 	}
 	return &ConsoleCredentials{
 		ConsoleCredentials: creds,
 		AccountAccessKey:   accessKey,
+		CredContext: &credentials.CredContext{
+			Client: client,
+		},
 	}, nil
 }
 
@@ -130,25 +129,24 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *Coded
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	lr := params.Body
+
+	clientIP := getClientIP(params.HTTPRequest)
+	client := GetConsoleHTTPClient(clientIP)
+
 	var err error
 	var consoleCreds *ConsoleCredentials
 	// if we receive an STS we use that instead of the credentials
 	if lr.Sts != "" {
-		creds := credentials.NewStaticV4(lr.AccessKey, lr.SecretKey, lr.Sts)
 		consoleCreds = &ConsoleCredentials{
-			ConsoleCredentials: creds,
+			ConsoleCredentials: credentials.NewStaticV4(lr.AccessKey, lr.SecretKey, lr.Sts),
 			AccountAccessKey:   lr.AccessKey,
-		}
-
-		credsVerificate, _ := creds.Get()
-
-		if credsVerificate.SessionToken == "" || credsVerificate.SecretAccessKey == "" || credsVerificate.AccessKeyID == "" {
-			return nil, ErrorWithContext(ctx, errors.New(401, "Invalid STS Params"))
+			CredContext: &credentials.CredContext{
+				Client: client,
+			},
 		}
 	} else {
-		clientIP := getClientIP(params.HTTPRequest)
 		// prepare console credentials
-		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey, clientIP)
+		consoleCreds, err = getConsoleCredentials(lr.AccessKey, lr.SecretKey, client)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 		}
@@ -160,11 +158,8 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *Coded
 	}
 	sessionID, err := login(consoleCreds, sf)
 	if err != nil {
-		var urlErr *url.Error
-		if stderrors.As(err, &urlErr) {
-			if _, isNetErr := urlErr.Err.(net.Error); isNetErr {
-				return nil, ErrorWithContext(ctx, ErrNetworkError)
-			}
+		if xnet.IsNetworkOrHostDown(err, true) {
+			return nil, ErrorWithContext(ctx, ErrNetworkError)
 		}
 		return nil, ErrorWithContext(ctx, err, ErrInvalidLogin)
 	}
@@ -265,6 +260,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 	r := params.HTTPRequest
 	lr := params.Body
 
+	client := GetConsoleHTTPClient(getClientIP(params.HTTPRequest))
 	if len(openIDProviders) > 0 {
 		// we read state
 		rState := *lr.State
@@ -288,8 +284,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		}
 
 		// Initialize new identity provider with new oauth2Client per IDPName
-		oauth2Client, err := providerCfg.GetOauth2Provider(IDPName, nil, r,
-			GetConsoleHTTPClient(getClientIP(params.HTTPRequest)))
+		oauth2Client, err := providerCfg.GetOauth2Provider(IDPName, nil, r, client)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)
 		}
@@ -309,6 +304,7 @@ func getLoginOauth2AuthResponse(params authApi.LoginOauth2AuthParams, openIDProv
 		token, err := login(&ConsoleCredentials{
 			ConsoleCredentials: userCredentials,
 			AccountAccessKey:   "",
+			CredContext:        &credentials.CredContext{Client: client},
 		}, nil)
 		if err != nil {
 			return nil, ErrorWithContext(ctx, err)

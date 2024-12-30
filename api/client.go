@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/http"
 	"path"
 	"strings"
 	"time"
@@ -288,6 +289,7 @@ type ConsoleCredentialsI interface {
 type ConsoleCredentials struct {
 	ConsoleCredentials *credentials.Credentials
 	AccountAccessKey   string
+	CredContext        *credentials.CredContext
 }
 
 func (c ConsoleCredentials) GetAccountAccessKey() string {
@@ -296,7 +298,7 @@ func (c ConsoleCredentials) GetAccountAccessKey() string {
 
 // Get implements *Login.Get()
 func (c ConsoleCredentials) Get() (credentials.Value, error) {
-	return c.ConsoleCredentials.Get()
+	return c.ConsoleCredentials.GetWithContext(c.CredContext)
 }
 
 // Expire implements *Login.Expire()
@@ -311,6 +313,10 @@ type consoleSTSAssumeRole struct {
 	stsAssumeRole *credentials.STSAssumeRole
 }
 
+func (s consoleSTSAssumeRole) RetrieveWithCredContext(cc *credentials.CredContext) (credentials.Value, error) {
+	return s.stsAssumeRole.RetrieveWithCredContext(cc)
+}
+
 func (s consoleSTSAssumeRole) Retrieve() (credentials.Value, error) {
 	return s.stsAssumeRole.Retrieve()
 }
@@ -319,7 +325,7 @@ func (s consoleSTSAssumeRole) IsExpired() bool {
 	return s.stsAssumeRole.IsExpired()
 }
 
-func stsCredentials(minioURL, accessKey, secretKey, location, clientIP string) (*credentials.Credentials, error) {
+func stsCredentials(minioURL, accessKey, secretKey, location string, client *http.Client) (*credentials.Credentials, error) {
 	if accessKey == "" || secretKey == "" {
 		return nil, errors.New("credentials endpoint, access and secret key are mandatory for AssumeRoleSTS")
 	}
@@ -330,7 +336,7 @@ func stsCredentials(minioURL, accessKey, secretKey, location, clientIP string) (
 		DurationSeconds: int(xjwt.GetConsoleSTSDuration().Seconds()),
 	}
 	stsAssumeRole := &credentials.STSAssumeRole{
-		Client:      GetConsoleHTTPClient(clientIP),
+		Client:      client,
 		STSEndpoint: minioURL,
 		Options:     opts,
 	}
@@ -338,51 +344,48 @@ func stsCredentials(minioURL, accessKey, secretKey, location, clientIP string) (
 	return credentials.New(consoleSTSWrapper), nil
 }
 
-func NewConsoleCredentials(accessKey, secretKey, location, clientIP string) (*credentials.Credentials, error) {
+func NewConsoleCredentials(accessKey, secretKey, location string, client *http.Client) (*credentials.Credentials, error) {
 	minioURL := getMinIOServer()
 
-	// Future authentication methods can be added under this switch statement
-	switch {
 	// LDAP authentication for Console
-	case ldap.GetLDAPEnabled():
-		{
-			creds, err := auth.GetCredentialsFromLDAP(GetConsoleHTTPClient(clientIP), minioURL, accessKey, secretKey)
+	if ldap.GetLDAPEnabled() {
+		creds, err := auth.GetCredentialsFromLDAP(client, minioURL, accessKey, secretKey)
+		if err != nil {
+			return nil, err
+		}
+
+		credContext := &credentials.CredContext{
+			Client: client,
+		}
+
+		// We verify if LDAP credentials are correct and no error is returned
+		_, err = creds.GetWithContext(credContext)
+
+		if err != nil && strings.Contains(strings.ToLower(err.Error()), "not found") {
+			// We try to use STS Credentials in case LDAP credentials are incorrect.
+			stsCreds, errSTS := stsCredentials(minioURL, accessKey, secretKey, location, client)
+
+			// If there is an error with STS too, then we return the original LDAP error
+			if errSTS != nil {
+				LogError("error in STS credentials for LDAP case: %v ", errSTS)
+
+				// We return LDAP result
+				return creds, nil
+			}
+
+			_, err := stsCreds.GetWithContext(credContext)
+			// There is an error with STS credentials, We return the result of LDAP as STS is not a priority in this case.
 			if err != nil {
-				return nil, err
+				return creds, nil
 			}
 
-			// We verify if LDAP credentials are correct and no error is returned
-			_, err = creds.Get()
-
-			if err != nil && strings.Contains(strings.ToLower(err.Error()), "not found") {
-				// We try to use STS Credentials in case LDAP credentials are incorrect.
-				stsCreds, errSTS := stsCredentials(minioURL, accessKey, secretKey, location, clientIP)
-
-				// If there is an error with STS too, then we return the original LDAP error
-				if errSTS != nil {
-					LogError("error in STS credentials for LDAP case: %v ", errSTS)
-
-					// We return LDAP result
-					return creds, nil
-				}
-
-				_, err := stsCreds.Get()
-				// There is an error with STS credentials, We return the result of LDAP as STS is not a priority in this case.
-				if err != nil {
-					return creds, nil
-				}
-
-				return stsCreds, nil
-			}
-
-			return creds, nil
+			return stsCreds, nil
 		}
-	// default authentication for Console is via STS (Security Token Service) against MinIO
-	default:
-		{
-			return stsCredentials(minioURL, accessKey, secretKey, location, clientIP)
-		}
+
+		return creds, nil
 	}
+
+	return stsCredentials(minioURL, accessKey, secretKey, location, client)
 }
 
 // getConsoleCredentialsFromSession returns the *consoleCredentials.Login associated to the
