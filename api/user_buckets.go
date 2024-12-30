@@ -21,6 +21,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 	"github.com/minio/madmin-go/v3"
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio-go/v7/pkg/tags"
 
@@ -1067,8 +1069,7 @@ func getMaxShareLinkExpirationResponse(session *models.Principal, params bucketA
 // getMaxShareLinkExpirationSeconds returns the max share link expiration time in seconds which is the sts token expiration time
 func getMaxShareLinkExpirationSeconds(session *models.Principal) (int64, error) {
 	creds := getConsoleCredentialsFromSession(session)
-
-	val, err := creds.Get()
+	val, err := creds.GetWithContext(&credentials.CredContext{Client: http.DefaultClient})
 	if err != nil {
 		return 0, err
 	}
