@@ -14,10 +14,26 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export interface IRouteRule {
-  component: any;
-  path: string;
-  forceDisplay?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: any;
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { BucketsIcon, MenuItem } from "mds";
+import { Bucket } from "../../../../api/consoleApi";
+
+interface IBucketListItem {
+  bucket: Bucket;
 }
+
+const BucketListItem = ({ bucket }: IBucketListItem) => {
+  const navigate = useNavigate();
+
+  return (
+    <MenuItem
+      name={bucket.name}
+      icon={<BucketsIcon />}
+      onClick={() => navigate(`/browser/${bucket.name}`)}
+      id={`manageBucket-${bucket.name}`}
+    />
+  );
+};
+
+export default BucketListItem;

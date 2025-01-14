@@ -16,30 +16,20 @@
 
 import React, { Fragment } from "react";
 import { Box, Button } from "mds";
-import { SubnetInfo } from "./types";
 import { FEATURE_ITEMS, FeatureItem, LICENSE_PLANS_INFORMATION } from "./utils";
 import styled from "styled-components";
 import get from "lodash/get";
 import CheckIcon from "./CheckIcon";
 
-interface IRegisterStatus {
-  activateProductModal: any;
-  closeModalAndFetchLicenseInfo: any;
-  licenseInfo: SubnetInfo | undefined;
-  currentPlanID: number;
-  setActivateProductModal: any;
-}
-
 const LicensesInformation = styled.div(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "repeat(1, minmax(350px, 400px));",
-  alignItems: "center",
-  justifyContent: "center",
+  gridTemplateColumns: "repeat(3, minmax(350px, 400px))",
+  justifyContent: "flex-start",
   marginTop: 30,
   marginLeft: 30,
   "& > div": {
     borderBottom: `${get(theme, "borderColor", "#EAEAEA")} 1px solid`,
-    padding: "13px 20px",
+    padding: "25px 40px",
     justifyContent: "center",
     "&.openSource": {
       borderRight: `#002562 2px solid`,
@@ -89,21 +79,21 @@ const LicensesInformation = styled.div(({ theme }) => ({
   "& .planName": {
     fontWeight: 600,
     fontSize: 35,
-    marginBottom: 20,
+    marginBottom: 30,
     textAlign: "center",
     marginTop: 10,
   },
   "& .planIcon": {
-    height: 45,
+    height: 100,
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
     "& svg": {
-      height: 35,
+      height: 80,
     },
     "&.commercial": {
       "& svg": {
-        height: 20,
+        height: 70,
       },
     },
   },
@@ -113,10 +103,8 @@ const LicensesInformation = styled.div(({ theme }) => ({
   },
 }));
 
-const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
-  let currentPlan = !licenseInfo
-    ? "community"
-    : licenseInfo?.plan?.toLowerCase();
+const LicensePlans = () => {
+  let currentPlan = "community";
 
   const getButton = (link: string, btnText: string, variant: any) => {
     let linkToNav =
@@ -153,96 +141,73 @@ const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
   };
 
   return (
-    <LicensesInformation>
-      {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
-        return (
-          <Box
-            key={`${element?.planType}-${index}`}
-            className={`${index === 1 ? "openSource first" : ""}`}
-          >
-            {element !== null && (
-              <Box>
-                <Box className={"planName"}>{element.planName}</Box>
-                <Box
-                  className={`planIcon ${
-                    element.planType === "commercial" ? "commercial" : ""
-                  }`}
-                >
-                  {element?.planIcon}
+    <Fragment>
+      <LicensesInformation>
+        {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
+          return (
+            <Box className={`${index === 1 ? "openSource first" : ""}`}>
+              {element !== null && (
+                <Box>
+                  <Box className={"planName"}>{element.planName}</Box>
+                  <Box
+                    className={`planIcon ${
+                      element.planType === "commercial" ? "commercial" : ""
+                    }`}
+                  >
+                    {element?.planIcon}
+                  </Box>
+                  <Box className={"planDescription"}>
+                    {element?.planDescription}
+                  </Box>
                 </Box>
-                <Box className={"planDescription"}>
-                  {element?.planDescription}
-                </Box>
+              )}
+            </Box>
+          );
+        })}
+        {FEATURE_ITEMS.map((feature, index) => {
+          const lastItem =
+            index === FEATURE_ITEMS.length - 1 ? "noBorderBottom" : "";
+
+          return (
+            <Fragment>
+              <Box className={`feature-label ${lastItem}`}>
+                {feature.featureLabel}
               </Box>
-            )}
-          </Box>
-        );
-      })}
-      {FEATURE_ITEMS.map((feature, index) => {
-        return (
-          <Box
-            key={`${feature.featureLabel}-${index}`}
-            className={`feature-information`}
-            sx={{
-              display: "flex",
-              borderLeft: `#002562 2px solid`,
-              borderRight: `#002562 2px solid`,
-              flexDirection: "column",
-              gap: "10px",
-              alignItems: "center",
-            }}
-          >
-            <Box className={`feature-label `}>{feature.featureLabel}</Box>
-            {renderFeatureInformation(feature.featurePlans.eosPlus || null)}
-          </Box>
-        );
-      })}
-      {[...LICENSE_PLANS_INFORMATION].map((element) => {
-        return element && currentPlan === "community" ? (
-          <div
-            key="plan-subscribe-btn"
-            style={{
-              borderLeft: `#002562 2px solid`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRight: `#002562 2px solid`,
-              borderBottom: `#002562 2px solid`,
-              borderBottomLeftRadius: "10px",
-              borderBottomRightRadius: "10px",
-            }}
-          >
-            {getButton(
-              element.planType === "commercial"
-                ? `https://min.io/signup`
-                : `https://slack.min.io`,
-              element.planType === "commercial" ? "Subscribe" : "Join Slack",
-              element.planType === "commercial" ? "callAction" : "regular",
-            )}
-          </div>
-        ) : (
-          <div
-            key="plan-subscribe-btn-1"
-            style={{
-              borderLeft: `#002562 2px solid`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRight: `#002562 2px solid`,
-              borderBottom: `#002562 2px solid`,
-              borderBottomLeftRadius: "10px",
-              borderBottomRightRadius: "10px",
-            }}
-          >
-            {getButton(
-              `https://subnet.min.io/`,
-              "Log in to SUBNET",
-              "callAction",
-            )}
-          </div>
-        );
-      })}
-    </LicensesInformation>
+              <Box className={`feature-information  openSource ${lastItem}`}>
+                {renderFeatureInformation(
+                  feature.featurePlans.openSource || null,
+                )}
+              </Box>
+              <Box className={`feature-information ${lastItem}`}>
+                {renderFeatureInformation(feature.featurePlans.eosPlus || null)}
+              </Box>
+            </Fragment>
+          );
+        })}
+        {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
+          return (
+            <Box
+              className={`${
+                index === 1 ? "openSource last" : ""
+              } noBorderBottom`}
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
+              {element &&
+                getButton(
+                  `https://min.io/signup`,
+                  element.planType === "commercial"
+                    ? "Subscribe"
+                    : "Join Slack",
+                  element.planType === "commercial" ? "callAction" : "regular",
+                )}
+            </Box>
+          );
+        })}
+      </LicensesInformation>
+    </Fragment>
   );
 };
 

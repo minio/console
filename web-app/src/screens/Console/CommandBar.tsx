@@ -33,8 +33,6 @@ import { Action } from "kbar/lib/types";
 import { routesAsKbarActions } from "./kbar-actions";
 
 import { Box, MenuExpandedIcon } from "mds";
-import { useSelector } from "react-redux";
-import { selFeatures } from "./consoleSlice";
 import { Bucket } from "../../api/consoleApi";
 import { api } from "../../api";
 
@@ -109,7 +107,6 @@ const KBarStateChangeMonitor = ({
 };
 
 const CommandBar = () => {
-  const features = useSelector(selFeatures);
   const navigate = useNavigate();
 
   const [buckets, setBuckets] = useState<Bucket[]>([]);
@@ -127,13 +124,9 @@ const CommandBar = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const initialActions: Action[] = routesAsKbarActions(
-    buckets,
-    navigate,
-    features,
-  );
+  const initialActions: Action[] = routesAsKbarActions(buckets, navigate);
 
-  useRegisterActions(initialActions, [buckets, features]);
+  useRegisterActions(initialActions, [buckets]);
 
   //fetch buckets everytime the kbar is shown so that new buckets created elsewhere , within first page is also shown
 
