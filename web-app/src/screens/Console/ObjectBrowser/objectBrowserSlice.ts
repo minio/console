@@ -20,10 +20,7 @@ import {
   BucketObjectItem,
   IRestoreLocalObjectList,
 } from "../Buckets/ListBuckets/Objects/ListObjects/types";
-import {
-  BucketVersioningResponse,
-  GetBucketRetentionConfig,
-} from "api/consoleApi";
+import { BucketVersioningResponse } from "api/consoleApi";
 import { AppState } from "store";
 
 const defaultRewind = {
@@ -302,9 +299,6 @@ const objectBrowserSlice = createSlice({
     ) => {
       state.versionInfo = action.payload;
     },
-    setLockingEnabled: (state, action: PayloadAction<boolean | undefined>) => {
-      state.lockingEnabled = action.payload;
-    },
     setLoadingLocking: (state, action: PayloadAction<boolean>) => {
       state.loadingLocking = action.payload;
     },
@@ -358,12 +352,6 @@ const objectBrowserSlice = createSlice({
           action.payload.objectInfo.size || 0;
       }
     },
-    setRetentionConfig: (
-      state,
-      action: PayloadAction<GetBucketRetentionConfig | null>,
-    ) => {
-      state.retentionConfig = action.payload;
-    },
     setSelectedBucket: (state, action: PayloadAction<string>) => {
       state.selectedBucket = action.payload;
     },
@@ -416,7 +404,6 @@ export const {
   setLoadingVersioning,
   setIsVersioned,
   setLoadingLocking,
-  setLockingEnabled,
   newMessage,
   setSelectedObjects,
   setDownloadRenameModal,
@@ -425,7 +412,6 @@ export const {
   setShareFileModalOpen,
   setReloadObjectsList,
   restoreLocalObjectList,
-  setRetentionConfig,
   setSelectedBucket,
   setLongFileOpen,
   setAnonymousAccessOpen,

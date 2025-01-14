@@ -19,6 +19,7 @@ import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("For user with Bucket Read & Write permissions").page(
   "http://localhost:9090",
@@ -31,7 +32,8 @@ test
     await functions.setVersioned(t, "bucketdelete3");
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, "bucketdelete3")
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -47,7 +49,8 @@ test
     );
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, "bucketdelete3")
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",

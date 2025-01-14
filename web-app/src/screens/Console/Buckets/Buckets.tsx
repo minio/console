@@ -19,40 +19,10 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import NotFoundPage from "../../NotFoundPage";
 import LoadingComponent from "../../../common/LoadingComponent";
-import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-
-const ListBuckets = React.lazy(() => import("./ListBuckets/ListBuckets"));
-const BucketDetails = React.lazy(() => import("./BucketDetails/BucketDetails"));
-const AddBucket = React.lazy(() => import("./ListBuckets/AddBucket/AddBucket"));
 
 const Buckets = () => {
   return (
     <Routes>
-      <Route
-        path={IAM_PAGES.ADD_BUCKETS}
-        element={
-          <Suspense fallback={<LoadingComponent />}>
-            <AddBucket />
-          </Suspense>
-        }
-      />
-      <Route
-        path="/"
-        element={
-          <Suspense fallback={<LoadingComponent />}>
-            <ListBuckets />
-          </Suspense>
-        }
-      />
-
-      <Route
-        path=":bucketName/admin/*"
-        element={
-          <Suspense fallback={<LoadingComponent />}>
-            <BucketDetails />
-          </Suspense>
-        }
-      />
       <Route element={<Navigate to={`/buckets`} />} path="*" />
 
       <Route
