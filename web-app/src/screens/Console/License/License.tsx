@@ -19,15 +19,10 @@ import { PageLayout, ProgressBar, Grid } from "mds";
 import { SubnetInfo } from "./types";
 import api from "../../../common/api";
 import LicensePlans from "./LicensePlans";
-import withSuspense from "../Common/Components/withSuspense";
 import { getLicenseConsent } from "./utils";
 import PageHeaderWrapper from "../Common/PageHeaderWrapper/PageHeaderWrapper";
 import { setHelpName } from "../../../systemSlice";
 import { useAppDispatch } from "../../../store";
-
-const LicenseConsentModal = withSuspense(
-  React.lazy(() => import("./LicenseConsentModal")),
-);
 
 const License = () => {
   const [activateProductModal, setActivateProductModal] =
@@ -130,13 +125,6 @@ const License = () => {
           licenseInfo={licenseInfo}
           currentPlanID={currentPlanID}
           setActivateProductModal={setActivateProductModal}
-        />
-
-        <LicenseConsentModal
-          isOpen={isLicenseConsentOpen}
-          onClose={() => {
-            setIsLicenseConsentOpen(false);
-          }}
         />
       </PageLayout>
     </Fragment>
