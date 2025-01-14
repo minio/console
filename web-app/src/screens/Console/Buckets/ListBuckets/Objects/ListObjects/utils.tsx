@@ -134,3 +134,8 @@ export const displayFileIconName = (
 
   return <IconWithLabel icon={icon} strings={splitItem} />;
 };
+
+export const sanitizeFilePath = (filePath: string) => {
+  // Replace `./` at the start of the path or preceded by `/` - happens when drag drop upload of files (not folders !) in chrome
+  return filePath.replace(/(^|\/)\.\//g, "/");
+};
