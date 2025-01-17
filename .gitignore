@@ -8,6 +8,8 @@ web-app/playwright-report/
 # Coverage from Playwright
 web-app/.nyc_output/
 
+
+
 # Binaries for programs and plugins
 *.exe
 *.exe~

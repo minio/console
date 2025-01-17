@@ -33,11 +33,7 @@ const StyleHandler = ({ children }: IStyleHandler) => {
   );
   const darkMode = useSelector((state: AppState) => state.system.darkMode);
 
-  let thm = undefined;
-
-  if (colorVariants) {
-    thm = generateOverrideTheme(colorVariants);
-  }
+  let thm = generateOverrideTheme(colorVariants ?? {});
 
   return (
     <Fragment>

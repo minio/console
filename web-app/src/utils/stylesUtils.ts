@@ -28,257 +28,272 @@ export const getOverrideColorVariants: (
   }
 };
 
-export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
-  let retVal = undefined;
+export const generateOverrideTheme = (
+  overrideVars: IEmbeddedCustomStyles | {},
+) => {
+  // Core Colors
+  const PRIMARY = "#ff00a0";
+  const PRIMARY_HOVER = "#e4008e";
+  const TEXT_PRIMARY = "#f9fafb";
+  const TEXT_SECONDARY = "#e5e7eb";
+  const TEXT_MUTED = "#9ca3af";
+  const BG_DARK = "#19191d";
+  const BORDER_COLOR = "#39393c";
+  const CARD_BG = "#ffffff";
+  const CARD_TEXT = "#1f2937";
+  const CARD_CONTENT = "#4b5563";
+  const CARD_BORDER = "#e5e7eb";
 
-  try {
-    retVal = {
-      bgColor: overrideVars.backgroundColor,
-      fontColor: overrideVars.fontColor,
-      borderColor: overrideVars.borderColor,
-      bulletColor: overrideVars.fontColor,
-      logoColor: "#C51B3F",
-      logoLabelColor: overrideVars.fontColor,
-      logoLabelInverse: "#FFF",
-      loaderColor: overrideVars.loaderColor,
-      boxBackground: overrideVars.boxBackground,
-      mutedText: "#9c9c9c",
-      secondaryText: "#9c9c9c",
-      buttons: {
-        regular: {
-          enabled: {
-            border: overrideVars.regularButtonStyles.textColor,
-            text: overrideVars.regularButtonStyles.textColor,
-            background: "transparent",
-            iconColor: overrideVars.regularButtonStyles.textColor,
-          },
-          disabled: {
-            border: overrideVars.regularButtonStyles.disabledText,
-            text: overrideVars.regularButtonStyles.disabledText,
-            background: "transparent",
-            iconColor: overrideVars.regularButtonStyles.disabledText,
-          },
-          hover: {
-            border: overrideVars.regularButtonStyles.hoverText,
-            text: overrideVars.regularButtonStyles.hoverText,
-            background: "transparent",
-            iconColor: overrideVars.regularButtonStyles.hoverText,
-          },
-          pressed: {
-            border: overrideVars.regularButtonStyles.activeText,
-            text: overrideVars.regularButtonStyles.activeText,
-            background: "transparent",
-            iconColor: overrideVars.regularButtonStyles.activeText,
-          },
-        },
-        callAction: {
-          enabled: {
-            border: overrideVars.buttonStyles.backgroundColor,
-            text: overrideVars.buttonStyles.textColor,
-            background: overrideVars.buttonStyles.backgroundColor,
-            iconColor: overrideVars.buttonStyles.textColor,
-          },
-          disabled: {
-            border: overrideVars.buttonStyles.disabledColor,
-            text: overrideVars.buttonStyles.disabledText,
-            background: overrideVars.buttonStyles.disabledColor,
-            iconColor: overrideVars.buttonStyles.disabledText,
-          },
-          hover: {
-            border: overrideVars.buttonStyles.hoverColor,
-            text: overrideVars.buttonStyles.hoverText,
-            background: overrideVars.buttonStyles.hoverColor,
-            iconColor: overrideVars.buttonStyles.hoverText,
-          },
-          pressed: {
-            border: overrideVars.buttonStyles.activeColor,
-            text: overrideVars.buttonStyles.activeText,
-            background: overrideVars.buttonStyles.activeColor,
-            iconColor: overrideVars.buttonStyles.activeText,
-          },
-        },
-        secondary: {
-          enabled: {
-            border: overrideVars.secondaryButtonStyles.textColor,
-            text: overrideVars.secondaryButtonStyles.textColor,
-            background: "transparent",
-            iconColor: overrideVars.secondaryButtonStyles.textColor,
-          },
-          disabled: {
-            border: overrideVars.secondaryButtonStyles.disabledText,
-            text: overrideVars.secondaryButtonStyles.disabledText,
-            background: "transparent",
-            iconColor: overrideVars.secondaryButtonStyles.disabledText,
-          },
-          hover: {
-            border: overrideVars.secondaryButtonStyles.hoverText,
-            text: overrideVars.secondaryButtonStyles.hoverText,
-            background: "transparent",
-            iconColor: overrideVars.secondaryButtonStyles.hoverText,
-          },
-          pressed: {
-            border: overrideVars.secondaryButtonStyles.activeText,
-            text: overrideVars.secondaryButtonStyles.activeText,
-            background: "transparent",
-            iconColor: overrideVars.secondaryButtonStyles.activeText,
-          },
-        },
-        text: {
-          enabled: {
-            border: "transparent",
-            text: overrideVars.fontColor,
-            background: "transparent",
-            iconColor: overrideVars.fontColor,
-          },
-          disabled: {
-            border: "transparent",
-            text: overrideVars.fontColor,
-            background: "transparent",
-            iconColor: overrideVars.fontColor,
-          },
-          hover: {
-            border: "transparent",
-            text: overrideVars.fontColor,
-            background: "transparent",
-            iconColor: overrideVars.fontColor,
-          },
-          pressed: {
-            border: "transparent",
-            text: overrideVars.fontColor,
-            background: "transparent",
-            iconColor: overrideVars.fontColor,
-          },
-        },
-      },
-      login: {
-        formBG: "#fff",
-        bgFilter: "none",
-        promoBG: "#000110",
-        promoHeader: "#fff",
-        promoText: "#A6DFEF",
-        footerElements: "#2781B0",
-        footerDivider: "#F2F2F2",
-      },
-      pageHeader: {
-        background: overrideVars.boxBackground,
-        border: overrideVars.borderColor,
-        color: overrideVars.fontColor,
-      },
-      tooltip: {
-        background: overrideVars.boxBackground,
-        color: overrideVars.fontColor,
-      },
-      commonInput: {
-        labelColor: overrideVars.fontColor,
-      },
-      checkbox: {
-        checkBoxBorder: overrideVars.borderColor,
-        checkBoxColor: overrideVars.okColor,
-        disabledBorder: overrideVars.buttonStyles.disabledColor,
-        disabledColor: overrideVars.buttonStyles.disabledColor,
-      },
-      iconButton: {
-        buttonBG: overrideVars.buttonStyles.backgroundColor,
-        activeBG: overrideVars.buttonStyles.activeColor,
-        hoverBG: overrideVars.buttonStyles.hoverColor,
-        disabledBG: overrideVars.buttonStyles.disabledColor,
-        color: overrideVars.buttonStyles.textColor,
-      },
-      dataTable: {
-        border: overrideVars.tableColors.border,
-        disabledBorder: overrideVars.tableColors.disabledBorder,
-        disabledBG: overrideVars.tableColors.disabledBG,
-        selected: overrideVars.tableColors.selected,
-        deletedDisabled: overrideVars.tableColors.deletedDisabled,
-        hoverColor: overrideVars.tableColors.hoverColor,
-      },
-      backLink: {
-        color: overrideVars.linkColor,
-        arrow: overrideVars.linkColor,
-        hover: overrideVars.hoverLinkColor,
-      },
-      inputBox: {
-        border: overrideVars.inputBox.border,
-        hoverBorder: overrideVars.inputBox.hoverBorder,
-        color: overrideVars.inputBox.textColor,
-        backgroundColor: overrideVars.inputBox.backgroundColor,
-        error: overrideVars.errorColor,
-        placeholderColor: overrideVars.inputBox.textColor,
-        disabledBorder: overrideVars.buttonStyles.disabledColor,
-        disabledBackground: overrideVars.inputBox.backgroundColor,
-        disabledPlaceholder: overrideVars.buttonStyles.disabledColor,
-        disabledText: overrideVars.buttonStyles.disabledColor,
-      },
-      breadcrumbs: {
-        border: overrideVars.borderColor,
-        linksColor: overrideVars.linkColor,
-        textColor: overrideVars.fontColor,
-        backgroundColor: overrideVars.boxBackground,
-        backButton: {
-          border: overrideVars.borderColor,
-          backgroundColor: overrideVars.boxBackground,
-        },
-      },
-      actionsList: {
-        containerBorderColor: overrideVars.boxBackground,
-        backgroundColor: overrideVars.boxBackground,
-        disabledOptionsTextColor: overrideVars.disabledLinkColor,
-        optionsBorder: overrideVars.borderColor,
-        optionsHoverTextColor: overrideVars.hoverLinkColor,
-        optionsTextColor: overrideVars.linkColor,
-        titleColor: overrideVars.fontColor,
-      },
-      screenTitle: {
-        border: overrideVars.borderColor,
-        subtitleColor: overrideVars.secondaryFontColor,
-        iconColor: overrideVars.fontColor,
-      },
-      modalBox: {
-        closeColor: overrideVars.regularButtonStyles.textColor,
-        closeHoverBG: overrideVars.regularButtonStyles.hoverColor,
-        closeHoverColor: overrideVars.regularButtonStyles.hoverText,
-        containerColor: overrideVars.backgroundColor,
-        overlayColor: "#00000050",
-        titleColor: overrideVars.fontColor,
-        iconColor: {
-          default: overrideVars.fontColor,
-          accept: overrideVars.okColor,
-          delete: overrideVars.errorColor,
-        },
-      },
-      switchButton: {
-        bulletBGColor: overrideVars.switch.bulletBGColor,
-        bulletBorderColor: overrideVars.switch.bulletBorderColor,
-        disabledBulletBGColor: overrideVars.switch.disabledBulletBGColor,
-        disabledBulletBorderColor:
-          overrideVars.switch.disabledBulletBorderColor,
-        offLabelColor: overrideVars.secondaryFontColor,
-        onLabelColor: overrideVars.fontColor,
-        onBackgroundColor: overrideVars.okColor,
-        switchBackground: overrideVars.switch.switchBackground,
-        disabledBackground: overrideVars.switch.disabledBackground,
-        disabledOnBackground: overrideVars.switch.disabledBackground,
-      },
-      dropdownSelector: {
-        hoverText: overrideVars.buttonStyles.hoverText,
-        backgroundColor: overrideVars.boxBackground,
-        hoverBG: overrideVars.buttonStyles.hoverColor,
-        selectedBGColor: overrideVars.buttonStyles.hoverColor,
-        selectedTextColor: overrideVars.buttonStyles.hoverText,
-        optionTextColor: overrideVars.fontColor,
-        disabledText: overrideVars.disabledLinkColor,
-      },
-      readBox: {
-        borderColor: overrideVars.borderColor,
-        backgroundColor: overrideVars.boxBackground,
-        textColor: overrideVars.fontColor,
-      },
-    };
-  } catch (e) {
-    console.warn("Invalid theme provided. Fallback to original theme.");
-  }
+  // Additional Colors
+  const ERROR_COLOR = "#dc2626";
+  const SUCCESS_COLOR = "#059669";
+  const LINK_COLOR = PRIMARY;
+  const LINK_HOVER = PRIMARY_HOVER;
+  const DISABLED_COLOR = TEXT_MUTED;
+  const OVERLAY_COLOR = "#00000050";
+  const ACTIVE_NAV_BG = "rgba(255, 0, 160, 0.15)";
 
-  return retVal;
+  return {
+    bgColor: BG_DARK,
+    fontColor: TEXT_PRIMARY,
+    borderColor: BORDER_COLOR,
+    bulletColor: TEXT_PRIMARY,
+    logoColor: PRIMARY,
+    logoLabelColor: TEXT_PRIMARY,
+    logoLabelInverse: CARD_BG,
+    loaderColor: PRIMARY,
+    boxBackground: BG_DARK,
+    mutedText: TEXT_MUTED,
+    secondaryText: TEXT_SECONDARY,
+    buttons: {
+      regular: {
+        enabled: {
+          border: PRIMARY,
+          text: TEXT_PRIMARY,
+          background: "transparent",
+          iconColor: TEXT_PRIMARY,
+        },
+        disabled: {
+          border: TEXT_MUTED,
+          text: TEXT_MUTED,
+          background: "transparent",
+          iconColor: TEXT_MUTED,
+        },
+        hover: {
+          border: PRIMARY_HOVER,
+          text: TEXT_PRIMARY,
+          background: "transparent",
+          iconColor: TEXT_PRIMARY,
+        },
+        pressed: {
+          border: PRIMARY_HOVER,
+          text: TEXT_PRIMARY,
+          background: "transparent",
+          iconColor: TEXT_PRIMARY,
+        },
+      },
+      callAction: {
+        enabled: {
+          border: PRIMARY,
+          text: TEXT_PRIMARY,
+          background: PRIMARY,
+          iconColor: TEXT_PRIMARY,
+        },
+        disabled: {
+          border: TEXT_MUTED,
+          text: TEXT_MUTED,
+          background: `${TEXT_MUTED}40`,
+          iconColor: TEXT_MUTED,
+        },
+        hover: {
+          border: PRIMARY_HOVER,
+          text: TEXT_PRIMARY,
+          background: PRIMARY_HOVER,
+          iconColor: TEXT_PRIMARY,
+        },
+        pressed: {
+          border: PRIMARY_HOVER,
+          text: TEXT_PRIMARY,
+          background: PRIMARY_HOVER,
+          iconColor: TEXT_PRIMARY,
+        },
+      },
+      secondary: {
+        enabled: {
+          border: TEXT_PRIMARY,
+          text: TEXT_PRIMARY,
+          background: "transparent",
+          iconColor: TEXT_PRIMARY,
+        },
+        disabled: {
+          border: DISABLED_COLOR,
+          text: DISABLED_COLOR,
+          background: "transparent",
+          iconColor: DISABLED_COLOR,
+        },
+        hover: {
+          border: TEXT_SECONDARY,
+          text: TEXT_SECONDARY,
+          background: "transparent",
+          iconColor: TEXT_SECONDARY,
+        },
+        pressed: {
+          border: TEXT_SECONDARY,
+          text: TEXT_SECONDARY,
+          background: "transparent",
+          iconColor: TEXT_SECONDARY,
+        },
+      },
+      text: {
+        enabled: {
+          border: "transparent",
+          text: TEXT_PRIMARY,
+          background: "transparent",
+          iconColor: TEXT_PRIMARY,
+        },
+        disabled: {
+          border: "transparent",
+          text: DISABLED_COLOR,
+          background: "transparent",
+          iconColor: DISABLED_COLOR,
+        },
+        hover: {
+          border: "transparent",
+          text: TEXT_SECONDARY,
+          background: "transparent",
+          iconColor: TEXT_SECONDARY,
+        },
+        pressed: {
+          border: "transparent",
+          text: TEXT_SECONDARY,
+          background: "transparent",
+          iconColor: TEXT_SECONDARY,
+        },
+      },
+    },
+    login: {
+      formBG: BG_DARK,
+      bgFilter: "none",
+      promoBG: BG_DARK,
+      promoHeader: TEXT_PRIMARY,
+      promoText: TEXT_SECONDARY,
+      footerElements: TEXT_SECONDARY,
+      footerDivider: BORDER_COLOR,
+    },
+    pageHeader: {
+      background: BG_DARK,
+      border: BORDER_COLOR,
+      color: TEXT_PRIMARY,
+    },
+    tooltip: {
+      background: BG_DARK,
+      color: TEXT_PRIMARY,
+    },
+    commonInput: {
+      labelColor: TEXT_PRIMARY,
+    },
+    checkbox: {
+      checkBoxBorder: BORDER_COLOR,
+      checkBoxColor: SUCCESS_COLOR,
+      disabledBorder: DISABLED_COLOR,
+      disabledColor: DISABLED_COLOR,
+    },
+    iconButton: {
+      buttonBG: "transparent",
+      activeBG: ACTIVE_NAV_BG,
+      hoverBG: ACTIVE_NAV_BG,
+      disabledBG: DISABLED_COLOR,
+      color: TEXT_PRIMARY,
+    },
+    dataTable: {
+      border: BORDER_COLOR,
+      disabledBorder: DISABLED_COLOR,
+      disabledBG: `${DISABLED_COLOR}40`,
+      selected: ACTIVE_NAV_BG,
+      deletedDisabled: ERROR_COLOR,
+      hoverColor: ACTIVE_NAV_BG,
+    },
+    backLink: {
+      color: LINK_COLOR,
+      arrow: LINK_COLOR,
+      hover: LINK_HOVER,
+    },
+    inputBox: {
+      border: BORDER_COLOR,
+      hoverBorder: PRIMARY,
+      color: TEXT_PRIMARY,
+      backgroundColor: BG_DARK,
+      error: ERROR_COLOR,
+      placeholderColor: TEXT_MUTED,
+      disabledBorder: DISABLED_COLOR,
+      disabledBackground: BG_DARK,
+      disabledPlaceholder: DISABLED_COLOR,
+      disabledText: DISABLED_COLOR,
+    },
+    breadcrumbs: {
+      border: BORDER_COLOR,
+      linksColor: LINK_COLOR,
+      textColor: TEXT_PRIMARY,
+      backgroundColor: BG_DARK,
+      backButton: {
+        border: BORDER_COLOR,
+        backgroundColor: BG_DARK,
+      },
+    },
+    actionsList: {
+      containerBorderColor: BG_DARK,
+      backgroundColor: BG_DARK,
+      disabledOptionsTextColor: DISABLED_COLOR,
+      optionsBorder: BORDER_COLOR,
+      optionsHoverTextColor: LINK_HOVER,
+      optionsTextColor: LINK_COLOR,
+      titleColor: TEXT_PRIMARY,
+    },
+    screenTitle: {
+      border: BORDER_COLOR,
+      subtitleColor: TEXT_SECONDARY,
+      iconColor: TEXT_PRIMARY,
+    },
+    modalBox: {
+      closeColor: TEXT_PRIMARY,
+      closeHoverBG: ACTIVE_NAV_BG,
+      closeHoverColor: PRIMARY,
+      containerColor: BG_DARK,
+      overlayColor: OVERLAY_COLOR,
+      titleColor: TEXT_PRIMARY,
+      iconColor: {
+        default: TEXT_PRIMARY,
+        accept: SUCCESS_COLOR,
+        delete: ERROR_COLOR,
+      },
+    },
+    switchButton: {
+      bulletBGColor: TEXT_PRIMARY,
+      bulletBorderColor: BORDER_COLOR,
+      disabledBulletBGColor: DISABLED_COLOR,
+      disabledBulletBorderColor: DISABLED_COLOR,
+      offLabelColor: TEXT_SECONDARY,
+      onLabelColor: TEXT_PRIMARY,
+      onBackgroundColor: SUCCESS_COLOR,
+      switchBackground: BG_DARK,
+      disabledBackground: `${DISABLED_COLOR}40`,
+      disabledOnBackground: `${DISABLED_COLOR}40`,
+    },
+    dropdownSelector: {
+      hoverText: PRIMARY,
+      backgroundColor: BG_DARK,
+      hoverBG: ACTIVE_NAV_BG,
+      selectedBGColor: ACTIVE_NAV_BG,
+      selectedTextColor: PRIMARY,
+      optionTextColor: TEXT_PRIMARY,
+      disabledText: DISABLED_COLOR,
+    },
+    readBox: {
+      borderColor: BORDER_COLOR,
+      backgroundColor: BG_DARK,
+      textColor: TEXT_PRIMARY,
+    },
+  };
 };
 
 export const isDarkModeOn = () => {
