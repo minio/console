@@ -129,6 +129,10 @@ func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *Coded
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	lr := params.Body
+	// trim any leading and trailing whitespace from the login request
+	lr.AccessKey = strings.TrimSpace(lr.AccessKey)
+	lr.SecretKey = strings.TrimSpace(lr.SecretKey)
+	lr.Sts = strings.TrimSpace(lr.Sts)
 
 	clientIP := getClientIP(params.HTTPRequest)
 	client := GetConsoleHTTPClient(clientIP)
