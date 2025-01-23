@@ -131,6 +131,36 @@ func TestLogout(t *testing.T) {
 	assert.Equal(response.StatusCode, 200)
 }
 
+func TestLoginExtraSpaces(t *testing.T) {
+	assert := assert.New(t)
+
+	client := &http.Client{
+		Timeout: 2 * time.Second,
+	}
+	requestData := map[string]string{
+		"accessKey": " minioadmin ",
+		"secretKey": "minioadmin",
+	}
+
+	requestDataJSON, _ := json.Marshal(requestData)
+
+	requestDataBody := bytes.NewReader(requestDataJSON)
+
+	request, err := http.NewRequest("POST", "http://localhost:9090/api/v1/login", requestDataBody)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+
+	assert.Equal(204, response.StatusCode, "Login request should succeed")
+	assert.NotNil(response, "Login response is nil")
+	assert.Nil(err, "Login errored out")
+}
+
 func TestBadLogin(t *testing.T) {
 	assert := assert.New(t)
 
