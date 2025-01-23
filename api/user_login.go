@@ -22,7 +22,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"reflect"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -125,24 +124,15 @@ func getConsoleCredentials(accessKey, secretKey string, client *http.Client) (*C
 	}, nil
 }
 
-// trimWhitespace removes any leading and trailing whitespace from the login request string field
-func trimWhitespace(lr *models.LoginRequest) {
-	val := reflect.ValueOf(lr).Elem()
-
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-		if field.Kind() == reflect.String {
-			field.SetString(strings.TrimSpace(field.String()))
-		}
-	}
-}
-
 // getLoginResponse performs login() and serializes it to the handler's output
 func getLoginResponse(params authApi.LoginParams) (*models.LoginResponse, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 	lr := params.Body
-	trimWhitespace(lr)
+	// trim any leading and trailing whitespace from the login request
+	lr.AccessKey = strings.TrimSpace(lr.AccessKey)
+	lr.SecretKey = strings.TrimSpace(lr.SecretKey)
+	lr.Sts = strings.TrimSpace(lr.Sts)
 
 	clientIP := getClientIP(params.HTTPRequest)
 	client := GetConsoleHTTPClient(clientIP)
