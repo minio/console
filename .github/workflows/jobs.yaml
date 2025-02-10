@@ -223,7 +223,7 @@ jobs:
         run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
-        run: npx testcafe "firefox:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 3
+        run: npx testcafe "firefox:headless" web-app/tests/subpath-nginx/ -q --skip-js-errors -c 1
 
       - name: Clean up docker
         if: always()
