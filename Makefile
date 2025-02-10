@@ -234,7 +234,7 @@ initialize-docker-network:
 
 test-start-docker-minio-w-redirect-url: initialize-docker-network
 	@(docker run \
-    -e MINIO_BROWSER_REDIRECT_URL='http://localhost:8000/console/subpath/' \
+    -e MINIO_BROWSER_REDIRECT_URL='http://localhost:8000/console/subpath' \
     -e MINIO_SERVER_URL='http://localhost:9000' \
     -v /data1 -v /data2 -v /data3 -v /data4 \
     -d --network host --name minio --rm\
