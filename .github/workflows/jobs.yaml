@@ -217,7 +217,7 @@ jobs:
 
       - name: Start Console, MinIO and Nginx
         run: |
-          (CONSOLE_SUBPATH=/console/subpath ./console server ) & (make test-initialize-minio-nginx)
+          (./console server ) & (make test-initialize-minio-nginx)
 
       - name: Install TestCafe
         run: npm install testcafe@3.7.0
