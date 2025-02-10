@@ -202,11 +202,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
-      - name: Install MinIO JS
-        working-directory: ./
-        continue-on-error: false
-        run: |
-          yarn add minio
 
       - uses: actions/cache@v4
         name: Console Binary Cache
