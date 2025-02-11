@@ -1,5 +1,14 @@
 # Changelog
 
+## Release v1.7.6
+
+Bug Fix:
+
+- Fix null pointer exception in Admin Info
+- Ignore leading or trailing spaces in login request
+- Fix file path on drag and drop
+- Fix typo in User DN Search Filter example
+
 ## Release v1.7.5
 
 Bug Fix:

@@ -61,7 +61,7 @@ type CreateRemoteBucket struct {
 	SourceBucket *string `json:"sourceBucket"`
 
 	// sync mode
-	// Enum: [async sync]
+	// Enum: ["async","sync"]
 	SyncMode *string `json:"syncMode,omitempty"`
 
 	// target bucket
