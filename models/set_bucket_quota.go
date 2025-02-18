@@ -45,7 +45,7 @@ type SetBucketQuota struct {
 	Enabled *bool `json:"enabled"`
 
 	// quota type
-	// Enum: [hard]
+	// Enum: ["hard"]
 	QuotaType string `json:"quota_type,omitempty"`
 }
 

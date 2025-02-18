@@ -68,14 +68,14 @@ type BucketReplicationRule struct {
 	Priority int32 `json:"priority,omitempty"`
 
 	// status
-	// Enum: [Enabled Disabled]
+	// Enum: ["Enabled","Disabled"]
 	Status string `json:"status,omitempty"`
 
 	// storage class
 	StorageClass string `json:"storageClass,omitempty"`
 
 	// sync mode
-	// Enum: [async sync]
+	// Enum: ["async","sync"]
 	SyncMode *string `json:"syncMode,omitempty"`
 
 	// tags
