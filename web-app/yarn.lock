@@ -18221,7 +18221,6 @@ __metadata:
     babel-plugin-istanbul: "npm:^6.1.1"
     clsx: "npm:^2.1.1"
     customize-cra: "npm:^1.0.0"
-    dompurify: "npm:^3.2.4"
     http-status-codes: "npm:^2.3.0"
     kbar: "npm:^0.1.0-beta.45"
     knip: "npm:^5.27.2"
