@@ -3,8 +3,12 @@
 name: Workflow
 
 on:
-  workflow_dispatch:
-
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
 
 # This ensures that previous jobs for the PR are canceled when the PR is
 # updated.
@@ -69,7 +73,7 @@ jobs:
         id: node_version
         run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
       - name: Enable Corepack
-        run: corepack enable
+        run: corepack enable && corepack prepare yarn@stable --activate
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
