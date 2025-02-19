@@ -7,6 +7,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
     "clsx": "^2.1.1",
+    "dompurify": "^3.2.4",
     "http-status-codes": "^2.3.0",
     "kbar": "^0.1.0-beta.45",
     "local-storage-fallback": "^4.1.2",
@@ -28,8 +29,7 @@
     "recharts": "^2.12.7",
     "styled-components": "5.3.11",
     "superagent": "^9.0.2",
-    "tinycolor2": "^1.6.0",
-    "dompurify": "^3.2.4"
+    "tinycolor2": "^1.6.0"
   },
   "scripts": {
     "start": "PORT=5005 react-scripts start",
