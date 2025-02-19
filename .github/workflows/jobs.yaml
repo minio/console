@@ -3,12 +3,8 @@
 name: Workflow
 
 on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+
 
 # This ensures that previous jobs for the PR are canceled when the PR is
 # updated.
