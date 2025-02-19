@@ -79,6 +79,7 @@
     "@types/webpack-env": "^1.18.5",
     "babel-plugin-istanbul": "^6.1.1",
     "customize-cra": "^1.0.0",
+    "dompurify": "^3.2.4",
     "knip": "^5.27.2",
     "minio": "^8.0.1",
     "nyc": "^15.1.0",
