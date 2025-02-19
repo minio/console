@@ -176,7 +176,7 @@ test("Can delete an object inside a bucket prefix", () => {
         "xref_cust_guid_actd-v1.jpg",
         "test/digitalinsights/xref_cust_guid_actd-v1.jpg",
       ],
-      [IAM_SCOPES.S3_DELETE_OBJECT],
+      [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
     ),
   ).toBe(true);
 });
@@ -186,7 +186,7 @@ test("Can't delete an object inside a bucket prefix", () => {
   expect(
     hasPermission(
       ["xref_cust_guid_actd-v1.jpg", "test/xref_cust_guid_actd-v1.jpg"],
-      [IAM_SCOPES.S3_DELETE_OBJECT],
+      [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
     ),
   ).toBe(false);
 });

@@ -352,7 +352,7 @@ const ObjectDetailPanel = ({
   ]);
   const canDelete = hasPermission(
     [bucketName, currentItem, [bucketName, actualInfo.name].join("/")],
-    [IAM_SCOPES.S3_DELETE_OBJECT],
+    [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
   );
 
   let objectType: AllowedPreviews = previewObjectType(metaData, currentItem);
@@ -649,7 +649,7 @@ const ObjectDetailPanel = ({
               canDelete
                 ? ""
                 : permissionTooltipHelper(
-                    [IAM_SCOPES.S3_DELETE_OBJECT],
+                    [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
                     "delete this object",
                   )
             }
@@ -665,7 +665,10 @@ const ObjectDetailPanel = ({
                   currentItem,
                   [bucketName, actualInfo.name].join("/"),
                 ]}
-                scopes={[IAM_SCOPES.S3_DELETE_OBJECT]}
+                scopes={[
+                  IAM_SCOPES.S3_DELETE_OBJECT,
+                  IAM_SCOPES.S3_DELETE_ACTIONS,
+                ]}
                 errorProps={{ disabled: true }}
               >
                 <Button
