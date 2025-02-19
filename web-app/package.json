@@ -28,7 +28,8 @@
     "recharts": "^2.12.7",
     "styled-components": "5.3.11",
     "superagent": "^9.0.2",
-    "tinycolor2": "^1.6.0"
+    "tinycolor2": "^1.6.0",
+    "dompurify": "^3.2.4"
   },
   "scripts": {
     "start": "PORT=5005 react-scripts start",
