@@ -63,7 +63,7 @@ type SessionResponse struct {
 	ServerEndPoint string `json:"serverEndPoint,omitempty"`
 
 	// status
-	// Enum: [ok]
+	// Enum: ["ok"]
 	Status string `json:"status,omitempty"`
 }
 
