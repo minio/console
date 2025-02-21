@@ -96,7 +96,8 @@
     "semver": "^7.5.2",
     "ws": "^8.17.1",
     "rollup": "^4.24.0",
-    "cookie": "^0.7.2"
+    "cookie": "^0.7.2",
+    "jspdf": "^3.0.0"
   },
   "main": "index.js",
   "packageManager": "yarn@4.4.0"

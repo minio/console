@@ -278,7 +278,7 @@ const ListObjects = () => {
   ]);
   const canDelete = hasPermission(
     [pathAsResourceInPolicy, ...sessionGrantWildCards],
-    [IAM_SCOPES.S3_DELETE_OBJECT],
+    [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
   );
   const canUpload =
     hasPermission(
@@ -912,7 +912,7 @@ const ListObjects = () => {
       tooltip: canDelete
         ? "Delete Selected Files"
         : permissionTooltipHelper(
-            [IAM_SCOPES.S3_DELETE_OBJECT],
+            [IAM_SCOPES.S3_DELETE_OBJECT, IAM_SCOPES.S3_DELETE_ACTIONS],
             "delete objects in this bucket",
           ),
     },
