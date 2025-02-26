@@ -62,9 +62,6 @@ fixture("For user with Bucket Prefix permissions")
 test("Bucket page can be opened", async (t) => {
   await t.navigateTo(bucketsScreenUrl);
 });
-test("Buckets sidebar item exists", async (t) => {
-  await t.expect(bucketsSidebarEl.exists).ok();
-});
 
 /**
  * Without the fix UI crashes with

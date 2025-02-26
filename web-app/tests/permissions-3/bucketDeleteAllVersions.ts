@@ -31,7 +31,7 @@ test
     await functions.setVersioned(t, "bucketdelete3");
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/browser")
+      .typeText(elements.filterBuckets, "bucketdelete3")
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -47,7 +47,7 @@ test
     );
     await t
       .useRole(roles.bucketReadWrite)
-      .navigateTo("http://localhost:9090/browser")
+      .typeText(elements.filterBuckets, "bucketdelete3")
       .click(testBucketBrowseButtonFor("bucketdelete3"))
       .click(
         "div.ReactVirtualized__Grid.ReactVirtualized__Table__Grid > div > div:nth-child(1)",
