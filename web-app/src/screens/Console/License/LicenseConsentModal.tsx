@@ -33,7 +33,8 @@ const LicenseConsentModal = () => {
 
   const [displayForceAcknowledge, setDisplayForceAcknowledge] =
     useState<boolean>(false);
-  const [acknowledgeDisabled, setAcknowledgeDisabled] = useState<boolean>(false);
+  const [acknowledgeDisabled, setAcknowledgeDisabled] =
+    useState<boolean>(false);
 
   const licenseAcknowledged = useSelector(
     (state: AppState) => state.system.licenseAcknowledged,
@@ -43,17 +44,18 @@ const LicenseConsentModal = () => {
     setAcknowledgeDisabled(true);
 
     fetch("https://dl.min.io/server/minio/agplv3-ack", {
-      mode: 'no-cors'
-    }).then(() => {
-      setLicenseConsent(); //to Local storage.
-      dispatch(setAcknowledgeLicense(true));
-      setAcknowledgeDisabled(false);
-    }).catch(() => {
-      setAcknowledgeDisabled(false);
-      console.error("Error while trying to Acknowledge the license");
-      dispatch(setAcknowledgeLicense(true));
+      mode: "no-cors",
     })
-
+      .then(() => {
+        setLicenseConsent(); //to Local storage.
+        dispatch(setAcknowledgeLicense(true));
+        setAcknowledgeDisabled(false);
+      })
+      .catch(() => {
+        setAcknowledgeDisabled(false);
+        console.error("Error while trying to Acknowledge the license");
+        dispatch(setAcknowledgeLicense(true));
+      });
   };
 
   if (licenseAcknowledged) {
@@ -61,127 +63,129 @@ const LicenseConsentModal = () => {
   }
 
   return (
-    <Box sx={{
-      "& #close": {
-        display: "none",
-      }
-    }}>
-    <ModalWrapper
-      modalOpen={!licenseAcknowledged}
-      title="License"
-      onClose={() => {
-        setDisplayForceAcknowledge(true);
-      }}
+    <Box
       sx={{
-        backgroundColor: "red",
         "& #close": {
-          width: 0,
-          height: 0,
           display: "none",
-          visibility: "hidden"
-        }
+        },
       }}
     >
-      {displayForceAcknowledge && (
-        <Box sx={{ marginBottom: 15 }}>
-          <InformativeMessage
-            title={"Please read the license statement"}
-            message={"Click on the Acknowledge button to continue"}
-            variant={"warning"}
-          />
-        </Box>
-      )}
-      <Box
+      <ModalWrapper
+        modalOpen={!licenseAcknowledged}
+        title="License"
+        onClose={() => {
+          setDisplayForceAcknowledge(true);
+        }}
         sx={{
-          display: "flex",
-          flexFlow: "column",
-          "& .link-text": {
-            color: "#2781B0",
-            fontWeight: 600,
+          backgroundColor: "red",
+          "& #close": {
+            width: 0,
+            height: 0,
+            display: "none",
+            visibility: "hidden",
           },
         }}
       >
+        {displayForceAcknowledge && (
+          <Box sx={{ marginBottom: 15 }}>
+            <InformativeMessage
+              title={"Please read the license statement"}
+              message={"Click on the Acknowledge button to continue"}
+              variant={"warning"}
+            />
+          </Box>
+        )}
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            marginBottom: "20px",
-            justifyContent: "center",
-            "& .min-icon": {
-              width: "188px",
-              height: "62px",
-              "& path": {
-                fill: `${get(theme, "signalColors.main", "blue")}!important`,
-              },
+            flexFlow: "column",
+            "& .link-text": {
+              color: "#2781B0",
+              fontWeight: 600,
             },
           }}
         >
-          <AGPLV3DarkLogo
-            style={{
-              color: `${get(theme, "signalColors.main", "blue")}!important`,
-            }}
-          />
-        </Box>
-        <Box
-          sx={{
-            overflowY: "auto",
-            maxHeight: 500,
-          }}
-        >
           <Box
             sx={{
-              marginBottom: "27px",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "20px",
+              justifyContent: "center",
+              "& .min-icon": {
+                width: "188px",
+                height: "62px",
+                "& path": {
+                  fill: `${get(theme, "signalColors.main", "blue")}!important`,
+                },
+              },
             }}
           >
-            By using this software, you acknowledge that MinIO software is
-            licensed under the <LicenseLink />, for which, the full text can be
-            found here:{" "}
-            <a
-              href={`https://www.gnu.org/licenses/agpl-3.0.html`}
-              rel="noopener"
-              className={"link-text"}
-            >
-              https://www.gnu.org/licenses/agpl-3.0.html.
-            </a>
+            <AGPLV3DarkLogo
+              style={{
+                color: `${get(theme, "signalColors.main", "blue")}!important`,
+              }}
+            />
           </Box>
           <Box
             sx={{
-              paddingBottom: "23px",
+              overflowY: "auto",
+              maxHeight: 500,
             }}
           >
-            Please review the terms carefully and ensure you are in compliance
-            with the obligations of the license. If you are not able to satisfy
-            the license obligations, we offer a commercial license which is
-            available here:{" "}
-            <a
-              href={`https://min.io/signup?ref=con`}
-              rel="noopener"
-              className={"link-text"}
+            <Box
+              sx={{
+                marginBottom: "27px",
+              }}
             >
-              https://min.io/signup.
-            </a>
+              By using this software, you acknowledge that MinIO software is
+              licensed under the <LicenseLink />, for which, the full text can
+              be found here:{" "}
+              <a
+                href={`https://www.gnu.org/licenses/agpl-3.0.html`}
+                rel="noopener"
+                className={"link-text"}
+              >
+                https://www.gnu.org/licenses/agpl-3.0.html.
+              </a>
+            </Box>
+            <Box
+              sx={{
+                paddingBottom: "23px",
+              }}
+            >
+              Please review the terms carefully and ensure you are in compliance
+              with the obligations of the license. If you are not able to
+              satisfy the license obligations, we offer a commercial license
+              which is available here:{" "}
+              <a
+                href={`https://min.io/signup?ref=con`}
+                rel="noopener"
+                className={"link-text"}
+              >
+                https://min.io/signup.
+              </a>
+            </Box>
+            <LicenseFAQ />
           </Box>
-          <LicenseFAQ />
+          <Box
+            sx={{
+              marginTop: "19px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              id={"confirm"}
+              type="button"
+              variant="callAction"
+              onClick={recordAgplConsent}
+              label={"Acknowledge"}
+              disabled={acknowledgeDisabled}
+            />
+          </Box>
         </Box>
-        <Box
-          sx={{
-            marginTop: "19px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            id={"confirm"}
-            type="button"
-            variant="callAction"
-            onClick={recordAgplConsent}
-            label={"Acknowledge"}
-            disabled={acknowledgeDisabled}
-          />
-        </Box>
-      </Box>
-    </ModalWrapper>
+      </ModalWrapper>
     </Box>
   );
 };

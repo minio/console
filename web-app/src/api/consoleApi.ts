@@ -464,7 +464,11 @@ export interface SetBucketQuota {
 }
 
 export interface LoginDetails {
-  loginStrategy?: "form" | "redirect" | "service-account" | "redirect-service-account";
+  loginStrategy?:
+    | "form"
+    | "redirect"
+    | "service-account"
+    | "redirect-service-account";
   redirectRules?: RedirectRule[];
   isK8S?: boolean;
   animatedLogin?: boolean;
@@ -1201,16 +1205,22 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -1229,7 +1239,8 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
@@ -1262,9 +1273,15 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key],
+    );
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
       .join("&");
   }
 
@@ -1275,8 +1292,13 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== "string"
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -1293,7 +1315,10 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -1306,7 +1331,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -1350,15 +1377,26 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { "Content-Type": type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === "undefined" || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response.clone() as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -1394,7 +1432,9 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version 0.1.0
  * @baseUrl /api/v1
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   login = {
     /**
      * No description
@@ -1437,7 +1477,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Identity Provider oauth2 callback endpoint.
      * @request POST:/login/oauth2/auth
      */
-    loginOauth2Auth: (body: LoginOauth2AuthRequest, params: RequestParams = {}) =>
+    loginOauth2Auth: (
+      body: LoginOauth2AuthRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, ApiError>({
         path: `/login/oauth2/auth`,
         method: "POST",
@@ -1668,7 +1711,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/buckets/{bucket_name}/objects/download-multiple
      * @secure
      */
-    downloadMultipleObjects: (bucketName: string, objectList: SelectedUsers, params: RequestParams = {}) =>
+    downloadMultipleObjects: (
+      bucketName: string,
+      objectList: SelectedUsers,
+      params: RequestParams = {},
+    ) =>
       this.request<File, ApiError>({
         path: `/buckets/${encodeURIComponent(bucketName)}/objects/download-multiple`,
         method: "POST",
@@ -1822,7 +1869,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{bucket_name}/tags
      * @secure
      */
-    putBucketTags: (bucketName: string, body: PutBucketTagsRequest, params: RequestParams = {}) =>
+    putBucketTags: (
+      bucketName: string,
+      body: PutBucketTagsRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, ApiError>({
         path: `/buckets/${encodeURIComponent(bucketName)}/tags`,
         method: "PUT",
@@ -1877,7 +1928,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/buckets/{bucket_name}/versioning
      * @secure
      */
-    setBucketVersioning: (bucketName: string, body: SetBucketVersioning, params: RequestParams = {}) =>
+    setBucketVersioning: (
+      bucketName: string,
+      body: SetBucketVersioning,
+      params: RequestParams = {},
+    ) =>
       this.request<void, ApiError>({
         path: `/buckets/${encodeURIComponent(bucketName)}/versioning`,
         method: "PUT",

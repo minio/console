@@ -16,19 +16,10 @@
 
 import React, { Fragment } from "react";
 import { Box, Button } from "mds";
-import { SubnetInfo } from "./types";
 import { FEATURE_ITEMS, FeatureItem, LICENSE_PLANS_INFORMATION } from "./utils";
 import styled from "styled-components";
 import get from "lodash/get";
 import CheckIcon from "./CheckIcon";
-
-interface IRegisterStatus {
-  activateProductModal: any;
-  closeModalAndFetchLicenseInfo: any;
-  licenseInfo: SubnetInfo | undefined;
-  currentPlanID: number;
-  setActivateProductModal: any;
-}
 
 const LicensesInformation = styled.div(({ theme }) => ({
   display: "grid",
@@ -112,10 +103,8 @@ const LicensesInformation = styled.div(({ theme }) => ({
   },
 }));
 
-const LicensePlans = ({ licenseInfo }: IRegisterStatus) => {
-  let currentPlan = !licenseInfo
-    ? "community"
-    : licenseInfo?.plan?.toLowerCase();
+const LicensePlans = () => {
+  let currentPlan = "community";
 
   const getButton = (link: string, btnText: string, variant: any) => {
     let linkToNav =
