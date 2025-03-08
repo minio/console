@@ -69,6 +69,7 @@ const VirtualizedList = ({
                   width={width}
                   ref={ref}
                   onItemsRendered={onItemsRendered}
+                  className={"bucketsListing"}
                 >
                   {RenderItemLine}
                 </List>

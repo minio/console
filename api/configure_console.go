@@ -115,52 +115,13 @@ func configureAPI(api *operations.ConsoleAPI) http.Handler {
 	registerLogoutHandlers(api)
 	// Register bucket handlers
 	registerBucketsHandlers(api)
-	// Register all users handlers
-	registerUsersHandlers(api)
-	// Register groups handlers
-	registerGroupsHandlers(api)
-	// Register policies handlers
-	registersPoliciesHandler(api)
-	// Register configurations handlers
-	registerConfigHandlers(api)
-	// Register bucket events handlers
-	registerBucketEventsHandlers(api)
-	// Register service handlers
-	registerServiceHandlers(api)
 	// Register session handlers
 	registerSessionHandlers(api)
-	// Register admin info handlers
-	registerAdminInfoHandlers(api)
-	// Register admin arns handlers
-	registerAdminArnsHandlers(api)
-	// Register admin notification endpoints handlers
-	registerAdminNotificationEndpointsHandlers(api)
-	// Register admin Service Account Handlers
-	registerServiceAccountsHandlers(api)
-	// Register admin remote buckets
-	registerAdminBucketRemoteHandlers(api)
-	// Register admin log search
-	registerLogSearchHandlers(api)
-	// Register admin KMS handlers
-	registerKMSHandlers(api)
-	// Register admin IDP handlers
-	registerIDPHandlers(api)
-	// Register Inspect Handler
-	registerInspectHandler(api)
-	// Register nodes handlers
-	registerNodesHandler(api)
-
-	// Operator Console
-
 	// Register Object's Handlers
 	registerObjectsHandlers(api)
 	// Register Bucket Quota's Handlers
 	registerBucketQuotaHandlers(api)
-	// Register Account handlers
-	registerAccountHandlers(api)
-
-	registerReleasesHandlers(api)
-
+	// Register Bucket Policy's Handlers
 	registerPublicObjectsHandlers(api)
 
 	api.PreServerShutdown = func() {}

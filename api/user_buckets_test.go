@@ -25,6 +25,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/minio/minio-go/v7/pkg/notification"
+
 	"github.com/minio/console/pkg/auth/token"
 	"github.com/minio/console/pkg/utils"
 
@@ -37,6 +39,31 @@ import (
 	"github.com/minio/minio-go/v7/pkg/tags"
 	"github.com/stretchr/testify/assert"
 )
+
+// // Mock mc S3Client functions ////
+var (
+	mcAddNotificationConfigMock    func(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error
+	mcRemoveNotificationConfigMock func(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error
+	minioGetBucketNotificationMock func(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error)
+)
+
+// Define a mock struct of mc S3Client interface implementation
+type s3ClientMock struct{}
+
+// implements mc.S3Client.AddNotificationConfigMock()
+func (c s3ClientMock) addNotificationConfig(ctx context.Context, arn string, events []string, prefix, suffix string, ignoreExisting bool) *probe.Error {
+	return mcAddNotificationConfigMock(ctx, arn, events, prefix, suffix, ignoreExisting)
+}
+
+// implements mc.S3Client.DeleteBucketEventNotification()
+func (c s3ClientMock) removeNotificationConfig(ctx context.Context, arn string, event string, prefix string, suffix string) *probe.Error {
+	return mcRemoveNotificationConfigMock(ctx, arn, event, prefix, suffix)
+}
+
+// mock function of getBucketNotification()
+func (mc minioClientMock) getBucketNotification(ctx context.Context, bucketName string) (bucketNotification notification.Configuration, err error) {
+	return minioGetBucketNotificationMock(ctx, bucketName)
+}
 
 // assigning mock at runtime instead of compile time
 var minioListBucketsWithContextMock func(ctx context.Context) ([]minio.BucketInfo, error)
@@ -157,31 +184,6 @@ func TestMakeBucket(t *testing.T) {
 		return errors.New("error")
 	}
 	if err := makeBucket(ctx, minClient, "bucktest1", true); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
-func TestDeleteBucket(t *testing.T) {
-	assert := assert.New(t)
-	// mock minIO client
-	minClient := minioClientMock{}
-	function := "removeBucket()"
-
-	// Test-1: removeBucket() delete a bucket
-	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(_ string) error {
-		return nil
-	}
-	if err := removeBucket(minClient, "bucktest1"); err != nil {
-		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
-	}
-
-	// Test-2: removeBucket() make sure errors are handled correctly when errors on DeleteBucket()
-	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(_ string) error {
-		return errors.New("error")
-	}
-	if err := removeBucket(minClient, "bucktest1"); assert.Error(err) {
 		assert.Equal("error", err.Error())
 	}
 }

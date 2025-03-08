@@ -36,21 +36,9 @@ import (
 // swagger:model makeBucketRequest
 type MakeBucketRequest struct {
 
-	// locking
-	Locking bool `json:"locking,omitempty"`
-
 	// name
 	// Required: true
 	Name *string `json:"name"`
-
-	// quota
-	Quota *SetBucketQuota `json:"quota,omitempty"`
-
-	// retention
-	Retention *PutBucketRetentionRequest `json:"retention,omitempty"`
-
-	// versioning
-	Versioning *SetBucketVersioning `json:"versioning,omitempty"`
 }
 
 // Validate validates this make bucket request
@@ -58,18 +46,6 @@ func (m *MakeBucketRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateQuota(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRetention(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVersioning(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -88,145 +64,8 @@ func (m *MakeBucketRequest) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MakeBucketRequest) validateQuota(formats strfmt.Registry) error {
-	if swag.IsZero(m.Quota) { // not required
-		return nil
-	}
-
-	if m.Quota != nil {
-		if err := m.Quota.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("quota")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("quota")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MakeBucketRequest) validateRetention(formats strfmt.Registry) error {
-	if swag.IsZero(m.Retention) { // not required
-		return nil
-	}
-
-	if m.Retention != nil {
-		if err := m.Retention.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("retention")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("retention")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MakeBucketRequest) validateVersioning(formats strfmt.Registry) error {
-	if swag.IsZero(m.Versioning) { // not required
-		return nil
-	}
-
-	if m.Versioning != nil {
-		if err := m.Versioning.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("versioning")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("versioning")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this make bucket request based on the context it is used
+// ContextValidate validates this make bucket request based on context it is used
 func (m *MakeBucketRequest) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateQuota(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateRetention(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateVersioning(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *MakeBucketRequest) contextValidateQuota(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Quota != nil {
-
-		if swag.IsZero(m.Quota) { // not required
-			return nil
-		}
-
-		if err := m.Quota.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("quota")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("quota")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MakeBucketRequest) contextValidateRetention(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Retention != nil {
-
-		if swag.IsZero(m.Retention) { // not required
-			return nil
-		}
-
-		if err := m.Retention.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("retention")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("retention")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MakeBucketRequest) contextValidateVersioning(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Versioning != nil {
-
-		if swag.IsZero(m.Versioning) { // not required
-			return nil
-		}
-
-		if err := m.Versioning.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("versioning")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("versioning")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 

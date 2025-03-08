@@ -18,6 +18,7 @@ import * as roles from "../utils/roles";
 import { Selector } from "testcafe";
 import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
+import * as elements from "../utils/elements";
 
 fixture("Delete Objects With Prefix Only policy").page(
   "http://localhost:9090/",
@@ -43,7 +44,7 @@ test
   })("Delete button is disabled for object inside bucket", async (t) => {
     await t
       .useRole(roles.deleteObjectWithPrefixOnly)
-      .navigateTo(`http://localhost:9090/browser`)
+      .typeText(elements.filterBuckets, bucket1)
       .click(test1BucketBrowseButton)
       .click(
         Selector(".ReactVirtualized__Table__rowColumn").withText("test.txt"),
@@ -69,7 +70,7 @@ test
     async (t) => {
       await t
         .useRole(roles.deleteObjectWithPrefixOnly)
-        .navigateTo(`http://localhost:9090/browser`)
+        .typeText(elements.filterBuckets, bucket2)
         .click(test2BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
@@ -103,7 +104,7 @@ test
     async (t) => {
       await t
         .useRole(roles.deleteObjectWithPrefixOnly)
-        .navigateTo(`http://localhost:9090/browser`)
+        .typeText(elements.filterBuckets, bucket3)
         .click(test3BucketBrowseButton)
         .click(
           Selector(".ReactVirtualized__Table__rowColumn").withText(
