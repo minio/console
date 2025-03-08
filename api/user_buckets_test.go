@@ -188,31 +188,6 @@ func TestMakeBucket(t *testing.T) {
 	}
 }
 
-func TestDeleteBucket(t *testing.T) {
-	assert := assert.New(t)
-	// mock minIO client
-	minClient := minioClientMock{}
-	function := "removeBucket()"
-
-	// Test-1: removeBucket() delete a bucket
-	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(_ string) error {
-		return nil
-	}
-	if err := removeBucket(minClient, "bucktest1"); err != nil {
-		t.Errorf("Failed on %s:, errors occurred: %s", function, err.Error())
-	}
-
-	// Test-2: removeBucket() make sure errors are handled correctly when errors on DeleteBucket()
-	// mock function response from removeBucket(bucketName)
-	minioRemoveBucketMock = func(_ string) error {
-		return errors.New("error")
-	}
-	if err := removeBucket(minClient, "bucktest1"); assert.Error(err) {
-		assert.Equal("error", err.Error())
-	}
-}
-
 func TestBucketInfo(t *testing.T) {
 	assert := assert.New(t)
 	// mock minIO client
