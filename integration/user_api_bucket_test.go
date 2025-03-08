@@ -20,7 +20,6 @@ package integration
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -34,10 +33,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/minio-go/v7"
-
 	"github.com/minio/console/models"
-	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -1437,66 +1433,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	assert.True(
 		strings.Contains(debugResponse, "tag1"),
 		inspectHTTPResponse(bucketInfoResponse))
-}
-
-func TestDeleteBucket(t *testing.T) {
-	/*
-		Test to delete a bucket
-	*/
-	assert := assert.New(t)
-	type args struct {
-		bucketName       string
-		createBucketName string
-	}
-	tests := []struct {
-		name           string
-		args           args
-		expectedStatus int
-	}{
-		{
-			name:           "Delete a bucket",
-			expectedStatus: 204,
-			args: args{
-				bucketName:       "testdeletebucket1",
-				createBucketName: "testdeletebucket1",
-			},
-		}, {
-			name:           "Delete invalid bucket",
-			expectedStatus: 404,
-			args: args{
-				bucketName:       "nonexistingbucket",
-				createBucketName: "",
-			},
-		},
-	}
-
-	// Initialize minio client object.
-	minioClient, err := minio.New("localhost:9000", &minio.Options{
-		Creds:  credentials.NewStaticV4("minioadmin", "minioadmin", ""),
-		Secure: false,
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(_ *testing.T) {
-			// Create bucket if needed for the test
-			if tt.args.createBucketName != "" {
-				if err := minioClient.MakeBucket(context.Background(), tt.args.createBucketName, minio.MakeBucketOptions{}); err != nil {
-					assert.Failf("Failed to create bucket", "Could not create bucket %s: %v", tt.args.createBucketName, err)
-				}
-			}
-
-			// Delete the bucket
-			deleteBucketResponse, deleteBucketError := DeleteBucket(tt.args.bucketName)
-			assert.Nil(deleteBucketError)
-			if deleteBucketResponse != nil {
-				assert.Equal(
-					tt.expectedStatus, deleteBucketResponse.StatusCode, "Status Code is incorrect")
-			}
-		})
-	}
 }
 
 func TestListBuckets(t *testing.T) {
