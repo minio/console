@@ -22,6 +22,7 @@ import {
   testBucketBrowseButtonFor,
 } from "../utils/functions";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("Rewind Testing").page("http://localhost:9090");
 
@@ -35,6 +36,7 @@ test
     await functions.setVersioned(t, "abucketrewind");
     await t
       .useRole(roles.bucketReadWrite)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "abucketrewind")
       .click(testBucketBrowseButtonFor("abucketrewind"))
       // Upload object to bucket
@@ -48,6 +50,7 @@ test
   })("Rewind works in bucket", async (t) => {
     await t
       .useRole(roles.bucketReadWrite)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "abucketrewind")
       .click(testBucketBrowseButtonFor("abucketrewind"))
       .expect(elements.table.exists)
@@ -84,6 +87,7 @@ test
   })("Rewind button enabled in bucket", async (t) => {
     await t
       .useRole(roles.rewindEnabled)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, bucketname)
       .click(test3BucketBrowseButton)
       .wait(1500)
@@ -121,6 +125,7 @@ test
   })("Rewind button disabled in bucket", async (t) => {
     await t
       .useRole(roles.rewindNotEnabled)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, bucketname)
       .click(test3BucketBrowseButton)
       .wait(1500)

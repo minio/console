@@ -19,6 +19,7 @@ import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("For user with Bucket Read & Write permissions").page(
   "http://localhost:9090",
@@ -31,6 +32,7 @@ test
     await functions.setVersioned(t, "bucketobjecttags");
     await t
       .useRole(roles.bucketObjectTags)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketobjecttags")
       .click(testBucketBrowseButtonFor("bucketobjecttags"))
       // Upload object to bucket
@@ -39,6 +41,7 @@ test
   })("Tags can be created and deleted", async (t) => {
     await t
       .useRole(roles.bucketObjectTags)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketobjecttags")
       .click(testBucketBrowseButtonFor("bucketobjecttags"))
       .click(
@@ -69,6 +72,7 @@ test
     await functions.setVersioned(t, "bucketcannottag");
     await t
       .useRole(roles.bucketCannotTag)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketcannottag")
       .click(testBucketBrowseButtonFor("bucketcannottag"))
       // Upload object to bucket
@@ -77,6 +81,7 @@ test
   })("User should not be able to create tag", async (t) => {
     await t
       .useRole(roles.bucketCannotTag)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketcannottag")
       .click(testBucketBrowseButtonFor("bucketcannottag"))
       .click(

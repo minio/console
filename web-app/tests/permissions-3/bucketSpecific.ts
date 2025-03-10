@@ -23,6 +23,7 @@ import {
 } from "../utils/functions";
 import { bucketsElement, logoutItem } from "../utils/elements-menu";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 const TEST_BUCKET_NAME_SPECIFIC = "specific-bucket";
 
@@ -38,6 +39,7 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-6`);
     await t
       .useRole(roles.admin)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-6`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       // Upload object to bucket
@@ -47,6 +49,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-6`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       .expect(elements.table.exists)
@@ -72,6 +75,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-7`)
       .expect(testBucketBrowseButton.exists)
       .ok();
@@ -95,6 +99,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-9`)
       .click(testBucketBrowseButton)
       .expect(uploadExists)
@@ -118,6 +123,7 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-10`)
       .click(testBucketBrowseButton)
       // Upload object to bucket
@@ -138,6 +144,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketSpecific)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-11`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-11`))
       .expect(elements.bucketsTableDisabled.exists)

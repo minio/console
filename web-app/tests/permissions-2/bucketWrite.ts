@@ -18,6 +18,7 @@ import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { testBucketBrowseButtonFor } from "../utils/functions";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("For user with Bucket Write permissions").page("http://localhost:9090");
 
@@ -30,6 +31,7 @@ test
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite2");
     await t
       .useRole(roles.bucketWrite)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketwrite2")
       .click(testBucketBrowseButton)
       .expect(uploadExists)
@@ -47,6 +49,7 @@ test
   })("Object can be uploaded to a bucket", async (t) => {
     await t
       .useRole(roles.bucketWrite)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketwrite3")
       .click(testBucketBrowseButtonFor("bucketwrite3"))
       // Upload object to bucket
@@ -64,6 +67,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketWrite)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketwrite4")
       .click(testBucketBrowseButtonFor("bucketwrite4"))
       .expect(elements.bucketsTableDisabled.exists)

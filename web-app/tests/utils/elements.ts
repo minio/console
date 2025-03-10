@@ -208,3 +208,10 @@ export const locationEmpty = Selector("div").withAttribute(
 // Login Window
 //----------------------------------------------------
 export const loginButton = Selector("button").withAttribute("id", "do-login");
+//----------------------------------------------------
+// Ackwnowledge Button
+//----------------------------------------------------
+export const acknowledgeButton = Selector("button").withAttribute(
+  "id",
+  "acknowledge-confirm",
+);

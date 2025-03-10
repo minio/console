@@ -19,6 +19,7 @@ import { Selector } from "testcafe";
 import * as functions from "../utils/functions";
 import { namedTestBucketBrowseButtonFor } from "../utils/functions";
 import * as elements from "../utils/elements";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("Test error visibility in Object Browser Navigation").page(
   "http://localhost:9090/",
@@ -60,6 +61,7 @@ test
     async (t) => {
       await t
         .useRole(roles.conditions3)
+        .click(acknowledgeButton)
         .typeText(elements.filterBuckets, bucketName)
         .click(bucketBrowseButton)
         .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))
@@ -101,6 +103,7 @@ test
     async (t) => {
       await t
         .useRole(roles.conditions4)
+        .click(acknowledgeButton)
         .typeText(elements.filterBuckets, bucketName2)
         .click(bucketBrowseButton2)
         .click(Selector("label").withText("Show deleted objects"))

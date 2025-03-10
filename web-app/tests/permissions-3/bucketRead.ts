@@ -19,6 +19,7 @@ import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
 import { logoutItem } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("For user with Bucket Read permissions")
   .page("http://localhost:9090")
@@ -34,6 +35,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "bucketread1")
       .expect(testBucketBrowseButtonFor("bucketread1").exists)
       .ok();
@@ -49,6 +51,7 @@ test
     await functions.setUpBucket(t, "aread3");
     await t
       .useRole(roles.admin)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "aread3")
       .click(testBucketBrowseButtonFor("aread3"))
       // Upload object to bucket
@@ -58,6 +61,7 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
+      .click(acknowledgeButton)
       .typeText(elements.filterBuckets, "aread3")
       .wait(2000)
       .click(testBucketBrowseButtonFor("aread3"))
