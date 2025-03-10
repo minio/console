@@ -18,6 +18,8 @@ import * as roles from "../utils/roles";
 import { Selector } from "testcafe";
 import * as functions from "../utils/functions";
 import { namedTestBucketBrowseButtonFor } from "../utils/functions";
+import * as elements from "../utils/elements";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("Test resources policy").page("http://localhost:9090/");
 
@@ -48,7 +50,8 @@ test
     async (t) => {
       await t
         .useRole(roles.admin)
-        .navigateTo(`http://localhost:9090/browser`)
+        .click(acknowledgeButton)
+        .typeText(elements.filterBuckets, bucket1)
         .click(test1BucketBrowseButton)
         .click(Selector(".ReactVirtualized__Table__rowColumn").withText("abc"))
         .click(Selector("#delete-element-click"))

@@ -17,6 +17,7 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("For user with Bucket Write to specific prefix permissions").page(
   "http://localhost:9090",
@@ -27,9 +28,11 @@ test
     "Upload File button is disable and Upload Folder button is enabled on bucket root path",
     async (t) => {
       const uploadButton = elements.uploadButton;
+
       await t
         .useRole(roles.bucketWritePrefixOnly)
         .navigateTo("http://localhost:9090/browser/testcafe")
+        .click(acknowledgeButton)
         .click(uploadButton)
         .expect(
           Selector("div")
@@ -52,9 +55,11 @@ test
     "Upload File and Folder buttons are enabled on bucket prefix path",
     async (t) => {
       const uploadButton = elements.uploadButton;
+
       await t
         .useRole(roles.bucketWritePrefixOnly)
         .navigateTo("http://localhost:9090/browser/testcafe/write")
+        .click(acknowledgeButton)
         .click(uploadButton)
         .expect(
           Selector("div")

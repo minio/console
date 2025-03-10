@@ -15,20 +15,12 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect } from "react";
-import {
-  IAM_PAGES,
-  IAM_PERMISSIONS,
-  IAM_ROLES,
-  IAM_SCOPES,
-} from "../../../common/SecureComponent/permissions";
+import { IAM_SCOPES } from "../../../common/SecureComponent/permissions";
 import { SecureComponent } from "../../../common/SecureComponent";
-import TooltipWrapper from "../Common/TooltipWrapper/TooltipWrapper";
-import { BackLink, Button, SettingsIcon, Grid } from "mds";
+import { Grid } from "mds";
 import AutoColorIcon from "../Common/Components/AutoColorIcon";
 import { useSelector } from "react-redux";
 import { selFeatures } from "../consoleSlice";
-import hasPermission from "../../../common/SecureComponent/accessControl";
-import { useNavigate } from "react-router-dom";
 import SearchBox from "../Common/SearchBox";
 import { setSearchVersions } from "./objectBrowserSlice";
 import { AppState, useAppDispatch } from "../../../store";
@@ -57,31 +49,6 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
   );
 
   const obOnly = !!features?.includes("object-browser-only");
-
-  const navigate = useNavigate();
-
-  const configureBucketAllowed = hasPermission(bucketName, [
-    IAM_SCOPES.S3_GET_BUCKET_POLICY,
-    IAM_SCOPES.S3_PUT_BUCKET_POLICY,
-    IAM_SCOPES.S3_GET_BUCKET_VERSIONING,
-    IAM_SCOPES.S3_PUT_BUCKET_VERSIONING,
-    IAM_SCOPES.S3_GET_BUCKET_ENCRYPTION_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_BUCKET_ENCRYPTION_CONFIGURATION,
-    IAM_SCOPES.S3_DELETE_BUCKET,
-    IAM_SCOPES.S3_GET_BUCKET_NOTIFICATIONS,
-    IAM_SCOPES.S3_PUT_BUCKET_NOTIFICATIONS,
-    IAM_SCOPES.S3_GET_REPLICATION_CONFIGURATION,
-    IAM_SCOPES.S3_PUT_REPLICATION_CONFIGURATION,
-    IAM_SCOPES.ADMIN_GET_BUCKET_QUOTA,
-    IAM_SCOPES.ADMIN_SET_BUCKET_QUOTA,
-    IAM_SCOPES.S3_PUT_BUCKET_TAGGING,
-    IAM_SCOPES.S3_GET_BUCKET_TAGGING,
-    IAM_SCOPES.S3_LIST_BUCKET_VERSIONS,
-    IAM_SCOPES.S3_GET_BUCKET_POLICY_STATUS,
-    IAM_SCOPES.S3_DELETE_BUCKET_POLICY,
-    IAM_SCOPES.S3_GET_ACTIONS,
-    IAM_SCOPES.S3_PUT_ACTIONS,
-  ]);
 
   const searchBar = (
     <Fragment>
@@ -116,46 +83,9 @@ const OBHeader = ({ bucketName }: IOBHeader) => {
     <Fragment>
       {!obOnly ? (
         <PageHeaderWrapper
-          label={
-            <BackLink
-              label={"Object Browser"}
-              onClick={() => {
-                navigate(IAM_PAGES.OBJECT_BROWSER_VIEW);
-              }}
-            />
-          }
+          label={"Object Browser"}
           actions={
             <Fragment>
-              <SecureComponent
-                scopes={IAM_PERMISSIONS[IAM_ROLES.BUCKET_ADMIN]}
-                resource={bucketName}
-                errorProps={{ disabled: true }}
-              >
-                <TooltipWrapper
-                  tooltip={
-                    configureBucketAllowed
-                      ? "Configure Bucket"
-                      : "You do not have the required permissions to configure this bucket. Please contact your MinIO administrator to request " +
-                        IAM_ROLES.BUCKET_ADMIN +
-                        " permisions."
-                  }
-                >
-                  <Button
-                    id={"configure-bucket-main"}
-                    color="primary"
-                    aria-label="Configure Bucket"
-                    onClick={() => navigate(`/buckets/${bucketName}/admin`)}
-                    icon={
-                      <SettingsIcon
-                        style={{ width: 20, height: 20, marginTop: -3 }}
-                      />
-                    }
-                    style={{
-                      padding: "0 10px",
-                    }}
-                  />
-                </TooltipWrapper>
-              </SecureComponent>
               <HelpMenu />
             </Fragment>
           }

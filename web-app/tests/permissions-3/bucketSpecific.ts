@@ -23,6 +23,7 @@ import {
 } from "../utils/functions";
 import { bucketsElement, logoutItem } from "../utils/elements-menu";
 import { Selector } from "testcafe";
+import { acknowledgeButton } from "../utils/elements";
 
 const TEST_BUCKET_NAME_SPECIFIC = "specific-bucket";
 
@@ -30,119 +31,7 @@ fixture("For user with permissions that only allow specific Buckets").page(
   "http://localhost:9090",
 );
 
-test("Buckets sidebar item exists", async (t) => {
-  const bucketsExist = bucketsElement.with({ boundTestRun: t }).exists;
-  await t.useRole(roles.bucketSpecific).expect(bucketsExist).ok();
-});
-
-// Bucket assign policy tests
-
-test
-  .before(async (t) => {
-    // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-1`);
-  })("A readonly policy can be assigned to a bucket", async (t) => {
-    await t
-      // We need to log back in after we use the admin account to create bucket,
-      // using the specific role we use in this module
-      .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
-      .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-1`))
-      .click(elements.bucketAccessRulesTab)
-      .click(elements.addAccessRuleButton)
-      .typeText(elements.bucketsPrefixInput, "readonlytest")
-      .click(elements.bucketsAccessInput)
-      .click(elements.bucketsAccessReadOnlyInput)
-      .click(elements.saveButton);
-  })
-  .after(async (t) => {
-    // Cleanup created bucket
-    await functions.cleanUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-1`);
-  });
-
-test
-  .before(async (t) => {
-    // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-2`);
-  })("A writeonly policy can be assigned to a bucket", async (t) => {
-    await t
-      // We need to log back in after we use the admin account to create bucket,
-      // using the specific role we use in this module
-      .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
-      .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-2`))
-      .click(elements.bucketAccessRulesTab)
-      .click(elements.addAccessRuleButton)
-      .typeText(elements.bucketsPrefixInput, "writeonlytest")
-      .click(elements.bucketsAccessInput)
-      .click(elements.bucketsAccessWriteOnlyInput)
-      .click(elements.saveButton);
-  })
-  .after(async (t) => {
-    // Cleanup created bucket
-    await functions.cleanUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-2`);
-  });
-
-test
-  .before(async (t) => {
-    // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-3`);
-  })("A readwrite policy can be assigned to a bucket", async (t) => {
-    await t
-      // We need to log back in after we use the admin account to create bucket,
-      // using the specific role we use in this module
-      .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
-      .click(namedManageButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-3`))
-      .click(elements.bucketAccessRulesTab)
-      .click(elements.addAccessRuleButton)
-      .typeText(elements.bucketsPrefixInput, "readwritetest")
-      .click(elements.bucketsAccessInput)
-      .click(elements.bucketsAccessReadWriteInput)
-      .click(elements.saveButton);
-  })
-  .after(async (t) => {
-    // Cleanup created bucket
-    await functions.cleanUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-3`);
-  });
-
 // Bucket read tests
-
-test
-  .before(async (t) => {
-    // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-4`);
-  })("Browse button exists", async (t) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await t
-      .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/browser")
-      .expect(
-        namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-4`).exists,
-      )
-      .ok();
-  })
-  .after(async (t) => {
-    // Cleanup created bucket and corresponding uploads
-    await functions.cleanUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-4`);
-  });
-
-test
-  .before(async (t) => {
-    // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-5`);
-  })("Bucket access is set to R", async (t) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await t
-      .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/buckets")
-      .expect(Selector(`#access-${TEST_BUCKET_NAME_SPECIFIC}-5`).innerText)
-      .eql("Access: R");
-  })
-  .after(async (t) => {
-    // Cleanup created bucket and corresponding uploads
-    await functions.cleanUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-5`);
-  });
 
 test
   .before(async (t) => {
@@ -150,7 +39,8 @@ test
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-6`);
     await t
       .useRole(roles.admin)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-6`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt")
@@ -159,7 +49,8 @@ test
     await new Promise((resolve) => setTimeout(resolve, 2000));
     await t
       .useRole(roles.bucketRead)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-6`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-6`))
       .expect(elements.table.exists)
       .ok();
@@ -184,7 +75,8 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-7`)
       .expect(testBucketBrowseButton.exists)
       .ok();
   })
@@ -199,26 +91,6 @@ test
 test
   .before(async (t) => {
     // Create a bucket
-    await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-8`);
-  })("Bucket access is set to R/W", async (t) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    await t
-      .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/buckets")
-      .expect(Selector(`#access-${TEST_BUCKET_NAME_SPECIFIC}-8`).innerText)
-      .eql("Access: R/W");
-  })
-  .after(async (t) => {
-    // Cleanup created bucket and corresponding uploads
-    await functions.cleanUpNamedBucketAndUploads(
-      t,
-      `${TEST_BUCKET_NAME_SPECIFIC}-8`,
-    );
-  });
-
-test
-  .before(async (t) => {
-    // Create a bucket
     await functions.setUpNamedBucket(t, `${TEST_BUCKET_NAME_SPECIFIC}-9`);
   })("Upload button exists", async (t) => {
     const uploadExists = elements.uploadButton.exists;
@@ -227,7 +99,8 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-9`)
       .click(testBucketBrowseButton)
       .expect(uploadExists)
       .ok();
@@ -250,7 +123,8 @@ test
     );
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-10`)
       .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
@@ -270,7 +144,8 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketSpecific)
-      .navigateTo("http://localhost:9090/browser")
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, `${TEST_BUCKET_NAME_SPECIFIC}-11`)
       .click(namedTestBucketBrowseButtonFor(`${TEST_BUCKET_NAME_SPECIFIC}-11`))
       .expect(elements.bucketsTableDisabled.exists)
       .ok();
