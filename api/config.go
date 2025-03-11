@@ -262,16 +262,8 @@ func getPrometheusURL() string {
 	return env.Get(PrometheusURL, "")
 }
 
-func getPrometheusAuthToken() string {
-	return env.Get(PrometheusAuthToken, "")
-}
-
 func getPrometheusJobID() string {
 	return env.Get(PrometheusJobID, "minio-job")
-}
-
-func getPrometheusExtraLabels() string {
-	return env.Get(PrometheusExtraLabels, "")
 }
 
 func getMaxConcurrentUploadsLimit() int64 {

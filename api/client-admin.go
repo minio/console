@@ -364,10 +364,6 @@ func (ac AdminClient) addRemoteBucket(ctx context.Context, bucket string, target
 	return ac.Client.SetRemoteTarget(ctx, bucket, target)
 }
 
-func (ac AdminClient) setBucketQuota(ctx context.Context, bucket string, quota *madmin.BucketQuota) error {
-	return ac.Client.SetBucketQuota(ctx, bucket, quota)
-}
-
 func (ac AdminClient) getBucketQuota(ctx context.Context, bucket string) (madmin.BucketQuota, error) {
 	return ac.Client.GetBucketQuota(ctx, bucket)
 }
@@ -412,11 +408,6 @@ func (ac AdminClient) addTier(ctx context.Context, cfg *madmin.TierConfig) error
 	return ac.Client.AddTier(ctx, cfg)
 }
 
-// implements madmin.Inspect()
-func (ac AdminClient) inspect(ctx context.Context, insOpts madmin.InspectOptions) ([]byte, io.ReadCloser, error) {
-	return ac.Client.Inspect(ctx, insOpts)
-}
-
 // implements madmin.EditTier()
 func (ac AdminClient) editTierCreds(ctx context.Context, tierName string, creds madmin.TierCreds) error {
 	return ac.Client.EditTier(ctx, tierName, creds)
@@ -457,19 +448,6 @@ func newAdminFromClaims(claims *models.Principal, clientIP string) (*madmin.Admi
 	adminClient.SetAppInfo(globalAppName, pkg.Version)
 	adminClient.SetCustomTransport(PrepareSTSClientTransport(clientIP))
 	return adminClient, nil
-}
-
-// newAdminFromCreds Creates a minio client using custom credentials for connecting to a remote host
-func newAdminFromCreds(accessKey, secretKey, endpoint string, tlsEnabled bool) (*madmin.AdminClient, error) {
-	minioClient, err := madmin.NewWithOptions(endpoint, &madmin.Options{
-		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
-		Secure: tlsEnabled,
-	})
-	if err != nil {
-		return nil, err
-	}
-	minioClient.SetAppInfo(globalAppName, pkg.Version)
-	return minioClient, nil
 }
 
 // isLocalAddress returns true if the url contains an IPv4/IPv6 hostname

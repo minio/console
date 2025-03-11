@@ -16,50 +16,13 @@
 
 import { Action } from "kbar/lib/types";
 import { BucketsIcon } from "mds";
-import { validRoutes } from "./valid-routes";
-import { IAM_PAGES } from "../../common/SecureComponent/permissions";
 import { Bucket } from "../../api/consoleApi";
 
 export const routesAsKbarActions = (
   buckets: Bucket[],
   navigate: (url: string) => void,
-  features?: string[],
 ) => {
   const initialActions: Action[] = [];
-  const allowedMenuItems = validRoutes(features);
-  for (const i of allowedMenuItems) {
-    if (i.children && i.children.length > 0) {
-      for (const childI of i.children) {
-        const a: Action = {
-          id: `${childI.id}`,
-          name: childI.name,
-          section: i.name,
-          perform: () => navigate(`${childI.path}`),
-          icon: childI.icon,
-        };
-        initialActions.push(a);
-      }
-    } else {
-      const a: Action = {
-        id: `${i.id}`,
-        name: i.name,
-        section: "Navigation",
-        perform: () => navigate(`${i.path}`),
-        icon: i.icon,
-      };
-      initialActions.push(a);
-    }
-  }
-
-  // Add additional actions
-  const a: Action = {
-    id: `create-bucket`,
-    name: "Create Bucket",
-    section: "Buckets",
-    perform: () => navigate(IAM_PAGES.ADD_BUCKETS),
-    icon: <BucketsIcon />,
-  };
-  initialActions.push(a);
 
   if (buckets) {
     buckets.map((buck) => [
