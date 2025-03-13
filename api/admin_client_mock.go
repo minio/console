@@ -22,14 +22,14 @@ import (
 	"github.com/minio/madmin-go/v3"
 )
 
-type AdminClientMock struct{}
-
-var minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
+type AdminClientMock struct {
+	minioAccountInfoMock func(ctx context.Context) (madmin.AccountInfo, error)
+}
 
 func (ac AdminClientMock) kmsStatus(_ context.Context) (madmin.KMSStatus, error) {
 	return madmin.KMSStatus{Name: "name", DefaultKeyID: "key", Endpoints: map[string]madmin.ItemState{"localhost": madmin.ItemState("online")}}, nil
 }
 
 func (ac AdminClientMock) AccountInfo(ctx context.Context) (madmin.AccountInfo, error) {
-	return minioAccountInfoMock(ctx)
+	return ac.minioAccountInfoMock(ctx)
 }

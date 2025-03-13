@@ -170,7 +170,7 @@ func Test_getAccountInfo(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 			mockFunc: func() {
-				minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
+				client.minioAccountInfoMock = func(_ context.Context) (madmin.AccountInfo, error) {
 					return madmin.AccountInfo{}, errors.New("something went wrong")
 				}
 			},
