@@ -42,29 +42,6 @@ const (
 	wsBasePath = "/ws"
 )
 
-// ConsoleWebsocketAdmin interface of a Websocket Client
-type ConsoleWebsocketAdmin interface {
-	trace()
-	console()
-}
-
-type wsAdminClient struct {
-	// websocket connection.
-	conn wsConn
-	// MinIO admin Client
-	client MinioAdmin
-}
-
-// ConsoleWebsocket interface of a Websocket Client
-type ConsoleWebsocket interface {
-	watch(options watchOptions)
-}
-
-// ConsoleWebSocketMClient interface of a Websocket Client
-type ConsoleWebsocketMClient interface {
-	objectManager(options objectsListOpts)
-}
-
 type wsMinioClient struct {
 	// websocket connection.
 	conn wsConn
@@ -253,26 +230,4 @@ func wsReadClientCtx(parentContext context.Context, conn WSConn) context.Context
 func closeWsConn(conn *websocket.Conn) {
 	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	conn.Close()
-}
-
-// sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
-// see https://tools.ietf.org/html/rfc6455#page-45
-func sendWsCloseMessage(conn WSConn, err error) {
-	if err != nil {
-		LogError("original ws error: %v", err)
-		// If connection exceeded read deadline send Close
-		// Message Policy Violation code since we don't want
-		// to let the receiver figure out the read deadline.
-		// This is a generic code designed if there is a
-		// need to hide specific details about the policy.
-		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
-			return
-		}
-		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
-		return
-	}
-	// normal closure
-	conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }
