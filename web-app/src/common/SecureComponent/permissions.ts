@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export const IAM_ROLES = {
+const IAM_ROLES = {
   BUCKET_OWNER: "BUCKET_OWNER", // upload/delete objects from the bucket
   BUCKET_VIEWER: "BUCKET_VIEWER", // only view objects on the bucket
   BUCKET_ADMIN: "BUCKET_ADMIN", // administrate the bucket
@@ -30,6 +30,7 @@ export const IAM_SCOPES = {
   S3_PUT_OBJECT: "s3:PutObject",
   S3_GET_ACTIONS: "s3:Get*",
   S3_PUT_ACTIONS: "s3:Put*",
+  S3_DELETE_ACTIONS: "s3:Delete*",
   S3_GET_OBJECT_LEGAL_HOLD: "s3:GetObjectLegalHold",
   S3_PUT_OBJECT_LEGAL_HOLD: "s3:PutObjectLegalHold",
   S3_DELETE_OBJECT: "s3:DeleteObject",
@@ -192,11 +193,12 @@ export const IAM_PAGES = {
 };
 
 // roles
-export const IAM_PERMISSIONS = {
+const IAM_PERMISSIONS = {
   [IAM_ROLES.BUCKET_OWNER]: [
     IAM_SCOPES.S3_PUT_OBJECT,
     IAM_SCOPES.S3_PUT_ACTIONS,
     IAM_SCOPES.S3_DELETE_OBJECT,
+    IAM_SCOPES.S3_DELETE_ACTIONS,
   ],
   [IAM_ROLES.BUCKET_VIEWER]: [
     IAM_SCOPES.S3_LIST_BUCKET,
@@ -395,7 +397,6 @@ export const IAM_PAGES_PERMISSIONS = {
   ],
 };
 
-export const S3_ALL_RESOURCES = "arn:aws:s3:::*";
 export const CONSOLE_UI_RESOURCE = "console-ui";
 
 export const permissionTooltipHelper = (scopes: string[], name: string) => {
@@ -413,106 +414,3 @@ export const permissionTooltipHelper = (scopes: string[], name: string) => {
     "."
   );
 };
-
-export const listUsersPermissions = [IAM_SCOPES.ADMIN_LIST_USERS];
-
-export const addUserToGroupPermissions = [IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP];
-
-export const deleteUserPermissions = [IAM_SCOPES.ADMIN_DELETE_USER];
-
-export const enableUserPermissions = [IAM_SCOPES.ADMIN_ENABLE_USER];
-
-export const disableUserPermissions = [IAM_SCOPES.ADMIN_DISABLE_USER];
-
-//note that adminUserPermissions does NOT include ADMIN_CREATE_USER to allow hiding the Users tab for users wtih only this permission as it is being applied by default
-export const adminUserPermissions = [
-  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-  IAM_SCOPES.ADMIN_LIST_USERS,
-  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-  IAM_SCOPES.ADMIN_LIST_USERS,
-  IAM_SCOPES.ADMIN_DELETE_USER,
-  IAM_SCOPES.ADMIN_ENABLE_USER,
-  IAM_SCOPES.ADMIN_DISABLE_USER,
-  IAM_SCOPES.ADMIN_GET_USER,
-  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-];
-
-export const assignIAMPolicyPermissions = [
-  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-  IAM_SCOPES.ADMIN_GET_POLICY,
-];
-
-export const assignGroupPermissions = [
-  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-  IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP,
-  IAM_SCOPES.ADMIN_LIST_GROUPS,
-  IAM_SCOPES.ADMIN_ENABLE_USER,
-];
-
-export const getGroupPermissions = [IAM_SCOPES.ADMIN_GET_GROUP];
-
-export const enableDisableUserPermissions = [
-  IAM_SCOPES.ADMIN_ENABLE_USER,
-  IAM_SCOPES.ADMIN_DISABLE_USER,
-];
-
-export const editServiceAccountPermissions = [
-  IAM_SCOPES.ADMIN_LIST_SERVICEACCOUNTS,
-  IAM_SCOPES.ADMIN_UPDATE_SERVICEACCOUNT,
-  IAM_SCOPES.ADMIN_REMOVE_SERVICEACCOUNT,
-];
-
-export const applyPolicyPermissions = [
-  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-];
-
-export const deleteGroupPermissions = [IAM_SCOPES.ADMIN_REMOVE_USER_FROM_GROUP];
-
-export const displayGroupsPermissions = [IAM_SCOPES.ADMIN_LIST_GROUPS];
-
-export const createGroupPermissions = [
-  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-  IAM_SCOPES.ADMIN_LIST_USERS,
-];
-
-export const viewUserPermissions = [
-  IAM_SCOPES.ADMIN_GET_USER,
-  IAM_SCOPES.ADMIN_LIST_USERS,
-];
-export const editGroupMembersPermissions = [
-  IAM_SCOPES.ADMIN_ADD_USER_TO_GROUP,
-  IAM_SCOPES.ADMIN_LIST_USERS,
-];
-export const setGroupPoliciesPermissions = [
-  IAM_SCOPES.ADMIN_ATTACH_USER_OR_GROUP_POLICY,
-  IAM_SCOPES.ADMIN_LIST_USER_POLICIES,
-];
-export const viewPolicyPermissions = [IAM_SCOPES.ADMIN_GET_POLICY];
-export const enableDisableGroupPermissions = [
-  IAM_SCOPES.ADMIN_ENABLE_GROUP,
-  IAM_SCOPES.ADMIN_DISABLE_GROUP,
-];
-export const createPolicyPermissions = [IAM_SCOPES.ADMIN_CREATE_POLICY];
-
-export const deletePolicyPermissions = [IAM_SCOPES.ADMIN_DELETE_POLICY];
-
-export const listPolicyPermissions = [IAM_SCOPES.ADMIN_LIST_USER_POLICIES];
-
-export const listGroupPermissions = [
-  IAM_SCOPES.ADMIN_LIST_GROUPS,
-  IAM_SCOPES.ADMIN_GET_GROUP,
-];
-
-export const deleteBucketPermissions = [
-  IAM_SCOPES.S3_DELETE_BUCKET,
-  IAM_SCOPES.S3_FORCE_DELETE_BUCKET,
-];
-
-export const browseBucketPermissions = [
-  IAM_SCOPES.S3_LIST_BUCKET,
-  IAM_SCOPES.S3_ALL_LIST_BUCKET,
-];

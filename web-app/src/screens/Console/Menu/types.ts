@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import { MenuItemProps } from "mds";
-
-export interface IMenuItem extends MenuItemProps {
-  forceDisplay?: boolean;
-  fsHidden?: boolean;
-  customPermissionFnc?: () => boolean;
-  children?: IMenuItem[];
-}
-
 export interface IRouteRule {
   component: any;
   path: string;

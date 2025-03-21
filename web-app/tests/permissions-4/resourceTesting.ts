@@ -21,6 +21,8 @@ import {
   cleanUpNamedBucketAndUploads,
   namedTestBucketBrowseButtonFor,
 } from "../utils/functions";
+import * as elements from "../utils/elements";
+import { acknowledgeButton } from "../utils/elements";
 
 fixture("Test resources policy").page("http://localhost:9090/");
 
@@ -66,7 +68,8 @@ test
     async (t) => {
       await t
         .useRole(roles.conditions2)
-        .navigateTo(`http://localhost:9090/browser`)
+        .click(acknowledgeButton)
+        .typeText(elements.filterBuckets, bucket1)
         .click(test1BucketBrowseButton)
         .wait(1500)
         .click(
@@ -122,7 +125,8 @@ test
   })("User can browse from first level as policy has wildcard", async (t) => {
     await t
       .useRole(roles.conditions1)
-      .navigateTo(`http://localhost:9090/browser`)
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, bucket1)
       .click(test1BucketBrowseButton)
       .wait(1500)
       .click(
@@ -186,7 +190,8 @@ test
   })("User can browse from sub levels as policy has wildcard", async (t) => {
     await t
       .useRole(roles.conditions3)
-      .navigateTo(`http://localhost:9090/browser`)
+      .click(acknowledgeButton)
+      .typeText(elements.filterBuckets, bucket3)
       .click(test3BucketBrowseButton)
       .wait(1500)
       .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))
@@ -206,6 +211,7 @@ test
       .expect(file.exists)
       .ok()
       .navigateTo(`http://localhost:9090/browser`)
+      .click(acknowledgeButton)
       .click(test3BucketBrowseButton)
       .wait(1500)
       .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))

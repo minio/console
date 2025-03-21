@@ -64,7 +64,7 @@ swagger-console:
 
 assets:
 	@(if [ -f "${NVM_DIR}/nvm.sh" ]; then \. "${NVM_DIR}/nvm.sh" && nvm install && nvm use && npm install -g yarn ; fi &&\
-	  cd web-app; corepack enable; yarn install --prefer-offline; make build-static; yarn prettier --write . --loglevel warn; cd ..)
+	  cd web-app; corepack enable; yarn install --prefer-offline; make build-static; yarn prettier --write . --log-level warn; cd ..)
 
 test-integration:
 	@(docker stop pgsqlcontainer || true)
@@ -204,11 +204,6 @@ test-permissions-3:
 test-permissions-4:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
 	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-4/")
-	@(docker stop minio)
-
-test-permissions-5:
-	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
-	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-5/")
 	@(docker stop minio)
 
 test-permissions-6:

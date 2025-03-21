@@ -26,7 +26,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7/pkg/replication"
 	"github.com/minio/minio-go/v7/pkg/sse"
 	xnet "github.com/minio/pkg/v3/net"
 
@@ -138,11 +137,6 @@ func (c minioClient) getBucketVersioning(ctx context.Context, bucketName string)
 	return c.client.GetBucketVersioning(ctx, bucketName)
 }
 
-// implements minio.getBucketVersioning(ctx, bucketName)
-func (c minioClient) getBucketReplication(ctx context.Context, bucketName string) (replication.Config, error) {
-	return c.client.GetBucketReplication(ctx, bucketName)
-}
-
 // implements minio.listObjects(ctx)
 func (c minioClient) listObjects(ctx context.Context, bucket string, opts minio.ListObjectsOptions) <-chan minio.ObjectInfo {
 	return c.client.ListObjects(ctx, bucket, opts)
@@ -245,14 +239,6 @@ func (c mcClient) removeNotificationConfig(ctx context.Context, arn string, even
 
 func (c mcClient) watch(ctx context.Context, options mc.WatchOptions) (*mc.WatchObject, *probe.Error) {
 	return c.client.Watch(ctx, options)
-}
-
-func (c mcClient) setReplication(ctx context.Context, cfg *replication.Config, opts replication.Options) *probe.Error {
-	return c.client.SetReplication(ctx, cfg, opts)
-}
-
-func (c mcClient) deleteAllReplicationRules(ctx context.Context) *probe.Error {
-	return c.client.RemoveReplication(ctx)
 }
 
 func (c mcClient) setVersioning(ctx context.Context, status string, excludePrefix []string, excludeFolders bool) *probe.Error {

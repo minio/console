@@ -43,77 +43,127 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
   {
     featureLabel: "",
     featurePlans: {
+      openSource: {
+        content: "GNU AGPL v3 License",
+      },
       eosPlus: {
-        content: "Commercial License",
+        content: "Enterprise License",
       },
     },
   },
   {
-    featureLabel: "",
+    featureLabel: "Best suited for",
     featurePlans: {
+      openSource: {
+        content: (
+          <div>
+            Test and Dev Use <br /> Intended for open source applications
+          </div>
+        ),
+      },
       eosPlus: {
-        content: "Enterprise Stable Release",
+        content: (
+          <div>
+            Production Use <br /> Intended for commercial applications
+          </div>
+        ),
       },
     },
   },
   {
-    featureLabel: "Additional Features",
+    featureLabel: "Support",
     featurePlans: {
+      openSource: {
+        content: "Community Support",
+      },
       eosPlus: {
         content:
-          "Global Console, Observability, Cache, Data Firewall, Key Management Server Catalog",
+          "SLA backed - 24/7/365, <4 hr response time, Instant SLA for P0 issues ",
       },
     },
   },
   {
-    featureLabel: "Long Term Release Support",
+    featureLabel: "Regulatory Compliance",
     featurePlans: {
+      openSource: {
+        content: "N/A",
+      },
       eosPlus: {
-        content: "5 years LTS",
+        content:
+          "FIPS 140-a Compliant, Pentest\n" +
+          "SOC2, ISO 27001, \n" +
+          "SEC 17a-4(f), FINRA 4511(c) and CFTC 1.31(c)-(d)\n" +
+          "\n",
       },
     },
   },
   {
-    featureLabel: "Support SLA",
+    featureLabel: "System Management",
     featurePlans: {
+      openSource: {
+        content: "CLI and API",
+      },
       eosPlus: {
-        content: "Less than 4 Hours",
+        content: "CLI, API and Graphical User Interface (GUI)",
       },
     },
   },
   {
-    featureLabel: "Panic button",
+    featureLabel: "Optimizations",
     featurePlans: {
+      openSource: {
+        content: "N/A",
+      },
       eosPlus: {
-        content: "Unlimited Panic Buttons Per Year",
+        content:
+          "Optimizations for Small Objects, Bulk Deletes, List Operations, Low TTFB, Distributed Cache",
       },
     },
   },
   {
-    featureLabel:
-      "Call Home Diagnostics, Health Check, Performance Benchmark, Security and Critical Vulnerabilities Notifications",
+    featureLabel: "Data Management",
     featurePlans: {
+      openSource: {
+        content: "S3, SFTP",
+      },
       eosPlus: {
-        content: "",
-        isCheck: true,
+        content: "S3, SFTP, GPU Direct, S3 over RDMA",
       },
     },
   },
   {
-    featureLabel: "Indemnification",
+    featureLabel: "Features",
     featurePlans: {
+      openSource: {
+        content: "Core Features",
+      },
       eosPlus: {
-        content: "",
-        isCheck: true,
+        content:
+          "Core Features, QoS, Metadata Search, Monitoring, Audit Logs, Load Balancer",
       },
     },
   },
   {
-    featureLabel: "Annual Review of Architecture, Performance and Security",
+    featureLabel: "Security",
     featurePlans: {
+      openSource: {
+        content: "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C)",
+      },
       eosPlus: {
-        content: "",
-        isCheck: true,
+        content:
+          "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C), Encryption Key Management Server, Data Firewall",
+      },
+    },
+  },
+  {
+    featureLabel: "Extra Features",
+    featurePlans: {
+      openSource: {
+        content: "N/A",
+      },
+      eosPlus: {
+        content:
+          "AI Features- Prompt Object, AI Hub, AI Studio, OpenAI Integration, Model Context Protocols for AI Agents",
       },
     },
   },
@@ -121,20 +171,22 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
 
 export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
   {
+    planId: "openSource",
+    planName: "MinIO Community Edition",
+    planType: "open-source",
+    planIcon: (
+      <ApplicationLogo applicationName={"console"} subVariant={"AGPL"} />
+    ),
+    planDescription: "",
+  },
+  {
     planId: "eosPlus",
-    planName: "Enterprise",
+    planName: "MinIO Enterprise Edition",
     planType: "commercial",
     planIcon: (
-      <ApplicationLogo applicationName={"minio"} subVariant={"enterpriseos"} />
+      <ApplicationLogo applicationName={"aistor"} subVariant={"enterprise"} />
     ),
-    planDescription: (
-      <span>
-        Designed for customers where a commercial license and the
-        strictest,engineer-backed SLA are required. It offers additional
-        features and operational capabilities, more interaction options and more
-        enterprise deliverables.
-      </span>
-    ),
+    planDescription: "",
   },
 ];
 
