@@ -42,29 +42,6 @@ const (
 	wsBasePath = "/ws"
 )
 
-// ConsoleWebsocketAdmin interface of a Websocket Client
-type ConsoleWebsocketAdmin interface {
-	trace()
-	console()
-}
-
-type wsAdminClient struct {
-	// websocket connection.
-	conn wsConn
-	// MinIO admin Client
-	client MinioAdmin
-}
-
-// ConsoleWebsocket interface of a Websocket Client
-type ConsoleWebsocket interface {
-	watch(options watchOptions)
-}
-
-// ConsoleWebSocketMClient interface of a Websocket Client
-type ConsoleWebsocketMClient interface {
-	objectManager(options objectsListOpts)
-}
-
 type wsMinioClient struct {
 	// websocket connection.
 	conn wsConn
@@ -87,26 +64,6 @@ type WSConn interface {
 // Define the structure of a websocket Connection
 type wsConn struct {
 	conn *websocket.Conn
-}
-
-// Types for trace request. this adds support for calls, threshold, status and extra filters
-type TraceRequest struct {
-	s3         bool
-	internal   bool
-	storage    bool
-	os         bool
-	threshold  int64
-	onlyErrors bool
-	statusCode int64
-	method     string
-	funcName   string
-	path       string
-}
-
-// Type for log requests. This allows for filtering by node and kind
-type LogRequest struct {
-	node    string
-	logType string
 }
 
 func (c wsConn) writeMessage(messageType int, data []byte) error {
@@ -176,22 +133,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 	}
 
 	switch {
-	case strings.HasPrefix(wsPath, `/console`):
-
-		wsAdminClient, err := newWebSocketAdminClient(conn, session, clientIP)
-		if err != nil {
-			ErrorWithContext(ctx, err)
-			closeWsConn(conn)
-			return
-		}
-		node := req.URL.Query().Get("node")
-		logType := req.URL.Query().Get("logType")
-
-		logRequestItem := LogRequest{
-			node:    node,
-			logType: logType,
-		}
-		go wsAdminClient.console(ctx, logRequestItem)
 	case strings.HasPrefix(wsPath, `/objectManager`):
 		wsMinioClient, err := newWebSocketMinioClient(conn, session, clientIP)
 		if err != nil {
@@ -205,28 +146,6 @@ func serveWS(w http.ResponseWriter, req *http.Request) {
 		// path not found
 		closeWsConn(conn)
 	}
-}
-
-// newWebSocketAdminClient returns a wsAdminClient authenticated as an admin user
-func newWebSocketAdminClient(conn *websocket.Conn, autClaims *models.Principal, clientIP string) (*wsAdminClient, error) {
-	// create a websocket connection interface implementation
-	// defining the connection to be used
-	wsConnection := wsConn{conn: conn}
-
-	// Only start Websocket Interaction after user has been
-	// authenticated with MinIO
-	mAdmin, err := newAdminFromClaims(autClaims, clientIP)
-	if err != nil {
-		LogError("error creating madmin client: %v", err)
-		return nil, err
-	}
-
-	// create a minioClient interface implementation
-	// defining the client to be used
-	adminClient := AdminClient{Client: mAdmin}
-	// create websocket client and handle request
-	wsAdminClient := &wsAdminClient{conn: wsConnection, client: adminClient}
-	return wsAdminClient, nil
 }
 
 func newWebSocketMinioClient(conn *websocket.Conn, claims *models.Principal, clientIP string) (*wsMinioClient, error) {
@@ -311,43 +230,4 @@ func wsReadClientCtx(parentContext context.Context, conn WSConn) context.Context
 func closeWsConn(conn *websocket.Conn) {
 	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	conn.Close()
-}
-
-// console serves madmin.GetLogs
-// on a Websocket connection.
-func (wsc *wsAdminClient) console(ctx context.Context, logRequestItem LogRequest) {
-	defer func() {
-		LogInfo("console logs stopped")
-		// close connection after return
-		wsc.conn.close()
-	}()
-	LogInfo("console logs started")
-
-	ctx = wsReadClientCtx(ctx, wsc.conn)
-
-	err := startConsoleLog(ctx, wsc.conn, wsc.client, logRequestItem)
-
-	sendWsCloseMessage(wsc.conn, err)
-}
-
-// sendWsCloseMessage sends Websocket Connection Close Message indicating the Status Code
-// see https://tools.ietf.org/html/rfc6455#page-45
-func sendWsCloseMessage(conn WSConn, err error) {
-	if err != nil {
-		LogError("original ws error: %v", err)
-		// If connection exceeded read deadline send Close
-		// Message Policy Violation code since we don't want
-		// to let the receiver figure out the read deadline.
-		// This is a generic code designed if there is a
-		// need to hide specific details about the policy.
-		if nErr, ok := err.(net.Error); ok && nErr.Timeout() {
-			conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.ClosePolicyViolation, ""))
-			return
-		}
-		// else, internal server error
-		conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseInternalServerErr, err.Error()))
-		return
-	}
-	// normal closure
-	conn.writeMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 }
