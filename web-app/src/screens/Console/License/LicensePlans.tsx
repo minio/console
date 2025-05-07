@@ -78,10 +78,10 @@ const LicensesInformation = styled.div(({ theme }) => ({
   },
   "& .planName": {
     fontWeight: 600,
-    fontSize: 35,
-    marginBottom: 30,
+    fontSize: 32,
+    marginBottom: 24,
     textAlign: "center",
-    marginTop: 10,
+    marginTop: 8,
   },
   "& .planIcon": {
     height: 100,
@@ -175,7 +175,7 @@ const LicensePlans = () => {
               </Box>
               <Box className={`feature-information  openSource ${lastItem}`}>
                 {renderFeatureInformation(
-                  feature.featurePlans.openSource || null,
+                  feature.featurePlans.openSource || null
                 )}
               </Box>
               <Box className={`feature-information ${lastItem}`}>
@@ -198,10 +198,8 @@ const LicensePlans = () => {
               {element &&
                 getButton(
                   `https://min.io/signup`,
-                  element.planType === "commercial"
-                    ? "Subscribe"
-                    : "Join Slack",
-                  element.planType === "commercial" ? "callAction" : "regular",
+                  element.planType === "commercial" ? "Upgrade" : "Join Slack",
+                  element.planType === "commercial" ? "callAction" : "regular"
                 )}
             </Box>
           );

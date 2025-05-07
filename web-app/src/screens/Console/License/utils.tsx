@@ -41,7 +41,7 @@ interface PlansFeatures {
 
 export const FEATURE_ITEMS: PlansFeatures[] = [
   {
-    featureLabel: "",
+    featureLabel: "License",
     featurePlans: {
       openSource: {
         content: "GNU AGPL v3 License",
@@ -52,21 +52,30 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
     },
   },
   {
-    featureLabel: "Best suited for",
+    featureLabel: "Intended Use",
     featurePlans: {
       openSource: {
-        content: (
-          <div>
-            Test and Dev Use <br /> Intended for open source applications
-          </div>
-        ),
+        content: <div>Test and Dev Use</div>,
       },
       eosPlus: {
         content: (
           <div>
-            Production Use <br /> Intended for commercial applications
+            Production Use <br /> (Site-Replication, Enterprise Grade Security,
+            Encryption and Key Management)
           </div>
         ),
+      },
+    },
+  },
+  {
+    featureLabel: "Features",
+    featurePlans: {
+      openSource: {
+        content: "Basic Features",
+      },
+      eosPlus: {
+        content:
+          "Basic Features, S3 Express, Non-Disruptive Upgrade, QoS, Catalog, Monitoring, Audit Logs, Health-Diagnostics, RDMA, GPU Direct, AI Features",
       },
     },
   },
@@ -97,17 +106,17 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
       },
     },
   },
-  {
-    featureLabel: "System Management",
-    featurePlans: {
-      openSource: {
-        content: "CLI and API",
-      },
-      eosPlus: {
-        content: "CLI, API and Graphical User Interface (GUI)",
-      },
-    },
-  },
+  // {
+  //   featureLabel: "System Management",
+  //   featurePlans: {
+  //     openSource: {
+  //       content: "CLI and API",
+  //     },
+  //     eosPlus: {
+  //       content: "CLI, API and Graphical User Interface (GUI)",
+  //     },
+  //   },
+  // },
   {
     featureLabel: "Optimizations",
     featurePlans: {
@@ -120,59 +129,59 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
       },
     },
   },
-  {
-    featureLabel: "Data Management",
-    featurePlans: {
-      openSource: {
-        content: "S3, SFTP",
-      },
-      eosPlus: {
-        content: "S3, SFTP, GPU Direct, S3 over RDMA",
-      },
-    },
-  },
-  {
-    featureLabel: "Features",
-    featurePlans: {
-      openSource: {
-        content: "Core Features",
-      },
-      eosPlus: {
-        content:
-          "Core Features, QoS, Metadata Search, Monitoring, Audit Logs, Load Balancer",
-      },
-    },
-  },
-  {
-    featureLabel: "Security",
-    featurePlans: {
-      openSource: {
-        content: "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C)",
-      },
-      eosPlus: {
-        content:
-          "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C), Encryption Key Management Server, Data Firewall",
-      },
-    },
-  },
-  {
-    featureLabel: "Extra Features",
-    featurePlans: {
-      openSource: {
-        content: "N/A",
-      },
-      eosPlus: {
-        content:
-          "AI Features- Prompt Object, AI Hub, AI Studio, OpenAI Integration, Model Context Protocols for AI Agents",
-      },
-    },
-  },
+  // {
+  //   featureLabel: "Data Management",
+  //   featurePlans: {
+  //     openSource: {
+  //       content: "S3, SFTP",
+  //     },
+  //     eosPlus: {
+  //       content: "S3, SFTP, GPU Direct, S3 over RDMA",
+  //     },
+  //   },
+  // },
+  // {
+  //   featureLabel: "Features",
+  //   featurePlans: {
+  //     openSource: {
+  //       content: "Core Features",
+  //     },
+  //     eosPlus: {
+  //       content:
+  //         "Core Features, QoS, Metadata Search, Monitoring, Audit Logs, Load Balancer",
+  //     },
+  //   },
+  // },
+  // {
+  //   featureLabel: "Security",
+  //   featurePlans: {
+  //     openSource: {
+  //       content: "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C)",
+  //     },
+  //     eosPlus: {
+  //       content:
+  //         "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C), Encryption Key Management Server, Data Firewall",
+  //     },
+  //   },
+  // },
+  // {
+  //   featureLabel: "Extra Features",
+  //   featurePlans: {
+  //     openSource: {
+  //       content: "N/A",
+  //     },
+  //     eosPlus: {
+  //       content:
+  //         "AI Features- Prompt Object, AI Hub, AI Studio, OpenAI Integration, Model Context Protocols for AI Agents",
+  //     },
+  //   },
+  // },
 ];
 
 export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
   {
     planId: "openSource",
-    planName: "MinIO Community Edition",
+    planName: "Community Edition",
     planType: "open-source",
     planIcon: (
       <ApplicationLogo applicationName={"console"} subVariant={"AGPL"} />
@@ -181,7 +190,7 @@ export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
   },
   {
     planId: "eosPlus",
-    planName: "MinIO Enterprise Edition",
+    planName: "Enterprise Edition",
     planType: "commercial",
     planIcon: (
       <ApplicationLogo applicationName={"aistor"} subVariant={"enterprise"} />
