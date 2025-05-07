@@ -1,5 +1,20 @@
 # Changelog
 
+## Release v2.0.0
+
+Community version is going back to be an object browser only.
+
+Bug Fix:
+
+- Fixed Dependencies vulnerabilities
+
+Deprecations:
+
+- Deprecated support of accounts & policies management, this can be managed by using mc admin commands. Please refer to the [MinIO Console User Management page](https://min.io/docs/minio/kubernetes/upstream/administration/identity-access-management/minio-user-management.html#id1) for more information.
+- Deprecated support of bucket management, this can be managed by using mc commands. Please refer to the [MinIO Client](https://min.io/docs/minio/linux/reference/minio-mc.html) for more information.
+- Deprecated support of configuration management, this can be managed by using mc admin config commands. Please refer to the [MinIO Client](https://min.io/docs/minio/linux/reference/minio-mc.html) for more information.
+
+
 ## Release v1.7.6
 
 Bug Fix:
