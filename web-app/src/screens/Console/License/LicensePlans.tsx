@@ -175,7 +175,7 @@ const LicensePlans = () => {
               </Box>
               <Box className={`feature-information  openSource ${lastItem}`}>
                 {renderFeatureInformation(
-                  feature.featurePlans.openSource || null
+                  feature.featurePlans.openSource || null,
                 )}
               </Box>
               <Box className={`feature-information ${lastItem}`}>
@@ -199,7 +199,7 @@ const LicensePlans = () => {
                 getButton(
                   `https://min.io/signup`,
                   element.planType === "commercial" ? "Upgrade" : "Join Slack",
-                  element.planType === "commercial" ? "callAction" : "regular"
+                  element.planType === "commercial" ? "callAction" : "regular",
                 )}
             </Box>
           );

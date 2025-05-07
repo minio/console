@@ -106,17 +106,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
       },
     },
   },
-  // {
-  //   featureLabel: "System Management",
-  //   featurePlans: {
-  //     openSource: {
-  //       content: "CLI and API",
-  //     },
-  //     eosPlus: {
-  //       content: "CLI, API and Graphical User Interface (GUI)",
-  //     },
-  //   },
-  // },
   {
     featureLabel: "Optimizations",
     featurePlans: {
@@ -129,53 +118,6 @@ export const FEATURE_ITEMS: PlansFeatures[] = [
       },
     },
   },
-  // {
-  //   featureLabel: "Data Management",
-  //   featurePlans: {
-  //     openSource: {
-  //       content: "S3, SFTP",
-  //     },
-  //     eosPlus: {
-  //       content: "S3, SFTP, GPU Direct, S3 over RDMA",
-  //     },
-  //   },
-  // },
-  // {
-  //   featureLabel: "Features",
-  //   featurePlans: {
-  //     openSource: {
-  //       content: "Core Features",
-  //     },
-  //     eosPlus: {
-  //       content:
-  //         "Core Features, QoS, Metadata Search, Monitoring, Audit Logs, Load Balancer",
-  //     },
-  //   },
-  // },
-  // {
-  //   featureLabel: "Security",
-  //   featurePlans: {
-  //     openSource: {
-  //       content: "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C)",
-  //     },
-  //     eosPlus: {
-  //       content:
-  //         "Server Side Encyrption (SSE-S3, SSE-KMS, SSE-C), Encryption Key Management Server, Data Firewall",
-  //     },
-  //   },
-  // },
-  // {
-  //   featureLabel: "Extra Features",
-  //   featurePlans: {
-  //     openSource: {
-  //       content: "N/A",
-  //     },
-  //     eosPlus: {
-  //       content:
-  //         "AI Features- Prompt Object, AI Hub, AI Studio, OpenAI Integration, Model Context Protocols for AI Agents",
-  //     },
-  //   },
-  // },
 ];
 
 export const LICENSE_PLANS_INFORMATION: LicensePlanOption[] = [
