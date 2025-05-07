@@ -78,10 +78,10 @@ const LicensesInformation = styled.div(({ theme }) => ({
   },
   "& .planName": {
     fontWeight: 600,
-    fontSize: 35,
-    marginBottom: 30,
+    fontSize: 32,
+    marginBottom: 24,
     textAlign: "center",
-    marginTop: 10,
+    marginTop: 8,
   },
   "& .planIcon": {
     height: 100,
@@ -198,9 +198,7 @@ const LicensePlans = () => {
               {element &&
                 getButton(
                   `https://min.io/signup`,
-                  element.planType === "commercial"
-                    ? "Subscribe"
-                    : "Join Slack",
+                  element.planType === "commercial" ? "Upgrade" : "Join Slack",
                   element.planType === "commercial" ? "callAction" : "regular",
                 )}
             </Box>
