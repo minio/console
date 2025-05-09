@@ -1509,6 +1509,17 @@ func init() {
         }
       }
     },
+    "loginResponse": {
+      "type": "object",
+      "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        }
+      }
+    },
     "logoutRequest": {
       "type": "object",
       "properties": {
@@ -3537,6 +3548,17 @@ func init() {
           "type": "string"
         },
         "sts": {
+          "type": "string"
+        }
+      }
+    },
+    "loginResponse": {
+      "type": "object",
+      "properties": {
+        "IDPRefreshToken": {
+          "type": "string"
+        },
+        "sessionId": {
           "type": "string"
         }
       }

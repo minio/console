@@ -133,6 +133,11 @@ export interface BucketQuota {
   type?: "hard";
 }
 
+export interface LoginResponse {
+  sessionId?: string;
+  IDPRefreshToken?: string;
+}
+
 export interface LoginDetails {
   loginStrategy?: "form" | "redirect" | "service-account" | "redirect-service-account";
   redirectRules?: RedirectRule[];
