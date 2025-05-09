@@ -484,36 +484,6 @@ func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName
 	return client.removeBucketEncryption(ctx, bucketName)
 }
 
-// setBucketRetentionConfig sets object lock configuration on a bucket
-func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketName string, mode models.ObjectRetentionMode, unit models.ObjectRetentionUnit, validity *int32) error {
-	if validity == nil {
-		return errors.New("retention validity can't be nil")
-	}
-
-	var retentionMode minio.RetentionMode
-	switch mode {
-	case models.ObjectRetentionModeGovernance:
-		retentionMode = minio.Governance
-	case models.ObjectRetentionModeCompliance:
-		retentionMode = minio.Compliance
-	default:
-		return errors.New("invalid retention mode")
-	}
-
-	var retentionUnit minio.ValidityUnit
-	switch unit {
-	case models.ObjectRetentionUnitDays:
-		retentionUnit = minio.Days
-	case models.ObjectRetentionUnitYears:
-		retentionUnit = minio.Years
-	default:
-		return errors.New("invalid retention unit")
-	}
-
-	retentionValidity := uint(*validity)
-	return client.setObjectLockConfig(ctx, bucketName, &retentionMode, &retentionValidity, &retentionUnit)
-}
-
 func getBucketRetentionConfig(ctx context.Context, client MinioClient, bucketName string) (*models.GetBucketRetentionConfig, error) {
 	m, v, u, err := client.getBucketObjectLockConfig(ctx, bucketName)
 	if err != nil {
