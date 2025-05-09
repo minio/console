@@ -45,7 +45,7 @@ type LoginDetails struct {
 	IsK8S bool `json:"isK8S,omitempty"`
 
 	// login strategy
-	// Enum: [form redirect service-account redirect-service-account]
+	// Enum: ["form","redirect","service-account","redirect-service-account"]
 	LoginStrategy string `json:"loginStrategy,omitempty"`
 
 	// redirect rules
