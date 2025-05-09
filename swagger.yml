@@ -25,7 +25,7 @@ securityDefinitions:
     type: apiKey
 # Apply the key security definition to all APIs
 security:
-  - key: []
+  - key: [ ]
 parameters:
   limit:
     name: limit
@@ -54,7 +54,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - Auth
     post:
@@ -74,7 +74,7 @@ paths:
           schema:
             $ref: "#/definitions/ApiError"
       # Exclude this API from the authentication requirement
-      security: []
+      security: [ ]
       tags:
         - Auth
   /login/oauth2/auth:
@@ -94,7 +94,7 @@ paths:
           description: Generic error response.
           schema:
             $ref: "#/definitions/ApiError"
-      security: []
+      security: [ ]
       tags:
         - Auth
 
@@ -195,8 +195,8 @@ paths:
     get:
       summary: List Objects
       security:
-        - key: []
-        - anonymous: []
+        - key: [ ]
+        - anonymous: [ ]
       operationId: ListObjects
       parameters:
         - name: bucket_name
@@ -311,8 +311,8 @@ paths:
     post:
       summary: Uploads an Object.
       security:
-        - key: []
-        - anonymous: []
+        - key: [ ]
+        - anonymous: [ ]
       consumes:
         - multipart/form-data
       parameters:
@@ -338,8 +338,8 @@ paths:
       summary: Download Multiple Objects
       operationId: DownloadMultipleObjects
       security:
-        - key: []
-        - anonymous: []
+        - key: [ ]
+        - anonymous: [ ]
       produces:
         - application/octet-stream
       parameters:
@@ -371,8 +371,8 @@ paths:
       summary: Download Object
       operationId: Download Object
       security:
-        - key: []
-        - anonymous: []
+        - key: [ ]
+        - anonymous: [ ]
       produces:
         - application/octet-stream
       parameters:
@@ -722,7 +722,7 @@ paths:
     get:
       summary: Downloads an object from a presigned url
       operationId: DownloadSharedObject
-      security: []
+      security: [ ]
       produces:
         - application/octet-stream
       parameters:
@@ -743,35 +743,6 @@ paths:
         - Public
 
 definitions:
-  accountChangePasswordRequest:
-    type: object
-    required:
-      - current_secret_key
-      - new_secret_key
-    properties:
-      current_secret_key:
-        type: string
-      new_secret_key:
-        type: string
-
-  changeUserPasswordRequest:
-    type: object
-    required:
-      - selectedUser
-      - newSecretKey
-    properties:
-      selectedUser:
-        type: string
-      newSecretKey:
-        type: string
-
-  bucketEncryptionType:
-    type: string
-    enum:
-      - sse-s3
-      - sse-kms
-    default: sse-s3
-
   bucketAccess:
     type: string
     enum:
@@ -779,16 +750,6 @@ definitions:
       - PUBLIC
       - CUSTOM
     default: PRIVATE
-
-  userServiceAccountItem:
-    type: object
-    properties:
-      userName:
-        type: string
-      numSAs:
-        type: integer
-        format: int64
-
   bucket:
     type: object
     required:
@@ -842,22 +803,6 @@ definitions:
       creation_date:
         type: string
 
-  bucketEncryptionRequest:
-    type: object
-    properties:
-      encType:
-        $ref: "#/definitions/bucketEncryptionType"
-      kmsKeyID:
-        type: string
-
-  bucketEncryptionInfo:
-    type: object
-    properties:
-      kmsMasterKeyID:
-        type: string
-      algorithm:
-        type: string
-
   listBucketsResponse:
     type: object
     properties:
@@ -870,18 +815,26 @@ definitions:
         type: integer
         format: int64
         title: number of buckets accessible to the user
-
-  userServiceAccountSummary:
+  objectRetentionUnit:
+    type: string
+    enum:
+      - days
+      - years
+  objectRetentionMode:
+    type: string
+    enum:
+      - governance
+      - compliance
+  getBucketRetentionConfig:
     type: object
     properties:
-      userServiceAccountList:
-        type: array
-        items:
-          $ref: "#/definitions/userServiceAccountItem"
-        title: list of users with number of service accounts
-      hasSA:
-        type: boolean
-
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
   listObjectsResponse:
     type: object
     properties:
@@ -982,542 +935,10 @@ definitions:
         items:
           $ref: "#/definitions/user"
         title: list of resulting users
-  selectedUsers:
-    type: array
-    items:
-      type: string
-  addUserRequest:
-    type: object
-    required:
-      - accessKey
-      - secretKey
-      - groups
-      - policies
-    properties:
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-      groups:
-        type: array
-        items:
-          type: string
-      policies:
-        type: array
-        items:
-          type: string
-  group:
-    type: object
-    properties:
-      name:
-        type: string
-      status:
-        type: string
-      members:
-        type: array
-        items:
-          type: string
-      policy:
-        type: string
-  addGroupRequest:
-    type: object
-    required:
-      - group
-      - members
-    properties:
-      group:
-        type: string
-      members:
-        type: array
-        items:
-          type: string
-  listGroupsResponse:
-    type: object
-    properties:
-      groups:
-        type: array
-        items:
-          type: string
-        title: list of groups
-      total:
-        type: integer
-        format: int64
-        title: total number of groups
-  policy:
-    type: object
-    properties:
-      name:
-        type: string
-      policy:
-        type: string
-  policyEntity:
-    type: string
-    enum:
-      - user
-      - group
-    default: user
-  setPolicyRequest:
-    type: object
-    required:
-      - entityType
-      - entityName
-    properties:
-      entityType:
-        $ref: "#/definitions/policyEntity"
-      entityName:
-        type: string
-
-  setPolicyNameRequest:
-    type: object
-    required:
-      - name
-      - entityType
-      - entityName
-    properties:
-      name:
-        type: array
-        items:
-          type: string
-      entityType:
-        $ref: "#/definitions/policyEntity"
-      entityName:
-        type: string
-
-  setPolicyMultipleNameRequest:
-    type: object
-    properties:
-      name:
-        type: array
-        items:
-          type: string
-      users:
-        type: array
-        items:
-          $ref: "#/definitions/iamEntity"
-      groups:
-        type: array
-        items:
-          $ref: "#/definitions/iamEntity"
-
-  iamEntity:
-    type: string
-
-  addPolicyRequest:
-    type: object
-    required:
-      - name
-      - policy
-    properties:
-      name:
-        type: string
-      policy:
-        type: string
-
-  updateServiceAccountRequest:
-    type: object
-    required:
-      - policy
-    properties:
-      policy:
-        type: string
-      secretKey:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      expiry:
-        type: string
-      status:
-        type: string
-
-  listPoliciesResponse:
-    type: object
-    properties:
-      policies:
-        type: array
-        items:
-          $ref: "#/definitions/policy"
-        title: list of policies
-      total:
-        type: integer
-        format: int64
-        title: total number of policies
-
-  listAccessRulesResponse:
-    type: object
-    properties:
-      accessRules:
-        type: array
-        items:
-          $ref: "#/definitions/accessRule"
-        title: list of policies
-      total:
-        type: integer
-        format: int64
-        title: total number of policies
-
-  accessRule:
-    type: object
-    properties:
-      prefix:
-        type: string
-      access:
-        type: string
-
-  updateGroupRequest:
-    type: object
-    required:
-      - members
-      - status
-    properties:
-      members:
-        type: array
-        items:
-          type: string
-      status:
-        type: string
-  configDescription:
-    type: object
-    properties:
-      key:
-        type: string
-      description:
-        type: string
-  configurationKV:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-      env_override:
-        $ref: "#/definitions/envOverride"
-  envOverride:
-    type: object
-    properties:
-      name:
-        type: string
-      value:
-        type: string
-  configuration:
-    type: object
-    properties:
-      name:
-        type: string
-      key_values:
-        type: array
-        items:
-          $ref: "#/definitions/configurationKV"
-  listConfigResponse:
-    type: object
-    properties:
-      configurations:
-        type: array
-        items:
-          $ref: "#/definitions/configDescription"
-      total:
-        type: integer
-        format: int64
-        title: total number of configurations
-  setConfigRequest:
-    type: object
-    required:
-      - key_values
-    properties:
-      key_values:
-        type: array
-        minItems: 1
-        items:
-          $ref: "#/definitions/configurationKV"
-      arn_resource_id:
-        type: string
-        title: Used if configuration is an event notification's target
-  notificationEventType:
-    type: string
-    enum:
-      - put
-      - delete
-      - get
-      - replica
-      - ilm
-      - scanner
-  notificationConfig:
-    type: object
-    required:
-      - arn
-    properties:
-      id:
-        type: string
-      arn:
-        type: string
-      events:
-        type: array
-        items:
-          $ref: "#/definitions/notificationEventType"
-        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
-      prefix:
-        type: string
-        title: "filter event associated to the specified prefix"
-      suffix:
-        type: string
-        title: "filter event associated to the specified suffix"
-  notificationDeleteRequest:
-    type: object
-    required:
-      - events
-      - prefix
-      - suffix
-    properties:
-      events:
-        type: array
-        minLength: 1
-        items:
-          $ref: "#/definitions/notificationEventType"
-        title: "filter specific type of event. Defaults to all event (default: '[put,delete,get]')"
-      prefix:
-        type: string
-        title: "filter event associated to the specified prefix"
-      suffix:
-        type: string
-        title: "filter event associated to the specified suffix"
-  bucketEventRequest:
-    type: object
-    required:
-      - configuration
-    properties:
-      configuration:
-        $ref: "#/definitions/notificationConfig"
-      ignoreExisting:
-        type: boolean
-  bucketReplicationDestination:
-    type: object
-    properties:
-      bucket:
-        type: string
-  bucketReplicationRule:
-    type: object
-    properties:
-      id:
-        type: string
-      status:
-        type: string
-        enum:
-          - Enabled
-          - Disabled
-      priority:
-        type: integer
-        format: int32
-      syncMode:
-        type: string
-        enum:
-          - async
-          - sync
-        default: async
-      bandwidth:
-        type: string
-      healthCheckPeriod:
-        type: integer
-      delete_marker_replication:
-        type: boolean
-      deletes_replication:
-        type: boolean
-      existingObjects:
-        type: boolean
-      metadata_replication:
-        type: boolean
-      prefix:
-        type: string
-      tags:
-        type: string
-      storageClass:
-        type: string
-      destination:
-        $ref: "#/definitions/bucketReplicationDestination"
-
-  bucketReplicationRuleList:
-    type: object
-    properties:
-      rules:
-        type: array
-        items:
-          type: string
-
-  bucketReplicationResponse:
-    type: object
-    properties:
-      rules:
-        type: array
-        items:
-          $ref: "#/definitions/bucketReplicationRule"
-    # missing
-    #  "Filter": {
-    #   "And": {},
-    #   "Tag": {}
-    #  }
-    # }
-    #}
-
-  listExternalBucketsParams:
-    required:
-      - accessKey
-      - secretKey
-      - targetURL
-      - useTLS
-    properties:
-      accessKey:
-        type: string
-        minLength: 3
-      secretKey:
-        type: string
-        minLength: 8
-      targetURL:
-        type: string
-      useTLS:
-        type: boolean
-      region:
-        type: string
-
-  multiBucketReplication:
-    required:
-      - accessKey
-      - secretKey
-      - targetURL
-      - bucketsRelation
-    properties:
-      accessKey:
-        type: string
-        minLength: 3
-      secretKey:
-        type: string
-        minLength: 8
-      targetURL:
-        type: string
-      region:
-        type: string
-      syncMode:
-        type: string
-        enum:
-          - async
-          - sync
-        default: async
-      bandwidth:
-        type: integer
-        format: int64
-      healthCheckPeriod:
-        type: integer
-        format: int32
-      prefix:
-        type: string
-      tags:
-        type: string
-      replicateExistingObjects:
-        type: boolean
-      replicateDeleteMarkers:
-        type: boolean
-      replicateDeletes:
-        type: boolean
-      replicateMetadata:
-        type: boolean
-      priority:
-        type: integer
-        format: int32
-        default: 0
-      storageClass:
-        type: string
-        default: ""
-      bucketsRelation:
-        type: array
-        minLength: 1
-        items:
-          $ref: "#/definitions/multiBucketsRelation"
-
-  multiBucketReplicationEdit:
-    properties:
-      ruleState:
-        type: boolean
-      arn:
-        type: string
-      prefix:
-        type: string
-      tags:
-        type: string
-        default: ""
-      replicateDeleteMarkers:
-        type: boolean
-      replicateDeletes:
-        type: boolean
-      replicateMetadata:
-        type: boolean
-      replicateExistingObjects:
-        type: boolean
-      priority:
-        type: integer
-        format: int32
-        default: 0
-      storageClass:
-        type: string
-        default: ""
-
-  multiBucketsRelation:
-    type: object
-    properties:
-      originBucket:
-        type: string
-      destinationBucket:
-        type: string
-
-  multiBucketResponseItem:
-    type: object
-    properties:
-      originBucket:
-        type: string
-      targetBucket:
-        type: string
-      errorString:
-        type: string
-
-  multiBucketResponseState:
-    type: object
-    properties:
-      replicationState:
-        type: array
-        items:
-          $ref: "#/definitions/multiBucketResponseItem"
-
-  addBucketReplication:
-    type: object
-    properties:
-      arn:
-        type: string
-      destination_bucket:
-        type: string
-
   makeBucketsResponse:
     type: object
     properties:
       bucketName:
-        type: string
-
-  listBucketEventsResponse:
-    type: object
-    properties:
-      events:
-        type: array
-        items:
-          $ref: "#/definitions/notificationConfig"
-      total:
-        type: integer
-        format: int64
-        title: total number of bucket events
-  setBucketPolicyRequest:
-    type: object
-    required:
-      - access
-    properties:
-      access:
-        $ref: "#/definitions/bucketAccess"
-      definition:
         type: string
   bucketQuota:
     type: object
@@ -1528,25 +949,19 @@ definitions:
         type: string
         enum:
           - hard
-  setBucketQuota:
+  loginResponse:
     type: object
-    required:
-      - enabled
     properties:
-      enabled:
-        type: boolean
-      quota_type:
+      sessionId:
         type: string
-        enum:
-          - hard
-      amount:
-        type: integer
+      IDPRefreshToken:
+        type: string
   loginDetails:
     type: object
     properties:
       loginStrategy:
         type: string
-        enum: [form, redirect, service-account, redirect-service-account]
+        enum: [ form, redirect, service-account, redirect-service-account ]
       redirectRules:
         type: array
         items:
@@ -1579,13 +994,6 @@ definitions:
         properties:
           hide_menu:
             type: boolean
-  loginResponse:
-    type: object
-    properties:
-      sessionId:
-        type: string
-      IDPRefreshToken:
-        type: string
   logoutRequest:
     type: object
     properties:
@@ -1609,33 +1017,6 @@ definitions:
         type: boolean
       customStyleOb:
         type: string
-  startProfilingItem:
-    type: object
-    properties:
-      nodeName:
-        type: string
-      success:
-        type: boolean
-      error:
-        type: string
-  startProfilingList:
-    type: object
-    properties:
-      total:
-        type: integer
-        format: int64
-        title: number of start results
-      startResults:
-        type: array
-        items:
-          $ref: "#/definitions/startProfilingItem"
-  profilingStartRequest:
-    type: object
-    required:
-      - type
-    properties:
-      type:
-        type: string
   sessionResponse:
     type: object
     properties:
@@ -1645,7 +1026,7 @@ definitions:
           type: string
       status:
         type: string
-        enum: [ok]
+        enum: [ ok ]
       operator:
         type: boolean
       distributedMode:
@@ -1676,7 +1057,7 @@ definitions:
           type: string
       values:
         type: array
-        items: {}
+        items: { }
   resultTarget:
     type: object
     properties:
@@ -1689,30 +1070,6 @@ definitions:
         items:
           $ref: "#/definitions/widgetResult"
   widget:
-    type: object
-    properties:
-      title:
-        type: string
-      type:
-        type: string
-      id:
-        type: integer
-        format: int32
-      options:
-        type: object
-        properties:
-          reduceOptions:
-            type: object
-            properties:
-              calcs:
-                type: array
-                items:
-                  type: string
-      targets:
-        type: array
-        items:
-          $ref: "#/definitions/resultTarget"
-  widgetDetails:
     type: object
     properties:
       title:
@@ -1820,372 +1177,6 @@ definitions:
         type: integer
       offlineDrives:
         type: integer
-  arnsResponse:
-    type: object
-    properties:
-      arns:
-        type: array
-        items:
-          type: string
-  updateUserGroups:
-    type: object
-    required:
-      - groups
-    properties:
-      groups:
-        type: array
-        items:
-          type: string
-  nofiticationService:
-    type: string
-    enum:
-      - webhook
-      - amqp
-      - kafka
-      - mqtt
-      - nats
-      - nsq
-      - mysql
-      - postgres
-      - elasticsearch
-      - redis
-  notificationEndpointItem:
-    type: object
-    properties:
-      service:
-        $ref: "#/definitions/nofiticationService"
-      account_id:
-        type: string
-      status:
-        type: string
-  notificationEndpoint:
-    type: object
-    required:
-      - service
-      - account_id
-      - properties
-    properties:
-      service:
-        $ref: "#/definitions/nofiticationService"
-      account_id:
-        type: string
-      properties:
-        type: object
-        additionalProperties:
-          type: string
-  setNotificationEndpointResponse:
-    type: object
-    required:
-      - service
-      - account_id
-      - properties
-    properties:
-      service:
-        $ref: "#/definitions/nofiticationService"
-      account_id:
-        type: string
-      properties:
-        type: object
-        additionalProperties:
-          type: string
-      restart:
-        type: boolean
-  notifEndpointResponse:
-    type: object
-    properties:
-      notification_endpoints:
-        type: array
-        items:
-          $ref: "#/definitions/notificationEndpointItem"
-
-  peerSiteRemoveResponse:
-    type: object
-    properties:
-      status:
-        type: string
-      errorDetail:
-        type: string
-
-  peerSiteEditResponse:
-    type: object
-    properties:
-      success:
-        type: boolean
-      status:
-        type: string
-      errorDetail:
-        type: string
-
-  peerSite:
-    type: object
-    properties:
-      name:
-        type: string
-      endpoint:
-        type: string
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-
-  peerInfo:
-    type: object
-    properties:
-      endpoint:
-        type: string
-      name:
-        type: string
-      deploymentID:
-        type: string
-
-  peerInfoRemove:
-    type: object
-    required:
-      - sites
-    properties:
-      all:
-        type: boolean
-      sites:
-        type: array
-        items:
-          type: string
-
-  siteReplicationAddRequest:
-    type: array
-    items:
-      $ref: "#/definitions/peerSite"
-
-  siteReplicationAddResponse:
-    type: object
-    properties:
-      success:
-        type: boolean
-      status:
-        type: string
-      errorDetail:
-        type: string
-      initialSyncErrorMessage:
-        type: string
-
-  siteReplicationInfoResponse:
-    type: object
-    properties:
-      enabled:
-        type: boolean
-      name:
-        type: string
-      sites:
-        type: array
-        items:
-          $ref: "#/definitions/peerInfo"
-      serviceAccountAccessKey:
-        type: string
-
-  siteReplicationStatusResponse:
-    type: object
-    properties:
-      enabled:
-        type: boolean
-      maxBuckets:
-        type: integer
-      maxUsers:
-        type: integer
-      maxGroups:
-        type: integer
-      maxPolicies:
-        type: integer
-      sites:
-        type: object
-      statsSummary:
-        type: object
-      bucketStats:
-        type: object
-      policyStats:
-        type: object
-      userStats:
-        type: object
-      groupStats:
-        type: object
-
-  updateUser:
-    type: object
-    required:
-      - status
-      - groups
-    properties:
-      status:
-        type: string
-      groups:
-        type: array
-        items:
-          type: string
-  bulkUserGroups:
-    type: object
-    required:
-      - users
-      - groups
-    properties:
-      users:
-        type: array
-        items:
-          type: string
-      groups:
-        type: array
-        items:
-          type: string
-  serviceAccount:
-    type: object
-    properties:
-      parentUser:
-        type: string
-      accountStatus:
-        type: string
-      impliedPolicy:
-        type: boolean
-      policy:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      expiration:
-        type: string
-  serviceAccounts:
-    type: array
-    items:
-      type: object
-      properties:
-        accountStatus:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
-        expiration:
-          type: string
-        accessKey:
-          type: string
-
-  serviceAccountRequest:
-    type: object
-    properties:
-      policy:
-        type: string
-        title: "policy to be applied to the Service Account if any"
-      name:
-        type: string
-      description:
-        type: string
-      expiry:
-        type: string
-      comment:
-        type: string
-  serviceAccountRequestCreds:
-    type: object
-    properties:
-      policy:
-        type: string
-        title: "policy to be applied to the Service Account if any"
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-      name:
-        type: string
-      description:
-        type: string
-      expiry:
-        type: string
-      comment:
-        type: string
-  serviceAccountCreds:
-    type: object
-    properties:
-      accessKey:
-        type: string
-      secretKey:
-        type: string
-      url:
-        type: string
-  remoteBucket:
-    type: object
-    required:
-      - accessKey
-      - sourceBucket
-      - remoteARN
-    properties:
-      accessKey:
-        type: string
-        minLength: 3
-      secretKey:
-        type: string
-        minLength: 8
-      sourceBucket:
-        type: string
-      targetURL:
-        type: string
-      targetBucket:
-        type: string
-      remoteARN:
-        type: string
-      status:
-        type: string
-      service:
-        type: string
-        enum: [replication]
-      syncMode:
-        type: string
-      bandwidth:
-        type: integer
-        format: int64
-      healthCheckPeriod:
-        type: integer
-  createRemoteBucket:
-    required:
-      - accessKey
-      - secretKey
-      - targetURL
-      - sourceBucket
-      - targetBucket
-    properties:
-      accessKey:
-        type: string
-        minLength: 3
-      secretKey:
-        type: string
-        minLength: 8
-      targetURL:
-        type: string
-      sourceBucket:
-        type: string
-      targetBucket:
-        type: string
-      region:
-        type: string
-      syncMode:
-        type: string
-        enum:
-          - async
-          - sync
-        default: async
-      bandwidth:
-        type: integer
-        format: int64
-      healthCheckPeriod:
-        type: integer
-        format: int32
-  listRemoteBucketsResponse:
-    type: object
-    properties:
-      buckets:
-        type: array
-        items:
-          $ref: "#/definitions/remoteBucket"
-        title: list of remote buckets
-      total:
-        type: integer
-        format: int64
-        title: number of remote buckets accessible to user
   bucketVersioningResponse:
     type: object
     properties:
@@ -2215,53 +1206,6 @@ definitions:
           type: string
       excludeFolders:
         type: boolean
-
-  bucketObLockingResponse:
-    type: object
-    properties:
-      object_locking_enabled:
-        type: boolean
-
-  logSearchResponse:
-    type: object
-    properties:
-      results:
-        type: object
-        title: list of log search responses
-
-  objectLegalHoldStatus:
-    type: string
-    enum:
-      - enabled
-      - disabled
-
-  putObjectLegalHoldRequest:
-    type: object
-    required:
-      - status
-    properties:
-      status:
-        $ref: "#/definitions/objectLegalHoldStatus"
-
-  objectRetentionMode:
-    type: string
-    enum:
-      - governance
-      - compliance
-
-  putObjectRetentionRequest:
-    type: object
-    required:
-      - mode
-      - expires
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      expires:
-        type: string
-      governance_bypass:
-        type: boolean
-
   putObjectTagsRequest:
     type: object
     properties:
@@ -2275,111 +1219,7 @@ definitions:
       tags:
         additionalProperties:
           type: string
-
-  objectRetentionUnit:
-    type: string
-    enum:
-      - days
-      - years
-
-  putBucketRetentionRequest:
-    type: object
-    required:
-      - mode
-      - unit
-      - validity
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      unit:
-        $ref: "#/definitions/objectRetentionUnit"
-      validity:
-        type: integer
-        format: int32
-
-  getBucketRetentionConfig:
-    type: object
-    properties:
-      mode:
-        $ref: "#/definitions/objectRetentionMode"
-      unit:
-        $ref: "#/definitions/objectRetentionUnit"
-      validity:
-        type: integer
-        format: int32
-
-  prefixAccessPair:
-    type: object
-    properties:
-      prefix:
-        type: string
-      access:
-        type: string
-
-  prefixWrapper:
-    type: object
-    properties:
-      prefix:
-        type: string
-
-  setConfigResponse:
-    type: object
-    properties:
-      restart:
-        description: Returns wheter server needs to restart to apply changes or not
-        type: boolean
-
-  configExportResponse:
-    type: object
-    properties:
-      value:
-        description: Returns base64 encoded value
-        type: string
-      status:
-        type: string
-
-  license:
-    type: object
-    properties:
-      email:
-        type: string
-      organization:
-        type: string
-      account_id:
-        type: integer
-      storage_capacity:
-        type: integer
-      plan:
-        type: string
-      expires_at:
-        type: string
-  apiKey:
-    type: object
-    properties:
-      apiKey:
-        type: string
-
-  policyArgs:
-    type: object
-    properties:
-      id:
-        type: string
-      action:
-        type: string
-      bucket_name:
-        type: string
-
   deleteFile:
-    type: object
-    properties:
-      path:
-        type: string
-      versionID:
-        type: string
-      recursive:
-        type: boolean
-
-  userSAs:
     type: object
     properties:
       path:
@@ -2415,35 +1255,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/rewindItem"
-
-  iamPolicy:
-    type: object
-    properties:
-      version:
-        type: string
-      statement:
-        type: array
-        items:
-          $ref: "#/definitions/iamPolicyStatement"
-
-  iamPolicyStatement:
-    type: object
-    properties:
-      effect:
-        type: string
-      action:
-        type: array
-        items:
-          type: string
-      resource:
-        type: array
-        items:
-          type: string
-      condition:
-        type: object
-        additionalProperties:
-          type: object
-
   metadata:
     type: object
     properties:
@@ -2462,144 +1273,6 @@ definitions:
         type: array
         items:
           type: string
-
-  aUserPolicyResponse:
-    type: object
-    properties:
-      policy:
-        type: string
-
-  kmsStatusResponse:
-    type: object
-    properties:
-      name:
-        type: string
-      defaultKeyID:
-        type: string
-      endpoints:
-        type: array
-        items:
-          $ref: "#/definitions/kmsEndpoint"
-  kmsEndpoint:
-    type: object
-    properties:
-      url:
-        type: string
-      status:
-        type: string
-
-  kmsKeyStatusResponse:
-    type: object
-    properties:
-      keyID:
-        type: string
-      encryptionErr:
-        type: string
-      decryptionErr:
-        type: string
-  kmsCreateKeyRequest:
-    type: object
-    required:
-      - key
-    properties:
-      key:
-        type: string
-  kmsListKeysResponse:
-    type: object
-    properties:
-      results:
-        type: array
-        items:
-          $ref: "#/definitions/kmsKeyInfo"
-  kmsKeyInfo:
-    type: object
-    properties:
-      name:
-        type: string
-      createdAt:
-        type: string
-      createdBy:
-        type: string
-
-  kmsMetricsResponse:
-    type: object
-    required:
-      - requestOK
-      - requestErr
-      - requestFail
-      - requestActive
-      - auditEvents
-      - errorEvents
-      - latencyHistogram
-      - uptime
-      - cpus
-      - usableCPUs
-      - threads
-      - heapAlloc
-      - stackAlloc
-    properties:
-      requestOK:
-        type: integer
-      requestErr:
-        type: integer
-      requestFail:
-        type: integer
-      requestActive:
-        type: integer
-      auditEvents:
-        type: integer
-      errorEvents:
-        type: integer
-      latencyHistogram:
-        type: array
-        items:
-          $ref: "#/definitions/kmsLatencyHistogram"
-      uptime:
-        type: integer
-      cpus:
-        type: integer
-      usableCPUs:
-        type: integer
-      threads:
-        type: integer
-      heapAlloc:
-        type: integer
-      heapObjects:
-        type: integer
-      stackAlloc:
-        type: integer
-  kmsLatencyHistogram:
-    type: object
-    properties:
-      duration:
-        type: integer
-      total:
-        type: integer
-
-  kmsAPIsResponse:
-    type: object
-    properties:
-      results:
-        type: array
-        items:
-          $ref: "#/definitions/kmsAPI"
-  kmsAPI:
-    type: object
-    properties:
-      method:
-        type: string
-      path:
-        type: string
-      maxBody:
-        type: integer
-      timeout:
-        type: integer
-  kmsVersionResponse:
-    type: object
-    properties:
-      version:
-        type: string
-
   environmentConstants:
     type: object
     properties:
@@ -2618,230 +1291,6 @@ definitions:
       serviceType:
         type: string
 
-  idpServerConfiguration:
-    type: object
-    properties:
-      name:
-        type: string
-      input:
-        type: string
-      type:
-        type: string
-      enabled:
-        type: boolean
-      info:
-        type: array
-        items:
-          $ref: "#/definitions/idpServerConfigurationInfo"
-  idpServerConfigurationInfo:
-    type: object
-    properties:
-      key:
-        type: string
-      value:
-        type: string
-      isCfg:
-        type: boolean
-      isEnv:
-        type: boolean
-  idpListConfigurationsResponse:
-    type: object
-    properties:
-      results:
-        type: array
-        items:
-          $ref: "#/definitions/idpServerConfiguration"
-  setIDPResponse:
-    type: object
-    properties:
-      restart:
-        type: boolean
-
-  releaseListResponse:
-    type: object
-    properties:
-      results:
-        type: array
-        items:
-          $ref: "#/definitions/releaseInfo"
-  releaseInfo:
-    type: object
-    properties:
-      metadata:
-        $ref: "#/definitions/releaseMetadata"
-      notesContent:
-        type: string
-      securityContent:
-        type: string
-      breakingChangesContent:
-        type: string
-      contextContent:
-        type: string
-      newFeaturesContent:
-        type: string
-
-  releaseMetadata:
-    type: object
-    properties:
-      tag_name:
-        type: string
-      target_commitish:
-        type: string
-      name:
-        type: string
-      draft:
-        type: boolean
-      prerelease:
-        type: boolean
-      id:
-        type: integer
-      created_at:
-        type: string
-      published_at:
-        type: string
-      url:
-        type: string
-      html_url:
-        type: string
-      assets_url:
-        type: string
-      upload_url:
-        type: string
-      zipball_url:
-        type: string
-      tarball_url:
-        type: string
-      author:
-        $ref: "#/definitions/releaseAuthor"
-      node_id:
-        type: string
-  releaseAuthor:
-    type: object
-    properties:
-      login:
-        type: string
-      id:
-        type: integer
-      node_id:
-        type: string
-      avatar_url:
-        type: string
-      html_url:
-        type: string
-      gravatar_id:
-        type: string
-      type:
-        type: string
-      site_admin:
-        type: boolean
-      url:
-        type: string
-      events_url:
-        type: string
-      following_url:
-        type: string
-      followers_url:
-        type: string
-      gists_url:
-        type: string
-      organizations_url:
-        type: string
-      receivedEvents_url:
-        type: string
-      repos_url:
-        type: string
-      starred_url:
-        type: string
-      subscriptions_url:
-        type: string
-
-  callHomeGetResponse:
-    type: object
-    properties:
-      diagnosticsStatus:
-        type: boolean
-      logsStatus:
-        type: boolean
-
-  callHomeSetStatus:
-    type: object
-    required:
-      - diagState
-      - logsState
-    properties:
-      diagState:
-        type: boolean
-      logsState:
-        type: boolean
-
-  ldapEntitiesRequest:
-    type: object
-    properties:
-      users:
-        type: array
-        items:
-          type: string
-      groups:
-        type: array
-        items:
-          type: string
-      policies:
-        type: array
-        items:
-          type: string
-
-  ldapEntities:
-    type: object
-    properties:
-      timestamp:
-        type: string
-      users:
-        type: array
-        items:
-          $ref: "#/definitions/ldapUserPolicyEntity"
-      groups:
-        type: array
-        items:
-          $ref: "#/definitions/ldapGroupPolicyEntity"
-      policies:
-        type: array
-        items:
-          $ref: "#/definitions/ldapPolicyEntity"
-
-  ldapUserPolicyEntity:
-    type: object
-    properties:
-      user:
-        type: string
-      policies:
-        type: array
-        items:
-          type: string
-
-  ldapGroupPolicyEntity:
-    type: object
-    properties:
-      group:
-        type: string
-      policies:
-        type: array
-        items:
-          type: string
-
-  ldapPolicyEntity:
-    type: object
-    properties:
-      policy:
-        type: string
-      users:
-        type: array
-        items:
-          type: string
-      groups:
-        type: array
-        items:
-          type: string
-
   maxShareLinkExpResponse:
     type: object
     properties:
@@ -2851,7 +1300,3 @@ definitions:
     required:
       - exp
 
-  selectedSAs:
-    type: array
-    items:
-      type: string

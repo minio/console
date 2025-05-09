@@ -31,7 +31,6 @@ import (
 	"github.com/minio/mc/cmd"
 	"github.com/minio/mc/pkg/probe"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/sse"
 	"github.com/minio/minio-go/v7/pkg/tags"
 
 	"github.com/go-openapi/runtime/middleware"
@@ -480,64 +479,9 @@ func consoleAccess2policyAccess(bucketAccess models.BucketAccess) (bucketPolicy 
 	return bucketPolicy
 }
 
-// enableBucketEncryption will enable bucket encryption based on two encryption algorithms, sse-s3 (server side encryption with external KMS) or sse-kms (aws s3 kms key)
-func enableBucketEncryption(ctx context.Context, client MinioClient, bucketName string, encryptionType models.BucketEncryptionType, kmsKeyID string) error {
-	var config *sse.Configuration
-	switch encryptionType {
-	case models.BucketEncryptionTypeSseDashKms:
-		config = sse.NewConfigurationSSEKMS(kmsKeyID)
-	case models.BucketEncryptionTypeSseDashS3:
-		config = sse.NewConfigurationSSES3()
-	default:
-		return ErrInvalidEncryptionAlgorithm
-	}
-	return client.setBucketEncryption(ctx, bucketName, config)
-}
-
 // disableBucketEncryption will disable bucket for the provided bucket name
 func disableBucketEncryption(ctx context.Context, client MinioClient, bucketName string) error {
 	return client.removeBucketEncryption(ctx, bucketName)
-}
-
-func getBucketEncryptionInfo(ctx context.Context, client MinioClient, bucketName string) (*models.BucketEncryptionInfo, error) {
-	bucketInfo, err := client.getBucketEncryption(ctx, bucketName)
-	if err != nil {
-		return nil, err
-	}
-	if len(bucketInfo.Rules) == 0 {
-		return nil, ErrDefault
-	}
-	return &models.BucketEncryptionInfo{Algorithm: bucketInfo.Rules[0].Apply.SSEAlgorithm, KmsMasterKeyID: bucketInfo.Rules[0].Apply.KmsMasterKeyID}, nil
-}
-
-// setBucketRetentionConfig sets object lock configuration on a bucket
-func setBucketRetentionConfig(ctx context.Context, client MinioClient, bucketName string, mode models.ObjectRetentionMode, unit models.ObjectRetentionUnit, validity *int32) error {
-	if validity == nil {
-		return errors.New("retention validity can't be nil")
-	}
-
-	var retentionMode minio.RetentionMode
-	switch mode {
-	case models.ObjectRetentionModeGovernance:
-		retentionMode = minio.Governance
-	case models.ObjectRetentionModeCompliance:
-		retentionMode = minio.Compliance
-	default:
-		return errors.New("invalid retention mode")
-	}
-
-	var retentionUnit minio.ValidityUnit
-	switch unit {
-	case models.ObjectRetentionUnitDays:
-		retentionUnit = minio.Days
-	case models.ObjectRetentionUnitYears:
-		retentionUnit = minio.Years
-	default:
-		return errors.New("invalid retention unit")
-	}
-
-	retentionValidity := uint(*validity)
-	return client.setObjectLockConfig(ctx, bucketName, &retentionMode, &retentionValidity, &retentionUnit)
 }
 
 func getBucketRetentionConfig(ctx context.Context, client MinioClient, bucketName string) (*models.GetBucketRetentionConfig, error) {

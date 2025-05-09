@@ -39,7 +39,7 @@ import (
 type AdminInfoResponse struct {
 
 	// advanced metrics status
-	// Enum: [not configured available unavailable]
+	// Enum: ["not configured","available","unavailable"]
 	AdvancedMetricsStatus string `json:"advancedMetricsStatus,omitempty"`
 
 	// backend

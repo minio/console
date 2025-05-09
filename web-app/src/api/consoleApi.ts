@@ -9,33 +9,11 @@
  * ---------------------------------------------------------------
  */
 
-export interface AccountChangePasswordRequest {
-  current_secret_key: string;
-  new_secret_key: string;
-}
-
-export interface ChangeUserPasswordRequest {
-  selectedUser: string;
-  newSecretKey: string;
-}
-
-/** @default "sse-s3" */
-export enum BucketEncryptionType {
-  SseS3 = "sse-s3",
-  SseKms = "sse-kms",
-}
-
 /** @default "PRIVATE" */
 export enum BucketAccess {
   PRIVATE = "PRIVATE",
   PUBLIC = "PUBLIC",
   CUSTOM = "CUSTOM",
-}
-
-export interface UserServiceAccountItem {
-  userName?: string;
-  /** @format int64 */
-  numSAs?: number;
 }
 
 export interface Bucket {
@@ -66,16 +44,6 @@ export interface Bucket {
   creation_date?: string;
 }
 
-export interface BucketEncryptionRequest {
-  encType?: BucketEncryptionType;
-  kmsKeyID?: string;
-}
-
-export interface BucketEncryptionInfo {
-  kmsMasterKeyID?: string;
-  algorithm?: string;
-}
-
 export interface ListBucketsResponse {
   /** list of resulting buckets */
   buckets?: Bucket[];
@@ -86,10 +54,21 @@ export interface ListBucketsResponse {
   total?: number;
 }
 
-export interface UserServiceAccountSummary {
-  /** list of users with number of service accounts */
-  userServiceAccountList?: UserServiceAccountItem[];
-  hasSA?: boolean;
+export enum ObjectRetentionUnit {
+  Days = "days",
+  Years = "years",
+}
+
+export enum ObjectRetentionMode {
+  Governance = "governance",
+  Compliance = "compliance",
+}
+
+export interface GetBucketRetentionConfig {
+  mode?: ObjectRetentionMode;
+  unit?: ObjectRetentionUnit;
+  /** @format int32 */
+  validity?: number;
 }
 
 export interface ListObjectsResponse {
@@ -145,311 +124,8 @@ export interface ListUsersResponse {
   users?: User[];
 }
 
-export type SelectedUsers = string[];
-
-export interface AddUserRequest {
-  accessKey: string;
-  secretKey: string;
-  groups: string[];
-  policies: string[];
-}
-
-export interface Group {
-  name?: string;
-  status?: string;
-  members?: string[];
-  policy?: string;
-}
-
-export interface AddGroupRequest {
-  group: string;
-  members: string[];
-}
-
-export interface ListGroupsResponse {
-  /** list of groups */
-  groups?: string[];
-  /**
-   * total number of groups
-   * @format int64
-   */
-  total?: number;
-}
-
-export interface Policy {
-  name?: string;
-  policy?: string;
-}
-
-/** @default "user" */
-export enum PolicyEntity {
-  User = "user",
-  Group = "group",
-}
-
-export interface SetPolicyRequest {
-  entityType: PolicyEntity;
-  entityName: string;
-}
-
-export interface SetPolicyNameRequest {
-  name: string[];
-  entityType: PolicyEntity;
-  entityName: string;
-}
-
-export interface SetPolicyMultipleNameRequest {
-  name?: string[];
-  users?: IamEntity[];
-  groups?: IamEntity[];
-}
-
-export type IamEntity = string;
-
-export interface AddPolicyRequest {
-  name: string;
-  policy: string;
-}
-
-export interface UpdateServiceAccountRequest {
-  policy: string;
-  secretKey?: string;
-  name?: string;
-  description?: string;
-  expiry?: string;
-  status?: string;
-}
-
-export interface ListPoliciesResponse {
-  /** list of policies */
-  policies?: Policy[];
-  /**
-   * total number of policies
-   * @format int64
-   */
-  total?: number;
-}
-
-export interface ListAccessRulesResponse {
-  /** list of policies */
-  accessRules?: AccessRule[];
-  /**
-   * total number of policies
-   * @format int64
-   */
-  total?: number;
-}
-
-export interface AccessRule {
-  prefix?: string;
-  access?: string;
-}
-
-export interface UpdateGroupRequest {
-  members: string[];
-  status: string;
-}
-
-export interface ConfigDescription {
-  key?: string;
-  description?: string;
-}
-
-export interface ConfigurationKV {
-  key?: string;
-  value?: string;
-  env_override?: EnvOverride;
-}
-
-export interface EnvOverride {
-  name?: string;
-  value?: string;
-}
-
-export interface Configuration {
-  name?: string;
-  key_values?: ConfigurationKV[];
-}
-
-export interface ListConfigResponse {
-  configurations?: ConfigDescription[];
-  /**
-   * total number of configurations
-   * @format int64
-   */
-  total?: number;
-}
-
-export interface SetConfigRequest {
-  /** @minItems 1 */
-  key_values: ConfigurationKV[];
-  /** Used if configuration is an event notification's target */
-  arn_resource_id?: string;
-}
-
-export enum NotificationEventType {
-  Put = "put",
-  Delete = "delete",
-  Get = "get",
-  Replica = "replica",
-  Ilm = "ilm",
-  Scanner = "scanner",
-}
-
-export interface NotificationConfig {
-  id?: string;
-  arn: string;
-  /** filter specific type of event. Defaults to all event (default: '[put,delete,get]') */
-  events?: NotificationEventType[];
-  /** filter event associated to the specified prefix */
-  prefix?: string;
-  /** filter event associated to the specified suffix */
-  suffix?: string;
-}
-
-export interface NotificationDeleteRequest {
-  /**
-   * filter specific type of event. Defaults to all event (default: '[put,delete,get]')
-   * @minLength 1
-   */
-  events: NotificationEventType[];
-  /** filter event associated to the specified prefix */
-  prefix: string;
-  /** filter event associated to the specified suffix */
-  suffix: string;
-}
-
-export interface BucketEventRequest {
-  configuration: NotificationConfig;
-  ignoreExisting?: boolean;
-}
-
-export interface BucketReplicationDestination {
-  bucket?: string;
-}
-
-export interface BucketReplicationRule {
-  id?: string;
-  status?: "Enabled" | "Disabled";
-  /** @format int32 */
-  priority?: number;
-  /** @default "async" */
-  syncMode?: "async" | "sync";
-  bandwidth?: string;
-  healthCheckPeriod?: number;
-  delete_marker_replication?: boolean;
-  deletes_replication?: boolean;
-  existingObjects?: boolean;
-  metadata_replication?: boolean;
-  prefix?: string;
-  tags?: string;
-  storageClass?: string;
-  destination?: BucketReplicationDestination;
-}
-
-export interface BucketReplicationRuleList {
-  rules?: string[];
-}
-
-export interface BucketReplicationResponse {
-  rules?: BucketReplicationRule[];
-}
-
-export interface ListExternalBucketsParams {
-  /** @minLength 3 */
-  accessKey: string;
-  /** @minLength 8 */
-  secretKey: string;
-  targetURL: string;
-  useTLS: boolean;
-  region?: string;
-}
-
-export interface MultiBucketReplication {
-  /** @minLength 3 */
-  accessKey: string;
-  /** @minLength 8 */
-  secretKey: string;
-  targetURL: string;
-  region?: string;
-  /** @default "async" */
-  syncMode?: "async" | "sync";
-  /** @format int64 */
-  bandwidth?: number;
-  /** @format int32 */
-  healthCheckPeriod?: number;
-  prefix?: string;
-  tags?: string;
-  replicateExistingObjects?: boolean;
-  replicateDeleteMarkers?: boolean;
-  replicateDeletes?: boolean;
-  replicateMetadata?: boolean;
-  /**
-   * @format int32
-   * @default 0
-   */
-  priority?: number;
-  /** @default "" */
-  storageClass?: string;
-  /** @minLength 1 */
-  bucketsRelation: MultiBucketsRelation[];
-}
-
-export interface MultiBucketReplicationEdit {
-  ruleState?: boolean;
-  arn?: string;
-  prefix?: string;
-  /** @default "" */
-  tags?: string;
-  replicateDeleteMarkers?: boolean;
-  replicateDeletes?: boolean;
-  replicateMetadata?: boolean;
-  replicateExistingObjects?: boolean;
-  /**
-   * @format int32
-   * @default 0
-   */
-  priority?: number;
-  /** @default "" */
-  storageClass?: string;
-}
-
-export interface MultiBucketsRelation {
-  originBucket?: string;
-  destinationBucket?: string;
-}
-
-export interface MultiBucketResponseItem {
-  originBucket?: string;
-  targetBucket?: string;
-  errorString?: string;
-}
-
-export interface MultiBucketResponseState {
-  replicationState?: MultiBucketResponseItem[];
-}
-
-export interface AddBucketReplication {
-  arn?: string;
-  destination_bucket?: string;
-}
-
 export interface MakeBucketsResponse {
   bucketName?: string;
-}
-
-export interface ListBucketEventsResponse {
-  events?: NotificationConfig[];
-  /**
-   * total number of bucket events
-   * @format int64
-   */
-  total?: number;
-}
-
-export interface SetBucketPolicyRequest {
-  access: BucketAccess;
-  definition?: string;
 }
 
 export interface BucketQuota {
@@ -457,10 +133,9 @@ export interface BucketQuota {
   type?: "hard";
 }
 
-export interface SetBucketQuota {
-  enabled: boolean;
-  quota_type?: "hard";
-  amount?: number;
+export interface LoginResponse {
+  sessionId?: string;
+  IDPRefreshToken?: string;
 }
 
 export interface LoginDetails {
@@ -488,11 +163,6 @@ export interface LoginRequest {
   };
 }
 
-export interface LoginResponse {
-  sessionId?: string;
-  IDPRefreshToken?: string;
-}
-
 export interface LogoutRequest {
   state?: string;
 }
@@ -505,25 +175,6 @@ export interface Principal {
   hm?: boolean;
   ob?: boolean;
   customStyleOb?: string;
-}
-
-export interface StartProfilingItem {
-  nodeName?: string;
-  success?: boolean;
-  error?: string;
-}
-
-export interface StartProfilingList {
-  /**
-   * number of start results
-   * @format int64
-   */
-  total?: number;
-  startResults?: StartProfilingItem[];
-}
-
-export interface ProfilingStartRequest {
-  type: string;
 }
 
 export interface SessionResponse {
@@ -550,19 +201,6 @@ export interface ResultTarget {
 }
 
 export interface Widget {
-  title?: string;
-  type?: string;
-  /** @format int32 */
-  id?: number;
-  options?: {
-    reduceOptions?: {
-      calcs?: string[];
-    };
-  };
-  targets?: ResultTarget[];
-}
-
-export interface WidgetDetails {
   title?: string;
   type?: string;
   /** @format int32 */
@@ -617,207 +255,6 @@ export interface BackendProperties {
   offlineDrives?: number;
 }
 
-export interface ArnsResponse {
-  arns?: string[];
-}
-
-export interface UpdateUserGroups {
-  groups: string[];
-}
-
-export enum NofiticationService {
-  Webhook = "webhook",
-  Amqp = "amqp",
-  Kafka = "kafka",
-  Mqtt = "mqtt",
-  Nats = "nats",
-  Nsq = "nsq",
-  Mysql = "mysql",
-  Postgres = "postgres",
-  Elasticsearch = "elasticsearch",
-  Redis = "redis",
-}
-
-export interface NotificationEndpointItem {
-  service?: NofiticationService;
-  account_id?: string;
-  status?: string;
-}
-
-export interface NotificationEndpoint {
-  service: NofiticationService;
-  account_id: string;
-  properties: Record<string, string>;
-}
-
-export interface SetNotificationEndpointResponse {
-  service: NofiticationService;
-  account_id: string;
-  properties: Record<string, string>;
-  restart?: boolean;
-}
-
-export interface NotifEndpointResponse {
-  notification_endpoints?: NotificationEndpointItem[];
-}
-
-export interface PeerSiteRemoveResponse {
-  status?: string;
-  errorDetail?: string;
-}
-
-export interface PeerSiteEditResponse {
-  success?: boolean;
-  status?: string;
-  errorDetail?: string;
-}
-
-export interface PeerSite {
-  name?: string;
-  endpoint?: string;
-  accessKey?: string;
-  secretKey?: string;
-}
-
-export interface PeerInfo {
-  endpoint?: string;
-  name?: string;
-  deploymentID?: string;
-}
-
-export interface PeerInfoRemove {
-  all?: boolean;
-  sites: string[];
-}
-
-export type SiteReplicationAddRequest = PeerSite[];
-
-export interface SiteReplicationAddResponse {
-  success?: boolean;
-  status?: string;
-  errorDetail?: string;
-  initialSyncErrorMessage?: string;
-}
-
-export interface SiteReplicationInfoResponse {
-  enabled?: boolean;
-  name?: string;
-  sites?: PeerInfo[];
-  serviceAccountAccessKey?: string;
-}
-
-export interface SiteReplicationStatusResponse {
-  enabled?: boolean;
-  maxBuckets?: number;
-  maxUsers?: number;
-  maxGroups?: number;
-  maxPolicies?: number;
-  sites?: object;
-  statsSummary?: object;
-  bucketStats?: object;
-  policyStats?: object;
-  userStats?: object;
-  groupStats?: object;
-}
-
-export interface UpdateUser {
-  status: string;
-  groups: string[];
-}
-
-export interface BulkUserGroups {
-  users: string[];
-  groups: string[];
-}
-
-export interface ServiceAccount {
-  parentUser?: string;
-  accountStatus?: string;
-  impliedPolicy?: boolean;
-  policy?: string;
-  name?: string;
-  description?: string;
-  expiration?: string;
-}
-
-export type ServiceAccounts = {
-  accountStatus?: string;
-  name?: string;
-  description?: string;
-  expiration?: string;
-  accessKey?: string;
-}[];
-
-export interface ServiceAccountRequest {
-  /** policy to be applied to the Service Account if any */
-  policy?: string;
-  name?: string;
-  description?: string;
-  expiry?: string;
-  comment?: string;
-}
-
-export interface ServiceAccountRequestCreds {
-  /** policy to be applied to the Service Account if any */
-  policy?: string;
-  accessKey?: string;
-  secretKey?: string;
-  name?: string;
-  description?: string;
-  expiry?: string;
-  comment?: string;
-}
-
-export interface ServiceAccountCreds {
-  accessKey?: string;
-  secretKey?: string;
-  url?: string;
-}
-
-export interface RemoteBucket {
-  /** @minLength 3 */
-  accessKey: string;
-  /** @minLength 8 */
-  secretKey?: string;
-  sourceBucket: string;
-  targetURL?: string;
-  targetBucket?: string;
-  remoteARN: string;
-  status?: string;
-  service?: "replication";
-  syncMode?: string;
-  /** @format int64 */
-  bandwidth?: number;
-  healthCheckPeriod?: number;
-}
-
-export interface CreateRemoteBucket {
-  /** @minLength 3 */
-  accessKey: string;
-  /** @minLength 8 */
-  secretKey: string;
-  targetURL: string;
-  sourceBucket: string;
-  targetBucket: string;
-  region?: string;
-  /** @default "async" */
-  syncMode?: "async" | "sync";
-  /** @format int64 */
-  bandwidth?: number;
-  /** @format int32 */
-  healthCheckPeriod?: number;
-}
-
-export interface ListRemoteBucketsResponse {
-  /** list of remote buckets */
-  buckets?: RemoteBucket[];
-  /**
-   * number of remote buckets accessible to user
-   * @format int64
-   */
-  total?: number;
-}
-
 export interface BucketVersioningResponse {
   status?: string;
   MFADelete?: string;
@@ -834,35 +271,6 @@ export interface SetBucketVersioning {
   excludeFolders?: boolean;
 }
 
-export interface BucketObLockingResponse {
-  object_locking_enabled?: boolean;
-}
-
-export interface LogSearchResponse {
-  /** list of log search responses */
-  results?: object;
-}
-
-export enum ObjectLegalHoldStatus {
-  Enabled = "enabled",
-  Disabled = "disabled",
-}
-
-export interface PutObjectLegalHoldRequest {
-  status: ObjectLegalHoldStatus;
-}
-
-export enum ObjectRetentionMode {
-  Governance = "governance",
-  Compliance = "compliance",
-}
-
-export interface PutObjectRetentionRequest {
-  mode: ObjectRetentionMode;
-  expires: string;
-  governance_bypass?: boolean;
-}
-
 export interface PutObjectTagsRequest {
   tags?: any;
 }
@@ -871,71 +279,7 @@ export interface PutBucketTagsRequest {
   tags?: any;
 }
 
-export enum ObjectRetentionUnit {
-  Days = "days",
-  Years = "years",
-}
-
-export interface PutBucketRetentionRequest {
-  mode: ObjectRetentionMode;
-  unit: ObjectRetentionUnit;
-  /** @format int32 */
-  validity: number;
-}
-
-export interface GetBucketRetentionConfig {
-  mode?: ObjectRetentionMode;
-  unit?: ObjectRetentionUnit;
-  /** @format int32 */
-  validity?: number;
-}
-
-export interface PrefixAccessPair {
-  prefix?: string;
-  access?: string;
-}
-
-export interface PrefixWrapper {
-  prefix?: string;
-}
-
-export interface SetConfigResponse {
-  /** Returns wheter server needs to restart to apply changes or not */
-  restart?: boolean;
-}
-
-export interface ConfigExportResponse {
-  /** Returns base64 encoded value */
-  value?: string;
-  status?: string;
-}
-
-export interface License {
-  email?: string;
-  organization?: string;
-  account_id?: number;
-  storage_capacity?: number;
-  plan?: string;
-  expires_at?: string;
-}
-
-export interface ApiKey {
-  apiKey?: string;
-}
-
-export interface PolicyArgs {
-  id?: string;
-  action?: string;
-  bucket_name?: string;
-}
-
 export interface DeleteFile {
-  path?: string;
-  versionID?: string;
-  recursive?: boolean;
-}
-
-export interface UserSAs {
   path?: string;
   versionID?: string;
   recursive?: boolean;
@@ -956,18 +300,6 @@ export interface RewindResponse {
   objects?: RewindItem[];
 }
 
-export interface IamPolicy {
-  version?: string;
-  statement?: IamPolicyStatement[];
-}
-
-export interface IamPolicyStatement {
-  effect?: string;
-  action?: string[];
-  resource?: string[];
-  condition?: Record<string, object>;
-}
-
 export interface Metadata {
   objectMetadata?: Record<string, any>;
 }
@@ -976,78 +308,6 @@ export interface PermissionResource {
   resource?: string;
   conditionOperator?: string;
   prefixes?: string[];
-}
-
-export interface AUserPolicyResponse {
-  policy?: string;
-}
-
-export interface KmsStatusResponse {
-  name?: string;
-  defaultKeyID?: string;
-  endpoints?: KmsEndpoint[];
-}
-
-export interface KmsEndpoint {
-  url?: string;
-  status?: string;
-}
-
-export interface KmsKeyStatusResponse {
-  keyID?: string;
-  encryptionErr?: string;
-  decryptionErr?: string;
-}
-
-export interface KmsCreateKeyRequest {
-  key: string;
-}
-
-export interface KmsListKeysResponse {
-  results?: KmsKeyInfo[];
-}
-
-export interface KmsKeyInfo {
-  name?: string;
-  createdAt?: string;
-  createdBy?: string;
-}
-
-export interface KmsMetricsResponse {
-  requestOK: number;
-  requestErr: number;
-  requestFail: number;
-  requestActive: number;
-  auditEvents: number;
-  errorEvents: number;
-  latencyHistogram: KmsLatencyHistogram[];
-  uptime: number;
-  cpus: number;
-  usableCPUs: number;
-  threads: number;
-  heapAlloc: number;
-  heapObjects?: number;
-  stackAlloc: number;
-}
-
-export interface KmsLatencyHistogram {
-  duration?: number;
-  total?: number;
-}
-
-export interface KmsAPIsResponse {
-  results?: KmsAPI[];
-}
-
-export interface KmsAPI {
-  method?: string;
-  path?: string;
-  maxBody?: number;
-  timeout?: number;
-}
-
-export interface KmsVersionResponse {
-  version?: string;
 }
 
 export interface EnvironmentConstants {
@@ -1061,127 +321,10 @@ export interface RedirectRule {
   serviceType?: string;
 }
 
-export interface IdpServerConfiguration {
-  name?: string;
-  input?: string;
-  type?: string;
-  enabled?: boolean;
-  info?: IdpServerConfigurationInfo[];
-}
-
-export interface IdpServerConfigurationInfo {
-  key?: string;
-  value?: string;
-  isCfg?: boolean;
-  isEnv?: boolean;
-}
-
-export interface IdpListConfigurationsResponse {
-  results?: IdpServerConfiguration[];
-}
-
-export interface SetIDPResponse {
-  restart?: boolean;
-}
-
-export interface ReleaseListResponse {
-  results?: ReleaseInfo[];
-}
-
-export interface ReleaseInfo {
-  metadata?: ReleaseMetadata;
-  notesContent?: string;
-  securityContent?: string;
-  breakingChangesContent?: string;
-  contextContent?: string;
-  newFeaturesContent?: string;
-}
-
-export interface ReleaseMetadata {
-  tag_name?: string;
-  target_commitish?: string;
-  name?: string;
-  draft?: boolean;
-  prerelease?: boolean;
-  id?: number;
-  created_at?: string;
-  published_at?: string;
-  url?: string;
-  html_url?: string;
-  assets_url?: string;
-  upload_url?: string;
-  zipball_url?: string;
-  tarball_url?: string;
-  author?: ReleaseAuthor;
-  node_id?: string;
-}
-
-export interface ReleaseAuthor {
-  login?: string;
-  id?: number;
-  node_id?: string;
-  avatar_url?: string;
-  html_url?: string;
-  gravatar_id?: string;
-  type?: string;
-  site_admin?: boolean;
-  url?: string;
-  events_url?: string;
-  following_url?: string;
-  followers_url?: string;
-  gists_url?: string;
-  organizations_url?: string;
-  receivedEvents_url?: string;
-  repos_url?: string;
-  starred_url?: string;
-  subscriptions_url?: string;
-}
-
-export interface CallHomeGetResponse {
-  diagnosticsStatus?: boolean;
-  logsStatus?: boolean;
-}
-
-export interface CallHomeSetStatus {
-  diagState: boolean;
-  logsState: boolean;
-}
-
-export interface LdapEntitiesRequest {
-  users?: string[];
-  groups?: string[];
-  policies?: string[];
-}
-
-export interface LdapEntities {
-  timestamp?: string;
-  users?: LdapUserPolicyEntity[];
-  groups?: LdapGroupPolicyEntity[];
-  policies?: LdapPolicyEntity[];
-}
-
-export interface LdapUserPolicyEntity {
-  user?: string;
-  policies?: string[];
-}
-
-export interface LdapGroupPolicyEntity {
-  group?: string;
-  policies?: string[];
-}
-
-export interface LdapPolicyEntity {
-  policy?: string;
-  users?: string[];
-  groups?: string[];
-}
-
 export interface MaxShareLinkExpResponse {
   /** @format int64 */
   exp: number;
 }
-
-export type SelectedSAs = string[];
 
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
@@ -1713,7 +856,7 @@ export class Api<
      */
     downloadMultipleObjects: (
       bucketName: string,
-      objectList: SelectedUsers,
+      objectList: string[],
       params: RequestParams = {},
     ) =>
       this.request<File, ApiError>({
@@ -1772,7 +915,7 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<IamEntity, ApiError>({
+      this.request<string, ApiError>({
         path: `/buckets/${encodeURIComponent(bucketName)}/objects/share`,
         method: "GET",
         query: query,

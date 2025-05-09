@@ -84,7 +84,7 @@ func initConsoleServer(consoleIDPURL string) (*api.Server, error) {
 	return server, nil
 }
 
-func TestMain(t *testing.T) {
+func TestMainSSO(t *testing.T) {
 	assert := assert.New(t)
 
 	// start console server
@@ -139,6 +139,11 @@ func TestMain(t *testing.T) {
 		fmt.Printf("error JSON Unmarshal %s\n", err)
 	}
 
+	if len(jsonMap.RedirectRules) == 0 {
+		assert.Fail("redirect rules not found")
+	} else {
+		fmt.Println("redirect rules found")
+	}
 	redirectRule := jsonMap.RedirectRules[0]
 	redirectAsString := fmt.Sprint(redirectRule.Redirect)
 	fmt.Println(redirectAsString)

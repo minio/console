@@ -1032,43 +1032,6 @@ func getRequestURLWithScheme(r *http.Request) string {
 	return fmt.Sprintf("%s://%s", scheme, r.Host)
 }
 
-func setObjectLegalHold(ctx context.Context, client MinioClient, bucketName, prefix, versionID string, status models.ObjectLegalHoldStatus) error {
-	var lstatus minio.LegalHoldStatus
-	if status == models.ObjectLegalHoldStatusEnabled {
-		lstatus = minio.LegalHoldEnabled
-	} else {
-		lstatus = minio.LegalHoldDisabled
-	}
-	return client.putObjectLegalHold(ctx, bucketName, prefix, minio.PutObjectLegalHoldOptions{VersionID: versionID, Status: &lstatus})
-}
-
-func setObjectRetention(ctx context.Context, client MinioClient, bucketName, versionID, prefix string, retentionOps *models.PutObjectRetentionRequest) error {
-	if retentionOps == nil {
-		return errors.New("object retention options can't be nil")
-	}
-	if retentionOps.Expires == nil {
-		return errors.New("object retention expires can't be nil")
-	}
-
-	var mode minio.RetentionMode
-	if *retentionOps.Mode == models.ObjectRetentionModeGovernance {
-		mode = minio.Governance
-	} else {
-		mode = minio.Compliance
-	}
-	retentionUntilDate, err := time.Parse(time.RFC3339, *retentionOps.Expires)
-	if err != nil {
-		return err
-	}
-	opts := minio.PutObjectRetentionOptions{
-		GovernanceBypass: retentionOps.GovernanceBypass,
-		RetainUntilDate:  &retentionUntilDate,
-		Mode:             &mode,
-		VersionID:        versionID,
-	}
-	return client.putObjectRetention(ctx, bucketName, prefix, opts)
-}
-
 func deleteObjectRetention(ctx context.Context, client MinioClient, bucketName, prefix, versionID string) error {
 	opts := minio.PutObjectRetentionOptions{
 		GovernanceBypass: true,
