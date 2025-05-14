@@ -34,20 +34,11 @@ export const doLoginAsync = createAsyncThunk(
     const state = getState() as AppState;
     const accessKey = state.login.accessKey;
     const secretKey = state.login.secretKey;
-    const sts = state.login.sts;
-    const useSTS = state.login.useSTS;
 
     let payload: LoginRequest = {
       accessKey,
       secretKey,
     };
-    if (useSTS) {
-      payload = {
-        accessKey,
-        secretKey,
-        sts,
-      };
-    }
 
     return api.login
       .login(payload)

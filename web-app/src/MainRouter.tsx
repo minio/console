@@ -23,22 +23,11 @@ import { baseUrl } from "./history";
 
 const Login = React.lazy(() => import("./screens/LoginPage/Login"));
 const Logout = React.lazy(() => import("./screens/LogoutPage/LogoutPage"));
-const LoginCallback = React.lazy(
-  () => import("./screens/LoginPage/LoginCallback"),
-);
 
 const MainRouter = () => {
   return (
     <BrowserRouter basename={baseUrl}>
       <Routes>
-        <Route
-          path="/oauth_callback"
-          element={
-            <Suspense fallback={<LoadingComponent />}>
-              <LoginCallback />
-            </Suspense>
-          }
-        />
         <Route
           path="/logout"
           element={
