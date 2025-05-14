@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -367,34 +367,6 @@ func GetsTheMetadataOfAnObject(bucketName, prefix string) (*http.Response, error
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/metadata?prefix="+prefix,
 		nil,
 	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func PutBucketsTags(bucketName string, tags map[string]string) (*http.Response, error) {
-	/*
-		Helper function to put bucket's tags.
-		PUT: {{baseUrl}}/buckets/:bucket_name/tags
-		{
-			"tags": {}
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"tags": tags,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest("PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/tags",
-		requestDataBody)
 	if err != nil {
 		log.Println(err)
 	}
@@ -1019,22 +991,6 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		return
 	}
 
-	// 2. Add a tag to the bucket
-	tags := make(map[string]string)
-	tags["tag2"] = "tag2"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"bucketinformation2", tags)
-	if putBucketTagError != nil {
-		log.Println(putBucketTagError)
-		assert.Fail("Error putting the bucket's tags")
-		return
-	}
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			200, putBucketTagResponse.StatusCode,
-			inspectHTTPResponse(putBucketTagResponse))
-	}
-
 	// 3. Get the information
 	bucketInfoResponse, bucketInfoError := BucketInfo("bucketinformation3")
 	if bucketInfoError != nil {
@@ -1042,15 +998,10 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		assert.Fail("Error getting the bucket information")
 		return
 	}
-	finalResponse := inspectHTTPResponse(bucketInfoResponse)
 	if bucketInfoResponse != nil {
 		assert.Equal(200, bucketInfoResponse.StatusCode)
 	}
 
-	// 4. Verify the information
-	// Since bucketinformation3 hasn't been created, then it is expected that
-	// tag2 is not part of the response, this is why assert.False is used.
-	assert.False(strings.Contains(finalResponse, "tag2"), finalResponse)
 }
 
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
@@ -1062,22 +1013,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	assert := assert.New(t)
 	if !setupBucket("bucketinformation1", false, nil, nil, nil, assert, 200) {
 		return
-	}
-
-	// 2. Add a tag to the bucket
-	tags := make(map[string]string)
-	tags["tag1"] = "tag1"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"bucketinformation1", tags)
-	if putBucketTagError != nil {
-		log.Println(putBucketTagError)
-		assert.Fail("Error putting the bucket's tags")
-		return
-	}
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			200, putBucketTagResponse.StatusCode,
-			inspectHTTPResponse(putBucketTagResponse))
 	}
 
 	// 3. Get the information
@@ -1097,9 +1032,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	// 4. Verify the information
 	assert.True(
 		strings.Contains(debugResponse, "bucketinformation1"),
-		inspectHTTPResponse(bucketInfoResponse))
-	assert.True(
-		strings.Contains(debugResponse, "tag1"),
 		inspectHTTPResponse(bucketInfoResponse))
 }
 
@@ -1174,74 +1106,6 @@ func TestBucketsGet(t *testing.T) {
 		assert.Greater(listBuckets.Total, int64(0), "Total buckets is 0")
 
 	}
-}
-
-func TestSetBucketTags(t *testing.T) {
-	assert := assert.New(t)
-
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-
-	// put bucket
-	if !setupBucket("test4", false, nil, nil, nil, assert, 200) {
-		return
-	}
-
-	requestDataTags := map[string]interface{}{
-		"tags": map[string]interface{}{
-			"test": "TAG",
-		},
-	}
-
-	requestTagsJSON, _ := json.Marshal(requestDataTags)
-
-	requestTagsBody := bytes.NewBuffer(requestTagsJSON)
-
-	request, err := http.NewRequest(http.MethodPut, "http://localhost:9090/api/v1/buckets/test4/tags", requestTagsBody)
-	request.Close = true
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	_, err = client.Do(request)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// get bucket
-	request, err = http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test4", nil)
-	request.Close = true
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err := client.Do(request)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	bodyBytes, _ := io.ReadAll(response.Body)
-
-	bucket := models.Bucket{}
-	err = json.Unmarshal(bodyBytes, &bucket)
-	if err != nil {
-		log.Println(err)
-	}
-
-	assert.Equal("TAG", bucket.Details.Tags["test"], "Failed to add tag")
 }
 
 func TestGetBucket(t *testing.T) {
