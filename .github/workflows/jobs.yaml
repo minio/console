@@ -741,14 +741,6 @@ jobs:
           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
 
       - uses: actions/cache@v4
-        id: coverage-cache-sso
-        name: Coverage Cache SSO
-        with:
-          path: |
-            ./sso-integration/coverage/
-          key: ${{ runner.os }}-sso-coverage-2-${{ github.run_id }}
-
-      - uses: actions/cache@v4
         id: coverage-cache-api
         name: Coverage Cache API
         with:
@@ -775,7 +767,7 @@ jobs:
           echo "go build gocoverage.go"
           go build gocovmerge.go
           echo "put together the outs for final coverage resolution"
-          ./gocovmerge ../integration/coverage/system.out ../sso-integration/coverage/sso-system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
+          ./gocovmerge ../integration/coverage/system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
           wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
           echo "Change the permissions to execute mc command"
@@ -804,11 +796,6 @@ jobs:
             ./mc cp system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp ../integration/coverage/system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            go tool cover -html=../sso-integration/coverage/sso-system.out -o sso-system.html
-            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp sso-system.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
-            ./mc cp ../sso-integration/coverage/sso-system.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             go tool cover -html=../api/coverage/coverage.out -o coverage.html
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp coverage.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
