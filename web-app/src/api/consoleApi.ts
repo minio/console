@@ -111,19 +111,6 @@ export interface ApiError {
   detailedMessage?: string;
 }
 
-export interface User {
-  accessKey?: string;
-  policy?: string[];
-  memberOf?: string[];
-  status?: string;
-  hasPolicy?: boolean;
-}
-
-export interface ListUsersResponse {
-  /** list of resulting users */
-  users?: User[];
-}
-
 export interface MakeBucketsResponse {
   bucketName?: string;
 }
@@ -139,19 +126,10 @@ export interface LoginResponse {
 }
 
 export interface LoginDetails {
-  loginStrategy?:
-    | "form"
-    | "redirect"
-    | "service-account"
-    | "redirect-service-account";
+  loginStrategy?: "form" | "service-account" | "redirect-service-account";
   redirectRules?: RedirectRule[];
   isK8S?: boolean;
   animatedLogin?: boolean;
-}
-
-export interface LoginOauth2AuthRequest {
-  state: string;
-  code: string;
 }
 
 export interface LoginRequest {
@@ -272,10 +250,6 @@ export interface SetBucketVersioning {
 }
 
 export interface PutObjectTagsRequest {
-  tags?: any;
-}
-
-export interface PutBucketTagsRequest {
   tags?: any;
 }
 
@@ -606,26 +580,6 @@ export class Api<
     login: (body: LoginRequest, params: RequestParams = {}) =>
       this.request<void, ApiError>({
         path: `/login`,
-        method: "POST",
-        body: body,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Auth
-     * @name LoginOauth2Auth
-     * @summary Identity Provider oauth2 callback endpoint.
-     * @request POST:/login/oauth2/auth
-     */
-    loginOauth2Auth: (
-      body: LoginOauth2AuthRequest,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, ApiError>({
-        path: `/login/oauth2/auth`,
         method: "POST",
         body: body,
         type: ContentType.Json,
@@ -1007,29 +961,6 @@ export class Api<
      * No description
      *
      * @tags Bucket
-     * @name PutBucketTags
-     * @summary Put Bucket's tags
-     * @request PUT:/buckets/{bucket_name}/tags
-     * @secure
-     */
-    putBucketTags: (
-      bucketName: string,
-      body: PutBucketTagsRequest,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, ApiError>({
-        path: `/buckets/${encodeURIComponent(bucketName)}/tags`,
-        method: "PUT",
-        body: body,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Bucket
      * @name GetBucketQuota
      * @summary Get Bucket Quota
      * @request GET:/buckets/{name}/quota
@@ -1124,40 +1055,6 @@ export class Api<
       this.request<MaxShareLinkExpResponse, ApiError>({
         path: `/buckets/max-share-exp`,
         method: "GET",
-        secure: true,
-        format: "json",
-        ...params,
-      }),
-  };
-  users = {
-    /**
-     * No description
-     *
-     * @tags User
-     * @name ListUsers
-     * @summary List Users
-     * @request GET:/users
-     * @secure
-     */
-    listUsers: (
-      query?: {
-        /**
-         * @format int32
-         * @default 0
-         */
-        offset?: number;
-        /**
-         * @format int32
-         * @default 20
-         */
-        limit?: number;
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<ListUsersResponse, ApiError>({
-        path: `/users`,
-        method: "GET",
-        query: query,
         secure: true,
         format: "json",
         ...params,

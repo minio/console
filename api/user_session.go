@@ -35,8 +35,6 @@ import (
 	"github.com/minio/console/api/operations"
 	authApi "github.com/minio/console/api/operations/auth"
 	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth/idp/oauth2"
-	"github.com/minio/console/pkg/auth/ldap"
 )
 
 type Conditions struct {
@@ -240,7 +238,7 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 	envConstants.MaxConcurrentDownloads = getMaxConcurrentDownloadsLimit()
 
 	sessionResp := &models.SessionResponse{
-		Features:        getListOfEnabledFeatures(ctx, userAdminClient, session),
+		Features:        getListOfEnabledFeatures(session),
 		Status:          models.SessionResponseStatusOk,
 		Operator:        false,
 		DistributedMode: erasure,
@@ -254,33 +252,14 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 }
 
 // getListOfEnabledFeatures returns a list of features
-func getListOfEnabledFeatures(ctx context.Context, minioClient MinioAdmin, session *models.Principal) []string {
+func getListOfEnabledFeatures(session *models.Principal) []string {
 	features := []string{}
-	logSearchURL := getLogSearchURL()
-	oidcEnabled := oauth2.IsIDPEnabled()
-	ldapEnabled := ldap.GetLDAPEnabled()
-
-	if logSearchURL != "" {
-		features = append(features, "log-search")
-	}
-	if oidcEnabled {
-		features = append(features, "oidc-idp", "external-idp")
-	}
-	if ldapEnabled {
-		features = append(features, "ldap-idp", "external-idp")
-	}
 
 	if session.Hm {
 		features = append(features, "hide-menu")
 	}
 	if session.Ob {
 		features = append(features, "object-browser-only")
-	}
-	if minioClient != nil {
-		_, err := minioClient.kmsStatus(ctx)
-		if err == nil {
-			features = append(features, "kms")
-		}
 	}
 
 	return features

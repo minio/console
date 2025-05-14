@@ -1,5 +1,5 @@
 // This file is part of MinIO Console Server
-// Copyright (c) 2021 MinIO, Inc.
+// Copyright (c) 2023 MinIO, Inc.
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published by
@@ -45,17 +45,6 @@ type AddBucketOps struct {
 	Retention  map[string]interface{}
 	Endpoint   *string
 	UseToken   *string
-}
-
-func AddBucket(name string, locking bool, versioning, quota, retention map[string]interface{}) (*http.Response, error) {
-	return AddBucketWithOpts(&AddBucketOps{
-		Name:       name,
-		Locking:    locking,
-		Versioning: versioning,
-		Quota:      quota,
-		Retention:  retention,
-		Endpoint:   nil,
-	})
 }
 
 func AddBucketWithOpts(opts *AddBucketOps) (*http.Response, error) {
@@ -155,25 +144,6 @@ func ListBuckets() (*http.Response, error) {
 	return response, err
 }
 
-func DeleteBucket(name string) (*http.Response, error) {
-	/*
-		Helper function to delete bucket.
-		DELETE: {{baseUrl}}/buckets/:name
-	*/
-	request, err := http.NewRequest(
-		"DELETE", "http://localhost:9090/api/v1/buckets/"+name, nil)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func BucketInfo(name string) (*http.Response, error) {
 	/*
 		Helper function to test Bucket Info End Point
@@ -191,57 +161,6 @@ func BucketInfo(name string) (*http.Response, error) {
 		Timeout: 2 * time.Second,
 	}
 	response, err := client.Do(bucketInformationRequest)
-	return response, err
-}
-
-func SetBucketRetention(bucketName, mode, unit string, validity int) (*http.Response, error) {
-	/*
-		Helper function to set bucket's retention
-		PUT: {{baseUrl}}/buckets/:bucket_name/retention
-		{
-			"mode":"compliance",
-			"unit":"years",
-			"validity":2
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"mode":     mode,
-		"unit":     unit,
-		"validity": validity,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest("PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
-		requestDataBody)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func GetBucketRetention(bucketName string) (*http.Response, error) {
-	/*
-		Helper function to get the bucket's retention
-	*/
-	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/retention",
-		nil)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
 	return response, err
 }
 
@@ -437,33 +356,6 @@ func SharesAnObjectOnAUrl(bucketName, prefix, versionID, expires string) (*http.
 	return response, err
 }
 
-func PutObjectsRetentionStatus(bucketName, prefix, versionID, mode, expires string, governanceBypass bool) (*http.Response, error) {
-	requestDataAdd := map[string]interface{}{
-		"mode":              mode,
-		"expires":           expires,
-		"governance_bypass": governanceBypass,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/retention?prefix=" + prefix + "&version_id=" + versionID
-
-	request, err := http.NewRequest(
-		"PUT",
-		apiURL,
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func GetsTheMetadataOfAnObject(bucketName, prefix string) (*http.Response, error) {
 	/*
 		Gets the metadata of an object
@@ -487,209 +379,11 @@ func GetsTheMetadataOfAnObject(bucketName, prefix string) (*http.Response, error
 	return response, err
 }
 
-func PutBucketsTags(bucketName string, tags map[string]string) (*http.Response, error) {
-	/*
-		Helper function to put bucket's tags.
-		PUT: {{baseUrl}}/buckets/:bucket_name/tags
-		{
-			"tags": {}
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"tags": tags,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest("PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/tags",
-		requestDataBody)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func RestoreObjectToASelectedVersion(bucketName, prefix, versionID string) (*http.Response, error) {
 	request, err := http.NewRequest(
 		"PUT",
 		"http://localhost:9090/api/v1/buckets/"+bucketName+"/objects/restore?prefix="+prefix+"&version_id="+versionID,
 		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func BucketSetPolicy(bucketName, access, definition string) (*http.Response, error) {
-	/*
-		Helper function to set policy on a bucket
-		Name: Bucket Set Policy
-		HTTP Verb: PUT
-		URL: {{baseUrl}}/buckets/:name/set-policy
-		Body:
-		{
-			"access": "PRIVATE",
-			"definition": "dolo"
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"access":     access,
-		"definition": definition,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/set-policy",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func DeleteObjectsRetentionStatus(bucketName, prefix, versionID string) (*http.Response, error) {
-	/*
-		Helper function to Delete Object Retention Status
-		DELETE:
-		{{baseUrl}}/buckets/:bucket_name/objects/retention?prefix=proident velit&version_id=proident velit
-	*/
-	url := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/retention?prefix=" +
-		prefix + "&version_id=" + versionID
-	request, err := http.NewRequest(
-		"DELETE",
-		url,
-		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func ListBucketEvents(bucketName string) (*http.Response, error) {
-	/*
-		Helper function to list bucket's events
-		Name: List Bucket Events
-		HTTP Verb: GET
-		URL: {{baseUrl}}/buckets/:bucket_name/events
-	*/
-	request, err := http.NewRequest(
-		"GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
-		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func PutBucketQuota(bucketName string, enabled bool, quotaType string, amount int) (*http.Response, error) {
-	/*
-		Helper function to put bucket quota
-		Name: Bucket Quota
-		URL: {{baseUrl}}/buckets/:name/quota
-		HTTP Verb: PUT
-		Body:
-		{
-			"enabled": false,
-			"quota_type": "fifo",
-			"amount": 18462288
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"enabled":    enabled,
-		"quota_type": quotaType,
-		"amount":     amount,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"PUT",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/quota",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func GetBucketQuota(bucketName string) (*http.Response, error) {
-	/*
-		Helper function to get bucket quota
-		Name: Get Bucket Quota
-		URL: {{baseUrl}}/buckets/:name/quota
-		HTTP Verb: GET
-	*/
-	request, err := http.NewRequest(
-		"GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/quota",
-		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func PutObjectsLegalholdStatus(bucketName, prefix, status, versionID string) (*http.Response, error) {
-	// Helper function to test "Put Object's legalhold status" end point
-	requestDataAdd := map[string]interface{}{
-		"status": status,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	apiURL := "http://localhost:9090/api/v1/buckets/" + bucketName + "/objects/legalhold?prefix=" + prefix + "&version_id=" + versionID
-	request, err := http.NewRequest(
-		"PUT",
-		apiURL,
-		requestDataBody,
 	)
 	if err != nil {
 		log.Println(err)
@@ -788,60 +482,6 @@ func TestRestoreObjectToASelectedVersion(t *testing.T) {
 					restResp.StatusCode,
 					finalResponse,
 				)
-			}
-		})
-	}
-}
-
-func TestPutBucketsTags(t *testing.T) {
-	// Focused test for "Put Bucket's tags" endpoint
-
-	// 1. Create the bucket
-	assert := assert.New(t)
-	validBucketName := "testputbuckettags1"
-	if !setupBucket(validBucketName, false, nil, nil, nil, assert, 200) {
-		return
-	}
-
-	type args struct {
-		bucketName string
-	}
-	tests := []struct {
-		name           string
-		expectedStatus int
-		args           args
-	}{
-		{
-			name:           "Put a tag to a valid bucket",
-			expectedStatus: 200,
-			args: args{
-				bucketName: validBucketName,
-			},
-		},
-		{
-			name:           "Put a tag to an invalid bucket",
-			expectedStatus: 500,
-			args: args{
-				bucketName: "invalidbucketname",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(_ *testing.T) {
-			// 2. Add a tag to the bucket
-			tags := make(map[string]string)
-			tags["tag2"] = "tag2"
-			putBucketTagResponse, putBucketTagError := PutBucketsTags(
-				tt.args.bucketName, tags)
-			if putBucketTagError != nil {
-				log.Println(putBucketTagError)
-				assert.Fail("Error putting the bucket's tags")
-				return
-			}
-			if putBucketTagResponse != nil {
-				assert.Equal(
-					tt.expectedStatus, putBucketTagResponse.StatusCode,
-					inspectHTTPResponse(putBucketTagResponse))
 			}
 		})
 	}
@@ -1351,22 +991,6 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		return
 	}
 
-	// 2. Add a tag to the bucket
-	tags := make(map[string]string)
-	tags["tag2"] = "tag2"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"bucketinformation2", tags)
-	if putBucketTagError != nil {
-		log.Println(putBucketTagError)
-		assert.Fail("Error putting the bucket's tags")
-		return
-	}
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			200, putBucketTagResponse.StatusCode,
-			inspectHTTPResponse(putBucketTagResponse))
-	}
-
 	// 3. Get the information
 	bucketInfoResponse, bucketInfoError := BucketInfo("bucketinformation3")
 	if bucketInfoError != nil {
@@ -1374,15 +998,9 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 		assert.Fail("Error getting the bucket information")
 		return
 	}
-	finalResponse := inspectHTTPResponse(bucketInfoResponse)
 	if bucketInfoResponse != nil {
 		assert.Equal(200, bucketInfoResponse.StatusCode)
 	}
-
-	// 4. Verify the information
-	// Since bucketinformation3 hasn't been created, then it is expected that
-	// tag2 is not part of the response, this is why assert.False is used.
-	assert.False(strings.Contains(finalResponse, "tag2"), finalResponse)
 }
 
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
@@ -1394,22 +1012,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	assert := assert.New(t)
 	if !setupBucket("bucketinformation1", false, nil, nil, nil, assert, 200) {
 		return
-	}
-
-	// 2. Add a tag to the bucket
-	tags := make(map[string]string)
-	tags["tag1"] = "tag1"
-	putBucketTagResponse, putBucketTagError := PutBucketsTags(
-		"bucketinformation1", tags)
-	if putBucketTagError != nil {
-		log.Println(putBucketTagError)
-		assert.Fail("Error putting the bucket's tags")
-		return
-	}
-	if putBucketTagResponse != nil {
-		assert.Equal(
-			200, putBucketTagResponse.StatusCode,
-			inspectHTTPResponse(putBucketTagResponse))
 	}
 
 	// 3. Get the information
@@ -1429,9 +1031,6 @@ func TestBucketInformationSuccessfulResponse(t *testing.T) {
 	// 4. Verify the information
 	assert.True(
 		strings.Contains(debugResponse, "bucketinformation1"),
-		inspectHTTPResponse(bucketInfoResponse))
-	assert.True(
-		strings.Contains(debugResponse, "tag1"),
 		inspectHTTPResponse(bucketInfoResponse))
 }
 
@@ -1508,74 +1107,6 @@ func TestBucketsGet(t *testing.T) {
 	}
 }
 
-func TestSetBucketTags(t *testing.T) {
-	assert := assert.New(t)
-
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-
-	// put bucket
-	if !setupBucket("test4", false, nil, nil, nil, assert, 200) {
-		return
-	}
-
-	requestDataTags := map[string]interface{}{
-		"tags": map[string]interface{}{
-			"test": "TAG",
-		},
-	}
-
-	requestTagsJSON, _ := json.Marshal(requestDataTags)
-
-	requestTagsBody := bytes.NewBuffer(requestTagsJSON)
-
-	request, err := http.NewRequest(http.MethodPut, "http://localhost:9090/api/v1/buckets/test4/tags", requestTagsBody)
-	request.Close = true
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	_, err = client.Do(request)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	// get bucket
-	request, err = http.NewRequest("GET", "http://localhost:9090/api/v1/buckets/test4", nil)
-	request.Close = true
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-
-	response, err := client.Do(request)
-	assert.Nil(err)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-
-	bodyBytes, _ := io.ReadAll(response.Body)
-
-	bucket := models.Bucket{}
-	err = json.Unmarshal(bodyBytes, &bucket)
-	if err != nil {
-		log.Println(err)
-	}
-
-	assert.Equal("TAG", bucket.Details.Tags["test"], "Failed to add tag")
-}
-
 func TestGetBucket(t *testing.T) {
 	assert := assert.New(t)
 
@@ -1643,264 +1174,11 @@ func TestAddBucket(t *testing.T) {
 	}
 }
 
-func CreateBucketEvent(bucketName string, ignoreExisting bool, arn, prefix, suffix string, events []string) (*http.Response, error) {
-	/*
-		Helper function to create bucket event
-		POST: /buckets/{bucket_name}/events
-		{
-			"configuration":
-				{
-					"arn":"arn:minio:sqs::_:postgresql",
-					"events":["put"],
-					"prefix":"",
-					"suffix":""
-				},
-			"ignoreExisting":true
-		}
-	*/
-	configuration := map[string]interface{}{
-		"arn":    arn,
-		"events": events,
-		"prefix": prefix,
-		"suffix": suffix,
-	}
-	requestDataAdd := map[string]interface{}{
-		"configuration":  configuration,
-		"ignoreExisting": ignoreExisting,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"POST",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func DeleteBucketEvent(bucketName, arn string, events []string, prefix, suffix string) (*http.Response, error) {
-	/*
-		Helper function to test Delete Bucket Event
-		DELETE: /buckets/{bucket_name}/events/{arn}
-		{
-			"events":["put"],
-			"prefix":"",
-			"suffix":""
-		}
-	*/
-	requestDataAdd := map[string]interface{}{
-		"events": events,
-		"prefix": prefix,
-		"suffix": suffix,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"DELETE",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/events/"+arn,
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func SetMultiBucketReplication(accessKey, secretKey, targetURL, region, originBucket, destinationBucket, syncMode string, bandwidth, healthCheckPeriod int, prefix, tags string, replicateDeleteMarkers, replicateDeletes bool, priority int, storageClass string, replicateMetadata bool) (*http.Response, error) {
-	/*
-		Helper function
-		URL: /buckets-replication
-		HTTP Verb: POST
-		Body:
-		{
-			"accessKey":"Q3AM3UQ867SPQQA43P2F",
-			"secretKey":"zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG",
-			"targetURL":"https://play.min.io",
-			"region":"",
-			"bucketsRelation":[
-				{
-					"originBucket":"test",
-					"destinationBucket":"versioningenabled"
-				}
-			],
-			"syncMode":"async",
-			"bandwidth":107374182400,
-			"healthCheckPeriod":60,
-			"prefix":"",
-			"tags":"",
-			"replicateDeleteMarkers":true,
-			"replicateDeletes":true,
-			"priority":1,
-			"storageClass":"",
-			"replicateMetadata":true
-		}
-	*/
-	bucketsRelationArray := make([]map[string]interface{}, 1)
-	bucketsRelationIndex0 := map[string]interface{}{
-		"originBucket":      originBucket,
-		"destinationBucket": destinationBucket,
-	}
-	bucketsRelationArray[0] = bucketsRelationIndex0
-	requestDataAdd := map[string]interface{}{
-		"accessKey":              accessKey,
-		"secretKey":              secretKey,
-		"targetURL":              targetURL,
-		"region":                 region,
-		"bucketsRelation":        bucketsRelationArray,
-		"syncMode":               syncMode,
-		"bandwidth":              bandwidth,
-		"healthCheckPeriod":      healthCheckPeriod,
-		"prefix":                 prefix,
-		"tags":                   tags,
-		"replicateDeleteMarkers": replicateDeleteMarkers,
-		"replicateDeletes":       replicateDeletes,
-		"priority":               priority,
-		"storageClass":           storageClass,
-		"replicateMetadata":      replicateMetadata,
-	}
-	requestDataJSON, _ := json.Marshal(requestDataAdd)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"POST",
-		"http://localhost:9090/api/v1/buckets-replication",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func GetBucketReplication(bucketName string) (*http.Response, error) {
-	/*
-		URL: /buckets/{bucket_name}/replication
-		HTTP Verb: GET
-	*/
-	request, err := http.NewRequest("GET",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/replication",
-		nil)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func DeletesAllReplicationRulesOnABucket(bucketName string) (*http.Response, error) {
-	/*
-		Helper function to delete all replication rules in a bucket
-		URL: /buckets/{bucket_name}/delete-all-replication-rules
-		HTTP Verb: DELETE
-	*/
-	request, err := http.NewRequest(
-		"DELETE",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-all-replication-rules",
-		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func DeleteMultipleReplicationRules(bucketName string, rules []string) (*http.Response, error) {
-	/*
-		Helper function to delete multiple replication rules in a bucket
-		URL: /buckets/{bucket_name}/delete-multiple-replication-rules
-		HTTP Verb: DELETE
-	*/
-	body := map[string]interface{}{
-		"rules": rules,
-	}
-	requestDataJSON, _ := json.Marshal(body)
-	requestDataBody := bytes.NewReader(requestDataJSON)
-	request, err := http.NewRequest(
-		"DELETE",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/delete-selected-replication-rules",
-		requestDataBody,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
-func DeleteBucketReplicationRule(bucketName, ruleID string) (*http.Response, error) {
-	/*
-		Helper function to delete a bucket's replication rule
-		URL: /buckets/{bucket_name}/replication/{rule_id}
-		HTTP Verb: DELETE
-	*/
-	request, err := http.NewRequest(
-		"DELETE",
-		"http://localhost:9090/api/v1/buckets/"+bucketName+"/replication/"+ruleID,
-		nil,
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	request.Header.Add("Cookie", fmt.Sprintf("token=%s", token))
-	request.Header.Add("Content-Type", "application/json")
-	client := &http.Client{
-		Timeout: 2 * time.Second,
-	}
-	response, err := client.Do(request)
-	return response, err
-}
-
 func GetBucketVersioning(bucketName string) (*http.Response, error) {
 	/*
 		Helper function to get bucket's versioning
 	*/
 	endPoint := "versioning"
-	return BaseGetFunction(bucketName, endPoint)
-}
-
-func ReturnsTheStatusOfObjectLockingSupportOnTheBucket(bucketName string) (*http.Response, error) {
-	/*
-		Helper function to test end point below:
-		URL: /buckets/{bucket_name}/object-locking:
-		HTTP Verb: GET
-	*/
-	endPoint := "object-locking"
 	return BaseGetFunction(bucketName, endPoint)
 }
 

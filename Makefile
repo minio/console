@@ -140,56 +140,6 @@ test-replication:
 	@(docker stop minio2 || true)
 	@(docker network rm mynet123 || true)
 
-test-sso-integration:
-	@echo "create the network in bridge mode to communicate all containers"
-	@(docker network create my-net)
-	@echo "run openldap container using MinIO Image: quay.io/minio/openldap:latest"
-	@(docker run \
-		-e LDAP_ORGANIZATION="MinIO Inc" \
-		-e LDAP_DOMAIN="min.io" \
-		-e LDAP_ADMIN_PASSWORD="admin" \
-		--network my-net \
-		-p 389:389 \
-		-p 636:636 \
-		--name openldap \
-		--detach quay.io/minio/openldap:latest)
-	@echo "Run Dex container using MinIO Image: quay.io/minio/dex:latest"
-	@(docker run \
-		-e DEX_ISSUER=http://dex:5556/dex \
-		-e DEX_CLIENT_REDIRECT_URI=http://127.0.0.1:9090/oauth_callback \
-		-e DEX_LDAP_SERVER=openldap:389 \
-		--network my-net \
-		-p 5556:5556 \
-		--name dex \
-		--detach quay.io/minio/dex:latest)
-	@echo "running minio server"
-	@(docker run \
-	-v /data1 -v /data2 -v /data3 -v /data4 \
-	--network my-net \
-	-d \
-	--name minio \
-	--rm \
-	-p 9000:9000 \
-	-p 9001:9001 \
-	-e MINIO_IDENTITY_OPENID_CLIENT_ID="minio-client-app" \
-	-e MINIO_IDENTITY_OPENID_CLIENT_SECRET="minio-client-app-secret" \
-	-e MINIO_IDENTITY_OPENID_CLAIM_NAME=name \
-	-e MINIO_IDENTITY_OPENID_CONFIG_URL=http://dex:5556/dex/.well-known/openid-configuration \
-	-e MINIO_IDENTITY_OPENID_REDIRECT_URI=http://127.0.0.1:9090/oauth_callback \
-	-e MINIO_ROOT_USER=minio \
-	-e MINIO_ROOT_PASSWORD=minio123 $(MINIO_VERSION) server /data{1...4} --address :9000 --console-address :9001)
-	@echo "run mc commands to set the policy"
-	@(docker run --name minio-client --network my-net -dit --entrypoint=/bin/sh minio/mc)
-	@(docker exec minio-client mc alias set myminio/ http://minio:9000 minio minio123)
-	@echo "adding policy to Dillon Harper to be able to login:"
-	@(cd sso-integration && docker cp allaccess.json minio-client:/ && docker exec minio-client mc admin policy create myminio "Dillon Harper" allaccess.json)
-	@echo "starting bash script"
-	@(env bash $(PWD)/sso-integration/set-sso.sh)
-	@echo "add python module"
-	@(pip3 install bs4)
-	@echo "Executing the test:"
-	@(cd sso-integration && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage && ./sso-integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/sso-system.out)
-
 test-permissions-1:
 	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
 	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-1/")

@@ -17,9 +17,6 @@
 package kes
 
 import (
-	"crypto/x509"
-	"encoding/pem"
-	"errors"
 	"time"
 
 	"github.com/minio/kes"
@@ -178,19 +175,4 @@ type ServerConfig struct {
 	Cache    Cache             `yaml:"cache,omitempty" json:"cache,omitempty"`
 	Log      Log               `yaml:"log,omitempty" json:"log,omitempty"`
 	Keys     Keys              `yaml:"keys,omitempty" json:"keys,omitempty"`
-}
-
-func ParseCertificate(cert []byte) (*x509.Certificate, error) {
-	for {
-		var certDERBlock *pem.Block
-		certDERBlock, cert = pem.Decode(cert)
-		if certDERBlock == nil {
-			break
-		}
-
-		if certDERBlock.Type == "CERTIFICATE" {
-			return x509.ParseCertificate(certDERBlock.Bytes)
-		}
-	}
-	return nil, errors.New("found no (non-CA) certificate in any PEM block")
 }

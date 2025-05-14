@@ -316,10 +316,3 @@ func GetAllCertificatesAndCAs() (*x509.CertPool, []*x509.Certificate, *xcerts.Ma
 }
 
 // EnsureCertAndKey checks if both client certificate and key paths are provided
-func EnsureCertAndKey(clientCert, clientKey string) error {
-	if (clientCert != "" && clientKey == "") ||
-		(clientCert == "" && clientKey != "") {
-		return errors.New("cert and key must be specified as a pair")
-	}
-	return nil
-}

@@ -709,42 +709,6 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/tags": {
-      "put": {
-        "tags": [
-          "Bucket"
-        ],
-        "summary": "Put Bucket's tags",
-        "operationId": "PutBucketTags",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "bucket_name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/putBucketTagsRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -980,37 +944,6 @@ func init() {
         }
       }
     },
-    "/login/oauth2/auth": {
-      "post": {
-        "security": [],
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Identity Provider oauth2 callback endpoint.",
-        "operationId": "LoginOauth2Auth",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginOauth2AuthRequest"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "A successful login."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/logout": {
       "post": {
         "tags": [
@@ -1053,37 +986,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/sessionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List Users",
-        "operationId": "ListUsers",
-        "parameters": [
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/listUsersResponse"
             }
           },
           "default": {
@@ -1434,18 +1336,6 @@ func init() {
         }
       }
     },
-    "listUsersResponse": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "title": "list of resulting users",
-          "items": {
-            "$ref": "#/definitions/user"
-          }
-        }
-      }
-    },
     "loginDetails": {
       "type": "object",
       "properties": {
@@ -1459,7 +1349,6 @@ func init() {
           "type": "string",
           "enum": [
             "form",
-            "redirect",
             "service-account",
             "redirect-service-account"
           ]
@@ -1469,21 +1358,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/redirectRule"
           }
-        }
-      }
-    },
-    "loginOauth2AuthRequest": {
-      "type": "object",
-      "required": [
-        "state",
-        "code"
-      ],
-      "properties": {
-        "code": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
         }
       }
     },
@@ -1622,16 +1496,6 @@ func init() {
         },
         "ob": {
           "type": "boolean"
-        }
-      }
-    },
-    "putBucketTagsRequest": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "additionalProperties": {
-            "type": "string"
-          }
         }
       }
     },
@@ -1846,32 +1710,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "user": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "hasPolicy": {
-          "type": "boolean"
-        },
-        "memberOf": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "policy": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
@@ -2642,42 +2480,6 @@ func init() {
         }
       }
     },
-    "/buckets/{bucket_name}/tags": {
-      "put": {
-        "tags": [
-          "Bucket"
-        ],
-        "summary": "Put Bucket's tags",
-        "operationId": "PutBucketTags",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "bucket_name",
-            "in": "path",
-            "required": true
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/putBucketTagsRequest"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/buckets/{bucket_name}/versioning": {
       "get": {
         "tags": [
@@ -2913,37 +2715,6 @@ func init() {
         }
       }
     },
-    "/login/oauth2/auth": {
-      "post": {
-        "security": [],
-        "tags": [
-          "Auth"
-        ],
-        "summary": "Identity Provider oauth2 callback endpoint.",
-        "operationId": "LoginOauth2Auth",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/loginOauth2AuthRequest"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "A successful login."
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
     "/logout": {
       "post": {
         "tags": [
@@ -2986,45 +2757,6 @@ func init() {
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/sessionResponse"
-            }
-          },
-          "default": {
-            "description": "Generic error response.",
-            "schema": {
-              "$ref": "#/definitions/ApiError"
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "summary": "List Users",
-        "operationId": "ListUsers",
-        "parameters": [
-          {
-            "type": "number",
-            "format": "int32",
-            "default": 0,
-            "name": "offset",
-            "in": "query"
-          },
-          {
-            "type": "number",
-            "format": "int32",
-            "default": 20,
-            "name": "limit",
-            "in": "query"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/listUsersResponse"
             }
           },
           "default": {
@@ -3477,18 +3209,6 @@ func init() {
         }
       }
     },
-    "listUsersResponse": {
-      "type": "object",
-      "properties": {
-        "users": {
-          "type": "array",
-          "title": "list of resulting users",
-          "items": {
-            "$ref": "#/definitions/user"
-          }
-        }
-      }
-    },
     "loginDetails": {
       "type": "object",
       "properties": {
@@ -3502,7 +3222,6 @@ func init() {
           "type": "string",
           "enum": [
             "form",
-            "redirect",
             "service-account",
             "redirect-service-account"
           ]
@@ -3512,21 +3231,6 @@ func init() {
           "items": {
             "$ref": "#/definitions/redirectRule"
           }
-        }
-      }
-    },
-    "loginOauth2AuthRequest": {
-      "type": "object",
-      "required": [
-        "state",
-        "code"
-      ],
-      "properties": {
-        "code": {
-          "type": "string"
-        },
-        "state": {
-          "type": "string"
         }
       }
     },
@@ -3665,16 +3369,6 @@ func init() {
         },
         "ob": {
           "type": "boolean"
-        }
-      }
-    },
-    "putBucketTagsRequest": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "additionalProperties": {
-            "type": "string"
-          }
         }
       }
     },
@@ -3889,32 +3583,6 @@ func init() {
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "user": {
-      "type": "object",
-      "properties": {
-        "accessKey": {
-          "type": "string"
-        },
-        "hasPolicy": {
-          "type": "boolean"
-        },
-        "memberOf": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "policy": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "status": {
-          "type": "string"
         }
       }
     },
