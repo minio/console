@@ -1001,7 +1001,6 @@ func TestBucketInformationGenericErrorResponse(t *testing.T) {
 	if bucketInfoResponse != nil {
 		assert.Equal(200, bucketInfoResponse.StatusCode)
 	}
-
 }
 
 func TestBucketInformationSuccessfulResponse(t *testing.T) {
