@@ -42,7 +42,6 @@ import (
 	"github.com/minio/console/api/operations/object"
 	"github.com/minio/console/api/operations/public"
 	"github.com/minio/console/api/operations/system"
-	"github.com/minio/console/api/operations/user"
 	"github.com/minio/console/models"
 )
 
@@ -115,17 +114,11 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		ObjectListObjectsHandler: object.ListObjectsHandlerFunc(func(params object.ListObjectsParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.ListObjects has not yet been implemented")
 		}),
-		UserListUsersHandler: user.ListUsersHandlerFunc(func(params user.ListUsersParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation user.ListUsers has not yet been implemented")
-		}),
 		AuthLoginHandler: auth.LoginHandlerFunc(func(params auth.LoginParams) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Login has not yet been implemented")
 		}),
 		AuthLoginDetailHandler: auth.LoginDetailHandlerFunc(func(params auth.LoginDetailParams) middleware.Responder {
 			return middleware.NotImplemented("operation auth.LoginDetail has not yet been implemented")
-		}),
-		AuthLoginOauth2AuthHandler: auth.LoginOauth2AuthHandlerFunc(func(params auth.LoginOauth2AuthParams) middleware.Responder {
-			return middleware.NotImplemented("operation auth.LoginOauth2Auth has not yet been implemented")
 		}),
 		AuthLogoutHandler: auth.LogoutHandlerFunc(func(params auth.LogoutParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation auth.Logout has not yet been implemented")
@@ -135,9 +128,6 @@ func NewConsoleAPI(spec *loads.Document) *ConsoleAPI {
 		}),
 		ObjectPostBucketsBucketNameObjectsUploadHandler: object.PostBucketsBucketNameObjectsUploadHandlerFunc(func(params object.PostBucketsBucketNameObjectsUploadParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.PostBucketsBucketNameObjectsUpload has not yet been implemented")
-		}),
-		BucketPutBucketTagsHandler: bucket.PutBucketTagsHandlerFunc(func(params bucket.PutBucketTagsParams, principal *models.Principal) middleware.Responder {
-			return middleware.NotImplemented("operation bucket.PutBucketTags has not yet been implemented")
 		}),
 		ObjectPutObjectRestoreHandler: object.PutObjectRestoreHandlerFunc(func(params object.PutObjectRestoreParams, principal *models.Principal) middleware.Responder {
 			return middleware.NotImplemented("operation object.PutObjectRestore has not yet been implemented")
@@ -247,22 +237,16 @@ type ConsoleAPI struct {
 	BucketListBucketsHandler bucket.ListBucketsHandler
 	// ObjectListObjectsHandler sets the operation handler for the list objects operation
 	ObjectListObjectsHandler object.ListObjectsHandler
-	// UserListUsersHandler sets the operation handler for the list users operation
-	UserListUsersHandler user.ListUsersHandler
 	// AuthLoginHandler sets the operation handler for the login operation
 	AuthLoginHandler auth.LoginHandler
 	// AuthLoginDetailHandler sets the operation handler for the login detail operation
 	AuthLoginDetailHandler auth.LoginDetailHandler
-	// AuthLoginOauth2AuthHandler sets the operation handler for the login oauth2 auth operation
-	AuthLoginOauth2AuthHandler auth.LoginOauth2AuthHandler
 	// AuthLogoutHandler sets the operation handler for the logout operation
 	AuthLogoutHandler auth.LogoutHandler
 	// BucketMakeBucketHandler sets the operation handler for the make bucket operation
 	BucketMakeBucketHandler bucket.MakeBucketHandler
 	// ObjectPostBucketsBucketNameObjectsUploadHandler sets the operation handler for the post buckets bucket name objects upload operation
 	ObjectPostBucketsBucketNameObjectsUploadHandler object.PostBucketsBucketNameObjectsUploadHandler
-	// BucketPutBucketTagsHandler sets the operation handler for the put bucket tags operation
-	BucketPutBucketTagsHandler bucket.PutBucketTagsHandler
 	// ObjectPutObjectRestoreHandler sets the operation handler for the put object restore operation
 	ObjectPutObjectRestoreHandler object.PutObjectRestoreHandler
 	// ObjectPutObjectTagsHandler sets the operation handler for the put object tags operation
@@ -408,17 +392,11 @@ func (o *ConsoleAPI) Validate() error {
 	if o.ObjectListObjectsHandler == nil {
 		unregistered = append(unregistered, "object.ListObjectsHandler")
 	}
-	if o.UserListUsersHandler == nil {
-		unregistered = append(unregistered, "user.ListUsersHandler")
-	}
 	if o.AuthLoginHandler == nil {
 		unregistered = append(unregistered, "auth.LoginHandler")
 	}
 	if o.AuthLoginDetailHandler == nil {
 		unregistered = append(unregistered, "auth.LoginDetailHandler")
-	}
-	if o.AuthLoginOauth2AuthHandler == nil {
-		unregistered = append(unregistered, "auth.LoginOauth2AuthHandler")
 	}
 	if o.AuthLogoutHandler == nil {
 		unregistered = append(unregistered, "auth.LogoutHandler")
@@ -428,9 +406,6 @@ func (o *ConsoleAPI) Validate() error {
 	}
 	if o.ObjectPostBucketsBucketNameObjectsUploadHandler == nil {
 		unregistered = append(unregistered, "object.PostBucketsBucketNameObjectsUploadHandler")
-	}
-	if o.BucketPutBucketTagsHandler == nil {
-		unregistered = append(unregistered, "bucket.PutBucketTagsHandler")
 	}
 	if o.ObjectPutObjectRestoreHandler == nil {
 		unregistered = append(unregistered, "object.PutObjectRestoreHandler")
@@ -615,10 +590,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/buckets/{bucket_name}/objects"] = object.NewListObjects(o.context, o.ObjectListObjectsHandler)
-	if o.handlers["GET"] == nil {
-		o.handlers["GET"] = make(map[string]http.Handler)
-	}
-	o.handlers["GET"]["/users"] = user.NewListUsers(o.context, o.UserListUsersHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -627,10 +598,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/login"] = auth.NewLoginDetail(o.context, o.AuthLoginDetailHandler)
-	if o.handlers["POST"] == nil {
-		o.handlers["POST"] = make(map[string]http.Handler)
-	}
-	o.handlers["POST"]["/login/oauth2/auth"] = auth.NewLoginOauth2Auth(o.context, o.AuthLoginOauth2AuthHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
@@ -643,10 +610,6 @@ func (o *ConsoleAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/buckets/{bucket_name}/objects/upload"] = object.NewPostBucketsBucketNameObjectsUpload(o.context, o.ObjectPostBucketsBucketNameObjectsUploadHandler)
-	if o.handlers["PUT"] == nil {
-		o.handlers["PUT"] = make(map[string]http.Handler)
-	}
-	o.handlers["PUT"]["/buckets/{bucket_name}/tags"] = bucket.NewPutBucketTags(o.context, o.BucketPutBucketTagsHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

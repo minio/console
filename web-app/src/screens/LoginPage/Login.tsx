@@ -75,7 +75,6 @@ const Login = () => {
   let loginComponent;
 
   switch (loginStrategy.loginStrategy) {
-    case loginStrategyType.redirect:
     case loginStrategyType.form: {
       let redirectItems: RedirectRule[] = [];
 

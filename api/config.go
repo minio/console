@@ -227,11 +227,6 @@ func GetSecureSTSPreload() bool {
 	return strings.ToLower(env.Get(ConsoleSecureSTSPreload, "off")) == "on"
 }
 
-// If TLSTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
-func GetSecureTLSTemporaryRedirect() bool {
-	return strings.ToLower(env.Get(ConsoleSecureTLSTemporaryRedirect, "off")) == "on"
-}
-
 // STS header is only included when the connection is HTTPS.
 func GetSecureForceSTSHeader() bool {
 	return strings.ToLower(env.Get(ConsoleSecureForceSTSHeader, "off")) == "on"
@@ -252,18 +247,6 @@ func getLogSearchAPIToken() string {
 		return v
 	}
 	return env.Get(LogSearchQueryAuthToken, "")
-}
-
-func getLogSearchURL() string {
-	return env.Get(ConsoleLogQueryURL, "")
-}
-
-func getPrometheusURL() string {
-	return env.Get(PrometheusURL, "")
-}
-
-func getPrometheusJobID() string {
-	return env.Get(PrometheusJobID, "minio-job")
 }
 
 func getMaxConcurrentUploadsLimit() int64 {

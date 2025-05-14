@@ -77,27 +77,6 @@ paths:
       security: [ ]
       tags:
         - Auth
-  /login/oauth2/auth:
-    post:
-      summary: Identity Provider oauth2 callback endpoint.
-      operationId: LoginOauth2Auth
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/loginOauth2AuthRequest"
-      responses:
-        204:
-          description: A successful login.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      security: [ ]
-      tags:
-        - Auth
-
   /logout:
     post:
       summary: Logout from Console.
@@ -117,7 +96,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Auth
-
   /session:
     get:
       summary: Endpoint to check if your session is still valid
@@ -133,7 +111,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Auth
-
   /buckets:
     get:
       summary: List Buckets
@@ -169,7 +146,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
   /buckets/{name}:
     get:
       summary: Bucket Info
@@ -190,7 +166,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
   /buckets/{bucket_name}/objects:
     get:
       summary: List Objects
@@ -272,7 +247,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/delete-objects:
     post:
       summary: Delete Multiple Objects
@@ -306,7 +280,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/upload:
     post:
       summary: Uploads an Object.
@@ -332,7 +305,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/download-multiple:
     post:
       summary: Download Multiple Objects
@@ -365,7 +337,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/download:
     get:
       summary: Download Object
@@ -409,7 +380,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/share:
     get:
       summary: Shares an Object on a url
@@ -442,7 +412,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/tags:
     put:
       summary: Put Object's tags
@@ -474,7 +443,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/restore:
     put:
       summary: Restore Object to a selected version
@@ -501,7 +469,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
   /buckets/{bucket_name}/objects/metadata:
     get:
       summary: Gets the metadata of an object
@@ -529,31 +496,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Object
-
-  /buckets/{bucket_name}/tags:
-    put:
-      summary: Put Bucket's tags
-      operationId: PutBucketTags
-      parameters:
-        - name: bucket_name
-          in: path
-          required: true
-          type: string
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: "#/definitions/putBucketTagsRequest"
-      responses:
-        200:
-          description: A successful response.
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      tags:
-        - Bucket
-
   /buckets/{name}/quota:
     get:
       summary: Get Bucket Quota
@@ -574,7 +516,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
   /buckets/{bucket_name}/versioning:
     get:
       summary: Bucket Versioning
@@ -617,7 +558,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
   /buckets/{bucket_name}/rewind/{date}:
     get:
       summary: Get objects in a bucket for a rewind date
@@ -646,7 +586,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
   /buckets/max-share-exp:
     get:
       summary: Get max expiration time for share link in seconds
@@ -662,26 +601,6 @@ paths:
             $ref: "#/definitions/ApiError"
       tags:
         - Bucket
-
-  /users:
-    get:
-      summary: List Users
-      operationId: ListUsers
-      parameters:
-        - $ref: "#/parameters/offset"
-        - $ref: "#/parameters/limit"
-      responses:
-        200:
-          description: A successful response.
-          schema:
-            $ref: "#/definitions/listUsersResponse"
-        default:
-          description: Generic error response.
-          schema:
-            $ref: "#/definitions/ApiError"
-      tags:
-        - User
-
   /admin/info:
     get:
       summary: Returns information about the deployment
@@ -909,32 +828,6 @@ definitions:
         type: string
       detailedMessage:
         type: string
-  user:
-    type: object
-    properties:
-      accessKey:
-        type: string
-      policy:
-        type: array
-        items:
-          type: string
-      memberOf:
-        type: array
-        items:
-          type: string
-      status:
-        type: string
-      hasPolicy:
-        type: boolean
-
-  listUsersResponse:
-    type: object
-    properties:
-      users:
-        type: array
-        items:
-          $ref: "#/definitions/user"
-        title: list of resulting users
   makeBucketsResponse:
     type: object
     properties:
@@ -961,7 +854,7 @@ definitions:
     properties:
       loginStrategy:
         type: string
-        enum: [ form, redirect, service-account, redirect-service-account ]
+        enum: [ form, service-account, redirect-service-account ]
       redirectRules:
         type: array
         items:
@@ -970,16 +863,6 @@ definitions:
         type: boolean
       animatedLogin:
         type: boolean
-  loginOauth2AuthRequest:
-    type: object
-    required:
-      - state
-      - code
-    properties:
-      state:
-        type: string
-      code:
-        type: string
   loginRequest:
     type: object
     properties:
@@ -1213,12 +1096,6 @@ definitions:
         additionalProperties:
           type: string
 
-  putBucketTagsRequest:
-    type: object
-    properties:
-      tags:
-        additionalProperties:
-          type: string
   deleteFile:
     type: object
     properties:

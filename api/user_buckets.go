@@ -27,18 +27,16 @@ import (
 
 	"github.com/minio/minio-go/v7"
 
-	"github.com/minio/madmin-go/v3"
-	"github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/tags"
-
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
 	"github.com/minio/console/api/operations"
 	bucketApi "github.com/minio/console/api/operations/bucket"
 	"github.com/minio/console/models"
 	"github.com/minio/console/pkg/auth/token"
+	"github.com/minio/madmin-go/v3"
+	"github.com/minio/mc/cmd"
+	"github.com/minio/mc/pkg/probe"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/minio/minio-go/v7/pkg/policy"
 	minioIAMPolicy "github.com/minio/pkg/v3/policy"
 )
@@ -68,14 +66,6 @@ func registerBucketsHandlers(api *operations.ConsoleAPI) {
 		}
 
 		return bucketApi.NewBucketInfoOK().WithPayload(bucketInfoResp)
-	})
-	// set bucket tags
-	api.BucketPutBucketTagsHandler = bucketApi.PutBucketTagsHandlerFunc(func(params bucketApi.PutBucketTagsParams, session *models.Principal) middleware.Responder {
-		err := getPutBucketTagsResponse(session, params)
-		if err != nil {
-			return bucketApi.NewPutBucketTagsDefault(err.Code).WithPayload(err.APIError)
-		}
-		return bucketApi.NewPutBucketTagsOK()
 	})
 	// get bucket versioning
 	api.BucketGetBucketVersioningHandler = bucketApi.GetBucketVersioningHandlerFunc(func(params bucketApi.GetBucketVersioningParams, session *models.Principal) middleware.Responder {
@@ -335,34 +325,6 @@ func setBucketAccessPolicy(ctx context.Context, client MinioClient, bucketName s
 		return err
 	}
 	return client.setBucketPolicyWithContext(ctx, bucketName, string(policyJSON))
-}
-
-// putBucketTags sets tags for a bucket
-func getPutBucketTagsResponse(session *models.Principal, params bucketApi.PutBucketTagsParams) *CodedAPIError {
-	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
-	defer cancel()
-
-	mClient, err := newMinioClient(session, getClientIP(params.HTTPRequest))
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
-	// create a minioClient interface implementation
-	// defining the client to be used
-	minioClient := minioClient{client: mClient}
-
-	req := params.Body
-	bucketName := params.BucketName
-
-	newTagSet, err := tags.NewTags(req.Tags, true)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
-
-	err = minioClient.SetBucketTagging(ctx, bucketName, newTagSet)
-	if err != nil {
-		return ErrorWithContext(ctx, err)
-	}
-	return nil
 }
 
 // removeBucket deletes a bucket
