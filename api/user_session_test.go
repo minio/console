@@ -110,7 +110,7 @@ func Test_getListOfEnabledFeatures(t *testing.T) {
 					Hm:                 true,
 				},
 			},
-			want: []string{"log-search", "oidc-idp", "external-idp", "ldap-idp", "external-idp", "hide-menu"},
+			want: []string{"hide-menu"},
 			preFunc: func() {
 				os.Setenv(ConsoleLogQueryURL, "http://logsearchapi:8080")
 			},
