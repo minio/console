@@ -23,51 +23,49 @@ import CheckIcon from "./CheckIcon";
 
 const LicensesInformation = styled.div(({ theme }) => ({
   display: "grid",
-  gridTemplateColumns: "repeat(3, minmax(350px, 400px))",
+  gridTemplateColumns: "repeat(3, minmax(270px, 320px))",
   justifyContent: "flex-start",
   marginTop: 30,
   marginLeft: 30,
   "& > div": {
     borderBottom: `${get(theme, "borderColor", "#EAEAEA")} 1px solid`,
-    padding: "25px 40px",
+    padding: "25px 30px",
     justifyContent: "center",
+    "&.first": {
+      padding: 0,
+    },
     "&.openSource": {
-      borderRight: `#002562 2px solid`,
-      borderLeft: `#002562 2px solid`,
-      position: "relative",
-      "&.first:before": {
-        content: "' '",
-        width: "calc(100% + 4px)",
-        height: 16,
-        display: "block",
-        backgroundColor: "#001F55",
-        position: "absolute",
-        top: -14,
-        left: -2,
-        border: `#002562 2px solid`,
-        borderBottom: 0,
+      borderRight: `${get(theme, "signalColors.main", "#002562")} 2px solid`,
+      borderLeft: `${get(theme, "signalColors.main", "#002562")} 2px solid`,
+      "&.first": {
+        borderTop: `${get(theme, "signalColors.main", "#002562")} 2px solid`,
         borderTopLeftRadius: 12,
         borderTopRightRadius: 12,
       },
       "&.last": {
         paddingBottom: 30,
-        "&:after": {
-          content: "' '",
-          width: "calc(100% + 4px)",
-          height: 16,
-          display: "block",
-          position: "absolute",
-          bottom: -14,
-          left: -2,
-          border: `#002562 2px solid`,
-          borderTop: 0,
-          borderBottomLeftRadius: 12,
-          borderBottomRightRadius: 12,
-        },
+        borderBottom: `${get(theme, "signalColors.main", "#002562")} 2px solid`,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
+      },
+    },
+    "&.enterprise": {
+      borderRight: `#a0a0a0 2px solid`,
+      borderLeft: `#a0a0a0 2px solid`,
+      "&.first": {
+        borderTop: `#a0a0a0 2px solid`,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+      },
+      "&.last": {
+        paddingBottom: 30,
+        borderBottom: `#a0a0a0 2px solid`,
+        borderBottomLeftRadius: 12,
+        borderBottomRightRadius: 12,
       },
     },
     "&.feature-information": {
-      textAlign: "center",
+      textAlign: "center" as const,
     },
     "&.feature-label": {
       paddingLeft: 5,
@@ -78,23 +76,27 @@ const LicensesInformation = styled.div(({ theme }) => ({
   },
   "& .planName": {
     fontWeight: 600,
-    fontSize: 32,
-    marginBottom: 24,
-    textAlign: "center",
-    marginTop: 8,
+    fontSize: 18,
+    textAlign: "center" as const,
+    color: "#fff",
+    marginBottom: 30,
+    padding: "8px 0",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    "&.openSource": {
+      backgroundColor: `${get(theme, "signalColors.main", "#002562")}`,
+    },
+    "&.enterprise": {
+      backgroundColor: "#a0a0a0",
+    },
   },
   "& .planIcon": {
-    height: 100,
+    height: 90,
     display: "flex",
     alignItems: "flex-start",
     justifyContent: "center",
     "& svg": {
-      height: 80,
-    },
-    "&.commercial": {
-      "& svg": {
-        height: 70,
-      },
+      height: 50,
     },
   },
   "& .planDescription": {
@@ -116,7 +118,7 @@ const LicensePlans = () => {
         sx={{
           marginTop: "12px",
           width: "80%",
-          height: "55px",
+          height: "40px",
         }}
         onClick={(e) => {
           e.preventDefault();
@@ -145,10 +147,16 @@ const LicensePlans = () => {
       <LicensesInformation>
         {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
           return (
-            <Box className={`${index === 1 ? "openSource first" : ""}`}>
+            <Box
+              className={`first ${index === 1 ? "openSource" : index === 2 ? "enterprise" : ""}`}
+            >
               {element !== null && (
                 <Box>
-                  <Box className={"planName"}>{element.planName}</Box>
+                  <Box
+                    className={`planName  ${index === 1 ? "openSource" : index === 2 ? "enterprise" : ""}`}
+                  >
+                    {element.planName}
+                  </Box>
                   <Box
                     className={`planIcon ${
                       element.planType === "commercial" ? "commercial" : ""
@@ -178,7 +186,7 @@ const LicensePlans = () => {
                   feature.featurePlans.openSource || null,
                 )}
               </Box>
-              <Box className={`feature-information ${lastItem}`}>
+              <Box className={`feature-information enterprise ${lastItem}`}>
                 {renderFeatureInformation(feature.featurePlans.eosPlus || null)}
               </Box>
             </Fragment>
@@ -187,8 +195,8 @@ const LicensePlans = () => {
         {[null, ...LICENSE_PLANS_INFORMATION].map((element, index) => {
           return (
             <Box
-              className={`${
-                index === 1 ? "openSource last" : ""
+              className={`last ${
+                index === 1 ? "openSource" : index === 2 ? "enterprise" : ""
               } noBorderBottom`}
               sx={{
                 display: "flex",

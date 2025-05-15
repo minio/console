@@ -30,7 +30,7 @@ const License = () => {
 
   return (
     <Fragment>
-      <PageHeaderWrapper label="MinIO License and Support Plan" />
+      <PageHeaderWrapper label="Community and Enterprise Editions" />
       <PageLayout>
         <LicensePlans />
       </PageLayout>
