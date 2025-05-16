@@ -1,5 +1,18 @@
 # Changelog
 
+## Release v2.0.1
+
+Bug Fix:
+
+- Updated project dependencies for vulnerabilities
+
+Changes:
+
+- Updated Object Browser console logos
+- Updated License page information
+
+
+
 ## Release v2.0.0
 
 Community version is going back to be an object browser only.
