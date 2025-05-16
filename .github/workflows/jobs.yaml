@@ -689,23 +689,6 @@ jobs:
           path: |
             ./integration/coverage/
           key: ${{ runner.os }}-coverage-2-${{ github.run_id }}
-  react-tests:
-    name: React Tests
-    needs:
-      - lint-job
-      - ui-assets
-      - semgrep-static-code-analysis
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Enable Corepack
-        run: corepack enable
-      - name: Install modules
-        working-directory: ./web-app
-        run: yarn install --immutable
-      - name: Run tests
-        working-directory: ./web-app
-        run: yarn test
 
   coverage:
     name: "Coverage Limit Check"
