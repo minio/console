@@ -15,15 +15,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import storage from "local-storage-fallback";
-import { IErasureCodeCalc, IStorageFactors } from "./types";
 
 import get from "lodash/get";
 
-const minMemReq = 2147483648; // Minimal Memory required for MinIO in bytes
-
 const units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
 const k8sUnits = ["Ki", "Mi", "Gi", "Ti", "Pi", "Ei"];
-const k8sCalcUnits = ["B", ...k8sUnits];
 
 export const niceBytes = (x: string, showK8sUnits: boolean = false) => {
   let n = parseInt(x, 10) || 0;
@@ -52,170 +48,6 @@ export const clearSession = () => {
   storage.removeItem("auth-state");
   deleteCookie("token");
   deleteCookie("idp-refresh-token");
-};
-
-//getBytes, converts from a value and a unit from units array to bytes as a string
-export const getBytes = (
-  value: string,
-  unit: string,
-  fromk8s: boolean = false,
-): string => {
-  return getBytesNumber(value, unit, fromk8s).toString(10);
-};
-
-//getBytesNumber, converts from a value and a unit from units array to bytes
-const getBytesNumber = (
-  value: string,
-  unit: string,
-  fromk8s: boolean = false,
-): number => {
-  const vl: number = parseFloat(value);
-
-  const unitsTake = fromk8s ? k8sCalcUnits : units;
-
-  const powFactor = unitsTake.findIndex((element) => element === unit);
-
-  if (powFactor === -1) {
-    return 0;
-  }
-  const factor = Math.pow(1024, powFactor);
-  const total = vl * factor;
-
-  return total;
-};
-
-export const setMemoryResource = (
-  memorySize: number,
-  capacitySize: string,
-  maxMemorySize: number,
-) => {
-  // value always comes as Gi
-  const requestedSizeBytes = getBytes(memorySize.toString(10), "Gi", true);
-  const memReqSize = parseInt(requestedSizeBytes, 10);
-  if (maxMemorySize === 0) {
-    return {
-      error: "There is no memory available for the selected number of nodes",
-      request: 0,
-      limit: 0,
-    };
-  }
-
-  if (maxMemorySize < minMemReq) {
-    return {
-      error: "There are not enough memory resources available",
-      request: 0,
-      limit: 0,
-    };
-  }
-
-  if (memReqSize < minMemReq) {
-    return {
-      error: "The requested memory size must be greater than 2Gi",
-      request: 0,
-      limit: 0,
-    };
-  }
-  if (memReqSize > maxMemorySize) {
-    return {
-      error:
-        "The requested memory is greater than the max available memory for the selected number of nodes",
-      request: 0,
-      limit: 0,
-    };
-  }
-
-  const capSize = parseInt(capacitySize, 10);
-  let memLimitSize = memReqSize;
-  // set memory limit based on the capacitySize
-  // if capacity size is lower than 1TiB we use the limit equal to request
-  if (capSize >= parseInt(getBytes("1", "Pi", true), 10)) {
-    memLimitSize = Math.max(
-      memReqSize,
-      parseInt(getBytes("64", "Gi", true), 10),
-    );
-  } else if (capSize >= parseInt(getBytes("100", "Ti"), 10)) {
-    memLimitSize = Math.max(
-      memReqSize,
-      parseInt(getBytes("32", "Gi", true), 10),
-    );
-  } else if (capSize >= parseInt(getBytes("10", "Ti"), 10)) {
-    memLimitSize = Math.max(
-      memReqSize,
-      parseInt(getBytes("16", "Gi", true), 10),
-    );
-  } else if (capSize >= parseInt(getBytes("1", "Ti"), 10)) {
-    memLimitSize = Math.max(
-      memReqSize,
-      parseInt(getBytes("8", "Gi", true), 10),
-    );
-  }
-
-  return {
-    error: "",
-    request: memReqSize,
-    limit: memLimitSize,
-  };
-};
-
-// Erasure Code Parity Calc
-export const erasureCodeCalc = (
-  parityValidValues: string[],
-  totalDisks: number,
-  pvSize: number,
-  totalNodes: number,
-): IErasureCodeCalc => {
-  // Parity Values is empty
-  if (parityValidValues.length < 1) {
-    return {
-      error: 1,
-      defaultEC: "",
-      erasureCodeSet: 0,
-      maxEC: "",
-      rawCapacity: "0",
-      storageFactors: [],
-    };
-  }
-
-  const totalStorage = totalDisks * pvSize;
-  const maxEC = parityValidValues[0];
-  const maxParityNumber = parseInt(maxEC.split(":")[1], 10);
-
-  const erasureStripeSet = maxParityNumber * 2; // ESS is calculated by multiplying maximum parity by two.
-
-  const storageFactors: IStorageFactors[] = parityValidValues.map(
-    (currentParity) => {
-      const parityNumber = parseInt(currentParity.split(":")[1], 10);
-      const storageFactor =
-        erasureStripeSet / (erasureStripeSet - parityNumber);
-
-      const maxCapacity = Math.floor(totalStorage / storageFactor);
-      const maxTolerations =
-        totalDisks - Math.floor(totalDisks / storageFactor);
-      return {
-        erasureCode: currentParity,
-        storageFactor,
-        maxCapacity: maxCapacity.toString(10),
-        maxFailureTolerations: maxTolerations,
-      };
-    },
-  );
-
-  let defaultEC = maxEC;
-
-  const fourVar = parityValidValues.find((element) => element === "EC:4");
-
-  if (fourVar) {
-    defaultEC = "EC:4";
-  }
-
-  return {
-    error: 0,
-    storageFactors,
-    maxEC,
-    rawCapacity: totalStorage.toString(10),
-    erasureCodeSet: erasureStripeSet,
-    defaultEC,
-  };
 };
 
 // 92400 seconds -> 1 day, 1 hour, 40 minutes.

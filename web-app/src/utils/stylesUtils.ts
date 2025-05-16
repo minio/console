@@ -40,6 +40,8 @@ export const generateOverrideTheme = (overrideVars: IEmbeddedCustomStyles) => {
       logoColor: "#C51B3F",
       logoLabelColor: overrideVars.fontColor,
       logoLabelInverse: "#FFF",
+      logoContrast: "#000",
+      logoContrastInverse: overrideVars.fontColor,
       loaderColor: overrideVars.loaderColor,
       boxBackground: overrideVars.boxBackground,
       mutedText: "#9c9c9c",
