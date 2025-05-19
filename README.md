@@ -4,9 +4,10 @@
 
 A graphical user interface for [MinIO](https://github.com/minio/minio)
 
-| Object Browser                     | Dashboard                     | Creating a bucket             |
-|------------------------------------|-------------------------------|-------------------------------|
-| ![Object Browser](images/pic3.png) | ![Dashboard](images/pic1.png) | ![Dashboard](images/pic2.png) |
+| Object Browser                       | Creating a bucket                     | Object Details                  |
+|--------------------------------------|-------------------------------|---------------------------------|
+| ![Object Browser](images/pic1-a.png) | ![Dashboard](images/pic2-a.png) | ![Dashboard](images/pic3-a.png) |
+| ![Object Browser](images/pic1-b.png) | ![Dashboard](images/pic2-b.png) | ![Dashboard](images/pic3-b.png) |
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
